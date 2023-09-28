@@ -12,7 +12,7 @@ uint32_t hash(char *input)
         return -1; // in case of empty/invalid string, return an error value
     }
 
-    u_int32_t hash = FNV_OFFSET_BASIS;
+    uint32_t hash = FNV_OFFSET_BASIS;
 
     for (int i = 0; i < len; i++)
     {
