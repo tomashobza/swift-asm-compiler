@@ -20,5 +20,5 @@ uint32_t hash(char *input)
         hash = hash * FNV_PRIME;
     }
 
-    return hash;
+    return hash % SYMTABLE_MAX_ITEMS;
 }

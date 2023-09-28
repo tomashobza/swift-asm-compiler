@@ -7,7 +7,7 @@
 #ifndef SYMTABLE_H
 #define SYMTABLE_H
 
-#define MAX_ITEMS 313
+#define SYMTABLE_MAX_ITEMS 313
 
 #include <stdint.h>
 #include <stdbool.h>
@@ -22,7 +22,7 @@ typedef struct symtable_item
     struct symtable_item *next;
 } symtable_item_t;
 
-typedef symtable_item_t *symtable_t[MAX_ITEMS];
+typedef symtable_item_t *symtable_t[SYMTABLE_MAX_ITEMS];
 
 /**
  * @brief Calculates the hashed value of a string. Source: https://en.wikipedia.org/wiki/Fowler%E2%80%93Noll%E2%80%93Vo_hash_function
