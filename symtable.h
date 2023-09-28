@@ -7,7 +7,8 @@
 #ifndef SYMTABLE_H
 #define SYMTABLE_H
 
-#define SYMTABLE_MAX_ITEMS 313
+#define SYMTABLE_MAX_ITEMS 13
+// #define SYMTABLE_MAX_ITEMS 313
 
 #include <stdint.h>
 #include <stdlib.h>
@@ -40,6 +41,28 @@ uint32_t hash(char *input);
  */
 symtable_t init_symtable();
 
-symtable_item_t *symtable_add(uint32_t index, symtable_item_t item);
+/**
+ * @brief Adds a new symbol to the hash table of symbols.
+ *
+ * @param item item to be added
+ * @param table table to put the symbol into
+ * @return symtable_item_t*
+ */
+symtable_item_t *symtable_add(symtable_item_t item, symtable_t table);
+
+/**
+ * @brief Creates a new symbol object.
+ *
+ * @param item return a pointer to the new symbol
+ * @return symtable_item_t*
+ */
+symtable_item_t *init_symtable_item(symtable_item_t item);
+
+/**
+ * @brief Prints the content of the symtable.
+ *
+ * @param table table to print
+ */
+void symtable_print(symtable_t table);
 
 #endif // SYMTABLE_H
