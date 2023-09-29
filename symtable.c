@@ -7,8 +7,8 @@ const uint32_t FNV_OFFSET_BASIS = 2166136261;
 
 uint32_t hash(char *input)
 {
-    int len = strlen(input);
-    if (len <= 0)
+    int len = 0;
+    if (input == NULL || (len = strlen(input)) <= 0)
     {
         return -1; // in case of empty/invalid string, return an error value
     }
@@ -44,10 +44,12 @@ symtable_t init_symtable()
 symtable_item_t *symtable_add(symtable_item_t item, symtable_t table)
 {
     const uint32_t item_hash = hash(item.name);
-    printf("HASH: %u\n", item_hash);
+    if (item_hash == (uint32_t)-1)
+    {
+        return NULL;
+    }
 
     symtable_item_t *new_sti = init_symtable_item(item);
-    printf("symbol 2: %s\n", new_sti->name);
 
     if (table[item_hash] == NULL)
     {
