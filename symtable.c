@@ -81,6 +81,24 @@ symtable_item_t *init_symtable_item(symtable_item_t item)
     return new_sti;
 }
 
+symtable_item_t *symtable_find(char *name, symtable_t table)
+{
+    const uint32_t hashed_name = hash(name);
+    printf("%u\n", hashed_name);
+    if (hashed_name == (uint32_t)-1)
+    {
+        return NULL;
+    }
+
+    symtable_item_t *search = table[hashed_name];
+    while (search != NULL && search->next != NULL && strcmp(search->name, name))
+    {
+        search = search->next;
+    }
+
+    return search;
+}
+
 void symtable_print(symtable_t table)
 {
     for (int i = 0; i < SYMTABLE_MAX_ITEMS; i++)

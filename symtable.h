@@ -59,6 +59,15 @@ symtable_item_t *symtable_add(symtable_item_t item, symtable_t table);
 symtable_item_t *init_symtable_item(symtable_item_t item);
 
 /**
+ * @brief Returns a pointer to a symbol object or NULL if the symbol is not present.
+ *
+ * @param name search key
+ * @param table table to search in
+ * @return symtable_item_t*
+ */
+symtable_item_t *symtable_find(char *name, symtable_t table);
+
+/**
  * @brief Prints the content of the symtable.
  *
  * @param table table to print
