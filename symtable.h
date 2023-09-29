@@ -65,4 +65,18 @@ symtable_item_t *init_symtable_item(symtable_item_t item);
  */
 void symtable_print(symtable_t table);
 
+/**
+ * @brief Recursively free all the chained synonyms
+ *
+ * @param item synonym to start the freeing with
+ */
+void free_synonyms(symtable_item_t *item);
+
+/**
+ * @brief Free the memory used by the table and all it's items
+ *
+ * @param table table to free
+ */
+void symtable_free(symtable_t table);
+
 #endif // SYMTABLE_H

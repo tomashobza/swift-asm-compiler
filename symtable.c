@@ -101,3 +101,26 @@ void symtable_print(symtable_t table)
         }
     }
 }
+
+void free_synonyms(symtable_item_t *item)
+{
+    if (item->next != NULL)
+    {
+        free_synonyms(item->next);
+    }
+
+    free(item);
+}
+
+void symtable_free(symtable_t table)
+{
+    for (int i = 0; i < SYMTABLE_MAX_ITEMS; i++)
+    {
+        if (table[i] != NULL)
+        {
+            free_synonyms(table[i]);
+        }
+    }
+
+    free(table);
+}
