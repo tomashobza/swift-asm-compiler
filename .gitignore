@@ -34,3 +34,6 @@ core.*
 *.suo
 *.user
 
+# Ignore specific executables
+stack_test
+
