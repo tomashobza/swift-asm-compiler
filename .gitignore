@@ -1,3 +1,36 @@
-ifjcompiler
-.vscode/c_cpp_properties.json
-.vscode/settings.json
+# Ignore object files
+*.o
+*.obj
+
+# Ignore executables
+*.exe
+*.out
+
+# Ignore shared libraries
+*.so
+*.dll
+
+# Ignore archived libraries
+*.a
+*.lib
+
+# Ignore temporary files
+*.swp
+*.swo
+*.bak
+*.tmp
+
+# Ignore core dumps
+core.*
+
+# Ignore other generated files
+*.class
+*.pyc
+
+# Ignore IDE-specific files
+.idea/
+.vscode/
+*.sln
+*.suo
+*.user
+
