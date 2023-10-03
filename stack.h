@@ -1,27 +1,48 @@
 #ifndef STACK_H
 #define STACK_H
 
-#include "symtable.h"
+#include <stdbool.h>  // for the boolean data type
+#include "symtable.h" // include your symbol table header
 
 // Stack structure definition
-typedef struct {
-    symtable_t *arr;  // Change from symtable_t to symtable_t*
-    symtable_t top; // Pointer to the top element
-    int size;
-    int capacity;
+typedef struct Stack {
+    symtable_t *top;  // Pointer to the top element (a symtable_t)
+    int size;         // Number of elements in the stack
 } Stack;
+
 // Function prototypes
 
-// Creates a new stack with initial capacity and returns its pointer
-Stack* createStack(int initial_capacity);
+/**
+    * @brief Creates a new stack.
+    * @return Pointer to the stack.
+    */
+Stack* stack_init();
 
-// Pushes a new element onto the stack, resizing if necessary
-void push(Stack *s, symtable_t table);
+/**
+    * @brief Checks if the stack is empty.
+    * @param stack Pointer to the stack.
+    * @return true if empty, false otherwise.
+    */
+bool stack_is_empty(const Stack *stack);
 
-// Pops an element off the stack and returns it
-symtable_t pop(Stack *s);
+/**
+    * @brief Pushes a new symbol table onto the stack.
+    * @param s Pointer to the stack.
+    * @param table Pointer to the symbol table to be pushed.
+    */
+void stack_push(Stack *s, symtable_t *table);
 
-// Frees the memory occupied by the stack
-void freeStack(Stack *s);
+/**
+    * @brief Pops the top symbol table from the stack.
+    * @param s Pointer to the stack.
+    * @return Pointer to the popped symbol table.
+    */
+symtable_t* stack_pop(Stack *s);
+
+/**
+    * @brief Frees the stack.
+    * @param s Pointer to the stack.
+    */
+void stack_free(Stack *s);
 
 #endif // STACK_H

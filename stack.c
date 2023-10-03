@@ -11,56 +11,64 @@
 #include "stack.h"
 
 /**
-    * @brief Creates a new stack with initial capacity.
-    * @param initial_capacity Initial capacity of the stack.
+    * @brief Creates a new stack.
     * @return Pointer to the stack.
     */ 
-Stack* createStack(int initial_capacity) {
+Stack* stack_init() {
     Stack *s = malloc(sizeof(Stack));
-    s->arr = malloc(initial_capacity * sizeof(int));
+    if (s == NULL) {
+        fprintf(stderr, "Memory allocation failed.\n");
+        exit(1);
+    }
+    s->top = NULL;  // Initially, the stack is empty.
     s->size = 0;
-    s->capacity = initial_capacity;
-    s->top = NULL;
     return s;
 }
 
-void push(Stack *s, symtable_t table) {
-    if (s->size == s->capacity) {
-        s->capacity *= 2;
-        s->arr = realloc(s->arr, s->capacity * sizeof(symtable_t));
-    }
-    s->arr[s->size] = table;
-    s->top = table; // Update the top element
+/**
+    * @brief Checks if the stack is empty.
+    * @param stack Pointer to the stack.
+    * @return true if empty, false otherwise.
+    */
+bool stack_is_empty(const Stack *stack) {
+    return stack->top == NULL;
+}
+
+/**
+    * @brief Pushes a new symbol table onto the stack.
+    * @param s Pointer to the stack.
+    * @param table Pointer to the symbol table to be pushed.
+    */
+void stack_push(Stack *s, symtable_t *table) {
+    table->next = s->top;
+    s->top = table;
     s->size++;
 }
 
-symtable_t pop(Stack *s) {
-    if (s->size == 0) {
+/**
+    * @brief Pops the top symbol table from the stack.
+    * @param s Pointer to the stack.
+    * @return Pointer to the popped symbol table.
+    */
+symtable_t* stack_pop(Stack *s) {
+    if (stack_is_empty(s)) {
         fprintf(stderr, "Stack underflow.\n");
         exit(1);
     }
-
+    symtable_t *popped = s->top;
+    s->top = popped->next;
     s->size--;
-    symtable_t popped = s->arr[s->size];
-
-    // Capacity downsizing
-    if (s->size <= s->capacity / 4) {
-        s->capacity /= 2;
-        s->arr = realloc(s->arr, s->capacity * sizeof(symtable_t));
-        if (s->arr == NULL) {
-            fprintf(stderr, "Memory reallocation failed.\n");
-            exit(1);
-        }
-    }
-
     return popped;
 }
 
 /**
     * @brief Frees the stack.
     * @param s Pointer to the stack.
-    */ 
-void freeStack(Stack *s) {
-    free(s->arr);
+    */
+void stack_free(Stack *s) {
+    while (!stack_is_empty(s)) {
+        symtable_t *temp = stack_pop(s);
+        symtable_free(temp);
+    }
     free(s);
 }

@@ -10,11 +10,10 @@ uint32_t hash(char *input)
     int len = 0;
     if (input == NULL || (len = strlen(input)) <= 0)
     {
-        return -1; // in case of empty/invalid string, return an error value
+        return -1; // In case of empty/invalid string, return an error value
     }
 
     uint32_t hash = FNV_OFFSET_BASIS;
-
     for (int i = 0; i < len; i++)
     {
         hash = hash ^ (uint32_t)input[i];
@@ -24,24 +23,32 @@ uint32_t hash(char *input)
     return hash % SYMTABLE_MAX_ITEMS;
 }
 
-symtable_t init_symtable()
+symtable_t *init_symtable()
 {
-    symtable_t st = malloc(sizeof(symtable_item_t *) * SYMTABLE_MAX_ITEMS);
-
+    symtable_t *st = malloc(sizeof(symtable_t));
     if (st == NULL)
     {
-        return NULL;
+        fprintf(stderr, "Memory allocation failed.\n");
+        exit(1);
+    }
+
+    st->items = malloc(sizeof(symtable_item_t *) * SYMTABLE_MAX_ITEMS);
+    if (st->items == NULL)
+    {
+        fprintf(stderr, "Memory allocation failed.\n");
+        free(st);
+        exit(1);
     }
 
     for (int i = 0; i < SYMTABLE_MAX_ITEMS; i++)
     {
-        st[i] = NULL;
+        st->items[i] = NULL;
     }
 
     return st;
 }
 
-symtable_item_t *symtable_add(symtable_item_t item, symtable_t table)
+symtable_item_t *symtable_add(symtable_item_t item, symtable_t *table)
 {
     const uint32_t item_hash = hash(item.name);
     if (item_hash == (uint32_t)-1)
@@ -50,15 +57,13 @@ symtable_item_t *symtable_add(symtable_item_t item, symtable_t table)
     }
 
     symtable_item_t *new_sti = init_symtable_item(item);
-
-    if (table[item_hash] == NULL)
+    if (table->items[item_hash] == NULL)
     {
-        table[item_hash] = new_sti;
+        table->items[item_hash] = new_sti;
     }
     else
     {
-
-        symtable_item_t *last_item = table[item_hash];
+        symtable_item_t *last_item = table->items[item_hash];
         while (last_item->next != NULL)
         {
             last_item = last_item->next;
@@ -81,17 +86,17 @@ symtable_item_t *init_symtable_item(symtable_item_t item)
     return new_sti;
 }
 
-void symtable_print(symtable_t table)
+void symtable_print(symtable_t *table)
 {
     for (int i = 0; i < SYMTABLE_MAX_ITEMS; i++)
     {
-        if (table[i] == NULL)
+        if (table->items[i] == NULL)
         {
             printf("NULL,\n");
         }
         else
         {
-            symtable_item_t *item = table[i];
+            symtable_item_t *item = table->items[i];
             while (item != NULL)
             {
                 printf("'%s', ", item->name);
@@ -112,15 +117,15 @@ void free_synonyms(symtable_item_t *item)
     free(item);
 }
 
-void symtable_free(symtable_t table)
+void symtable_free(symtable_t *table)
 {
     for (int i = 0; i < SYMTABLE_MAX_ITEMS; i++)
     {
-        if (table[i] != NULL)
+        if (table->items[i] != NULL)
         {
-            free_synonyms(table[i]);
+            free_synonyms(table->items[i]);
         }
     }
 
-    free(table);
+    free(table->items);
 }
