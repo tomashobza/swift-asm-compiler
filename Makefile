@@ -1,6 +1,7 @@
 # Compiler and flags
 CC = gcc
-CFLAGS = -Wall -Wextra
+#CFLAGS = -Wall -Wextra
+
 
 # Find all source files
 SRCS = $(wildcard *.c)
@@ -12,7 +13,8 @@ TARGET = ifjcompiler
 all: $(TARGET)
 
 $(TARGET): 
-	$(CC) $(CFLAGS) $(SRCS) -o $@
+	#$(CC) $(CFLAGS) $(SRCS) -o $@
+	$(CC) $(SRCS) -o $@
 
 # Clean up
 clean:
