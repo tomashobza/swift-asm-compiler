@@ -1,3 +1,2 @@
-ifjcompiler
-.vscode/c_cpp_properties.json
-.vscode/settings.json
+stack_test
+stack_test.c
