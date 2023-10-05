@@ -6,8 +6,8 @@
  *
  * Project: IFJ compiler
  */
-#ifndef IFJ2022_SCANNER_H
-#define IFJ2022_SCANNER_H
+#ifndef IFJ2023_SCANNER_H
+#define IFJ2023_SCANNER_H
 #include "error.h"
 /*
  * Declaration of scanners states
@@ -29,7 +29,6 @@
 #define STRING_BLOCK 47
 #define STRING_BLOCK_ESCAPE 48
 #define HEX_START_BLOCK 49
-#define OCT_START 411
 #define HEX_START 423
 #define IDENTIFICATOR 50
 #define UNDERSCORE 51
@@ -120,4 +119,4 @@ int main_scanner(Token *tok);
 */
 int set_token(int next_state,char *val,Token_type type,Token *token,char *code);
 
-#endif //IFJ2022_SCANNER_H
+#endif //IFJ2023_SCANNER_H

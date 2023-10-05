@@ -20,8 +20,9 @@
 int state = NEW_TOKEN;                                                                     // initial state of scanner
 char *builtin_func[] = {"readString", "readInt", "readDouble", "write", "Int2Double", "Double2Int", "length", "substring", "ord", "chr", };
 char *keyword[] = {"Double", "Int", "String", "Bool", "func", "nil", "else", "elseif", "if", "return", "while", "var", "let", "for", "in", "break", "continue"};
-char *char_without_space[] = {":", ".", "{", "}", "(", ")", ",",  " ", "=", "!", "+", "-", "*", "/", "<", ">", "\n"};
+char *char_without_space[] = {":", ".", "{", "}", "(", ")", ",",  " ", "=", "!", "+", "-", "*", "/", "<", ">", "\n", "_"};
 
+//TODO delete
 int ret = 0;
 int main_scanner(Token *tok)
 {
@@ -183,7 +184,6 @@ int generate_token(Token *token, char *code)
                         state = IDENTIFICATOR;
                         break;
                     case '_':
-                        code[strlen(code)] = c;
                         state = UNDERSCORE;
                         break;
                     default:
@@ -191,23 +191,23 @@ int generate_token(Token *token, char *code)
                 }
                 break;
             }
-                /*
-                 * Everything before EOL is considered a line commentary
-                 */
             case UNDERSCORE: {
                 char c = (char) getchar();
-                if ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || (c <= 9 && c >= 0)) {
+                if ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || (c <= '9' && c >= '0')) {
                     check_length(&code_len, 0, code);
                     code[strlen(code)] = '_';
                     ungetc(c, stdin);
                     state = IDENTIFICATOR;
-                }else if (c == ' '){
+                } else if (c == ' ') {
                     return set_token(NEW_TOKEN, "_", TOKEN_UNDERSCORE, token, code);
-                }else{
+                } else {
                     return LEXICAL_ERR;
                 }
                 break;
             }
+                /*
+                 * Everything before EOL is considered a line commentary
+                 */
             case COMMENTARY: {
                 char c = (char) getchar();
                 while (c != '\n' && c != EOF) {
@@ -250,7 +250,6 @@ int generate_token(Token *token, char *code)
                  * Otherwise LEXICAL_ERR is generated
                  */
             case IDENTIFICATOR: {
-                //TODO order keywords etc
                 char c = (char) getchar();
                 while ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || (c >= '0' && c <= '9') || c == '_') {
                     check_length(&code_len, 0, code);
@@ -358,16 +357,13 @@ int generate_token(Token *token, char *code)
                 return set_token(NEW_TOKEN, code, TOKEN_EXP, token, code);
             }
                 /*
-                 * " has been read
-                 * Characters are read till " is read again
-                 * '$' without \ is considered LEXICAL_ERR
+                 * either " or """  has been read
+                 * Characters are read till " or """ is read again
                  */
             case STRING_BLOCK:
             case STRING: {
                 char c = (char) getchar();
-
                 while (c != '"') {
-
                     if (c == '\\') {
                         if (state == STRING) {
                             state = STRING_ESCAPE;
@@ -380,13 +376,8 @@ int generate_token(Token *token, char *code)
                     } else {
                         check_length(&code_len, 0, code);
                         code[strlen(code)] = c;
-                        /*printf(">%c<\n",c);
-                        printf("------\n");
-                        printf("xcode*%s*\n",code);
-                        printf("\n");*/
                         c = '\0';
                         c = (char) getchar();
-
                     }
                 }
                 if (state == STRING) {
@@ -399,13 +390,13 @@ int generate_token(Token *token, char *code)
                 /*
                  * '\' was read while in STRING state
                  */
-                //TODO fix block string with last white character
+                //TODO fix realloc
             case STRING_BLOCK_ESCAPE:
             case STRING_ESCAPE: {
                 char c = (char) getchar();
                 switch (c) {
                     case '{':
-                        if (state = STRING_ESCAPE) {
+                        if (state == STRING_ESCAPE) {
                             state = HEX_START;
                         } else {
                             state = HEX_START_BLOCK;
@@ -470,18 +461,16 @@ int generate_token(Token *token, char *code)
                 }
                 break;
             }
-                /* '\x' has been read
+                /* '\{' has been read
                  * correct indicated whether sequence is valid hexadecimal number in range 01 - ff (case-insensitive)
                  */
             case HEX_START_BLOCK:
             case HEX_START: {
-                //check_length(&code_len, 0, code);
-                //code[strlen(code)] = "{";
                 char hex[3];
                 memset(hex, '\0', sizeof(hex));
                 char c = '\0';
                 bool correct = 1;
-                for (int i = 0; i < 2; i++){
+                for (int i = 0; i < 2; i++) {
                     c = (char) getchar();
                     if (!((c <= '9' && c >= '0') || (c <= 'f' && c >= 'a') || (c <= 'F' && c >= 'A'))) {
                         correct = 0;
@@ -491,19 +480,20 @@ int generate_token(Token *token, char *code)
                             check_length(&code_len, strlen(str), code);
                             strcat(code,str);
                             ungetc(c, stdin);
-                        }else {
+                        } else {
                             hex[i] = c;
                         }
-                    }else {
+                    } else {
                         hex[i] = c;
                     }
                 }
+                c = '\0';
                 c = (char) getchar();
-                if(c != '}'){
+                if (c != '}') {
                     correct = 0;
                     ungetc(c, stdin);
                 }
-                if (correct == 1){
+                if (correct == 1) {
                     char str[5];
                     memset(str, '\0', sizeof(str));
                     sprintf(str, "0x%s", hex);
@@ -513,7 +503,7 @@ int generate_token(Token *token, char *code)
                     sprintf(dec_val, "%ld", dec_num);
                     check_length(&code_len, strlen(dec_val), code);
                     strcat(code,dec_val);
-                }else {
+                } else {
                     char str[3] = "{";
                     strcat("{",hex);
                     check_length(&code_len, strlen(str), code);
@@ -526,68 +516,50 @@ int generate_token(Token *token, char *code)
                 }
                 break;
             }
-            case STRING_1:
-            {
+            case STRING_1: {
                 char c = (char)getchar();
-                if (c == '"')
-                {
+                if (c == '"') {
                     state = STRING_2;
-                }
-                else
-                {
+                } else {
                     ungetc(c, stdin);
                     state = STRING;
                 }
                 break;
             }
-            case STRING_2:
-            {
+            case STRING_2: {
                 char c = (char)getchar();
-                if (c == '"')
-                {
+                if (c == '"') {
                     state = STRING_BLOCK;
-                }
-                else
-                {
+                } else {
                     ungetc(c, stdin);
                     return set_token(NEW_TOKEN, "", TOKEN_STRING, token, code);
                 }
                 break;
             }
             case STRING_1_END:
-            case STRING_2_END:
-            {
+            case STRING_2_END: {
                 char c = (char)getchar();
-                if (c == '"')
-                {
-                    if (state == STRING_1_END)
-                    {
+                if (c == '"') {
+                    if (state == STRING_1_END) {
                         state = STRING_2_END;
-                    }
-                    else
-                    {
+                    } else {
                         int len = strlen(code);
-
                         // Remove newline characters from the end of the string
                         while (len > 0 && (code[len - 1] == '\n' || code[len - 1] == '\r')) {
                             code[len - 1] = '\0';
                             len--;
                         }
-
-                        // Remove newline characters from the beginning of the codeing
+                        // Remove newline characters from the beginning of the string
                         int start = 0;
                         while (code[start] != '\0' && (code[start] == '\n' || code[start] == '\r')) {
                             start++;
                         }
-
                         if (start > 0) {
                             memmove(code, code + start, len - start + 1);
                         }
                         return set_token(NEW_TOKEN, code, TOKEN_STRING, token, code);
                     }
-                }
-                else
-                {
+                } else {
                     return LEXICAL_ERR;
                 }
                 break;
@@ -600,13 +572,10 @@ int generate_token(Token *token, char *code)
 /*
  * Before each character is added to *code it reallocates memory if needed
  */
-void check_length(int *code_len, int add, char *code)
-{
-    if (strlen(code) + add >= *code_len)
-    {
+void check_length(int *code_len, int add, char *code) {
+    if (strlen(code) + add >= *code_len) {
         code = realloc(code, sizeof(char) * (*code_len *= 2));
-        if (code == NULL)
-        {
+        if (code == NULL) {
             ret = INTERNAL_ERR;
             exit(INTERNAL_ERR);
         }
@@ -616,32 +585,22 @@ void check_length(int *code_len, int add, char *code)
  * set_token is called when token is generated successfully
  * Checks whether valid characters is next from *char_without_space
  */
-int set_token(int next_state, char *val, Token_type type, Token *token, char *code)
-{
+int set_token(int next_state, char *val, Token_type type, Token *token, char *code) {
     char c = (char)getchar();
     int correct = 0;
-    for (int i = 0; i < (int)CHAR_WTH_SPACE_LENGTH; i++)
-    {
-        if (c == *char_without_space[i] || c == EOF || isspace(c) != 0 || val[strlen(val) - 1] == *char_without_space[i])
-        {
+    for (int i = 0; i < (int)CHAR_WTH_SPACE_LENGTH; i++) {
+        if (c == *char_without_space[i] || c == EOF || isspace(c) != 0 || val[strlen(val) - 1] == *char_without_space[i]) {
             correct = 1;
         }
     }
-    if (val == "?>")
-    {
-        correct = 1;
-    }
     ungetc(c, stdin);
-    if (correct == 1)
-    {
+    if (correct == 1) {
         state = next_state;
         token->type = type;
         token->token_value = val;
         printf("type: %d, value:%s:\n",type,val);
         return 0;
-    }
-    else
-    {
+    } else {
         return LEXICAL_ERR;
     }
 }
