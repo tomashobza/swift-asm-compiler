@@ -6,6 +6,7 @@
  *
  * Project: IFJ compiler
  */
+
 #include <stdio.h>
 #include <malloc.h>
 #include <string.h>

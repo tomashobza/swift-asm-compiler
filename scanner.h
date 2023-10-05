@@ -6,6 +6,7 @@
  *
  * Project: IFJ compiler
  */
+
 #ifndef IFJ2023_SCANNER_H
 #define IFJ2023_SCANNER_H
 #include "error.h"
