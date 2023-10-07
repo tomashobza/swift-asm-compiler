@@ -6,8 +6,8 @@
  * Project: IFJ compiler
  */
 
-#ifndef IFJ22_ERROR_H
-#define IFJ22_ERROR_H
+#ifndef IFJ23_ERROR_H
+#define IFJ23_ERROR_H
 
 #define LEXICAL_ERR 1
 #define SYNTACTIC_ERR 2
@@ -16,6 +16,7 @@
 #define VARIABLES_ERR 5
 #define RETURN_ERR 6
 #define COMPATIBILITY_ERR 7
-#define SEMANTICS_ERR 8
+#define TYPE_ERR 8
+#define SEMANTICS_ERR 9
 #define INTERNAL_ERR 99
-#endif // IFJ22_ERROR_H
+#endif // IFJ23_ERROR_H
