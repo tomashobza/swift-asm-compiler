@@ -96,6 +96,8 @@ int generate_token(Token *token, char *code, bool exp)
                         return set_token(END_STATE, "", TOKEN_EOF, token, code);
                     case ',':
                         return set_token(NEW_TOKEN, ",", TOKEN_COMMA, token, code);
+                    case ';':
+                        return set_token(NEW_TOKEN, ",", TOKEN_SEMICOLON, token, code);
                     case ':':
                         return set_token(NEW_TOKEN, ":", TOKEN_DOUBLE_DOT, token, code);
                     case '+':
