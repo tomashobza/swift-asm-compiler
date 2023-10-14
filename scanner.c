@@ -10,17 +10,14 @@
 #include <stdio.h>
 #include <malloc.h>
 #include <string.h>
-#include <stdbool.h>
+
 #include <stdlib.h>
 #include <ctype.h>
 #include "scanner.h"
 
-#define KEYWORD_LENGTH (sizeof(keyword) / sizeof(*keyword))                              // length of array *keyword[]
-#define BUILTIN_LENGTH (sizeof(builtin_func) / sizeof(*builtin_func))                    // length of *array builtin_func[]
+
 #define CHAR_WTH_SPACE_LENGTH (sizeof(char_without_space) / sizeof(*char_without_space)) // length of array *char_without_space
-int state = NEW_TOKEN;                                                                     // initial state of scanner
-char *builtin_func[] = {"readString", "readInt", "readDouble", "write", "Int2Double", "Double2Int", "length", "substring", "ord", "chr", };
-char *keyword[] = {"Double", "Int", "String", "Bool", "func", "nil", "else", "elseif", "if", "return", "while", "var", "let", "for", "in", "break", "continue"};
+Token_type state = NEW_TOKEN;                                                                     // initial state of scanner
 char *char_without_space[] = {":", ".", "{", "}", "(", ")", ",",  " ", "=", "!", "+", "-", "*", "/", "<", ">", "\n", "_"};
 
 //TODO delete
@@ -30,7 +27,7 @@ int main_scanner(Token *tok)
     Token *token;
     token = malloc(sizeof(Token));
     char *code = '\0';
-    ret = generate_token(token, code);
+    ret = generate_token(token, code,true);
     tok->type = (token->type);
     tok->token_value = (token->token_value);
     free(code);
@@ -39,8 +36,36 @@ int main_scanner(Token *tok)
     code = NULL;
     return ret;
 }
-int generate_token(Token *token, char *code)
+int generate_token(Token *token, char *code, bool exp)
 {
+    Token_map defined_tokens[] = {
+            {"Double", TOKEN_TYPE_DOUBLE},
+            {"String", TOKEN_TYPE_STRING},
+            {"Int", TOKEN_TYPE_INT},
+            {"Bool", TOKEN_TYPE_BOOL},
+            {"func", TOKEN_FUNC},
+            {"nil", TOKEN_NIL},
+            {"if", TOKEN_IF},
+            {"else", TOKEN_ELSE},
+            {"return", TOKEN_RETURN},
+            {"while", TOKEN_WHILE},
+            {"var", TOKEN_VAR},
+            {"let", TOKEN_LET},
+            {"for", TOKEN_FOR},
+            {"in", TOKEN_IN},
+            {"break", TOKEN_BREAK},
+            {"continue", TOKEN_CONTINUE},
+            {"readString", TOKEN_READSTRING},
+            {"readInt", TOKEN_READINT},
+            {"readDouble", TOKEN_READDOUBLE},
+            {"write", TOKEN_WRITE},
+            {"Int2Double", TOKEN_INT2DOUBLE},
+            {"Double2Int", TOKEN_DOUBLE2INT},
+            {"length", TOKEN_LENGTH},
+            {"substring", TOKEN_SUBSTRING},
+            {"ord", TOKEN_ORD},
+            {"chr", TOKEN_CHR},
+    };
     int code_len = 1;
     code = malloc(sizeof(char) * code_len);
     while (1)
@@ -59,7 +84,12 @@ int generate_token(Token *token, char *code)
                     case '\v':
                     case '\f':
                     case '\r':
+                        state = NEW_TOKEN;
+                        break;
                     case '\n':
+                        if (exp){
+                            return set_token(NEW_TOKEN,"\n",TOKEN_EOL,token,code);
+                        }
                         state = NEW_TOKEN;
                         break;
                     case EOF:
@@ -115,7 +145,8 @@ int generate_token(Token *token, char *code)
                         if (c == '?') {
                             return set_token(NEW_TOKEN, "??", TOKEN_BINARY_OPERATOR, token, code);
                         } else {
-                            return LEXICAL_ERR;
+                            ungetc(c, stdin);
+                            return set_token(NEW_TOKEN, "?", TOKEN_TYPE_SUFFIX, token, code);
                         }
                     case '<':
                         c = (char) getchar();
@@ -244,11 +275,8 @@ int generate_token(Token *token, char *code)
                 break;
             }
                 /*
-                 * We expect identifier to be the next
-                 * TOKEN_TYPE_ID is generated if id == ("float"|| "int"||"string")
-                 * TOKEN_FUNCTION is generated if id == "function"
-                 * TOKEN_VAR_ID is generated if id meets general conditions for identifiers
-                 * Otherwise LEXICAL_ERR is generated
+                 * We expect identifier to be a particular keyword,
+                 * builtin function or some user defined identificator
                  */
             case IDENTIFICATOR: {
                 char c = (char) getchar();
@@ -258,35 +286,12 @@ int generate_token(Token *token, char *code)
                     c = (char) getchar();
                 }
                 ungetc(c, stdin);
-                for (int i = 0; i < END_TYPE; i++) {
-                    if (strcmp(code, keyword[i]) == 0) {
-                        c = (char) getchar();
-                        if (c == '?') {
-                            check_length(&code_len, 0, code);
-                            code[strlen(code)] = c;
-                        } else {
-                            ungetc(c, stdin);
-                        }
-                        return set_token(NEW_TOKEN, code, TOKEN_TYPE_ID, token, code);
+                for (size_t i = 0; i < sizeof(defined_tokens) / sizeof(defined_tokens[0]); i++) {
+                    if (strcmp(code, defined_tokens[i].code) == 0) {
+                        return set_token(NEW_TOKEN, code, defined_tokens[i].token, token, code);
                     }
                 }
-                for (int i = 6; i < (int) KEYWORD_LENGTH; i++) {
-                    if (strcmp(code, keyword[i]) == 0) {
-                        return set_token(NEW_TOKEN, code, TOKEN_KEYWORD, token, code);
-                    }
-                }
-                for (int i = 0; i < (int) BUILTIN_LENGTH; i++) {
-                    if (strcmp(code, builtin_func[i]) == 0) {
-                        return set_token(NEW_TOKEN, code, TOKEN_BUILTIN_FUNC, token, code);
-                    }
-                }
-                if (strcmp(code, keyword[4]) == 0) {
-                    return set_token(NEW_TOKEN, code, TOKEN_FUNC, token, code);
-                } else if (strcmp(code, "nil") == 0) {
-                    return set_token(NEW_TOKEN, code, TOKEN_NIL, token, code);
-                } else {
-                    return set_token(NEW_TOKEN, code, TOKEN_IDENTIFICATOR, token, code);
-                }
+                return set_token(NEW_TOKEN, code, TOKEN_IDENTIFICATOR, token, code);
             }
 
                 /*
@@ -405,7 +410,7 @@ int generate_token(Token *token, char *code)
                         break;
                     case '\\':
                         check_length(&code_len, 0, code);
-                        code[strlen(code)] = *"\\";
+                        code[strlen(code)] = '\\';
                         if (state == STRING_ESCAPE) {
                             state = STRING;
                         } else {
@@ -414,7 +419,7 @@ int generate_token(Token *token, char *code)
                         break;
                     case 'n':
                         check_length(&code_len, 0, code);
-                        code[strlen(code)] = *"\n";
+                        code[strlen(code)] = '\n';
                         if (state == STRING_ESCAPE) {
                             state = STRING;
                         } else {
@@ -423,7 +428,7 @@ int generate_token(Token *token, char *code)
                         break;
                     case 't':
                         check_length(&code_len, 0, code);
-                        code[strlen(code)] = *"\t";
+                        code[strlen(code)] = '\t';
                         if (state == STRING_ESCAPE) {
                             state = STRING;
                         } else {
@@ -432,7 +437,7 @@ int generate_token(Token *token, char *code)
                         break;
                     case 'r':
                         check_length(&code_len, 0, code);
-                        code[strlen(code)] = *"\r";
+                        code[strlen(code)] = '\r';
                         if (state == STRING_ESCAPE) {
                             state = STRING;
                         } else {
@@ -441,7 +446,7 @@ int generate_token(Token *token, char *code)
                         break;
                     case '"':
                         check_length(&code_len, 0, code);
-                        code[strlen(code)] = *"\"";
+                        code[strlen(code)] = '\"';
                         if (state == STRING_ESCAPE) {
                             state = STRING;
                         } else {
@@ -450,7 +455,7 @@ int generate_token(Token *token, char *code)
                         break;
                     default:
                         check_length(&code_len, 0, code);
-                        code[strlen(code)] = *("\\");
+                        code[strlen(code)] = '\\';
                         check_length(&code_len, 0, code);
                         code[strlen(code)] = c;
                         if (state == STRING_ESCAPE) {

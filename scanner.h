@@ -6,10 +6,12 @@
  *
  * Project: IFJ compiler
  */
+#include "error.h"
+#include <stdbool.h>
 
 #ifndef IFJ2023_SCANNER_H
 #define IFJ2023_SCANNER_H
-#include "error.h"
+
 /*
  * Declaration of scanners states
  */
@@ -41,58 +43,93 @@
 #define END_TYPE 4
 
 typedef enum {
-    TOKEN_KEYWORD, // Keyword 0
-    TOKEN_FUNC, // Keyword func 1
-    TOKEN_TYPE_ID, // ID of a type id 2
-    TOKEN_TYPE_SUFFIX, // Prefix of type id ? 3
-    TOKEN_IDENTIFICATOR, // Variable id 4
-    TOKEN_EOL, // EOL 5
-    TOKEN_EOF, // EOF 6
-    TOKEN_INT, // Integer 7
-    TOKEN_DOUBLE, // Decimal number 8
-    TOKEN_EXP, // Exponent 9
-    TOKEN_STRING, // String 10
-    TOKEN_EQ, // Equals == 11
-    TOKEN_NEQ, // Not equal !== 12
-    TOKEN_LESS, // Less than < 13
-    TOKEN_MORE, // More than > 14
-    TOKEN_MORE_EQ, // More than or equal >= 15
-    TOKEN_LESS_EQ, // Less than or equal <= 16
-    TOKEN_PLUS, // Plus + 17
-    TOKEN_MINUS, // Minus - 18
-    TOKEN_MUL, // Multiply * 19
-    TOKEN_DIV, // Divide / 20
-    TOKEN_BINARY_OPERATOR, // Binary operator ?? 21
-    TOKEN_ASSIGN, // Assign = 22
-    TOKEN_L_BRACKET, // Left bracket ( 23
-    TOKEN_R_BRACKET, // Right bracket ) 24
-    TOKEN_R_CURLY, // Left bracket { 25
-    TOKEN_L_CURLY, // Right bracket } 26
-    TOKEN_COMMA, // Comma , 27
-    TOKEN_ARROW, // Arrow -> 28
-    TOKEN_BUILTIN_FUNC, // Builtin function identificator has been read 29
-    TOKEN_NIL, // nil has been read 30
-    TOKEN_DOUBLE_DOT, // : has been read 31
-    TOKEN_NOT, // ! has been read 32
-    TOKEN_AND, // && has been read 33
-    TOKEN_OR, // || has been read 34
-    TOKEN_UNDERSCORE,
+    TOKEN_IF, // Keyword if 0
+    TOKEN_ELSE, // Keyword else 1
+    TOKEN_WHILE, // Keyword while 2
+    TOKEN_RETURN, // Keyword return 3
+    TOKEN_VAR, // Keyword var 4
+    TOKEN_LET, // Keyword let 5
+    TOKEN_FOR, // Keyword for 6
+    TOKEN_IN, // Keyword in 7
+    TOKEN_BREAK, // Keyword break 8
+    TOKEN_CONTINUE, // Keyword continue 9
+    TOKEN_TYPE_STRING, // Keyword String 10
+    TOKEN_TYPE_INT, // Keyword Int 11
+    TOKEN_TYPE_DOUBLE, // Keyword Double 12
+    TOKEN_TYPE_BOOL, // Keyword Bool 13
+    TOKEN_FUNC, // Keyword func 14
+    TOKEN_TYPE_SUFFIX, // Prefix of type ? 15
+    TOKEN_IDENTIFICATOR, // Identificator 16
+    TOKEN_EOL, // EOL 17
+    TOKEN_EOF, // EOF 18
+    TOKEN_INT, // Integer 19
+    TOKEN_DOUBLE, // Decimal number 20
+    TOKEN_EXP, // Exponent 21
+    TOKEN_STRING, // String 22
+    TOKEN_EQ, // Equals == 23
+    TOKEN_NEQ, // Not equal !== 24
+    TOKEN_LESS, // Less than < 25
+    TOKEN_MORE, // More than > 26
+    TOKEN_MORE_EQ, // More than or equal >= 27
+    TOKEN_LESS_EQ, // Less than or equal <= 28
+    TOKEN_PLUS, // Plus + 29
+    TOKEN_MINUS, // Minus - 30
+    TOKEN_MUL, // Multiply * 31
+    TOKEN_DIV, // Divide / 32
+    TOKEN_BINARY_OPERATOR, // Binary operator ?? 33
+    TOKEN_ASSIGN, // Assign = 34
+    TOKEN_L_BRACKET, // Left bracket ( 35
+    TOKEN_R_BRACKET, // Right bracket ) 36
+    TOKEN_R_CURLY, // Left bracket { 37
+    TOKEN_L_CURLY, // Right bracket } 38
+    TOKEN_COMMA, // Comma , 39
+    TOKEN_ARROW, // Arrow -> 40
+    TOKEN_NIL, // nil has been read 41
+    TOKEN_DOUBLE_DOT, // : has been read 42
+    TOKEN_NOT, // ! has been read 43
+    TOKEN_AND, // && has been read 44
+    TOKEN_OR, // || has been read 45
+    TOKEN_UNDERSCORE, // _ has been read 46
+    TOKEN_READSTRING, // Builtin function readString 47
+    TOKEN_READINT, // Builtin function readInt 48
+    TOKEN_READDOUBLE, // Builtin function readDouble 49
+    TOKEN_WRITE, // Builtin function write 50
+    TOKEN_INT2DOUBLE, //Builtin function Int2Double 51
+    TOKEN_DOUBLE2INT, // Builtin function Double2Int 52
+    TOKEN_LENGTH, // Builtin function length 53
+    TOKEN_SUBSTRING, // Builtin function substring 54
+    TOKEN_ORD, // Builtin function ord 55
+    TOKEN_CHR // Builtin function chr 56
 }Token_type;
 /*
 * Structure Token - used to store token type and token value read from stdin
 */
 typedef struct {
-    int type;
+    Token_type type;
     char *token_value;
 }Token;
+
+/*
+ * Structure Token_map - used to define keywords and builtin functions with their particular tokens
+ */
+typedef struct {
+    const char *code;
+    int token;
+} Token_map;
+
+/*
+ * Declaration of token map of builtin functions and keywords
+ */
+extern Token_map defined_tokens[]; // Declaration of the variable
 
 /**
  * @def function generate_token works based on final state automat of scanner states
  * @param token empty token structure to which read values and determined token type will be saved
- * @param code dynamically allocated sequence of characers read from stdin
- * @return returns error code if any occured during lexical anaysis
+ * @param code `dynamically allocated sequence of characters read from stdin
+ * @param exp flag that tells scanner whether to ignore newline character or not
+ * @return returns error code if any occurred during lexical analysis
 */
-int generate_token(Token *token,char *code);
+int generate_token(Token *token,char *code, bool exp);
 
 /**
  * @def function check_lenght is called always when character needs to be added to dynamically allocated
