@@ -19,6 +19,8 @@ typedef struct symtable_item
     char *name;
     char *type;   //
     int size;     // size in bytes
+    char* params; // string of params
+    int param_count; // number of params
     bool is_init; //
 
     struct symtable_item *next;
