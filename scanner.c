@@ -8,7 +8,7 @@
  */
 
 #include <stdio.h>
-#include <malloc.h>
+// #include <malloc.h>
 #include <string.h>
 
 #include <stdlib.h>
@@ -26,7 +26,7 @@ int main_scanner(Token *tok)
 {
     Token *token;
     token = malloc(sizeof(Token));
-    char *code = '\0';
+    char code = '\0';
     ret = generate_token(token, code,true);
     tok->type = (token->type);
     tok->token_value = (token->token_value);
