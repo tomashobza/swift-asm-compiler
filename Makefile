@@ -18,7 +18,7 @@ $(TARGET):
 
 # clean, compile and run
 run: clean all
-	./$(TARGET)
+	./$(TARGET) <test_stdin.txt
 
 # Clean up
 clean:
