@@ -82,6 +82,7 @@ unsigned int getValue(Token_type token)
     case TOKEN_R_BRACKET:
         return 7;
     case TOKEN_EOF:
+    default:
         return 8;
     }
 }
