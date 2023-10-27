@@ -1,95 +1,82 @@
-# Information provided
-precedence = {
-    "!": 0,
-    "*": 1,
-    "/": 1,
-    "+": 2,
-    "-": 2,
-    "==": 3,
-    "!=": 3,
-    "<": 3,
-    ">": 3,
-    "<=": 3,
-    ">=": 3,
-    "??": 4,
-}
+import pandas as pd
 
-associativity = {
-    "!": "none",
-    "*": "left",
-    "/": "left",
-    "+": "left",
-    "-": "left",
-    "==": "none",
-    "!=": "none",
-    "<": "none",
-    ">": "none",
-    "<=": "none",
-    ">=": "none",
-    "??": "right",
-}
+# Symbols
+symbols = [
+    "!",
+    "*",
+    "/",
+    "+",
+    "-",
+    "==",
+    "!=",
+    "<",
+    ">",
+    "<=",
+    ">=",
+    "??",
+    "i",
+    "(",
+    ")",
+    "$",
+]
 
-# Operators grouped for the table
-grouped_operators = ["!", "* /", "+ -", "== != < > <= >=", "??", "i", "(", ")", "$"]
+# Initialize the table with empty strings
+precedence_table = pd.DataFrame("", index=symbols, columns=symbols)
 
+# 1) Precedence of operators
+precedence_order = [
+    ["!"],
+    ["*", "/"],
+    ["+", "-"],
+    ["==", "!=", "<", ">", "<=", ">="],
+    ["??"],
+]
 
-def get_relation(op1_group, op2_group):
-    op1s = op1_group.split()
-    op2s = op2_group.split()
+for i in range(len(precedence_order)):
+    for op_i in precedence_order[i]:
+        for j in range(len(precedence_order)):
+            for op_j in precedence_order[j]:
+                if i < j:
+                    precedence_table.at[op_i, op_j] = ">"
+                    precedence_table.at[op_j, op_i] = "<"
+                elif i > j:
+                    precedence_table.at[op_i, op_j] = "<"
+                    precedence_table.at[op_j, op_i] = ">"
 
-    # If there are multiple operators in both groups, we compare the first of each.
-    # It's an assumption based on the data provided.
-    op1 = op1s[0]
-    op2 = op2s[0]
+# 2) Associativity
+left_associative = ["*", "/", "+", "-"]
+right_associative = ["??"]
 
-    if op1 == "i" or op2 == "(":
-        return "<"
-    if op2 == "i" or op1 == ")":
-        return ">"
-    if op1 == "$":
-        return "<"
-    if op2 == "$":
-        return ">"
-    if op1 == "(":
-        if op2 == ")":
-            return "="
-        return "<"
-    if op2 == ")":
-        return ">"
+for op_i in left_associative:
+    for op_j in left_associative:
+        if op_i != op_j:
+            precedence_table.at[op_i, op_j] = ">"
+            precedence_table.at[op_j, op_i] = ">"
 
-    if precedence[op1] < precedence[op2]:
-        return "<"
-    elif precedence[op1] > precedence[op2]:
-        return ">"
-    else:
-        if associativity[op1] == "left":
-            return ">"
-        elif associativity[op1] == "right":
-            return "<"
-        else:
-            return "-"
+for op_i in right_associative:
+    for op_j in right_associative:
+        if op_i != op_j:
+            precedence_table.at[op_i, op_j] = "<"
+            precedence_table.at[op_j, op_i] = "<"
 
+# 3) Identifiers
+for a in symbols:
+    precedence_table.at[a, "i"] = "<"
+    precedence_table.at["i", a] = ">"
 
-# Rest of the code remains unchanged
+# 4) Parentheses
+for a in symbols:
+    if a not in [")", "$"]:
+        precedence_table.at["(", a] = "<"
+    if a not in ["(", "$"]:
+        precedence_table.at[a, ")"] = ">"
 
+precedence_table.at["(", ")"] = "="
 
-# Generate the table
-table = []
-header = [""] + grouped_operators
-table.append(header)
+# 5) End of string $
+for op_i in symbols:
+    if op_i != "$":
+        precedence_table.at["$", op_i] = "<"
+        precedence_table.at[op_i, "$"] = ">"
 
-for op1_group in grouped_operators:
-    row = [op1_group]
-    for op2_group in grouped_operators:
-        if " " in op1_group:  # Multiple operators in the group
-            relation = get_relation(
-                op1_group.split(" ")[0], op2_group.split(" ")[0]
-            )  # Just take the first one as representative
-        else:
-            relation = get_relation(op1_group, op2_group)
-        row.append(relation)
-    table.append(row)
-
-# Display the table
-for row in table:
-    print(",".join(row))
+print(precedence_table)
