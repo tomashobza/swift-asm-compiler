@@ -1,4 +1,5 @@
 import pandas as pd
+import sys
 
 # Symbols
 symbols = [
@@ -21,7 +22,7 @@ symbols = [
 ]
 
 # Initialize the table with empty strings
-precedence_table = pd.DataFrame("", index=symbols, columns=symbols)
+precedence_table = pd.DataFrame("-", index=symbols, columns=symbols)
 
 # 1) Precedence of operators
 precedence_order = [
@@ -79,4 +80,7 @@ for op_i in symbols:
         precedence_table.at["$", op_i] = "<"
         precedence_table.at[op_i, "$"] = ">"
 
-print(precedence_table)
+# Print the table in CSV format
+csv_output = precedence_table.to_csv(index=True)
+
+print(csv_output)
