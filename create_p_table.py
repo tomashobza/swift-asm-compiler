@@ -1,5 +1,4 @@
 import pandas as pd
-import sys
 
 # Symbols
 symbols = [
@@ -65,6 +64,15 @@ for a in symbols:
     precedence_table.at[a, "i"] = "<"
     precedence_table.at["i", a] = ">"
 
+# 4) Parentheses with operators
+operators = ["!", "+", "-", "*", "/"]
+for op in operators:
+    precedence_table.at[op, "("] = "<"
+    precedence_table.at["(", op] = "<"
+    precedence_table.at[op, ")"] = ">"
+    precedence_table.at[")", op] = ">"
+
+precedence_table.at["(", ")"] = "="
 
 # 5) End of string $
 for op_i in symbols:
@@ -97,7 +105,6 @@ symbol_mapping = {
 merged_precedence_table = pd.DataFrame(
     "-", index=merged_symbols, columns=merged_symbols
 )
-
 
 for row_symbol in symbols:
     for col_symbol in symbols:
