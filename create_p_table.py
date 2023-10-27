@@ -80,7 +80,44 @@ for op_i in symbols:
         precedence_table.at["$", op_i] = "<"
         precedence_table.at[op_i, "$"] = ">"
 
-# Print the table in CSV format
-csv_output = precedence_table.to_csv(index=True)
+# Merging the operators with the same precedence
+merged_symbols = ["!", "*/", "+-", "== != < > <= >=", "??", "i", "(", ")", "$"]
+
+symbol_mapping = {
+    "!": "!",
+    "*": "*/",
+    "/": "*/",
+    "+": "+-",
+    "-": "+-",
+    "==": "== != < > <= >=",
+    "!=": "== != < > <= >=",
+    "<": "== != < > <= >=",
+    ">": "== != < > <= >=",
+    "<=": "== != < > <= >=",
+    ">=": "== != < > <= >=",
+    "??": "??",
+    "i": "i",
+    "(": "(",
+    ")": ")",
+    "$": "$",
+}
+
+merged_precedence_table = pd.DataFrame(
+    "-", index=merged_symbols, columns=merged_symbols
+)
+
+for row_symbol in symbols:
+    for col_symbol in symbols:
+        merged_row_symbol = symbol_mapping[row_symbol]
+        merged_col_symbol = symbol_mapping[col_symbol]
+        current_value = precedence_table.at[row_symbol, col_symbol]
+
+        if current_value:
+            merged_precedence_table.at[
+                merged_row_symbol, merged_col_symbol
+            ] = current_value
+
+# Print the merged table in CSV format
+csv_output = merged_precedence_table.to_csv(index=True)
 
 print(csv_output)

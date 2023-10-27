@@ -3,15 +3,15 @@
 #define TOKEN_EXPRSN (Token_type)100
 
 char P_TABLE[9][9] = {
-    {'-', '<', '<', '<', '<', '>', '<', '>', '>'},
-    {'>', '>', '<', '<', '<', '>', '<', '>', '>'},
-    {'>', '>', '>', '<', '<', '>', '<', '>', '>'},
-    {'>', '>', '>', '-', '<', '>', '<', '>', '>'},
-    {'>', '>', '>', '>', '<', '>', '<', '>', '>'},
-    {'<', '<', '<', '<', '<', '<', '<', '<', '<'},
-    {'<', '<', '<', '<', '<', '>', '<', '=', '>'},
-    {'>', '>', '>', '>', '>', '>', '<', '>', '>'},
-    {'<', '<', '<', '<', '<', '>', '<', '<', '<'},
+    {'-', '>', '>', '>', '>', '<', '-', '>', '>'},
+    {'<', '-', '>', '>', '>', '<', '-', '>', '>'},
+    {'<', '>', '-', '>', '>', '<', '-', '>', '>'},
+    {'<', '<', '<', '-', '>', '<', '-', '>', '>'},
+    {'<', '<', '<', '<', '-', '<', '-', '>', '>'},
+    {'>', '>', '>', '>', '>', '>', '>', '>', '>'},
+    {'<', '<', '<', '<', '<', '<', '<', '=', '>'},
+    {'-', '-', '-', '-', '-', '<', '-', '>', '>'},
+    {'<', '<', '<', '<', '<', '<', '<', '<', '-'},
 };
 
 unsigned int getSymbolValue(Token_type token)
@@ -135,6 +135,36 @@ Token_type getRule(Token_type *handle)
     return TOKEN_EOF;
 }
 
+bool readNextToken(Token **tkn)
+{
+    int ch = getchar();
+    ungetc(ch, stdin);
+    if (*tkn == NULL)
+    {
+        *tkn = malloc(sizeof(Token));
+    }
+    if (ch == EOF)
+    {
+        (*tkn)->type = TOKEN_EOF;
+        return false;
+    }
+
+    generate_token(*tkn, "\0", true);
+    return true;
+}
+
+void printStack(Stack *s)
+{
+    StackNode *tmp = s->top;
+    printf("Stack: ");
+    while (tmp != NULL)
+    {
+        printf("%d ", ((Token *)tmp->data)->type);
+        tmp = tmp->next;
+    }
+    printf("\n");
+}
+
 /**
  * @brief Parses the expression using the precedent bottom-up parser. Reads tokens from the scanner.
  *
@@ -142,20 +172,80 @@ Token_type getRule(Token_type *handle)
  */
 psa_return_type parse_expression()
 {
-    Token *token = malloc(sizeof(Token));
     Stack *s = general_stack_init();
+    general_stack_push(
+        s,
+        &(Token){
+            .type = TOKEN_EOF,
+        });
 
     int ch = getchar();
-    while (ch != EOF)
+    ungetc(ch, stdin);
+    Token *b = NULL;
+    readNextToken(&b);
+
+    Token *a = general_stack_top(s);
+
+    printStack(s);
+    printf("b: %d\n", b->type);
+
+    while (b->type != TOKEN_EOF && (s->size >= 1))
     {
-        ungetc(ch, stdin);
-        generate_token(token, "\0", true);
-        // main_scanner(token);
-        printf("'%s', ", token->token_value);
-        ch = getchar();
+        printf("P_TABLE[%d][%d] = %c\n", getSymbolValue(a->type), getSymbolValue(b->type), P_TABLE[getSymbolValue(a->type)][getSymbolValue(b->type)]);
+        switch (P_TABLE[getSymbolValue(a->type)][getSymbolValue(b->type)])
+        {
+        case '=':
+            general_stack_push(s, b);
+            readNextToken(&b);
+            break;
+        case '<':
+            if (((Token *)general_stack_top(s))->type == TOKEN_EXPRSN)
+            {
+                Token *tmp = general_stack_pop(s);
+                general_stack_push(s, &(Token){
+                                          .type = (Token_type)TOKEN_SHIFT,
+                                      });
+                general_stack_push(s, tmp);
+                general_stack_push(s, b);
+                readNextToken(&b);
+            }
+        case '>':
+        { // from the top of the stack, pop all tokens until the first < is found
+            // put all the popped tokens->type into an array
+            // getTheRule of the array
+            // if the rule is not EOF, push the rule into the stack
+            // else, return error
+            Token_type *handle = malloc(sizeof(Token_type) * s->size);
+            int i = 0;
+            while (((Token *)general_stack_top(s))->type != TOKEN_EXPRSN)
+            {
+                handle[i] = ((Token *)general_stack_pop(s))->type;
+                i++;
+            }
+            handle[i] = ((Token *)general_stack_pop(s))->type;
+            Token_type rule = getRule(handle);
+            if (rule != TOKEN_EOF)
+            {
+                general_stack_push(s, &(Token){
+                                          .type = rule,
+                                      });
+            }
+            else
+            {
+                return (psa_return_type){
+                    .return_type = TOKEN_EOF,
+                    .is_ok = false,
+                };
+            }
+        }
+        }
+
+        printStack(s);
+
+        a = general_stack_top(s);
     }
 
-    free(token);
+    free(b);
 
     return (psa_return_type){
         .return_type = TOKEN_EOF,
