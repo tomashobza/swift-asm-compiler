@@ -54,11 +54,16 @@ unsigned int getSymbolValue(Token_type token)
     }
 }
 
-bool arrcmp(Token_type *arr1, Token_type *arr2, int len1, int len2)
+bool arrcmp(Token_type *arr1, unsigned int len1, Token_type *arr2, unsigned int len2)
 {
-    printf("tmp1: %d, tmp2: %d, len: %i\n", tmp1, tmp2, len);
+    // printf("len1: %d, len2: %d\n", len1, len2);
 
-    for (int i = 0; i < len; i++)
+    if (len1 != len2)
+    {
+        return false;
+    }
+
+    for (int i = 0; i < len1; i++)
     {
         if (arr1[i] != arr2[i])
         {
@@ -69,7 +74,18 @@ bool arrcmp(Token_type *arr1, Token_type *arr2, int len1, int len2)
     return true;
 }
 
-Token_type getRule(Token_type *handle)
+uint32_t handleToUInt32(Token_type *handle, unsigned int len)
+{
+    uint32_t result = 0;
+    for (int i = 0; i < len; i++)
+    {
+        int value = handle[i] * pow(10, len - (i + 1));
+        result += value;
+    }
+    return result;
+}
+
+Token_type getRule(Token_type *handle, unsigned int len)
 {
     /*
         E -> E*E
@@ -88,57 +104,57 @@ Token_type getRule(Token_type *handle)
         E -> !E
     */
 
-    if (arrcmp(handle, (Token_type[]){(Token_type)TOKEN_EXPRSN, TOKEN_MUL, (Token_type)TOKEN_EXPRSN}, 3))
+    if (arrcmp(handle, len, (Token_type[]){(Token_type)TOKEN_EXPRSN, TOKEN_MUL, (Token_type)TOKEN_EXPRSN}, 3))
     {
         printf("rule: E -> E*E\n");
         return (Token_type)TOKEN_EXPRSN;
     }
-    else if (arrcmp(handle, (Token_type[]){(Token_type)TOKEN_EXPRSN, TOKEN_DIV, (Token_type)TOKEN_EXPRSN}, 3))
+    else if (arrcmp(handle, len, (Token_type[]){(Token_type)TOKEN_EXPRSN, TOKEN_DIV, (Token_type)TOKEN_EXPRSN}, 3))
     {
         printf("rule: E -> E/E\n");
         return (Token_type)TOKEN_EXPRSN;
     }
-    else if (arrcmp(handle, (Token_type[]){(Token_type)TOKEN_EXPRSN, TOKEN_PLUS, (Token_type)TOKEN_EXPRSN}, 3))
+    else if (arrcmp(handle, len, (Token_type[]){(Token_type)TOKEN_EXPRSN, TOKEN_PLUS, (Token_type)TOKEN_EXPRSN}, 3))
     {
         printf("rule: E -> E+E\n");
         return (Token_type)TOKEN_EXPRSN;
     }
-    else if (arrcmp(handle, (Token_type[]){(Token_type)TOKEN_EXPRSN, TOKEN_MINUS, (Token_type)TOKEN_EXPRSN}, 3))
+    else if (arrcmp(handle, len, (Token_type[]){(Token_type)TOKEN_EXPRSN, TOKEN_MINUS, (Token_type)TOKEN_EXPRSN}, 3))
     {
         printf("rule: E -> E-E\n");
         return (Token_type)TOKEN_EXPRSN;
     }
-    else if (arrcmp(handle, (Token_type[]){(Token_type)TOKEN_EXPRSN, TOKEN_EQ, (Token_type)TOKEN_EXPRSN}, 3))
+    else if (arrcmp(handle, len, (Token_type[]){(Token_type)TOKEN_EXPRSN, TOKEN_EQ, (Token_type)TOKEN_EXPRSN}, 3))
     {
         printf("rule: E -> E==E\n");
         return (Token_type)TOKEN_EXPRSN;
     }
-    else if (arrcmp(handle, (Token_type[]){(Token_type)TOKEN_EXPRSN, TOKEN_NEQ, (Token_type)TOKEN_EXPRSN}, 3))
+    else if (arrcmp(handle, len, (Token_type[]){(Token_type)TOKEN_EXPRSN, TOKEN_NEQ, (Token_type)TOKEN_EXPRSN}, 3))
     {
         printf("rule: E -> E!=E\n");
         return (Token_type)TOKEN_EXPRSN;
     }
-    else if (arrcmp(handle, (Token_type[]){(Token_type)TOKEN_EXPRSN, TOKEN_LESS, (Token_type)TOKEN_EXPRSN}, 3))
+    else if (arrcmp(handle, len, (Token_type[]){(Token_type)TOKEN_EXPRSN, TOKEN_LESS, (Token_type)TOKEN_EXPRSN}, 3))
     {
         printf("rule: E -> E<E\n");
         return (Token_type)TOKEN_EXPRSN;
     }
-    else if (arrcmp(handle, (Token_type[]){(Token_type)TOKEN_EXPRSN, TOKEN_MORE, (Token_type)TOKEN_EXPRSN}, 3))
+    else if (arrcmp(handle, len, (Token_type[]){(Token_type)TOKEN_EXPRSN, TOKEN_MORE, (Token_type)TOKEN_EXPRSN}, 3))
     {
         printf("rule: E -> E>E\n");
         return (Token_type)TOKEN_EXPRSN;
     }
-    else if (arrcmp(handle, (Token_type[]){(Token_type)TOKEN_EXPRSN, TOKEN_LESS_EQ, (Token_type)TOKEN_EXPRSN}, 3))
+    else if (arrcmp(handle, len, (Token_type[]){(Token_type)TOKEN_EXPRSN, TOKEN_LESS_EQ, (Token_type)TOKEN_EXPRSN}, 3))
     {
         printf("rule: E -> E<=E\n");
         return (Token_type)TOKEN_EXPRSN;
     }
-    else if (arrcmp(handle, (Token_type[]){(Token_type)TOKEN_EXPRSN, TOKEN_MORE_EQ, (Token_type)TOKEN_EXPRSN}, 3))
+    else if (arrcmp(handle, len, (Token_type[]){(Token_type)TOKEN_EXPRSN, TOKEN_MORE_EQ, (Token_type)TOKEN_EXPRSN}, 3))
     {
         printf("rule: E -> E>=E\n");
         return (Token_type)TOKEN_EXPRSN;
     }
-    else if (arrcmp(handle, (Token_type[]){(Token_type)TOKEN_EXPRSN, TOKEN_BINARY_OPERATOR, (Token_type)TOKEN_EXPRSN}, 3))
+    else if (arrcmp(handle, len, (Token_type[]){(Token_type)TOKEN_EXPRSN, TOKEN_BINARY_OPERATOR, (Token_type)TOKEN_EXPRSN}, 3))
     {
         printf("rule: E -> E??E\n");
         return (Token_type)TOKEN_EXPRSN;
@@ -150,37 +166,37 @@ Token_type getRule(Token_type *handle)
         case TOKEN_EXP:
         case TOKEN_STRING:
     */
-    else if (arrcmp(handle, (Token_type[]){TOKEN_IDENTIFICATOR}, 1))
+    else if (arrcmp(handle, len, (Token_type[]){TOKEN_IDENTIFICATOR}, 1))
     {
         printf("rule: E -> i\n");
         return (Token_type)TOKEN_EXPRSN;
     }
-    else if (arrcmp(handle, (Token_type[]){TOKEN_INT}, 1))
+    else if (arrcmp(handle, len, (Token_type[]){TOKEN_INT}, 1))
     {
         printf("rule: E -> i\n");
         return (Token_type)TOKEN_EXPRSN;
     }
-    else if (arrcmp(handle, (Token_type[]){TOKEN_DOUBLE}, 1))
+    else if (arrcmp(handle, len, (Token_type[]){TOKEN_DOUBLE}, 1))
     {
         printf("rule: E -> i\n");
         return (Token_type)TOKEN_EXPRSN;
     }
-    else if (arrcmp(handle, (Token_type[]){TOKEN_EXP}, 1))
+    else if (arrcmp(handle, len, (Token_type[]){TOKEN_EXP}, 1))
     {
         printf("rule: E -> i\n");
         return (Token_type)TOKEN_EXPRSN;
     }
-    else if (arrcmp(handle, (Token_type[]){TOKEN_STRING}, 1))
+    else if (arrcmp(handle, len, (Token_type[]){TOKEN_STRING}, 1))
     {
         printf("rule: E -> i\n");
         return (Token_type)TOKEN_EXPRSN;
     }
-    else if (arrcmp(handle, (Token_type[]){TOKEN_L_BRACKET, (Token_type)TOKEN_EXPRSN, TOKEN_R_BRACKET}, 3))
+    else if (arrcmp(handle, len, (Token_type[]){TOKEN_L_BRACKET, (Token_type)TOKEN_EXPRSN, TOKEN_R_BRACKET}, 3))
     {
         printf("rule: E -> (E)\n");
         return (Token_type)TOKEN_EXPRSN;
     }
-    else if (arrcmp(handle, (Token_type[]){TOKEN_NOT, (Token_type)TOKEN_EXPRSN}, 2))
+    else if (arrcmp(handle, len, (Token_type[]){TOKEN_NOT, (Token_type)TOKEN_EXPRSN}, 2))
     {
         printf("rule: E -> !E\n");
         return (Token_type)TOKEN_EXPRSN;
@@ -327,7 +343,7 @@ psa_return_type parse_expression()
                 handle[i - j - 1] = tmp;
             }
 
-            Token_type rule = getRule(handle);
+            Token_type rule = getRule(handle, i);
 
             if (rule != TOKEN_EOF)
             {

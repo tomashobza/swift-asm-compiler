@@ -5,6 +5,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "psa_stack.h"
+#include <math.h>
 
 // STRUCTS, ENUMS & GLOBALS
 
@@ -42,7 +43,9 @@ typedef enum
  * @return true
  * @return false
  */
-bool arrcmp(Token_type *arr1, Token_type *arr2, int len);
+bool arrcmp(Token_type *arr1, unsigned int len1, Token_type *arr2, unsigned int len2);
+
+uint32_t handleToUInt32(Token_type *handle, unsigned int len);
 
 // PSA FUNCTIONS
 
@@ -52,7 +55,7 @@ bool arrcmp(Token_type *arr1, Token_type *arr2, int len);
  * @param handle - handle to be evaluated
  * @return Token_type - rule for the given handle
  */
-Token_type getRule(Token_type *handle);
+Token_type getRule(Token_type *handle, unsigned int len);
 
 /**
  * @brief LUT that returns the value of the token for the precedence table.

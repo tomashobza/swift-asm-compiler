@@ -23,7 +23,8 @@ int main(void)
     //     ch = getchar();
     // }
     // printf("Hello World!\n");
-    parse_expression();
+    // parse_expression();
+    printf("\n\nnemluv na me: %d\n", handleToUInt32((Token_type[]){1, 2, 3, 4}, 4));
 
     return EXIT_SUCCESS;
 }
