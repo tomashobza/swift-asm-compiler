@@ -1,17 +1,16 @@
 #include "psa.h"
 
-#define TOKEN_EXPRSN (Token_type)100
-
-char P_TABLE[9][9] = {
-    {'-', '>', '>', '>', '>', '<', '-', '>', '>'},
-    {'<', '-', '>', '>', '>', '<', '-', '>', '>'},
-    {'<', '>', '-', '>', '>', '<', '-', '>', '>'},
-    {'<', '<', '<', '-', '>', '<', '-', '>', '>'},
-    {'<', '<', '<', '<', '-', '<', '-', '>', '>'},
-    {'>', '>', '>', '>', '>', '>', '>', '>', '>'},
-    {'<', '<', '<', '<', '<', '<', '<', '=', '>'},
-    {'-', '-', '-', '-', '-', '<', '-', '>', '>'},
-    {'<', '<', '<', '<', '<', '<', '<', '<', '-'},
+char P_TABLE[10][10] = {
+    {'-', '>', '>', '>', '>', '<', '<', '>', '>', '<'},
+    {'<', '-', '>', '>', '>', '<', '<', '>', '>', '<'},
+    {'<', '<', '-', '>', '>', '<', '<', '>', '>', '<'},
+    {'<', '<', '<', '-', '>', '<', '-', '-', '>', '<'},
+    {'<', '<', '<', '<', '-', '<', '-', '-', '>', '<'},
+    {'>', '>', '>', '>', '>', '>', '>', '>', '>', '>'},
+    {'<', '<', '<', '-', '-', '<', '-', '=', '>', '<'},
+    {'>', '>', '>', '-', '-', '<', '-', '-', '>', '<'},
+    {'<', '<', '<', '<', '<', '<', '<', '<', '-', '<'},
+    {'>', '>', '>', '>', '>', '>', '>', '>', '>', '='},
 };
 
 unsigned int getSymbolValue(Token_type token)
@@ -47,18 +46,23 @@ unsigned int getSymbolValue(Token_type token)
         return 6;
     case TOKEN_R_BRACKET:
         return 7;
+    case TOKEN_EOL:
+        return 9;
     case TOKEN_EOF:
     default:
         return 8;
     }
 }
 
-bool arrcmp(Token_type *arr1, Token_type *arr2, int len)
+bool arrcmp(Token_type *arr1, Token_type *arr2, int len1, int len2)
 {
+    printf("tmp1: %d, tmp2: %d, len: %i\n", tmp1, tmp2, len);
+
     for (int i = 0; i < len; i++)
     {
         if (arr1[i] != arr2[i])
         {
+            printf("%d != %d\n", arr1[i], arr2[i]);
             return false;
         }
     }
@@ -68,101 +72,159 @@ bool arrcmp(Token_type *arr1, Token_type *arr2, int len)
 Token_type getRule(Token_type *handle)
 {
     /*
-        O -> *
-        O -> /
-        O -> +
-        O -> -
-        O -> ==
-        O -> !=
-        O -> <
-        O -> >
-        O -> <=
-        O -> >=
-        O -> ??
-        O -> \nO
-        O -> O\n
+        E -> E*E
+        E -> E/E
+        E -> E+E
+        E -> E-E
+        E -> E==E
+        E -> E!=E
+        E -> E<E
+        E -> E>E
+        E -> E<=E
+        E -> E>=E
+        E -> E??E
         E -> i
         E -> (E)
         E -> !E
-        E -> EOE
     */
 
-    if (arrcmp(handle, (Token_type[]){TOKEN_MUL}, 1))
+    if (arrcmp(handle, (Token_type[]){(Token_type)TOKEN_EXPRSN, TOKEN_MUL, (Token_type)TOKEN_EXPRSN}, 3))
     {
-        return TOKEN_EXPRSN;
+        printf("rule: E -> E*E\n");
+        return (Token_type)TOKEN_EXPRSN;
     }
-    else if (arrcmp(handle, (Token_type[]){TOKEN_DIV}, 1))
+    else if (arrcmp(handle, (Token_type[]){(Token_type)TOKEN_EXPRSN, TOKEN_DIV, (Token_type)TOKEN_EXPRSN}, 3))
     {
-        return TOKEN_EXPRSN;
+        printf("rule: E -> E/E\n");
+        return (Token_type)TOKEN_EXPRSN;
     }
-    else if (arrcmp(handle, (Token_type[]){TOKEN_PLUS}, 1))
+    else if (arrcmp(handle, (Token_type[]){(Token_type)TOKEN_EXPRSN, TOKEN_PLUS, (Token_type)TOKEN_EXPRSN}, 3))
     {
-        return TOKEN_EXPRSN;
+        printf("rule: E -> E+E\n");
+        return (Token_type)TOKEN_EXPRSN;
     }
-    else if (arrcmp(handle, (Token_type[]){TOKEN_MINUS}, 1))
+    else if (arrcmp(handle, (Token_type[]){(Token_type)TOKEN_EXPRSN, TOKEN_MINUS, (Token_type)TOKEN_EXPRSN}, 3))
     {
-        return TOKEN_EXPRSN;
+        printf("rule: E -> E-E\n");
+        return (Token_type)TOKEN_EXPRSN;
     }
-    else if (arrcmp(handle, (Token_type[]){TOKEN_EQ}, 1))
+    else if (arrcmp(handle, (Token_type[]){(Token_type)TOKEN_EXPRSN, TOKEN_EQ, (Token_type)TOKEN_EXPRSN}, 3))
     {
-        return TOKEN_EXPRSN;
+        printf("rule: E -> E==E\n");
+        return (Token_type)TOKEN_EXPRSN;
     }
-    else if (arrcmp(handle, (Token_type[]){TOKEN_NEQ}, 1))
+    else if (arrcmp(handle, (Token_type[]){(Token_type)TOKEN_EXPRSN, TOKEN_NEQ, (Token_type)TOKEN_EXPRSN}, 3))
     {
-        return TOKEN_EXPRSN;
+        printf("rule: E -> E!=E\n");
+        return (Token_type)TOKEN_EXPRSN;
     }
-    else if (arrcmp(handle, (Token_type[]){TOKEN_LESS}, 1))
+    else if (arrcmp(handle, (Token_type[]){(Token_type)TOKEN_EXPRSN, TOKEN_LESS, (Token_type)TOKEN_EXPRSN}, 3))
     {
-        return TOKEN_EXPRSN;
+        printf("rule: E -> E<E\n");
+        return (Token_type)TOKEN_EXPRSN;
     }
-    else if (arrcmp(handle, (Token_type[]){TOKEN_MORE}, 1))
+    else if (arrcmp(handle, (Token_type[]){(Token_type)TOKEN_EXPRSN, TOKEN_MORE, (Token_type)TOKEN_EXPRSN}, 3))
     {
-        return TOKEN_EXPRSN;
+        printf("rule: E -> E>E\n");
+        return (Token_type)TOKEN_EXPRSN;
     }
-    else if (arrcmp(handle, (Token_type[]){TOKEN_LESS_EQ}, 1))
+    else if (arrcmp(handle, (Token_type[]){(Token_type)TOKEN_EXPRSN, TOKEN_LESS_EQ, (Token_type)TOKEN_EXPRSN}, 3))
     {
-        return TOKEN_EXPRSN;
+        printf("rule: E -> E<=E\n");
+        return (Token_type)TOKEN_EXPRSN;
     }
-    else if (arrcmp(handle, (Token_type[]){TOKEN_MORE_EQ}, 1))
+    else if (arrcmp(handle, (Token_type[]){(Token_type)TOKEN_EXPRSN, TOKEN_MORE_EQ, (Token_type)TOKEN_EXPRSN}, 3))
     {
-        return TOKEN_EXPRSN;
+        printf("rule: E -> E>=E\n");
+        return (Token_type)TOKEN_EXPRSN;
     }
-    else if (arrcmp(handle, (Token_type[]){TOKEN_BINARY_OPERATOR}, 1))
+    else if (arrcmp(handle, (Token_type[]){(Token_type)TOKEN_EXPRSN, TOKEN_BINARY_OPERATOR, (Token_type)TOKEN_EXPRSN}, 3))
     {
-        return TOKEN_EXPRSN;
+        printf("rule: E -> E??E\n");
+        return (Token_type)TOKEN_EXPRSN;
+    }
+    /*
+        case TOKEN_IDENTIFICATOR:
+        case TOKEN_INT:
+        case TOKEN_DOUBLE:
+        case TOKEN_EXP:
+        case TOKEN_STRING:
+    */
+    else if (arrcmp(handle, (Token_type[]){TOKEN_IDENTIFICATOR}, 1))
+    {
+        printf("rule: E -> i\n");
+        return (Token_type)TOKEN_EXPRSN;
+    }
+    else if (arrcmp(handle, (Token_type[]){TOKEN_INT}, 1))
+    {
+        printf("rule: E -> i\n");
+        return (Token_type)TOKEN_EXPRSN;
+    }
+    else if (arrcmp(handle, (Token_type[]){TOKEN_DOUBLE}, 1))
+    {
+        printf("rule: E -> i\n");
+        return (Token_type)TOKEN_EXPRSN;
+    }
+    else if (arrcmp(handle, (Token_type[]){TOKEN_EXP}, 1))
+    {
+        printf("rule: E -> i\n");
+        return (Token_type)TOKEN_EXPRSN;
+    }
+    else if (arrcmp(handle, (Token_type[]){TOKEN_STRING}, 1))
+    {
+        printf("rule: E -> i\n");
+        return (Token_type)TOKEN_EXPRSN;
+    }
+    else if (arrcmp(handle, (Token_type[]){TOKEN_L_BRACKET, (Token_type)TOKEN_EXPRSN, TOKEN_R_BRACKET}, 3))
+    {
+        printf("rule: E -> (E)\n");
+        return (Token_type)TOKEN_EXPRSN;
+    }
+    else if (arrcmp(handle, (Token_type[]){TOKEN_NOT, (Token_type)TOKEN_EXPRSN}, 2))
+    {
+        printf("rule: E -> !E\n");
+        return (Token_type)TOKEN_EXPRSN;
+    }
+    else
+    {
+        printf("rule: EOF\n");
+        return TOKEN_EOF;
     }
 
     return TOKEN_EOF;
 }
 
-bool readNextToken(Token **tkn)
+Token readNextToken()
 {
     int ch = getchar();
     ungetc(ch, stdin);
-    if (*tkn == NULL)
-    {
-        *tkn = malloc(sizeof(Token));
-    }
     if (ch == EOF)
     {
-        (*tkn)->type = TOKEN_EOF;
-        return false;
+        return (Token){
+            .type = (Token_type)TOKEN_EOF,
+            .token_value = "$",
+        };
     }
 
-    generate_token(*tkn, "\0", true);
-    return true;
+    Token *tkn = malloc(sizeof(Token));
+    generate_token(tkn, "\0", false);
+    Token b = *tkn;
+    free(tkn);
+
+    printf("b: {'%s', %d}\n", b.token_value, b.type);
+    return b;
 }
 
-void printStack(Stack *s)
+// recursively prints the stack
+void printStack(StackNode *top)
 {
-    StackNode *tmp = s->top;
-    printf("Stack: ");
-    while (tmp != NULL)
+    if (top == NULL)
     {
-        printf("%d ", ((Token *)tmp->data)->type);
-        tmp = tmp->next;
+        return;
     }
-    printf("\n");
+    printStack(top->next);
+    printf("%s", ((Token *)top->data)->token_value);
+    // printf("{'%s', %d} ", ((Token *)top->data)->token_value, ((Token *)top->data)->type);
 }
 
 /**
@@ -173,42 +235,71 @@ void printStack(Stack *s)
 psa_return_type parse_expression()
 {
     Stack *s = general_stack_init();
-    general_stack_push(
-        s,
-        &(Token){
-            .type = TOKEN_EOF,
-        });
+    psa_stack_push(s, (Token){
+                          .type = (Token_type)TOKEN_EOF,
+                          .token_value = "$"});
+    printStack(s->top);
+    printf("\n");
 
     int ch = getchar();
     ungetc(ch, stdin);
-    Token *b = NULL;
-    readNextToken(&b);
+    Token b = readNextToken();
 
     Token *a = general_stack_top(s);
 
-    printStack(s);
-    printf("b: %d\n", b->type);
+    printStack(s->top);
+    printf("\n");
+    // printf("b: %s\n", b.token_value);
 
-    while (b->type != TOKEN_EOF && (s->size >= 1))
+    while (!(a->type == (Token_type)TOKEN_EXPRSN && s->size == 2 && b.type == (Token_type)TOKEN_EOF))
     {
-        printf("P_TABLE[%d][%d] = %c\n", getSymbolValue(a->type), getSymbolValue(b->type), P_TABLE[getSymbolValue(a->type)][getSymbolValue(b->type)]);
-        switch (P_TABLE[getSymbolValue(a->type)][getSymbolValue(b->type)])
+        // if the stack top is of type (Token_type)TOKEN_EXPRSN, then we need to use the second top of the stack to determine the rule
+        printf("a: {'%s': %d}\n", a->token_value, a->type);
+        if (a->type == (Token_type)TOKEN_EXPRSN)
+        {
+            a = (Token *)(s->top->next->data);
+        }
+        printf("a: {'%s': %d}\n", a->token_value, a->type);
+
+        printf("na stacku: ");
+        printStack(s->top);
+        printf("\n");
+        printf("na vstupu: ");
+        printf("{'%s', %d}\n", b.token_value, b.type);
+        printf("P_TABLE[{%d, '%s'}][{%d, '%s'}] = %c\n", getSymbolValue(a->type), a->token_value, (b.type), b.token_value, P_TABLE[getSymbolValue(a->type)][getSymbolValue(b.type)]);
+
+        switch (P_TABLE[getSymbolValue(a->type)][getSymbolValue(b.type)])
         {
         case '=':
-            general_stack_push(s, b);
-            readNextToken(&b);
+            psa_stack_push(s, b);
+            printStack(s->top);
+            printf("\n");
+            b = readNextToken();
             break;
         case '<':
-            if (((Token *)general_stack_top(s))->type == TOKEN_EXPRSN)
+            if (psa_stack_top(s).type == (Token_type)TOKEN_EXPRSN)
             {
-                Token *tmp = general_stack_pop(s);
-                general_stack_push(s, &(Token){
-                                          .type = (Token_type)TOKEN_SHIFT,
-                                      });
-                general_stack_push(s, tmp);
-                general_stack_push(s, b);
-                readNextToken(&b);
+                Token tmp = psa_stack_pop(s);
+                psa_stack_push(s, (Token){
+                                      .type = (Token_type)TOKEN_SHIFT,
+                                      .token_value = "<"});
+                psa_stack_push(s, tmp);
+                psa_stack_push(s, b);
+                b = readNextToken();
+                printStack(s->top);
+                printf("\n");
             }
+            else
+            {
+                psa_stack_push(s, (Token){
+                                      .type = (Token_type)TOKEN_SHIFT,
+                                      .token_value = "<"});
+                psa_stack_push(s, b);
+                b = readNextToken();
+                printStack(s->top);
+                printf("\n");
+            }
+            break;
         case '>':
         { // from the top of the stack, pop all tokens until the first < is found
             // put all the popped tokens->type into an array
@@ -216,36 +307,65 @@ psa_return_type parse_expression()
             // if the rule is not EOF, push the rule into the stack
             // else, return error
             Token_type *handle = malloc(sizeof(Token_type) * s->size);
+            printf("handle: ");
             int i = 0;
-            while (((Token *)general_stack_top(s))->type != TOKEN_EXPRSN)
+            while (psa_stack_top(s).type != TOKEN_SHIFT)
             {
-                handle[i] = ((Token *)general_stack_pop(s))->type;
+
+                handle[i] = ((Token)psa_stack_pop(s)).type;
+                printf("%s", ((Token *)s->top->data)->token_value);
                 i++;
             }
-            handle[i] = ((Token *)general_stack_pop(s))->type;
+            printf("\n");
+            handle[i] = ((Token)psa_stack_pop(s)).type;
+            // reverse handle
+            Token_type tmp;
+            for (int j = 0; j < i / 2; j++)
+            {
+                tmp = handle[j];
+                handle[j] = handle[i - j - 1];
+                handle[i - j - 1] = tmp;
+            }
+
             Token_type rule = getRule(handle);
+
             if (rule != TOKEN_EOF)
             {
-                general_stack_push(s, &(Token){
-                                          .type = rule,
-                                      });
+                psa_stack_push(s, (Token){
+                                      .type = rule,
+                                      .token_value = "E"});
             }
             else
             {
+                printf("domrdalo se to!\n");
                 return (psa_return_type){
                     .return_type = TOKEN_EOF,
                     .is_ok = false,
                 };
             }
+            printStack(s->top);
+            printf("\n");
+            break;
         }
+        case '-':
+        default:
+            // printf("input {'%s', %d}\n", b.token_value, b.type);
+            // printf("stack {'%s', %d}\n", a->token_value, a->type);
+            return (psa_return_type){
+                .return_type = TOKEN_EOF,
+                .is_ok = false,
+            };
         }
 
-        printStack(s);
+        printStack(s->top);
+        printf("\n");
+
+        printf("\n\n");
 
         a = general_stack_top(s);
     }
 
-    free(b);
+    printf("All good!\n");
 
     return (psa_return_type){
         .return_type = TOKEN_EOF,

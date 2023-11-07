@@ -48,3 +48,14 @@ void *general_stack_pop(Stack *s)
 
     return popped;
 }
+
+void *general_stack_top(Stack *s)
+{
+    if (s->top == NULL)
+    {
+        fprintf(stderr, "Stack underflow.\n");
+        return NULL; // TODO: error code
+    }
+
+    return s->top->data;
+}

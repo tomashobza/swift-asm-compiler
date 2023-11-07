@@ -1,10 +1,12 @@
 #ifndef PSA_H
 #define PSA_H
 
-#include "scanner.h"
 #include <stdio.h>
 #include <stdlib.h>
-#include "general_stack.h"
+#include <string.h>
+#include "psa_stack.h"
+
+// STRUCTS, ENUMS & GLOBALS
 
 /**
  * @brief Struct to hold the return type of the precedent bottom-up parser.
@@ -17,11 +19,19 @@ typedef struct
 } psa_return_type;
 
 /**
- * @brief Parses the expression using the precedent bottom-up parser. Reads tokens from the scanner.
+ * @brief Precedence table for the precedent bottom-up parser.
  *
- * @return psa_return_type
  */
-psa_return_type parse_expression();
+extern char P_TABLE[10][10];
+
+typedef enum
+{
+    TOKEN_EXPRSN = TOKEN_COUNT,
+    TOKEN_SHIFT,
+    TOKEN_UNSHIFT,
+} PSA_Token_type;
+
+// UTILITY FUNCTIONS
 
 /**
  * @brief Checks if the given token array is a handle.
@@ -33,6 +43,8 @@ psa_return_type parse_expression();
  * @return false
  */
 bool arrcmp(Token_type *arr1, Token_type *arr2, int len);
+
+// PSA FUNCTIONS
 
 /**
  * @brief Returns the rule for the given handle.
@@ -50,10 +62,13 @@ Token_type getRule(Token_type *handle);
  */
 unsigned int getSymbolValue(Token_type token);
 
+// PSA MAIN FUNCTION
+
 /**
- * @brief Precedence table for the precedent bottom-up parser.
+ * @brief Parses the expression using the precedent bottom-up parser. Reads tokens from the scanner.
  *
+ * @return psa_return_type
  */
-extern char P_TABLE[9][9];
+psa_return_type parse_expression();
 
 #endif // PSA_H

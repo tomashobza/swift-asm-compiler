@@ -18,6 +18,7 @@ symbols = [
     "(",
     ")",
     "$",
+    "\n",  # added newline character
 ]
 
 # Initialize the table with empty strings
@@ -65,7 +66,7 @@ for a in symbols:
     precedence_table.at["i", a] = ">"
 
 # 4) Parentheses with operators
-operators = ["!", "+", "-", "*", "/"]
+operators = ["!", "*", "/", "+", "-"]
 for op in operators:
     precedence_table.at[op, "("] = "<"
     precedence_table.at["(", op] = "<"
@@ -80,8 +81,15 @@ for op_i in symbols:
         precedence_table.at["$", op_i] = "<"
         precedence_table.at[op_i, "$"] = ">"
 
+# 6) Precedence for newline character
+for symbol in symbols:
+    if symbol != "\n":
+        precedence_table.at["\n", symbol] = "<"
+        precedence_table.at[symbol, "\n"] = ">"
+precedence_table.at["\n", "\n"] = "="
+
 # Merging the operators with the same precedence
-merged_symbols = ["!", "*/", "+-", "== != < > <= >=", "??", "i", "(", ")", "$"]
+merged_symbols = ["!", "*/", "+-", "== != < > <= >=", "??", "i", "(", ")", "$", "\n"]
 
 symbol_mapping = {
     "!": "!",
@@ -100,6 +108,7 @@ symbol_mapping = {
     "(": "(",
     ")": ")",
     "$": "$",
+    "\n": "\n",
 }
 
 merged_precedence_table = pd.DataFrame(
