@@ -13,18 +13,22 @@
 
 int main(void)
 {
+    // printf("\n\n");
     // Token *token = malloc(sizeof(Token));
     // int ch = getchar();
     // ;
     // while (ch != EOF)
     // {
     //     ungetc(ch, stdin);
-    //     main_scanner(token);
+
+    //     Token *token = malloc(sizeof(Token));
+    //     generate_token(token, "\0", false);
+    //     printf("{ type: %d, value: '%s' }\n", token->type, token->token_value);
+
     //     ch = getchar();
     // }
     // printf("Hello World!\n");
-    // parse_expression();
-    printf("\n\nnemluv na me: %d\n", handleToUInt32((Token_type[]){1, 2, 3, 4}, 4));
+    parse_expression();
 
     return EXIT_SUCCESS;
 }
