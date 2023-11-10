@@ -6,6 +6,7 @@
 #include <string.h>
 #include "psa_stack.h"
 #include <math.h>
+#include "colorful_printf.h"
 
 // STRUCTS, ENUMS & GLOBALS
 
@@ -27,9 +28,9 @@ extern char P_TABLE[10][10];
 
 typedef enum
 {
-    TOKEN_EXPRSN = TOKEN_COUNT,
-    TOKEN_SHIFT,
-    TOKEN_UNSHIFT,
+    TOKEN_EXPRSN = TOKEN_COUNT, // E - 58
+    TOKEN_SHIFT,                // < - 59
+    TOKEN_UNSHIFT,              // > - 60
 } PSA_Token_type;
 
 // UTILITY FUNCTIONS
@@ -55,7 +56,7 @@ uint32_t handleToUInt32(Token_type *handle, unsigned int len);
  * @param handle - handle to be evaluated
  * @return Token_type - rule for the given handle
  */
-Token_type getRule(Token_type *handle, unsigned int len);
+Token_type getRule(uint32_t handle_val);
 
 /**
  * @brief LUT that returns the value of the token for the precedence table.
