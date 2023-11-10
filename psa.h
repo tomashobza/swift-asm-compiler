@@ -35,19 +35,6 @@ typedef enum
 
 // UTILITY FUNCTIONS
 
-/**
- * @brief Checks if the given token array is a handle.
- *
- * @param arr1
- * @param arr2
- * @param len
- * @return true
- * @return false
- */
-bool arrcmp(Token_type *arr1, unsigned int len1, Token_type *arr2, unsigned int len2);
-
-uint32_t handleToUInt32(Token_type *handle, unsigned int len);
-
 // PSA FUNCTIONS
 
 /**

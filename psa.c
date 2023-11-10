@@ -72,41 +72,6 @@ unsigned int getSymbolValue(Token_type token)
     }
 }
 
-// TODO: delete this function
-bool arrcmp(Token_type *arr1, unsigned int len1, Token_type *arr2, unsigned int len2)
-{
-    // //printf("len1: %d, len2: %d\n", len1, len2);
-
-    if (len1 != len2)
-    {
-        return false;
-    }
-
-    for (int i = 0; i < len1; i++)
-    {
-        if (arr1[i] != arr2[i])
-        {
-            // printf("%d != %d\n", arr1[i], arr2[i]);
-            return false;
-        }
-    }
-    return true;
-}
-
-// TODO: delete this
-uint32_t handleToUInt32(Token_type *handle, unsigned int len)
-{
-    uint32_t result = 0;
-
-    for (int i = 0; i < len; i++)
-    {
-        result = result << 8 | (char)handle[i];
-        printf("%d, ", handle[i]);
-    }
-
-    return result;
-}
-
 uint32_t reverseHandleToUInt32(Token_type *handle, unsigned int len)
 {
     uint32_t result = 0;
