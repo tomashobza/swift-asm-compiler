@@ -33,6 +33,53 @@ typedef enum
     TOKEN_UNSHIFT,              // > - 60
 } PSA_Token_type;
 
+/**
+ * @brief Rules for the precedent bottom-up parser.
+    1. E -> i
+    2. E -> (E)
+    3. E -> !E
+    4. E -> +E
+    5. E -> -E
+    6. E -> E*E
+    7. E -> E/E
+    8. E -> E+E
+    9. E -> E-E
+    10. E -> E==E
+    11. E -> E!=E
+    12. E -> E<E
+    13. E -> E>E
+    14. E -> E<=E
+    15. E -> E>=E
+    16. E -> E&&E
+    17. E -> E||E
+    18. E -> E??E
+*/
+typedef enum
+{
+    RULE_1a = TOKEN_IDENTIFICATOR,
+    RULE_1b = TOKEN_INT,
+    RULE_1c = TOKEN_DOUBLE,
+    RULE_1d = TOKEN_EXP,
+    RULE_1e = TOKEN_STRING,
+    RULE_2 = (char)TOKEN_L_BRACKET << 16 | (char)TOKEN_EXPRSN << 8 | (char)TOKEN_R_BRACKET,
+    RULE_3 = (char)TOKEN_NOT << 8 | (char)TOKEN_EXPRSN,
+    RULE_4 = (char)TOKEN_PLUS << 8 | (char)TOKEN_EXPRSN,
+    RULE_5 = (char)TOKEN_MINUS << 8 | (char)TOKEN_EXPRSN,
+    RULE_6 = (char)TOKEN_EXPRSN << 16 | (char)TOKEN_MUL << 8 | (char)TOKEN_EXPRSN,
+    RULE_7 = (char)TOKEN_EXPRSN << 16 | (char)TOKEN_DIV << 8 | (char)TOKEN_EXPRSN,
+    RULE_8 = (char)TOKEN_EXPRSN << 16 | (char)TOKEN_PLUS << 8 | (char)TOKEN_EXPRSN,
+    RULE_9 = (char)TOKEN_EXPRSN << 16 | (char)TOKEN_MINUS << 8 | (char)TOKEN_EXPRSN,
+    RULE_10 = (char)TOKEN_EXPRSN << 16 | (char)TOKEN_EQ << 8 | (char)TOKEN_EXPRSN,
+    RULE_11 = (char)TOKEN_EXPRSN << 16 | (char)TOKEN_NEQ << 8 | (char)TOKEN_EXPRSN,
+    RULE_12 = (char)TOKEN_EXPRSN << 16 | (char)TOKEN_LESS << 8 | (char)TOKEN_EXPRSN,
+    RULE_13 = (char)TOKEN_EXPRSN << 16 | (char)TOKEN_MORE << 8 | (char)TOKEN_EXPRSN,
+    RULE_14 = (char)TOKEN_EXPRSN << 16 | (char)TOKEN_LESS_EQ << 8 | (char)TOKEN_EXPRSN,
+    RULE_15 = (char)TOKEN_EXPRSN << 16 | (char)TOKEN_MORE_EQ << 8 | (char)TOKEN_EXPRSN,
+    RULE_16 = (char)TOKEN_EXPRSN << 16 | (char)TOKEN_AND << 8 | (char)TOKEN_EXPRSN,
+    RULE_17 = (char)TOKEN_EXPRSN << 16 | (char)TOKEN_OR << 8 | (char)TOKEN_EXPRSN,
+    RULE_18 = (char)TOKEN_EXPRSN << 16 | (char)TOKEN_BINARY_OPERATOR << 8 | (char)TOKEN_EXPRSN
+} PSA_Rules;
+
 // UTILITY FUNCTIONS
 
 // PSA FUNCTIONS

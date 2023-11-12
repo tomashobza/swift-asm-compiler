@@ -22,9 +22,9 @@ char P_TABLE[10][10] = {
     {'<', '<', '>', '>', '>', '<', '<', '>', '>'}, // +-
     {'<', '<', '<', '>', '>', '<', '<', '>', '>'}, // LOG
     {'<', '<', '<', '<', '>', '<', '<', '>', '>'}, // ??
-    {'>', '>', '>', '>', '>', '>', '>', '>', '>'}, // i
-    {'<', '<', '<', '<', '-', '<', '<', '=', '>'}, // (
-    {'>', '>', '>', '>', '-', '<', '-', '>', '>'}, // )
+    {'>', '>', '>', '>', '>', '-', '-', '>', '>'}, // i
+    {'<', '<', '<', '<', '<', '<', '<', '=', '-'}, // (
+    {'>', '>', '>', '>', '>', '-', '-', '>', '>'}, // )
     {'<', '<', '<', '<', '<', '<', '<', '-', '-'}, // $
 
     // LOG = LOGICAL OPERATOR (==, !=, <, >, <=, >=)
@@ -50,6 +50,8 @@ unsigned int getSymbolValue(Token_type token)
     case TOKEN_MORE:
     case TOKEN_LESS_EQ:
     case TOKEN_MORE_EQ:
+    case TOKEN_AND:
+    case TOKEN_OR:
         return 3;
     case TOKEN_BINARY_OPERATOR:
         return 4;
@@ -88,78 +90,65 @@ uint32_t reverseHandleToUInt32(Token_type *handle, unsigned int len)
 
 Token_type getRule(uint32_t handle_val)
 {
-    /*
-        E -> i
-        E -> (E)
-        E -> !E
-        E -> +E
-        E -> -E
-        E -> E*E
-        E -> E/E
-        E -> E+E
-        E -> E-E
-        E -> E==E
-        E -> E!=E
-        E -> E<E
-        E -> E>E
-        E -> E<=E
-        E -> E>=E
-        E -> E??E
-    */
     switch (handle_val)
     {
-    case TOKEN_IDENTIFICATOR:
-    case TOKEN_INT:
-    case TOKEN_DOUBLE:
-    case TOKEN_EXP:
-    case TOKEN_STRING:
+    case RULE_1a:
+    case RULE_1b:
+    case RULE_1c:
+    case RULE_1d:
+    case RULE_1e:
         DEBUG_CODE(printf_cyan("rule: E -> i\n"););
         return (Token_type)TOKEN_EXPRSN;
-    case (char)TOKEN_L_BRACKET << 16 | (char)TOKEN_EXPRSN << 8 | (char)TOKEN_R_BRACKET:
+    case RULE_2:
         DEBUG_CODE(printf_cyan("rule: E -> (E)\n"););
         return (Token_type)TOKEN_EXPRSN;
-    case (char)TOKEN_NOT << 8 | (char)TOKEN_EXPRSN:
+    case RULE_3:
         DEBUG_CODE(printf_cyan("rule: E -> !E\n"););
         return (Token_type)TOKEN_EXPRSN;
-    case (char)TOKEN_PLUS << 8 | (char)TOKEN_EXPRSN:
+    case RULE_4:
         DEBUG_CODE(printf_cyan("rule: E -> +E\n"););
-    case (char)TOKEN_MINUS << 8 | (char)TOKEN_EXPRSN:
+    case RULE_5:
         DEBUG_CODE(printf_cyan("rule: E -> -E\n"););
         return (Token_type)TOKEN_EXPRSN;
-    case (char)TOKEN_EXPRSN << 16 | (char)TOKEN_MUL << 8 | (char)TOKEN_EXPRSN:
+    case RULE_6:
         DEBUG_CODE(printf_cyan("rule: E -> E*E\n"););
         return (Token_type)TOKEN_EXPRSN;
-    case (char)TOKEN_EXPRSN << 16 | (char)TOKEN_DIV << 8 | (char)TOKEN_EXPRSN:
+    case RULE_7:
         DEBUG_CODE(printf_cyan("rule: E -> E/E\n"););
         return (Token_type)TOKEN_EXPRSN;
-    case (char)TOKEN_EXPRSN << 16 | (char)TOKEN_PLUS << 8 | (char)TOKEN_EXPRSN:
+    case RULE_8:
         DEBUG_CODE(printf_cyan("rule: E -> E+E\n"););
         return (Token_type)TOKEN_EXPRSN;
-    case (char)TOKEN_EXPRSN << 16 | (char)TOKEN_MINUS << 8 | (char)TOKEN_EXPRSN:
+    case RULE_9:
         DEBUG_CODE(printf_cyan("rule: E -> E-E\n"););
         return (Token_type)TOKEN_EXPRSN;
-    case (char)TOKEN_EXPRSN << 16 | (char)TOKEN_EQ << 8 | (char)TOKEN_EXPRSN:
+    case RULE_10:
         DEBUG_CODE(printf_cyan("rule: E -> E==E\n"););
         return (Token_type)TOKEN_EXPRSN;
-    case (char)TOKEN_EXPRSN << 16 | (char)TOKEN_NEQ << 8 | (char)TOKEN_EXPRSN:
+    case RULE_11:
         DEBUG_CODE(printf_cyan("rule: E -> E!=E\n"););
         return (Token_type)TOKEN_EXPRSN;
-    case (char)TOKEN_EXPRSN << 16 | (char)TOKEN_LESS << 8 | (char)TOKEN_EXPRSN:
+    case RULE_12:
         DEBUG_CODE(printf_cyan("rule: E -> E<E\n"););
         return (Token_type)TOKEN_EXPRSN;
-    case (char)TOKEN_EXPRSN << 16 | (char)TOKEN_MORE << 8 | (char)TOKEN_EXPRSN:
+    case RULE_13:
         DEBUG_CODE(printf_cyan("rule: E -> E>E\n"););
         return (Token_type)TOKEN_EXPRSN;
-    case (char)TOKEN_EXPRSN << 16 | (char)TOKEN_LESS_EQ << 8 | (char)TOKEN_EXPRSN:
+    case RULE_14:
         DEBUG_CODE(printf_cyan("rule: E -> E<=E\n"););
         return (Token_type)TOKEN_EXPRSN;
-    case (char)TOKEN_EXPRSN << 16 | (char)TOKEN_MORE_EQ << 8 | (char)TOKEN_EXPRSN:
+    case RULE_15:
         DEBUG_CODE(printf_cyan("rule: E -> E>=E\n"););
         return (Token_type)TOKEN_EXPRSN;
-    case (char)TOKEN_EXPRSN << 16 | (char)TOKEN_BINARY_OPERATOR << 8 | (char)TOKEN_EXPRSN:
+    case RULE_16:
+        DEBUG_CODE(printf_cyan("rule: E -> E&&E\n"););
+        return (Token_type)TOKEN_EXPRSN;
+    case RULE_17:
+        DEBUG_CODE(printf_cyan("rule: E -> E||E\n"););
+        return (Token_type)TOKEN_EXPRSN;
+    case RULE_18:
         DEBUG_CODE(printf_cyan("rule: E -> E??E\n"););
         return (Token_type)TOKEN_EXPRSN;
-
     default:
         DEBUG_CODE(printf_red("rule: EOF\n"););
         return TOKEN_EOF;
