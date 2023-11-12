@@ -36,7 +36,7 @@ typedef struct
 {
     Token_type type;
     char *token_value;
-    // uint32_t handle_val;
+    bool canBeNil;
     Expression_type expr_type;
 } PSA_Token;
 
@@ -110,7 +110,7 @@ typedef enum
  * @param handle - handle to be evaluated
  * @return Token_type - rule for the given handle
  */
-Token_type getRule(uint32_t handle_val);
+PSA_Token getRule(PSA_Token *handle, unsigned int len);
 
 /**
  * @brief LUT that returns the value of the token for the precedence table.

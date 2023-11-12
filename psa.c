@@ -74,14 +74,14 @@ unsigned int getSymbolValue(Token_type token)
     }
 }
 
-uint32_t reverseHandleToUInt32(Token_type *handle, unsigned int len)
+uint32_t reverseHandleToUInt32(PSA_Token *handle, unsigned int len)
 {
     uint32_t result = 0;
     printf("\n{");
     for (int i = len - 1; i >= 0; i--)
     {
-        result = result << 8 | (char)handle[i];
-        printf("%d, ", handle[i]);
+        result = result << 8 | (char)(handle[i].type);
+        printf("%d, ", (handle[i].type));
     }
     printf("}\n");
     printf("handleToUInt32: %d\n", result);
@@ -110,6 +110,7 @@ Expression_type getTypeFromToken(Token_type token)
         return (Expression_type)TYPE_INT;
     case TOKEN_DOUBLE:
     case TOKEN_EXP:
+    case TOKEN_IDENTIFICATOR: // TODO: delete and for id use symbol table
         return (Expression_type)TYPE_DOUBLE;
 
     case TOKEN_STRING:
@@ -119,9 +120,187 @@ Expression_type getTypeFromToken(Token_type token)
     }
 }
 
-PSA_Token getRule(uint32_t handle_val)
+/**
+ * @brief Returns the type of the expression based on the types of the operands.
+
+    Supports: (int, int), (int, double), (double, int), (double, double)
+ *
+ * @param l_operand
+ * @param r_operand
+ * @return Expression_type
+ */
+Expression_type getTypeCombination(PSA_Token l_operand, PSA_Token r_operand)
 {
-    // TODO: predelat tyto odporne switch-case na neco lepsiho (pomoci enumu)
+    switch (((char)l_operand.expr_type << 8) | r_operand.expr_type)
+    {
+    case ((char)TYPE_INT << 8) | TYPE_INT:
+        return TYPE_INT;
+    case ((char)TYPE_INT << 8) | TYPE_DOUBLE:
+        if (l_operand.type != TOKEN_IDENTIFICATOR)
+        {
+            DEBUG_CODE(printf("implicite Int2Double for left operand '%s'\n", l_operand.token_value););
+            return TYPE_DOUBLE;
+        }
+        else
+        {
+            return TYPE_INVALID;
+        }
+    case ((char)TYPE_DOUBLE << 8) | TYPE_INT:
+        if (r_operand.type != TOKEN_IDENTIFICATOR)
+        {
+            DEBUG_CODE(printf("impicite Int2Double for right operand '%s'\n", r_operand.token_value););
+            return TYPE_DOUBLE;
+        }
+        else
+        {
+            return TYPE_INVALID;
+        }
+    case ((char)TYPE_DOUBLE << 8) | TYPE_DOUBLE:
+        return TYPE_DOUBLE;
+    default:
+        return TYPE_INVALID;
+    }
+}
+
+/**
+ * @brief Returns the type of the expression based on the types of the operands and the operation.
+ *
+ * @param l_operand
+ * @param operation
+ * @param r_operand
+ * @return Expression_type
+ */
+PSA_Token getHandleType(PSA_Token l_operand, Token_type operation, PSA_Token r_operand)
+{
+    if (l_operand.expr_type == TYPE_INVALID || r_operand.expr_type == TYPE_INVALID)
+    {
+        return (PSA_Token){
+            .type = (Token_type)TOKEN_EXPRSN,
+            .token_value = "E",
+            .expr_type = TYPE_INVALID,
+            .canBeNil = false,
+        };
+    }
+
+    switch (operation)
+    {
+    // for: +, -, *, /
+    case TOKEN_PLUS:
+        // can be (string, string), ...
+        if (l_operand.expr_type == TYPE_STRING && r_operand.expr_type == TYPE_STRING && !(l_operand.canBeNil || r_operand.canBeNil))
+        {
+            return (PSA_Token){
+                .type = (Token_type)TOKEN_EXPRSN,
+                .token_value = "E",
+                .expr_type = TYPE_STRING,
+                .canBeNil = true,
+            };
+        }
+    case TOKEN_MINUS:
+    case TOKEN_MUL:
+    case TOKEN_DIV:
+        if (l_operand.canBeNil || r_operand.canBeNil)
+        {
+            return (PSA_Token){
+                .type = (Token_type)TOKEN_EXPRSN,
+                .token_value = "E",
+                .expr_type = TYPE_INVALID,
+                .canBeNil = true,
+            };
+        }
+
+        // can be (int, int), (int, double), (double, int), (double, double)
+        Expression_type type = getTypeCombination(l_operand, r_operand);
+
+        if (type != TYPE_INVALID)
+        {
+            return (PSA_Token){
+                .type = (Token_type)TOKEN_EXPRSN,
+                .token_value = "E",
+                .expr_type = type,
+                .canBeNil = true,
+            };
+        }
+
+        break;
+
+    // for: ==, !=
+    case TOKEN_EQ:
+    case TOKEN_NEQ:
+
+        // can be (int, int), (int, double), (double, int), (double, double), (string, string), (bool, bool)
+        if (l_operand.expr_type == r_operand.expr_type || getTypeCombination(l_operand, r_operand) != TYPE_INVALID)
+        {
+            return (PSA_Token){
+                .type = (Token_type)TOKEN_EXPRSN,
+                .token_value = "E",
+                .expr_type = TYPE_BOOL,
+                .canBeNil = false,
+            };
+        }
+        break;
+    // for: <, >, <=, >=
+    case TOKEN_LESS:
+    case TOKEN_MORE:
+    case TOKEN_LESS_EQ:
+    case TOKEN_MORE_EQ:
+        // can be (int, int), (int, double), (double, int), (double, double), (string, string)
+        if (getTypeCombination(l_operand, r_operand) != TYPE_INVALID || l_operand.expr_type == TYPE_STRING && r_operand.expr_type == TYPE_STRING)
+        {
+            return (PSA_Token){
+                .type = (Token_type)TOKEN_EXPRSN,
+                .token_value = "E",
+                .expr_type = TYPE_BOOL,
+                .canBeNil = false,
+            };
+        }
+        break;
+    // for: ??, &&, ||
+    case TOKEN_AND:
+    case TOKEN_OR:
+        if (l_operand.expr_type == TYPE_BOOL && r_operand.expr_type == TYPE_BOOL)
+        {
+            return (PSA_Token){
+                .type = (Token_type)TOKEN_EXPRSN,
+                .token_value = "E",
+                .expr_type = TYPE_BOOL,
+                .canBeNil = false,
+            };
+        }
+        break;
+    // for: !
+    case TOKEN_BINARY_OPERATOR:
+        if (l_operand.canBeNil && !r_operand.canBeNil)
+        {
+            return (PSA_Token){
+                .type = (Token_type)TOKEN_EXPRSN,
+                .token_value = "E",
+                .expr_type = getTypeCombination(l_operand, r_operand),
+                .canBeNil = false,
+            };
+        }
+        break;
+    default:
+        break;
+    }
+
+    return (PSA_Token){
+        .type = (Token_type)TOKEN_EXPRSN,
+        .token_value = "E",
+        .expr_type = TYPE_INVALID,
+        .canBeNil = false,
+    };
+}
+
+PSA_Token getRule(PSA_Token *handle, unsigned int len)
+{
+    return (PSA_Token){
+        .type = (Token_type)TOKEN_EXPRSN,
+        .token_value = "E",
+        .expr_type = TYPE_INVALID,
+    };
+
+    uint32_t handle_val = reverseHandleToUInt32(handle, len);
     /*
         E -> i
         E -> (E)
@@ -148,67 +327,129 @@ PSA_Token getRule(uint32_t handle_val)
     case RULE_1d:
     case RULE_1e:
         DEBUG_CODE(printf_cyan("rule: E -> i\n"););
-        return (Token_type)TOKEN_EXPRSN;
+        return (PSA_Token){
+            .type = (Token_type)TOKEN_EXPRSN,
+            .token_value = "E",
+            .expr_type = getTypeFromToken(handle[0].type),
+        };
     case RULE_2:
         DEBUG_CODE(printf_cyan("rule: E -> (E)\n"););
         return (PSA_Token){
             .type = (Token_type)TOKEN_EXPRSN,
             .token_value = "E",
-            .expr_type = getTypeFromToken((Token_type)handle_val),
+            .expr_type = getTypeFromToken(handle[1].type),
         };
     case RULE_3:
         DEBUG_CODE(printf_cyan("rule: E -> !E\n"););
-        return (Token_type)TOKEN_EXPRSN;
+        return (PSA_Token){
+            .type = (Token_type)TOKEN_EXPRSN,
+            .token_value = "E",
+            .expr_type = getTypeFromToken(handle[2].type),
+        };
     case RULE_4:
         DEBUG_CODE(printf_cyan("rule: E -> +E\n"););
+        return (PSA_Token){
+            .type = (Token_type)TOKEN_EXPRSN,
+            .token_value = "E",
+
+        };
     case RULE_5:
         DEBUG_CODE(printf_cyan("rule: E -> -E\n"););
-        return (Token_type)TOKEN_EXPRSN;
+        return (PSA_Token){
+            .type = (Token_type)TOKEN_EXPRSN,
+            .token_value = "E",
+
+        };
     case RULE_6:
         DEBUG_CODE(printf_cyan("rule: E -> E*E\n"););
-        return (Token_type)TOKEN_EXPRSN;
+        return (PSA_Token){
+            .type = (Token_type)TOKEN_EXPRSN,
+            .token_value = "E",
+        };
     case RULE_7:
         DEBUG_CODE(printf_cyan("rule: E -> E/E\n"););
-        return (Token_type)TOKEN_EXPRSN;
+        return (PSA_Token){
+            .type = (Token_type)TOKEN_EXPRSN,
+            .token_value = "E",
+        };
     case RULE_8:
         DEBUG_CODE(printf_cyan("rule: E -> E+E\n"););
-        return (Token_type)TOKEN_EXPRSN;
+        return (PSA_Token){
+            .type = (Token_type)TOKEN_EXPRSN,
+            .token_value = "E",
+        };
     case RULE_9:
         DEBUG_CODE(printf_cyan("rule: E -> E-E\n"););
-        return (Token_type)TOKEN_EXPRSN;
+        return (PSA_Token){
+            .type = (Token_type)TOKEN_EXPRSN,
+            .token_value = "E",
+        };
     case RULE_10:
         DEBUG_CODE(printf_cyan("rule: E -> E==E\n"););
-        return (Token_type)TOKEN_EXPRSN;
+        return (PSA_Token){
+            .type = (Token_type)TOKEN_EXPRSN,
+            .token_value = "E",
+        };
     case RULE_11:
         DEBUG_CODE(printf_cyan("rule: E -> E!=E\n"););
-        return (Token_type)TOKEN_EXPRSN;
+        return (PSA_Token){
+            .type = (Token_type)TOKEN_EXPRSN,
+            .token_value = "E",
+        };
     case RULE_12:
         DEBUG_CODE(printf_cyan("rule: E -> E<E\n"););
-        return (Token_type)TOKEN_EXPRSN;
+        return (PSA_Token){
+            .type = (Token_type)TOKEN_EXPRSN,
+            .token_value = "E",
+        };
     case RULE_13:
         DEBUG_CODE(printf_cyan("rule: E -> E>E\n"););
-        return (Token_type)TOKEN_EXPRSN;
+        return (PSA_Token){
+            .type = (Token_type)TOKEN_EXPRSN,
+            .token_value = "E",
+        };
     case RULE_14:
         DEBUG_CODE(printf_cyan("rule: E -> E<=E\n"););
-        return (Token_type)TOKEN_EXPRSN;
+        return (PSA_Token){
+            .type = (Token_type)TOKEN_EXPRSN,
+            .token_value = "E",
+        };
     case RULE_15:
         DEBUG_CODE(printf_cyan("rule: E -> E>=E\n"););
-        return (Token_type)TOKEN_EXPRSN;
+        return (PSA_Token){
+            .type = (Token_type)TOKEN_EXPRSN,
+            .token_value = "E",
+        };
     case RULE_16:
         DEBUG_CODE(printf_cyan("rule: E -> E&&E\n"););
-        return (Token_type)TOKEN_EXPRSN;
+        return (PSA_Token){
+            .type = (Token_type)TOKEN_EXPRSN,
+            .token_value = "E",
+        };
     case RULE_17:
         DEBUG_CODE(printf_cyan("rule: E -> E||E\n"););
-        return (Token_type)TOKEN_EXPRSN;
+        return (PSA_Token){
+            .type = (Token_type)TOKEN_EXPRSN,
+            .token_value = "E",
+        };
     case RULE_18:
         DEBUG_CODE(printf_cyan("rule: E -> E??E\n"););
-        return (Token_type)TOKEN_EXPRSN;
+        return (PSA_Token){
+            .type = (Token_type)TOKEN_EXPRSN,
+            .token_value = "E",
+        };
     default:
         DEBUG_CODE(printf_red("rule: EOF\n"););
-        return TOKEN_EOF;
+        return (PSA_Token){
+            .type = (Token_type)TOKEN_EOF,
+            .token_value = "$",
+        };
     }
 
-    return TOKEN_EOF;
+    return (PSA_Token){
+        .type = (Token_type)TOKEN_EOF,
+        .token_value = "$",
+    };
 }
 
 PSA_Token readNextToken()
@@ -334,26 +575,21 @@ psa_return_type parse_expression()
             // getTheRule of the array
             // if the rule is not EOF, push the rule into the stack
             // else, return error
-            Token_type *handle = malloc(sizeof(Token_type) * s->size);
+            PSA_Token *handle = malloc(sizeof(Token_type) * s->size);
 
             int i = 0;
             while (psa_stack_top(s).type != TOKEN_SHIFT)
             {
-                handle[i] = ((PSA_Token)psa_stack_pop(s)).type;
+                handle[i] = ((PSA_Token)psa_stack_pop(s));
                 i++;
             }
             (void)psa_stack_pop(s); // pop the <
 
-            // reverse handle
-            uint32_t handle_val = reverseHandleToUInt32(handle, i);
+            PSA_Token rule = getRule(handle, i);
 
-            Token_type rule = getRule(handle_val);
-
-            if (rule != TOKEN_EOF)
+            if (rule.type != TOKEN_EOF)
             {
-                psa_stack_push(s, (PSA_Token){
-                                      .type = rule,
-                                      .token_value = "E"});
+                psa_stack_push(s, rule);
             }
             else
             {
