@@ -86,8 +86,40 @@ uint32_t reverseHandleToUInt32(Token_type *handle, unsigned int len)
     return result;
 }
 
-Token_type getRule(uint32_t handle_val)
+uint32_t reverseHandleTypesToUInt32(Expression_type *types, unsigned int len)
 {
+    uint32_t result = 0;
+    printf("\n{");
+    for (int i = len - 1; i >= 0; i--)
+    {
+        result = result << 8 | (char)types[i];
+        printf("%d, ", types[i]);
+    }
+    printf("}\n");
+    printf("handleTypesToUInt32: %d\n", result);
+    return result;
+}
+
+Expression_type getTypeFromToken(Token_type token)
+{
+    switch (token)
+    {
+    case TOKEN_INT:
+        return (Expression_type)TYPE_INT;
+    case TOKEN_DOUBLE:
+    case TOKEN_EXP:
+        return (Expression_type)TYPE_DOUBLE;
+
+    case TOKEN_STRING:
+        return (Expression_type)TYPE_STRING;
+    default:
+        return (Expression_type)TYPE_INVALID;
+    }
+}
+
+PSA_Token getRule(uint32_t handle_val)
+{
+    // TODO: predelat tyto odporne switch-case na neco lepsiho (pomoci enumu)
     /*
         E -> i
         E -> (E)
@@ -114,7 +146,11 @@ Token_type getRule(uint32_t handle_val)
     case TOKEN_EXP:
     case TOKEN_STRING:
         DEBUG_CODE(printf_cyan("rule: E -> i\n"););
-        return (Token_type)TOKEN_EXPRSN;
+        return (PSA_Token){
+            .type = (Token_type)TOKEN_EXPRSN,
+            .token_value = "E",
+            .expr_type = getTypeFromToken((Token_type)handle_val),
+        };
     case (char)TOKEN_L_BRACKET << 16 | (char)TOKEN_EXPRSN << 8 | (char)TOKEN_R_BRACKET:
         DEBUG_CODE(printf_cyan("rule: E -> (E)\n"););
         return (Token_type)TOKEN_EXPRSN;
@@ -168,13 +204,13 @@ Token_type getRule(uint32_t handle_val)
     return TOKEN_EOF;
 }
 
-Token readNextToken()
+PSA_Token readNextToken()
 {
     int ch = getchar();
     ungetc(ch, stdin);
     if (ch == EOF)
     {
-        return (Token){
+        return (PSA_Token){
             .type = (Token_type)TOKEN_EOF,
             .token_value = "$",
         };
@@ -182,7 +218,11 @@ Token readNextToken()
 
     Token *tkn = malloc(sizeof(Token));
     generate_token(tkn, "\0", false);
-    Token b = *tkn;
+    PSA_Token b = {
+        .type = tkn->type,
+        .token_value = tkn->token_value,
+        .expr_type = getTypeFromToken(tkn->type),
+    };
     free(tkn);
 
     // printf("b: {'%s', %d}\n", b.token_value, b.type);
@@ -196,8 +236,8 @@ void printStackRec(StackNode *top)
         return;
     }
     printStackRec(top->next);
-    printf("%s", ((Token *)top->data)->token_value);
-    // printf("{'%s', %d} ", ((Token *)top->data)->token_value, ((Token *)top->data)->type);
+    printf("%s", ((PSA_Token *)top->data)->token_value);
+    // printf("{'%s', %d} ", ((PSA_Token *)top->data)->token_value, ((PSA_Token *)top->data)->type);
 }
 
 // recursively prints the stack
@@ -215,7 +255,7 @@ void printStack(StackNode *top)
 psa_return_type parse_expression()
 {
     Stack *s = general_stack_init();
-    psa_stack_push(s, (Token){
+    psa_stack_push(s, (PSA_Token){
                           .type = (Token_type)TOKEN_EOF,
                           .token_value = "$"});
 
@@ -225,15 +265,15 @@ psa_return_type parse_expression()
         s - stack
     */
 
-    Token *a = general_stack_top(s);
-    Token b = readNextToken();
+    PSA_Token *a = general_stack_top(s);
+    PSA_Token b = readNextToken();
 
     while (!(a->type == (Token_type)TOKEN_EXPRSN && s->size == 2 && b.type == (Token_type)TOKEN_EOF))
     {
         // if the stack top is of type (Token_type)TOKEN_EXPRSN, then we need to use the second top of the stack to determine the rule
         if (a->type == (Token_type)TOKEN_EXPRSN)
         {
-            a = (Token *)(s->top->next->data);
+            a = (PSA_Token *)(s->top->next->data);
         }
 
         DEBUG_CODE(printf("na stacku: ");
@@ -264,8 +304,8 @@ psa_return_type parse_expression()
 
             if (psa_stack_top(s).type == (Token_type)TOKEN_EXPRSN)
             {
-                Token tmp = psa_stack_pop(s);
-                psa_stack_push(s, (Token){
+                PSA_Token tmp = psa_stack_pop(s);
+                psa_stack_push(s, (PSA_Token){
                                       .type = (Token_type)TOKEN_SHIFT,
                                       .token_value = "<"});
                 psa_stack_push(s, tmp);
@@ -274,7 +314,7 @@ psa_return_type parse_expression()
             }
             else
             {
-                psa_stack_push(s, (Token){
+                psa_stack_push(s, (PSA_Token){
                                       .type = (Token_type)TOKEN_SHIFT,
                                       .token_value = "<"});
                 psa_stack_push(s, b);
@@ -292,7 +332,7 @@ psa_return_type parse_expression()
             int i = 0;
             while (psa_stack_top(s).type != TOKEN_SHIFT)
             {
-                handle[i] = ((Token)psa_stack_pop(s)).type;
+                handle[i] = ((PSA_Token)psa_stack_pop(s)).type;
                 i++;
             }
             (void)psa_stack_pop(s); // pop the <
@@ -304,7 +344,7 @@ psa_return_type parse_expression()
 
             if (rule != TOKEN_EOF)
             {
-                psa_stack_push(s, (Token){
+                psa_stack_push(s, (PSA_Token){
                                       .type = rule,
                                       .token_value = "E"});
             }
@@ -342,4 +382,28 @@ psa_return_type parse_expression()
         .return_type = TOKEN_EOF,
         .is_ok = true,
     };
+}
+
+// PSA STACK
+
+void psa_stack_push(Stack *s, PSA_Token data)
+{
+    PSA_Token *new_node = malloc(sizeof(PSA_Token));
+    *new_node = data;
+
+    general_stack_push(s, new_node);
+}
+
+PSA_Token psa_stack_pop(Stack *s)
+{
+    PSA_Token *popped = general_stack_pop(s);
+    PSA_Token ret = *popped;
+    free(popped);
+    return ret;
+}
+
+PSA_Token psa_stack_top(Stack *s)
+{
+    PSA_Token *top = general_stack_top(s);
+    return *top;
 }
