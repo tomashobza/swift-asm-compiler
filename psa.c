@@ -588,7 +588,7 @@ psa_return_type parse_expression()
             // getTheRule of the array
             // if the rule is not EOF, push the rule into the stack
             // else, return error
-            PSA_Token *handle = malloc(sizeof(Token_type) * s->size);
+            PSA_Token *handle = malloc(sizeof(PSA_Token) * s->size);
 
             int i = 0;
             while (psa_stack_top(s).type != TOKEN_SHIFT)
