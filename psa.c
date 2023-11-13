@@ -308,13 +308,7 @@ PSA_Token getHandleType(PSA_Token l_operand, Token_type operation, PSA_Token r_o
 
 PSA_Token getRule(PSA_Token *handle, unsigned int len)
 {
-    return (PSA_Token){
-        .type = (Token_type)TOKEN_EXPRSN,
-        .token_value = "E",
-        .expr_type = TYPE_INVALID,
-    };
-
-    uint32_t handle_val = reverseHandleToUInt32(handle, len);
+    uint32_t handle_val = handleToUInt32(handle, len);
     /*
         E -> i
         E -> (E)
