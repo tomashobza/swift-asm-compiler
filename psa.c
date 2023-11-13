@@ -74,6 +74,20 @@ unsigned int getSymbolValue(Token_type token)
     }
 }
 
+uint32_t handleToUInt32(PSA_Token *handle, unsigned int len)
+{
+    uint32_t result = 0;
+    printf("\n{");
+    for (int i = 0; i < len; i++)
+    {
+        result = result << 8 | (char)(handle[i].type);
+        printf("%d, ", (handle[i].type));
+    }
+    printf("}\n");
+    printf("handleToUInt32: %d\n", result);
+    return result;
+}
+
 uint32_t reverseHandleToUInt32(PSA_Token *handle, unsigned int len)
 {
     uint32_t result = 0;
