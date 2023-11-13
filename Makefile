@@ -16,6 +16,10 @@ $(TARGET):
 	#$(CC) $(CFLAGS) $(SRCS) -o $@
 	$(CC) $(SRCS) -o $@
 
+# clean, compile and run
+run: clean all
+	./$(TARGET)
+
 # Clean up
 clean:
 	rm -f $(TARGET)
