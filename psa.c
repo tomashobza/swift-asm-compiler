@@ -499,6 +499,11 @@ void printStackRec(StackNode *top)
 // recursively prints the stack
 void printStack(StackNode *top)
 {
+    if (top == NULL)
+    {
+        printf("Stack empty!\n");
+        return;
+    }
     printStackRec(top);
     printf("\n");
 }
