@@ -598,6 +598,20 @@ psa_return_type parse_expression()
             }
             (void)psa_stack_pop(s); // pop the <
 
+            // reverse the array
+            for (int j = 0; j < i / 2; j++)
+            {
+                PSA_Token tmp = handle[j];
+                handle[j] = handle[i - j - 1];
+                handle[i - j - 1] = tmp;
+            }
+
+            for (int k = 0; k < i; k++)
+            {
+                printf_cyan("%s:%d, ", handle[k].token_value, handle[k].expr_type);
+            }
+            printf("\n");
+
             PSA_Token rule = getRule(handle, i);
 
             if (rule.type != TOKEN_EOF)
