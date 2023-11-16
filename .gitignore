@@ -4,3 +4,5 @@ ifjcompiler
 .vscode
 build
 input.txt
+token_types.txt
+
