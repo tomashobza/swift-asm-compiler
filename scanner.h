@@ -49,58 +49,55 @@ typedef enum {
     TOKEN_RETURN, // Keyword return 3
     TOKEN_VAR, // Keyword var 4
     TOKEN_LET, // Keyword let 5
-    TOKEN_FOR, // Keyword for 6
-    TOKEN_IN, // Keyword in 7
-    TOKEN_BREAK, // Keyword break 8
-    TOKEN_CONTINUE, // Keyword continue 9
-    TOKEN_TYPE_STRING, // Keyword String 10
-    TOKEN_TYPE_INT, // Keyword Int 11
-    TOKEN_TYPE_DOUBLE, // Keyword Double 12
-    TOKEN_TYPE_BOOL, // Keyword Bool 13
-    TOKEN_FUNC, // Keyword func 14
-    TOKEN_TYPE_SUFFIX, // Prefix of type ? 15
-    TOKEN_IDENTIFICATOR, // Identificator 16
-    TOKEN_EOL, // EOL 17
-    TOKEN_EOF, // EOF 18
-    TOKEN_INT, // Integer 19
-    TOKEN_DOUBLE, // Decimal number 20
-    TOKEN_EXP, // Exponent 21
-    TOKEN_STRING, // String 22
-    TOKEN_EQ, // Equals == 23
-    TOKEN_NEQ, // Not equal !== 24
-    TOKEN_LESS, // Less than < 25
-    TOKEN_MORE, // More than > 26
-    TOKEN_MORE_EQ, // More than or equal >= 27
-    TOKEN_LESS_EQ, // Less than or equal <= 28
-    TOKEN_PLUS, // Plus + 29
-    TOKEN_MINUS, // Minus - 30
-    TOKEN_MUL, // Multiply * 31
-    TOKEN_DIV, // Divide / 32
-    TOKEN_BINARY_OPERATOR, // Binary operator ?? 33
-    TOKEN_ASSIGN, // Assign = 34
-    TOKEN_L_BRACKET, // Left bracket ( 35
-    TOKEN_R_BRACKET, // Right bracket ) 36
-    TOKEN_R_CURLY, // Left bracket { 37
-    TOKEN_L_CURLY, // Right bracket } 38
-    TOKEN_COMMA, // Comma , 39
-    TOKEN_ARROW, // Arrow -> 40
-    TOKEN_NIL, // nil has been read 41
-    TOKEN_DOUBLE_DOT, // : has been read 42
-    TOKEN_NOT, // ! has been read 43
-    TOKEN_AND, // && has been read 44
-    TOKEN_OR, // || has been read 45
-    TOKEN_UNDERSCORE, // _ has been read 46
-    TOKEN_READSTRING, // Builtin function readString 47
-    TOKEN_READINT, // Builtin function readInt 48
-    TOKEN_READDOUBLE, // Builtin function readDouble 49
-    TOKEN_WRITE, // Builtin function write 50
-    TOKEN_INT2DOUBLE, //Builtin function Int2Double 51
-    TOKEN_DOUBLE2INT, // Builtin function Double2Int 52
-    TOKEN_LENGTH, // Builtin function length 53
-    TOKEN_SUBSTRING, // Builtin function substring 54
-    TOKEN_ORD, // Builtin function ord 55
-    TOKEN_CHR, // Builtin function chr 56
-    TOKEN_SEMICOLON // ; has been read 57
+    TOKEN_BREAK, // Keyword break 6
+    TOKEN_CONTINUE, // Keyword continue 7
+    TOKEN_TYPE_STRING, // Keyword String 8
+    TOKEN_TYPE_INT, // Keyword Int 9
+    TOKEN_TYPE_DOUBLE, // Keyword Double 10
+    TOKEN_TYPE_BOOL, // Keyword Bool 11
+    TOKEN_FUNC, // Keyword func 12
+    TOKEN_TYPE_SUFFIX, // Prefix of type ? 13
+    TOKEN_IDENTIFICATOR, // Identificator 14
+    TOKEN_EOF, // EOF 15
+    TOKEN_INT, // Integer 16
+    TOKEN_DOUBLE, // Decimal number 17
+    TOKEN_BOOL, // Bool value 18
+    TOKEN_EXP, // Exponent 19
+    TOKEN_STRING, // String 20
+    TOKEN_EQ, // Equals == 21
+    TOKEN_NEQ, // Not equal !== 22
+    TOKEN_LESS, // Less than < 23
+    TOKEN_MORE, // More than > 24
+    TOKEN_MORE_EQ, // More than or equal >= 25
+    TOKEN_LESS_EQ, // Less than or equal <= 26
+    TOKEN_PLUS, // Plus + 27
+    TOKEN_MINUS, // Minus - 28
+    TOKEN_MUL, // Multiply * 29
+    TOKEN_DIV, // Divide / 30
+    TOKEN_BINARY_OPERATOR, // Binary operator ?? 31
+    TOKEN_ASSIGN, // Assign = 32
+    TOKEN_L_BRACKET, // Left bracket ( 33
+    TOKEN_R_BRACKET, // Right bracket ) 34
+    TOKEN_R_CURLY, // Right bracket } 35
+    TOKEN_L_CURLY, // Left bracket { 36
+    TOKEN_COMMA, // Comma , 37
+    TOKEN_ARROW, // Arrow -> 38
+    TOKEN_NIL, // nil has been read 39
+    TOKEN_DOUBLE_DOT, // : has been read 40
+    TOKEN_NOT, // ! has been read 41
+    TOKEN_AND, // && has been read 42
+    TOKEN_OR, // || has been read 43
+    TOKEN_UNDERSCORE, // _ has been read 44
+    TOKEN_READSTRING, // Builtin function readString 45
+    TOKEN_READINT, // Builtin function readInt 46
+    TOKEN_READDOUBLE, // Builtin function readDouble 47
+    TOKEN_WRITE, // Builtin function write 48
+    TOKEN_INT2DOUBLE, //Builtin function Int2Double 49
+    TOKEN_DOUBLE2INT, // Builtin function Double2Int 50
+    TOKEN_LENGTH, // Builtin function length 51
+    TOKEN_SUBSTRING, // Builtin function substring 52
+    TOKEN_ORD, // Builtin function ord 53
+    TOKEN_CHR, // Builtin function chr 54
 }Token_type;
 /*
 * Structure Token - used to store token type and token value read from stdin
@@ -108,6 +105,7 @@ typedef enum {
 typedef struct {
     Token_type type;
     char *token_value;
+    bool preceded_by_nl;
 }Token;
 
 /*
@@ -127,10 +125,9 @@ extern Token_map defined_tokens[]; // Declaration of the variable
  * @def function generate_token works based on final state automat of scanner states
  * @param token empty token structure to which read values and determined token type will be saved
  * @param code `dynamically allocated sequence of characters read from stdin
- * @param exp flag that tells scanner whether to ignore newline character or not
  * @return returns error code if any occurred during lexical analysis
 */
-int generate_token(Token *token,char *code, bool exp);
+int generate_token(Token *token,char *code);
 
 /**
  * @def function check_lenght is called always when character needs to be added to dynamically allocated
