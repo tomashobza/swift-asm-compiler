@@ -44,6 +44,7 @@ bool IN_PARAM(Token **token);
 bool TERM(Token **token);
 bool VAL(Token **token);
 bool IN_SEP(Token **token);
+bool EXP(Token **token);
 
 int main_parser(Token *tok);
 

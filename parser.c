@@ -37,6 +37,7 @@
  * @param pointer to the token structure
 */
 void get_token(Token **token) {
+    DEBUG_CODE(printf(YELLOW "popped: %s" RESET "\n", (*token)->token_value););
     generate_token(*token, "\0", false);
 }
 
@@ -288,6 +289,7 @@ bool AFTER_RET(Token **token) {
         case TOKEN_WHILE: return true;
         case TOKEN_IF: return true;
         // AFTER_RET -> EXP
+        case TOKEN_INT: return EXP(token);
         // TODO
         default: return false;
     }
@@ -368,42 +370,114 @@ bool ELSE_CLAUSE(Token **token) {
 
 bool AFTER_ELSE(Token **token) {
     DEBUG_CODE(printf("AFTER_ELSE    token: %d   value: %s\n", (*token)->type, (*token)->token_value););
+    switch((*token)->type) {
+        // AFTER_ELSE -> { STMT_LIST }
+        case TOKEN_L_CURLY: return cmp_type(token, TOKEN_L_CURLY) && STMT_LIST(token) && cmp_type(token, TOKEN_R_CURLY);
+        // AFTER_ELSE -> IF_STMT
+        case TOKEN_IF: return IF_STMT(token);
+        default: return false;
+    }
 }
 
 bool WHILE_STMT(Token **token) {
     DEBUG_CODE(printf("WHILE_STMT    token: %d   value: %s\n", (*token)->type, (*token)->token_value););
+    switch((*token)->type) {
+        // WHILE_STMT -> while EXP { STMT_LIST }
+        case TOKEN_WHILE: return cmp_type(token, TOKEN_WHILE) && EXP(token) && cmp_type(token, TOKEN_L_CURLY) &&
+                                STMT_LIST(token) && cmp_type(token, TOKEN_R_CURLY);
+        default: return false;
+    }
 }
 
 bool LOAD_ID(Token **token) {
     DEBUG_CODE(printf("LOAD_ID    token: %d   value: %s\n", (*token)->type, (*token)->token_value););
+    switch((*token)->type) {
+        // LOAD_ID -> id ALL_AFTER_ID
+        case TOKEN_IDENTIFICATOR: return cmp_type(token, TOKEN_IDENTIFICATOR) && ALL_AFTER_ID(token);
+        default: return false;
+    }
 }
 
 bool ALL_AFTER_ID(Token **token) {
     DEBUG_CODE(printf("ALL_AFTER_ID    token: %d   value: %s\n", (*token)->type, (*token)->token_value););
+    switch((*token)->type) {
+        // ALL_AFTER_ID -> = EXP
+        case TOKEN_ASSIGN: return cmp_type(token, TOKEN_ASSIGN) && EXP(token);
+        // ALL_AFTER_ID -> ( IN_P_LIST )
+        case TOKEN_L_BRACKET: return cmp_type(token, TOKEN_L_BRACKET) && IN_P_LIST(token) && cmp_type(token, TOKEN_R_BRACKET);
+        default: return false;
+    }
 }
 
 bool IN_P_LIST(Token **token) {
     DEBUG_CODE(printf("IN_P_LIST    token: %d   value: %s\n", (*token)->type, (*token)->token_value););
+    switch((*token)->type) {
+        // IN_P_LIST -> IN_PARAM
+        case TOKEN_IDENTIFICATOR: return IN_PARAM(token);
+        case TOKEN_INT: return IN_PARAM(token);
+        case TOKEN_DOUBLE: return IN_PARAM(token);
+        case TOKEN_STRING: return IN_PARAM(token);
+        case TOKEN_TYPE_BOOL: return IN_PARAM(token); //TODO opravit data type, v gramatice chybí
+        // IN_P_LIST -> eps
+        case TOKEN_R_BRACKET: return true;
+        default: return false;
+    }
 }
 
 bool IN_PARAM(Token **token) {
     DEBUG_CODE(printf("IN_PARAM    token: %d   value: %s\n", (*token)->type, (*token)->token_value););
+    switch((*token)->type) {
+        // IN_PARAM -> id TERM IN_SEP
+        case TOKEN_IDENTIFICATOR: return cmp_type(token, TOKEN_IDENTIFICATOR) && TERM(token) && IN_SEP(token);
+        // IN_PARAM -> D_TYPE IN_SEP
+        case TOKEN_TYPE_STRING: return cmp_type(token, TOKEN_TYPE_STRING) && TERM(token) && IN_SEP(token);
+        case TOKEN_TYPE_INT: return cmp_type(token, TOKEN_TYPE_INT) && TERM(token) && IN_SEP(token);
+        case TOKEN_TYPE_DOUBLE: return cmp_type(token, TOKEN_TYPE_DOUBLE) && TERM(token) && IN_SEP(token);
+        case TOKEN_TYPE_BOOL: return cmp_type(token, TOKEN_TYPE_BOOL) && TERM(token) && IN_SEP(token);
+        default: return false;
+    }
 }
 
 bool TERM(Token **token) {
     DEBUG_CODE(printf("TERM    token: %d   value: %s\n", (*token)->type, (*token)->token_value););
+    switch((*token)->type) {
+        // TERM -> : VAL
+        case TOKEN_DOUBLE_DOT: return cmp_type(token, TOKEN_DOUBLE_DOT) && VAL(token);
+        // TERM -> eps
+        case TOKEN_L_BRACKET: return true;
+        case TOKEN_COMMA: return true;
+        default: return false;
+    }
 }
 
 bool VAL(Token **token) {
     DEBUG_CODE(printf("VAL    token: %d   value: %s\n", (*token)->type, (*token)->token_value););
+    switch((*token)->type) {
+        // VAL -> id
+        case TOKEN_IDENTIFICATOR: return cmp_type(token, TOKEN_IDENTIFICATOR);
+        // VAL -> D_TYPE
+        case TOKEN_TYPE_STRING: return cmp_type(token, TOKEN_TYPE_STRING);
+        case TOKEN_TYPE_INT: return cmp_type(token, TOKEN_TYPE_INT);
+        case TOKEN_TYPE_DOUBLE: return cmp_type(token, TOKEN_TYPE_DOUBLE);
+        case TOKEN_TYPE_BOOL: return cmp_type(token, TOKEN_TYPE_BOOL);
+        default: return false;
+    }
 }
 
 bool IN_SEP(Token **token) {
     DEBUG_CODE(printf("IN_SEP    token: %d   value: %s\n", (*token)->type, (*token)->token_value););
+    switch((*token)->type) {
+        // IN_SEP -> eps
+        case TOKEN_R_BRACKET: return true;
+        // IN_SEP -> , IN_PARAM
+        case TOKEN_COMMA: return cmp_type(token, TOKEN_COMMA) && IN_PARAM(token);
+        default: return false;
+    }
 }
 
 bool EXP(Token **token) {
     DEBUG_CODE(printf("EXP    token: %d   value: %s\n", (*token)->type, (*token)->token_value););
+    return true;
 }
 
 
@@ -417,7 +491,7 @@ int parser_main() {
     //    generate_token(token, "\0", false);
     //    printf("Token type: %d, value: %s\n", token->type, token->token_value);
     //}
-    get_token(&token);
+    generate_token(token, "\0", false);
     bool all_ok = START(&token);
     if (all_ok) {
         printf(GREEN "All OK" RESET "\n");
