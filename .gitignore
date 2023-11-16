@@ -3,3 +3,4 @@ test_stack.c
 ifjcompiler
 .vscode
 build
+input.txt

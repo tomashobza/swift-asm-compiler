@@ -9,17 +9,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "scanner.h"
+#include "parser.h"
 
 int main()
 {
-    Token *token = malloc(sizeof(Token));
-    int ch = getchar(); ;
-    while(ch != EOF){
-        ungetc(ch, stdin);
-        main_scanner(token);
-        ch = getchar();
-    }
-    //printf("Hello World!\n");
+    parser_main();
 
     return EXIT_SUCCESS;
 }

@@ -606,7 +606,7 @@ int set_token(int next_state, char *val, Token_type type, Token *token, char *co
         state = next_state;
         token->type = type;
         token->token_value = val;
-        printf("type: %d, value:%s:\n",type,val);
+        //printf("type: %d, value:%s:\n",type,val);
         return 0;
     } else {
         return LEXICAL_ERR;
