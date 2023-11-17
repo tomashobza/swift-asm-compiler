@@ -2,7 +2,6 @@
 #include <stdlib.h>
 #include "stack.h"  // Assuming the Stack and Node definitions are in stack.h
 
-// Creates a new stack and returns its pointer
 Stack* stack_init() {
     Stack *s = malloc(sizeof(Stack));
     if (s == NULL) {
@@ -14,12 +13,10 @@ Stack* stack_init() {
     return s;
 }
 
-// Returns 1 if the stack is empty, 0 otherwise
 bool stack_is_empty(const Stack *stack) {
     return stack->top == NULL;
 }
 
-// Pushes a new element onto the stack
 void stack_push(Stack *s, symtable_t *table) {
     Node *new_node = malloc(sizeof(Node));
     new_node->data = table;
@@ -28,7 +25,6 @@ void stack_push(Stack *s, symtable_t *table) {
     s->size++;
 }
 
-// Pops an element off the stack and returns it
 symtable_t* stack_pop(Stack *s) {
     if (stack_is_empty(s)) {
         fprintf(stderr, "Stack underflow.\n");
@@ -44,7 +40,6 @@ symtable_t* stack_pop(Stack *s) {
     return popped;
 }
 
-// Frees the memory occupied by the stack
 void stack_free(Stack *s) {
     while (!stack_is_empty(s)) {
         stack_pop(s);

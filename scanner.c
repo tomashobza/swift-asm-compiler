@@ -8,7 +8,6 @@
  */
 
 #include <stdio.h>
-// #include <malloc.h>
 #include <string.h>
 
 #include <stdlib.h>
@@ -25,8 +24,8 @@ int main_scanner(Token *tok)
 {
     Token *token;
     token = malloc(sizeof(Token));
-    char *code = "\0";
-    ret = generate_token(token, code, true);
+    char code = '\0';
+    ret = generate_token(token, code);
     tok->type = (token->type);
     tok->token_value = (token->token_value);
     free(code);
@@ -35,7 +34,7 @@ int main_scanner(Token *tok)
     code = NULL;
     return ret;
 }
-int generate_token(Token *token, char *code, bool exp)
+int generate_token(Token *token, char *code)
 {
     Token_map defined_tokens[] = {
         {"Double", TOKEN_TYPE_DOUBLE},
@@ -46,12 +45,12 @@ int generate_token(Token *token, char *code, bool exp)
         {"nil", TOKEN_NIL},
         {"if", TOKEN_IF},
         {"else", TOKEN_ELSE},
+        {"true", TOKEN_BOOL},
+        {"false", TOKEN_BOOL},
         {"return", TOKEN_RETURN},
         {"while", TOKEN_WHILE},
         {"var", TOKEN_VAR},
         {"let", TOKEN_LET},
-        {"for", TOKEN_FOR},
-        {"in", TOKEN_IN},
         {"break", TOKEN_BREAK},
         {"continue", TOKEN_CONTINUE},
         {"readString", TOKEN_READSTRING},
@@ -65,6 +64,7 @@ int generate_token(Token *token, char *code, bool exp)
         {"ord", TOKEN_ORD},
         {"chr", TOKEN_CHR},
     };
+    token->preceded_by_nl = false;
     int code_len = 1;
     code = malloc(sizeof(char) * code_len);
     while (1)
@@ -89,18 +89,13 @@ int generate_token(Token *token, char *code, bool exp)
                 state = NEW_TOKEN;
                 break;
             case '\n':
-                if (exp)
-                {
-                    return set_token(NEW_TOKEN, "\n", TOKEN_EOL, token, code);
-                }
+                token->preceded_by_nl = true;
                 state = NEW_TOKEN;
                 break;
             case EOF:
                 return set_token(END_STATE, "", TOKEN_EOF, token, code);
             case ',':
                 return set_token(NEW_TOKEN, ",", TOKEN_COMMA, token, code);
-            case ';':
-                return set_token(NEW_TOKEN, ",", TOKEN_SEMICOLON, token, code);
             case ':':
                 return set_token(NEW_TOKEN, ":", TOKEN_DOUBLE_DOT, token, code);
             case '+':
@@ -345,11 +340,11 @@ int generate_token(Token *token, char *code, bool exp)
             return set_token(NEW_TOKEN, code, TOKEN_IDENTIFICATOR, token, code);
         }
 
-            /*
-             * TOKEN_INT is generated if integer is read and there is no dec.point subsequent it
-             * TOKEN_DOUBLE is generated if dec.point and dec.part has been read
-             * state = EXP_START if there is e/E read after the end of float/int
-             */
+        /*
+         * TOKEN_INT is generated if integer is read and there is no dec.point subsequent it
+         * TOKEN_DOUBLE is generated if dec.point and dec.part has been read
+         * state = EXP_START if there is e/E read after the end of float/int
+         */
         case DEC_POINT:
         case INTEGER:
         {
@@ -755,7 +750,7 @@ int set_token(int next_state, char *val, Token_type type, Token *token, char *co
         state = next_state;
         token->type = type;
         token->token_value = val;
-        // printf("type: %d, value:%s:\n", type, val);
+        printf("type: %d, value:%s:, preceded:%d\n", type, val, token->preceded_by_nl);
         return 0;
     }
     else
