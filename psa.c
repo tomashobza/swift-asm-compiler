@@ -431,7 +431,46 @@ PSA_Token getRule(PSA_Token *handle, unsigned int len)
     };
 }
 
-PSA_Token readNextToken()
+bool isTokenOperand(Token_type token)
+{
+    switch (token)
+    {
+    case TOKEN_INT:
+    case TOKEN_DOUBLE:
+    case TOKEN_EXP:
+    case TOKEN_STRING:
+    case TOKEN_EXPRSN:
+    case TOKEN_IDENTIFICATOR:
+        return true;
+    default:
+        return false;
+    }
+}
+
+bool isTokenBinaryOperator(Token_type token)
+{
+    switch (token)
+    {
+    case TOKEN_MUL:
+    case TOKEN_DIV:
+    case TOKEN_PLUS:
+    case TOKEN_MINUS:
+    case TOKEN_EQ:
+    case TOKEN_NEQ:
+    case TOKEN_LESS:
+    case TOKEN_MORE:
+    case TOKEN_LESS_EQ:
+    case TOKEN_MORE_EQ:
+    case TOKEN_AND:
+    case TOKEN_OR:
+    case TOKEN_BINARY_OPERATOR:
+        return true;
+    default:
+        return false;
+    }
+}
+
+PSA_Token readNextToken(Stack *s)
 {
     int ch = getchar();
     ungetc(ch, stdin);
@@ -453,7 +492,15 @@ PSA_Token readNextToken()
     };
     free(tkn);
 
-    printf("b: {'%s', %d}\n", b.token_value, b.type);
+    PSA_Token a = psa_stack_top(s);
+
+    if (isTokenOperand(a.type) && isTokenOperand(b.type))
+    {
+        printf("Musim checknout newline!\n");
+        // TODO: check
+    }
+
+    printf("b: {'%s', %d}, top: {'%s', %d}\n", b.token_value, b.type, a.token_value, a.type);
     return b;
 }
 
@@ -500,7 +547,7 @@ psa_return_type parse_expression()
     */
 
     PSA_Token *a = general_stack_top(s);
-    PSA_Token b = readNextToken();
+    PSA_Token b = readNextToken(s);
 
     while (!(a->type == (Token_type)TOKEN_EXPRSN && s->size == 2 && b.type == (Token_type)TOKEN_EOF))
     {
@@ -532,7 +579,7 @@ psa_return_type parse_expression()
         {
         case '=':
             psa_stack_push(s, b);
-            b = readNextToken();
+            b = readNextToken(s);
             break;
         case '<':
 
@@ -544,7 +591,7 @@ psa_return_type parse_expression()
                                       .token_value = "<"});
                 psa_stack_push(s, tmp);
                 psa_stack_push(s, b);
-                b = readNextToken();
+                b = readNextToken(s);
             }
             else
             {
@@ -552,7 +599,7 @@ psa_return_type parse_expression()
                                       .type = (Token_type)TOKEN_SHIFT,
                                       .token_value = "<"});
                 psa_stack_push(s, b);
-                b = readNextToken();
+                b = readNextToken(s);
             }
             break;
         case '>':
