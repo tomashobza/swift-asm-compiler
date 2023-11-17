@@ -18,7 +18,7 @@
 char P_TABLE[10][10] = {
     //!	   */   +-  LOG   ??   i    (    )	  $
     {'-', '>', '>', '>', '>', '<', '<', '>', '>'}, // !
-    {'<', '>', '<', '>', '>', '<', '<', '>', '>'}, // */
+    {'<', '>', '>', '>', '>', '<', '<', '>', '>'}, // */
     {'<', '<', '>', '>', '>', '<', '<', '>', '>'}, // +-
     {'<', '<', '<', '>', '>', '<', '<', '>', '>'}, // LOG
     {'<', '<', '<', '<', '>', '<', '<', '>', '>'}, // ??
@@ -65,8 +65,6 @@ unsigned int getSymbolValue(Token_type token)
         return 6;
     case TOKEN_R_BRACKET:
         return 7;
-    case TOKEN_EOL:
-        return 9;
     case TOKEN_EOF:
         return 8;
     default: // error
@@ -483,21 +481,63 @@ PSA_Token readNextToken(Stack *s)
     }
 
     Token *tkn = malloc(sizeof(Token));
-    generate_token(tkn, "\0", false);
+    generate_token(tkn, "\0");
     PSA_Token b = {
         .type = tkn->type,
         .token_value = tkn->token_value,
         .expr_type = getTypeFromToken(tkn->type),
         .canBeNil = false,
+        .preceded_by_nl = tkn->preceded_by_nl,
     };
     free(tkn);
 
     PSA_Token a = psa_stack_top(s);
 
-    if (isTokenOperand(a.type) && isTokenOperand(b.type))
+    // detect expression end by no trailing operator
+    if (isTokenOperand(a.type) && isTokenOperand(b.type) && b.preceded_by_nl)
     {
+        // b is EOF
+        b = (PSA_Token){
+            .type = (Token_type)TOKEN_EOF,
+            .token_value = "$",
+            .expr_type = TYPE_INVALID,
+            .canBeNil = false,
+        };
+
         printf("Musim checknout newline!\n");
         // TODO: check
+    }
+
+    // detect expression end
+    if (getSymbolValue(b.type) == 99)
+    {
+        if (b.preceded_by_nl)
+        {
+            // b is EOF
+            b = (PSA_Token){
+                .type = (Token_type)TOKEN_EOF,
+                .token_value = "$",
+                .expr_type = TYPE_INVALID,
+                .canBeNil = false,
+            };
+        }
+        else
+        {
+            printf_red("❌ | Error: invalid token! Token '%s' cannot be a part of an expression, add a newline as a separator. \n", b.token_value);
+        }
+    }
+
+    // detect empty expression
+    if (a.type == (Token_type)TOKEN_EOF && b.preceded_by_nl)
+    {
+        printf_cyan("ℹ️ | Empty expression.\n");
+        // b is EOF
+        b = (PSA_Token){
+            .type = (Token_type)TOKEN_EOF,
+            .token_value = "$",
+            .expr_type = TYPE_INVALID,
+            .canBeNil = false,
+        };
     }
 
     printf("b: {'%s', %d}, top: {'%s', %d}\n", b.token_value, b.type, a.token_value, a.type);
@@ -511,8 +551,8 @@ void printStackRec(StackNode *top)
         return;
     }
     printStackRec(top->next);
-    // printf("%s", ((PSA_Token *)top->data)->token_value);
-    printf("%s:%d, ", ((PSA_Token *)top->data)->token_value, ((PSA_Token *)top->data)->expr_type);
+    printf("%s", ((PSA_Token *)top->data)->token_value);
+    // printf("%s:%d, ", ((PSA_Token *)top->data)->token_value, ((PSA_Token *)top->data)->expr_type);
     // printf("{'%s', %d} ", ((PSA_Token *)top->data)->token_value, ((PSA_Token *)top->data)->type);
 }
 

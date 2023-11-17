@@ -38,6 +38,7 @@ typedef struct
     char *token_value;
     bool canBeNil;
     Expression_type expr_type;
+    bool preceded_by_nl;
 } PSA_Token;
 
 /**
