@@ -5,8 +5,29 @@
 #include <stdlib.h>
 #include "scanner.h"
 #include "error.h"
-#include "symtable.h"
+#include "stack.h"
 
+#define RED   "\x1B[31m"
+#define GREEN "\x1B[32m"
+#define YELLOW "\x1B[33m"
+#define BLUE  "\x1B[34m"
+#define MAGENTA "\x1B[35m"
+#define CYAN  "\x1B[36m"
+#define RESET "\x1B[0m"
+
+#define DEBUG 1
+#if DEBUG
+#define DEBUG_CODE(code) \
+    do                   \
+    {                    \
+        code             \
+    } while (0)
+#else
+#define DEBUG_CODE(code) \
+    do                   \
+    {                    \
+    } while (0)
+#endif
 
 void get_token(Token **token);
 bool cmp_type(Token **token, Token_type type);
@@ -42,6 +63,6 @@ bool ALL_AFTER_ID(Token **token);
 bool FUNC_CALL(Token **token);
 bool EXP(Token **token);
 
-int main_parser(Token *tok);
+int parser_main();
 
 #endif  // PARSER_H

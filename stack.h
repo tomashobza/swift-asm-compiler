@@ -1,8 +1,8 @@
 #ifndef STACK_H
 #define STACK_H
 
-#include <stdbool.h>  // for bool
-#include "symtable.h"  // Assuming symtable_t is defined in this header
+#include <stdbool.h>
+#include "symtable.h"
 
 /// @struct Node
 /// @brief Node structure for stack implementation
@@ -31,6 +31,11 @@ bool stack_is_empty(const Stack *stack);
 /// @param s Pointer to the stack
 /// @param table Pointer to the symtable element to push
 void stack_push(Stack *s, symtable_t *table);
+
+/// @brief Get the top element of the stack
+/// @param s Pointer to the stack
+/// @return Pointer to the top symtable element
+symtable_t* stack_top(Stack *s);
 
 /// @brief Pop an element off the stack
 /// @param s Pointer to the stack

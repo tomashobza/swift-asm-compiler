@@ -1,6 +1,6 @@
 # Compiler and flags
 CC = gcc
-#CFLAGS = -Wall -Wextra
+CFLAGS = -Wall -Wextra -g -Pedantic -std=c99
 
 
 # Find all source files

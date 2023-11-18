@@ -43,7 +43,7 @@ symtable_t init_symtable()
 
 symtable_item_t *symtable_add(symtable_item_t item, symtable_t table)
 {
-    const uint32_t item_hash = hash(item.name);
+    const uint32_t item_hash = hash(item.id);
     if (item_hash == (uint32_t)-1)
     {
         return NULL;
@@ -57,7 +57,7 @@ symtable_item_t *symtable_add(symtable_item_t item, symtable_t table)
     }
     else
     {
-
+            
         symtable_item_t *last_item = table[item_hash];
         while (last_item->next != NULL)
         {
@@ -81,20 +81,43 @@ symtable_item_t *init_symtable_item(symtable_item_t item)
     return new_sti;
 }
 
+symtable_item_t *symtable_get(char *id, symtable_t table)
+{
+    const uint32_t item_hash = hash(id);
+    if (item_hash == (uint32_t)-1)
+    {
+        return NULL;
+    }
+
+    symtable_item_t *item = table[item_hash];
+    while (item != NULL)
+    {
+        if (strcmp(item->id, id) == 0)
+        {
+            return item;
+        }
+        item = item->next;
+    }
+
+    return NULL;
+}
+
 void symtable_print(symtable_t table)
 {
     for (int i = 0; i < SYMTABLE_MAX_ITEMS; i++)
     {
+        printf("%d: ", i);
         if (table[i] == NULL)
         {
-            printf("NULL,\n");
+            printf("NULL\n");
         }
         else
         {
+            printf("Found: ");
             symtable_item_t *item = table[i];
             while (item != NULL)
             {
-                printf("'%s', ", item->name);
+                printf("id: %s, type: %d", item->id, item->type);
                 item = item->next;
             }
             printf("\n");

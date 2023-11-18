@@ -40,6 +40,14 @@ symtable_t* stack_pop(Stack *s) {
     return popped;
 }
 
+symtable_t* stack_top(Stack *s) {
+    if (stack_is_empty(s)) {
+        fprintf(stderr, "Stack underflow.\n");
+        return NULL; //TODO: error code
+    }
+    return s->top->data;
+}
+
 void stack_free(Stack *s) {
     while (!stack_is_empty(s)) {
         stack_pop(s);

@@ -14,15 +14,35 @@
 #include <stdlib.h>
 #include <stdbool.h>
 
+typedef enum {
+    T_INT, T_DOUBLE, T_STRING, T_BOOL, T_VOID, T_NIL
+} DataType;
+
+typedef struct {
+    DataType type;
+    bool is_const;
+} VariableData;
+
+typedef struct {
+    char *name;
+    char *id;
+    DataType type;
+} ParamData;
+
+typedef struct {
+    DataType return_type;
+    bool is_defined;
+    ParamData **params;
+} FunctionData;
+
 typedef struct symtable_item
 {
-    char *name;
-    char *type;   //
-    int size;     // size in bytes
-    char* params; // string of params
-    int param_count; // number of params
-    bool is_init; //
-
+    char *id;
+    enum { VARIABLE, FUNCTION } type; // typ symbolu
+    union {
+        VariableData *var_data;
+        FunctionData *func_data;
+    } data;
     struct symtable_item *next;
 } symtable_item_t;
 
@@ -55,10 +75,18 @@ symtable_item_t *symtable_add(symtable_item_t item, symtable_t table);
 /**
  * @brief Creates a new symbol object.
  *
- * @param item return a pointer to the new symbol
  * @return symtable_item_t*
  */
-symtable_item_t *init_symtable_item(symtable_item_t item);
+symtable_item_t *init_symtable_item();
+
+/**
+ * @brief finds a symbol in the table and returns it's pointer
+ * 
+ * @param id id of the symbol to be found
+ * @param table table to search in
+ * @return symtable_item_t*
+*/
+symtable_item_t *symtable_get(char *id, symtable_t table);
 
 /**
  * @brief Prints the content of the symtable.
