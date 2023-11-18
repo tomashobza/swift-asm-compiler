@@ -61,14 +61,17 @@ bool cmp_type(Token **token, Token_type type) {
 bool START(Token **token) {
     DEBUG_CODE(printf("START    token: %d   value: %s\n", (*token)->type, (*token)->token_value););
     switch ((*token)->type) {
-        case TOKEN_EOF: return STMT_LIST(token) && cmp_type(token, TOKEN_EOF);
-        case TOKEN_FUNC: return STMT_LIST(token) && cmp_type(token, TOKEN_EOF);
-        case TOKEN_IF: return STMT_LIST(token) && cmp_type(token, TOKEN_EOF);
-        case TOKEN_IDENTIFICATOR : return STMT_LIST(token) && cmp_type(token, TOKEN_EOF);
-        case TOKEN_WHILE: return STMT_LIST(token) && cmp_type(token, TOKEN_EOF);
-        case TOKEN_VAR: return STMT_LIST(token) && cmp_type(token, TOKEN_EOF);
-        case TOKEN_LET: return STMT_LIST(token) && cmp_type(token, TOKEN_EOF);
-        default: return false;
+        // START -> STMT_LIST eof
+        case TOKEN_EOF:
+        case TOKEN_FUNC:
+        case TOKEN_IF:
+        case TOKEN_IDENTIFICATOR:
+        case TOKEN_WHILE:
+        case TOKEN_VAR:
+        case TOKEN_LET:
+            return STMT_LIST(token) && cmp_type(token, TOKEN_EOF);
+        default: 
+            return false;
     }
 
 }
@@ -83,14 +86,16 @@ bool START(Token **token) {
 bool STMT_LIST(Token **token) {
     DEBUG_CODE(printf("STMT_LIST    token: %d   value: %s\n", (*token)->type, (*token)->token_value););
     switch ((*token)->type) {
+        // STMT_LIST -> eps
         case TOKEN_EOF: return true;
+        case TOKEN_R_CURLY: return true; 
+        // STMT_LIST -> STMT STMT_LIST
         case TOKEN_FUNC: return STMT(token) && STMT_LIST(token);
         case TOKEN_IF: return STMT(token) && STMT_LIST(token);
         case TOKEN_IDENTIFICATOR : return STMT(token) && STMT_LIST(token);
         case TOKEN_WHILE: return STMT(token) && STMT_LIST(token);
         case TOKEN_VAR: return STMT(token) && STMT_LIST(token);
         case TOKEN_LET: return STMT(token) && STMT_LIST(token);
-        case TOKEN_R_CURLY: return true; 
         default: return false;
     }
 }
@@ -142,9 +147,11 @@ bool TYPE_AND_ASIGN(Token **token) {
     DEBUG_CODE(printf("TYPE_AND_ASIGN    token: %d   value: %s\n", (*token)->type, (*token)->token_value););
     switch((*token)->type) {
         // TYPE_AND_ASIGN -> : D_TYPE R_FLEX
-        case TOKEN_DOUBLE_DOT: return cmp_type(token, TOKEN_DOUBLE_DOT) && D_TYPE(token) && R_FLEX(token);
+        case TOKEN_DOUBLE_DOT:
+            return cmp_type(token, TOKEN_DOUBLE_DOT) && D_TYPE(token) && R_FLEX(token);
         // TYPE_AND_ASIGN -> = RIGID
-        case TOKEN_ASSIGN: return cmp_type(token, TOKEN_ASSIGN) && R_RIGID(token);
+        case TOKEN_ASSIGN:
+            return cmp_type(token, TOKEN_ASSIGN) && R_RIGID(token);
         default: return false;
     }
 }

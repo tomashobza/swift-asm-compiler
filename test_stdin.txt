@@ -1,7 +1,10 @@
 func bar(with param : String) -> String {
+true
+false
 let r : String = foo(param)
 return r
 }
+write("ahoj")
 func foo(_ par : String) -> String {
 let ret = bar(with: par)
 return ret
@@ -16,6 +19,7 @@ koko\nk
 """
 
 koko\nko
-78\{55}ooa
+78\{55}ooajoiajoidhaojoi
+55354654654d6sd5465
 
 """
