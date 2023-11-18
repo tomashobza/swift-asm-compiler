@@ -388,7 +388,7 @@ bool ALL_AFTER_ID(Token **token) {
         // ALL_AFTER_ID -> = EXP
         case TOKEN_ASSIGN: return cmp_type(token, TOKEN_ASSIGN) && EXP(token);
         // ALL_AFTER_ID -> FUNC_CALL
-        case TOKEN_L_BRACKET: return cmp_type(token, TOKEN_L_BRACKET) && IN_P_LIST(token) && cmp_type(token, TOKEN_R_BRACKET);
+        case TOKEN_L_BRACKET: return FUNC_CALL(token);
         default: return false;
     }
 }

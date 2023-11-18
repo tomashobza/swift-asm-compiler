@@ -39,11 +39,7 @@ bool AFTER_ELSE(Token **token);
 bool WHILE_STMT(Token **token);
 bool LOAD_ID(Token **token);
 bool ALL_AFTER_ID(Token **token);
-bool IN_P_LIST(Token **token);
-bool IN_PARAM(Token **token);
-bool TERM(Token **token);
-bool VAL(Token **token);
-bool IN_SEP(Token **token);
+bool FUNC_CALL(Token **token);
 bool EXP(Token **token);
 
 int main_parser(Token *tok);
