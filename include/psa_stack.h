@@ -3,5 +3,4 @@
 
 #include "psa.h"
 
-
 #endif /* PSA_STACK_H_ */

@@ -568,12 +568,7 @@ void printStack(StackNode *top)
     printf("\n");
 }
 
-/**
- * @brief Parses the expression using the precedent bottom-up parser. Reads tokens from the scanner.
- *
- * @return psa_return_type
- */
-psa_return_type parse_expression()
+psa_return_type parse_expression_base(bool is_param)
 {
     Stack *s = general_stack_init();
     psa_stack_push(s, (PSA_Token){
@@ -613,6 +608,11 @@ psa_return_type parse_expression()
                 .return_type = TOKEN_EOF,
                 .is_ok = false,
             };
+        }
+
+        if (a->type == (Token_type)TOKEN_IDENTIFICATOR && b.type == (Token_type)TOKEN_L_BRACKET)
+        {
+            printf_magenta("Je to funkce!\n");
         }
 
         switch (P_TABLE[a_val][b_val])
@@ -712,6 +712,16 @@ psa_return_type parse_expression()
         .return_type = TOKEN_EOF,
         .is_ok = true,
     };
+}
+
+psa_return_type parse_expression()
+{
+    return parse_expression_base(false);
+}
+
+psa_return_type parse_expression_param()
+{
+    return parse_expression_base(true);
 }
 
 // PSA STACK

@@ -1,27 +1,36 @@
 # Compiler and flags
 CC = gcc
-#CFLAGS = -Wall -Wextra
+CFLAGS = -Iinclude
 
+# Source files (excluding main.c for test build)
+SRCS = $(filter-out src/main.c, $(wildcard src/*.c))
 
-# Find all source files
-SRCS = $(wildcard *.c)
+# Test files in the test directory (explicitly list your test files here)
+TESTS = tests/test.c
 
 # Target executable name
 TARGET = ifjcompiler
 
+# Test executable name
+TEST_TARGET = test_runner
+
 # Default target
 all: $(TARGET)
 
-$(TARGET): 
-	#$(CC) $(CFLAGS) $(SRCS) -o $@
-	$(CC) $(SRCS) -o $@
+$(TARGET): src/main.c $(SRCS)
+	$(CC) $(CFLAGS) $^ -o bin/$@
+
+# Test target
+test: $(SRCS) $(TESTS)
+	$(CC) $(CFLAGS) $^ -o bin/$(TEST_TARGET)
+	./bin/$(TEST_TARGET) <tests/test.in
 
 # clean, compile and run
-run: clean all
-	./$(TARGET) <test_stdin.txt
+# run: clean all
+# 	./bin/$(TARGET) <tests/test.in
 
 # Clean up
 clean:
-	rm -f $(TARGET)
+	rm -f $(TARGET) $(TEST_TARGET)
 
-.PHONY: all clean
+.PHONY: all clean run test

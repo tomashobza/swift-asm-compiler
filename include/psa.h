@@ -130,6 +130,21 @@ unsigned int getSymbolValue(Token_type token);
  */
 psa_return_type parse_expression();
 
+/**
+ * @brief Parses the expression using the precedent bottom-up parser. Reads tokens from the scanner.
+ *
+ * @param is_param Is the expression a function parameter? (, will be the end of the expression)
+ * @return psa_return_type
+ */
+psa_return_type parse_expression_base(bool is_param);
+
+/**
+ * @brief Parses the expression that is a function parameter using the precedent bottom-up parser. Reads tokens from the scanner.
+ *
+ * @return psa_return_type
+ */
+psa_return_type parse_expression_param();
+
 // PSA STACK
 
 void psa_stack_push(Stack *s, PSA_Token data);
