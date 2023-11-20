@@ -22,7 +22,7 @@ $(TARGET): src/main.c $(SRCS)
 
 # Test target
 test: $(SRCS) $(TESTS)
-	$(CC) $(CFLAGS) $^ -o bin/$(TEST_TARGET)
+	$(CC) $(CFLAGS) -D DEBUG=1 $^ -o bin/$(TEST_TARGET)
 	./bin/$(TEST_TARGET) <tests/test.in
 
 # clean, compile and run
