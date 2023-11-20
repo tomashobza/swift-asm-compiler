@@ -5,10 +5,10 @@
       "type": "lldb",
       "request": "launch",
       "name": "Launch",
-      "program": "${workspaceFolder}/ifjcompiler",
-      "stdio": "${workspaceFolder}/test_stdin.txt",
+      "program": "${workspaceFolder}/bin/ifjcompiler_debug",
+      "stdio": "${workspaceFolder}/tests/test.in",
       "cwd": "${workspaceFolder}",
-      "preLaunchTask": "Build and Clear",
+      // "preLaunchTask": "Build and Clear",
       "console": "integratedTerminal"
     }
   ]

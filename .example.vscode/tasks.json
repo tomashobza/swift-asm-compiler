@@ -4,23 +4,18 @@
     {
       "type": "shell",
       "label": "build",
-      "command": "gcc",
-      "args": ["-g", "-fdiagnostics-color=always", "*.c", "-o", "ifjcompiler"],
+      "command": "make",
+      "args": ["test"],
       "options": {
-        "cwd": "${workspaceFolder}",
-        "shell": {
-          "executable": "/bin/sh",
-          "args": ["-c"]
-        }
+        "cwd": "${workspaceFolder}"
       },
       "problemMatcher": ["$gcc"],
       "group": {
         "kind": "build",
         "isDefault": true
       },
-      "detail": "kompilátor: /usr/bin/gcc"
+      "detail": "Executes 'make test' for building"
     },
-
     {
       "label": "Clear Terminal",
       "type": "shell",
