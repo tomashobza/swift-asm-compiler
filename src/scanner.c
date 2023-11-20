@@ -750,7 +750,6 @@ int set_token(int next_state, char *val, Token_type type, Token *token, char *co
         state = next_state;
         token->type = type;
         token->token_value = val;
-        printf("type: %d, value:%s:, preceded:%d\n", type, val, token->preceded_by_nl);
         return 0;
     }
     else
