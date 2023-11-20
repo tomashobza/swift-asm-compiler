@@ -1,4 +1,5 @@
 #include "psa.h"
+DEFINE_STACK_FUNCTIONS(PSA_Token)
 
 char P_TABLE[10][10] = {
     //!	   */   +-  LOG   ??   i    (    )	  $
@@ -473,7 +474,7 @@ bool canTokenBeEndOfExpression(Token_type token)
     }
 }
 
-PSA_Token readNextToken(Stack *s, char *next_token_error)
+PSA_Token readNextToken(PSA_TokenStack *s, char *next_token_error)
 {
     int ch = getchar();
     ungetc(ch, stdin);
@@ -496,7 +497,7 @@ PSA_Token readNextToken(Stack *s, char *next_token_error)
     };
     free(tkn);
 
-    PSA_Token a = psa_stack_top(s);
+    PSA_Token a = PSA_Token_stack_top(s);
 
     *next_token_error = 0;
     // detect expression end by a missing operator between operands
@@ -514,20 +515,20 @@ PSA_Token readNextToken(Stack *s, char *next_token_error)
     return b;
 }
 
-void printStackRec(StackNode *top)
+void printStackRec(PSA_TokenNode *top)
 {
     if (top == NULL)
     {
         return;
     }
     printStackRec(top->next);
-    printf("%s", ((PSA_Token *)top->data)->token_value);
+    printf("%s", top->data.token_value);
     // printf("%s:%d, ", ((PSA_Token *)top->data)->token_value, ((PSA_Token *)top->data)->expr_type);
     // printf("{'%s', %d} ", ((PSA_Token *)top->data)->token_value, ((PSA_Token *)top->data)->type);
 }
 
 // recursively prints the stack
-void printStack(StackNode *top)
+void printStack(PSA_TokenNode *top)
 {
     if (top == NULL)
     {
@@ -540,10 +541,10 @@ void printStack(StackNode *top)
 
 psa_return_type parse_expression_base(bool is_param)
 {
-    Stack *s = general_stack_init();
-    psa_stack_push(s, (PSA_Token){
-                          .type = (Token_type)TOKEN_EOF,
-                          .token_value = "$"});
+    PSA_TokenStack *s = PSA_Token_stack_init();
+    PSA_Token_stack_push(s, (PSA_Token){
+                                .type = (Token_type)TOKEN_EOF,
+                                .token_value = "$"});
 
     /*
         a - token on the top of the stack
@@ -551,23 +552,23 @@ psa_return_type parse_expression_base(bool is_param)
         s - stack
     */
 
-    PSA_Token *a = general_stack_top(s);
+    PSA_Token a = PSA_Token_stack_top(s);
 
     char next_token_error = 0;
     PSA_Token b = readNextToken(s, &next_token_error);
 
-    while (!(a->type == (Token_type)TOKEN_EXPRSN && s->size == 2 && b.type == (Token_type)TOKEN_EOF))
+    while (!(a.type == (Token_type)TOKEN_EXPRSN && s->size == 2 && b.type == (Token_type)TOKEN_EOF))
     {
         // if the stack top is of type (Token_type)TOKEN_EXPRSN, then we need to use the second top of the stack to determine the rule
-        if (a->type == (Token_type)TOKEN_EXPRSN)
+        if (a.type == (Token_type)TOKEN_EXPRSN)
         {
-            a = (PSA_Token *)(s->top->next->data);
+            a = s->top->next->data;
         }
 
         DEBUG_CODE(printf("Chyba: %d\n", next_token_error););
 
         // // DETECT EMPTY EXPRESSION
-        // if (a->type == (Token_type)TOKEN_EOF && !canTokenBeStartOfExpression(b.type))
+        // if (a.type == (Token_type)TOKEN_EOF && !canTokenBeStartOfExpression(b.type))
         // {
         //     // empty expression followed by EOL is valid
         //     if (b.preceded_by_nl)
@@ -595,9 +596,9 @@ psa_return_type parse_expression_base(bool is_param)
         DEBUG_CODE(printf("na stacku: ");
                    printStack(s->top);
                    printf_yellow("na vstupu: {'%s', %d}\n", b.token_value, b.type);
-                   printf_magenta("P_TABLE[{%d, '%s'}][{%d, '%s'}] = %c\n", getSymbolValue(a->type), a->token_value, (b.type), b.token_value, P_TABLE[getSymbolValue(a->type)][getSymbolValue(b.type)]););
+                   printf_magenta("P_TABLE[{%d, '%s'}][{%d, '%s'}] = %c\n", getSymbolValue(a.type), a.token_value, (b.type), b.token_value, P_TABLE[getSymbolValue(a.type)][getSymbolValue(b.type)]););
 
-        const unsigned int a_val = getSymbolValue(a->type);
+        const unsigned int a_val = getSymbolValue(a.type);
         const unsigned int b_val = getSymbolValue(b.type);
 
         if (a_val == 99 || b_val == 99)
@@ -613,7 +614,7 @@ psa_return_type parse_expression_base(bool is_param)
         }
 
         // TODO: dodelat funkce
-        if (a->type == (Token_type)TOKEN_IDENTIFICATOR && b.type == (Token_type)TOKEN_L_BRACKET)
+        if (a.type == (Token_type)TOKEN_IDENTIFICATOR && b.type == (Token_type)TOKEN_L_BRACKET)
         {
             printf_magenta("Je to funkce!\n");
         }
@@ -621,27 +622,27 @@ psa_return_type parse_expression_base(bool is_param)
         switch (P_TABLE[a_val][b_val])
         {
         case '=':
-            psa_stack_push(s, b);
+            PSA_Token_stack_push(s, b);
             b = readNextToken(s, &next_token_error);
             break;
         case '<':
 
-            if (psa_stack_top(s).type == (Token_type)TOKEN_EXPRSN)
+            if (PSA_Token_stack_top(s).type == (Token_type)TOKEN_EXPRSN)
             {
-                PSA_Token tmp = psa_stack_pop(s);
-                psa_stack_push(s, (PSA_Token){
-                                      .type = (Token_type)TOKEN_SHIFT,
-                                      .token_value = "<"});
-                psa_stack_push(s, tmp);
-                psa_stack_push(s, b);
+                PSA_Token tmp = PSA_Token_stack_pop(s);
+                PSA_Token_stack_push(s, (PSA_Token){
+                                            .type = (Token_type)TOKEN_SHIFT,
+                                            .token_value = "<"});
+                PSA_Token_stack_push(s, tmp);
+                PSA_Token_stack_push(s, b);
                 b = readNextToken(s, &next_token_error);
             }
             else
             {
-                psa_stack_push(s, (PSA_Token){
-                                      .type = (Token_type)TOKEN_SHIFT,
-                                      .token_value = "<"});
-                psa_stack_push(s, b);
+                PSA_Token_stack_push(s, (PSA_Token){
+                                            .type = (Token_type)TOKEN_SHIFT,
+                                            .token_value = "<"});
+                PSA_Token_stack_push(s, b);
                 b = readNextToken(s, &next_token_error);
             }
             break;
@@ -654,12 +655,12 @@ psa_return_type parse_expression_base(bool is_param)
             PSA_Token *handle = malloc(sizeof(PSA_Token) * s->size);
 
             int i = 0;
-            while (psa_stack_top(s).type != TOKEN_SHIFT)
+            while (PSA_Token_stack_top(s).type != TOKEN_SHIFT)
             {
-                handle[i] = ((PSA_Token)psa_stack_pop(s));
+                handle[i] = ((PSA_Token)PSA_Token_stack_pop(s));
                 i++;
             }
-            (void)psa_stack_pop(s); // pop the <
+            (void)PSA_Token_stack_pop(s); // pop the <
 
             // reverse the array
             for (int j = 0; j < i / 2; j++)
@@ -673,7 +674,7 @@ psa_return_type parse_expression_base(bool is_param)
 
             if (rule.type != TOKEN_EOF)
             {
-                psa_stack_push(s, rule);
+                PSA_Token_stack_push(s, rule);
             }
             else
             {
@@ -691,7 +692,7 @@ psa_return_type parse_expression_base(bool is_param)
         }
         case '-':
         default:
-            printf_red("❌ | Error: invalid combination of operands! '%s' and '%s' cannot be together, because it wasn't meant to be. \n", a->token_value, b.token_value);
+            printf_red("❌ | Error: invalid combination of operands! '%s' and '%s' cannot be together, because it wasn't meant to be. \n", a.token_value, b.token_value);
 
             return (psa_return_type){
                 .end_token = TOKEN_EOF,
@@ -704,16 +705,16 @@ psa_return_type parse_expression_base(bool is_param)
         printStack(s->top);
         DEBUG_CODE(printf("\n-----------\n\n"););
 
-        a = general_stack_top(s);
+        a = PSA_Token_stack_top(s);
     }
     printf("\n");
     printf_green("✅ | All good! \n");
 
     return (psa_return_type){
-        .is_ok = a->expr_type != TYPE_INVALID,
-        .type = a->expr_type,
-        .end_token = a->type,
-        .canBeNil = a->canBeNil,
+        .is_ok = a.expr_type != TYPE_INVALID,
+        .type = a.expr_type,
+        .end_token = a.type,
+        .canBeNil = a.canBeNil,
     };
 }
 
@@ -725,28 +726,4 @@ psa_return_type parse_expression()
 psa_return_type parse_expression_param()
 {
     return parse_expression_base(true);
-}
-
-// PSA STACK
-
-void psa_stack_push(Stack *s, PSA_Token data)
-{
-    PSA_Token *new_node = malloc(sizeof(PSA_Token));
-    *new_node = data;
-
-    general_stack_push(s, new_node);
-}
-
-PSA_Token psa_stack_pop(Stack *s)
-{
-    PSA_Token *popped = general_stack_pop(s);
-    PSA_Token ret = *popped;
-    free(popped);
-    return ret;
-}
-
-PSA_Token psa_stack_top(Stack *s)
-{
-    PSA_Token *top = general_stack_top(s);
-    return *top;
 }

@@ -22,8 +22,8 @@
 #include <stdint.h>
 #include <math.h>
 #include "colorful_printf.h"
-#include "general_stack.h"
 #include "scanner.h"
+#include "stack.h"
 
 // STRUCTS, ENUMS & GLOBALS
 
@@ -58,6 +58,8 @@ typedef struct
     Expression_type expr_type;
     bool preceded_by_nl;
 } PSA_Token;
+
+DECLARE_STACK_FUNCTIONS(PSA_Token);
 
 /**
  * @brief Precedence table for the precedent bottom-up parser.
@@ -155,13 +157,5 @@ psa_return_type parse_expression_base(bool is_param);
  * @return psa_return_type
  */
 psa_return_type parse_expression_param();
-
-// PSA STACK
-
-void psa_stack_push(Stack *s, PSA_Token data);
-
-PSA_Token psa_stack_pop(Stack *s);
-
-PSA_Token psa_stack_top(Stack *s);
 
 #endif // PSA_H
