@@ -7,20 +7,29 @@
 #include "error.h"
 #include "stack.h"
 
+#define RED   "\x1B[31m"
+#define GREEN "\x1B[32m"
+#define YELLOW "\x1B[33m"
+#define BLUE  "\x1B[34m"
+#define MAGENTA "\x1B[35m"
+#define CYAN  "\x1B[36m"
+#define RESET "\x1B[0m"
+
 typedef enum {
     LET,
     VAR,
+    VAR_ID,
     VAR_TYPE,
-    FUNC,
+    FUNC_ID,
     P_NAME,
     P_ID,
     P_TYPE,
-    RETURN,
+    R_TYPE,
     SEM_NONE
-} Sem_type;
+} Sem_rule;
 
 int semantic_init();
 void semantic_destroy();
-int check_semantic(Token **token, Sem_type sem_type);
+int check_semantic(Token **token, Sem_rule sem_rule);
 
 #endif // SEMANTIC_H

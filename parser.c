@@ -19,20 +19,15 @@ void get_token(Token **token) {
     generate_token(*token, "\0");
 }
 
-bool cmp_type(Token **token, Token_type type, Sem_type sem_type) {
+bool cmp_type(Token **token, Token_type type, Sem_rule sem_rule) {
     switch ((*token)->type) {
         case TOKEN_EOF: 
             return type == TOKEN_EOF;
         default:
             bool result = (*token)->type == type;
-            printf("cmp_type: %d\n", result);
 
             if (result) {
-                switch(type) {
-
-                    default:
-                        break;
-                }
+                check_semantic(token, sem_rule);
             }
             get_token(token);
             return result;
@@ -109,7 +104,7 @@ bool VAR_LET(Token **token) {
         // VAR_LET -> VAR_SCOPE id TYPE_AND_ASSIGN
         case TOKEN_VAR:
         case TOKEN_LET:
-            return VAR_SCOPE(token) && cmp_type(token, TOKEN_IDENTIFICATOR, SEM_NONE) && TYPE_AND_ASIGN(token);
+            return VAR_SCOPE(token) && cmp_type(token, TOKEN_IDENTIFICATOR, VAR_ID) && TYPE_AND_ASIGN(token);
         default: return false;
     }
 }
@@ -117,8 +112,8 @@ bool VAR_LET(Token **token) {
 bool VAR_SCOPE(Token **token) {
     DEBUG_CODE(printf("VAR_SCOPE    token: %d   value: %s\n", (*token)->type, (*token)->token_value););
     switch((*token)->type) {
-        case TOKEN_VAR: return cmp_type(token, TOKEN_VAR, SEM_NONE);
-        case TOKEN_LET: return cmp_type(token, TOKEN_LET, SEM_NONE);
+        case TOKEN_VAR: return cmp_type(token, TOKEN_VAR, VAR);
+        case TOKEN_LET: return cmp_type(token, TOKEN_LET, LET);
         default: return false;
     }
 }
@@ -128,29 +123,10 @@ bool TYPE_AND_ASIGN(Token **token) {
     switch((*token)->type) {
         // TYPE_AND_ASIGN -> : D_TYPE R_FLEX
         case TOKEN_DOUBLE_DOT:
-            return cmp_type(token, TOKEN_DOUBLE_DOT, SEM_NONE) && D_TYPE(token) && R_FLEX(token);
-        // TYPE_AND_ASIGN -> = RIGID
+            return cmp_type(token, TOKEN_DOUBLE_DOT, SEM_NONE) && D_TYPE(token, VAR_TYPE) && R_FLEX(token);
+        // TYPE_AND_ASIGN -> = EXP
         case TOKEN_ASSIGN:
-            return cmp_type(token, TOKEN_ASSIGN, SEM_NONE) && R_RIGID(token);
-        default: return false;
-    }
-}
-
-bool R_RIGID(Token **token) {
-    DEBUG_CODE(printf("R_RIGID    token: %d   value: %s\n", (*token)->type, (*token)->token_value););
-    switch((*token)->type) {
-        case TOKEN_ASSIGN: return cmp_type(token, TOKEN_ASSIGN, SEM_NONE) && EXP(token);
-        default: return false;
-    }
-}
-
-bool D_TYPE(Token **token) {
-    DEBUG_CODE(printf("D_TYPE    token: %d   value: %s\n", (*token)->type, (*token)->token_value););
-    switch((*token)->type) {
-        case TOKEN_TYPE_STRING: return cmp_type(token, TOKEN_TYPE_STRING, SEM_NONE);
-        case TOKEN_TYPE_INT: return cmp_type(token, TOKEN_TYPE_INT, SEM_NONE);
-        case TOKEN_TYPE_DOUBLE: return cmp_type(token, TOKEN_TYPE_DOUBLE, SEM_NONE);
-        case TOKEN_TYPE_BOOL: return cmp_type(token, TOKEN_TYPE_BOOL, SEM_NONE);
+            return cmp_type(token, TOKEN_ASSIGN, SEM_NONE) && EXP(token);
         default: return false;
     }
 }
@@ -171,6 +147,17 @@ bool R_FLEX(Token **token) {
         case TOKEN_WHILE:
         case TOKEN_IF:
             return true;
+        default: return false;
+    }
+}
+
+bool D_TYPE(Token **token, Sem_rule sem_rule) {
+    DEBUG_CODE(printf("D_TYPE    token: %d   value: %s\n", (*token)->type, (*token)->token_value););
+    switch((*token)->type) {
+        case TOKEN_TYPE_STRING: return cmp_type(token, TOKEN_TYPE_STRING, sem_rule);
+        case TOKEN_TYPE_INT: return cmp_type(token, TOKEN_TYPE_INT, sem_rule);
+        case TOKEN_TYPE_DOUBLE: return cmp_type(token, TOKEN_TYPE_DOUBLE, sem_rule);
+        case TOKEN_TYPE_BOOL: return cmp_type(token, TOKEN_TYPE_BOOL, sem_rule);
         default: return false;
     }
 }
@@ -202,7 +189,7 @@ bool PARAM(Token **token) {
     switch((*token)->type) {
         // PARAM -> id id : D_TYPE SEP
         case TOKEN_IDENTIFICATOR: return cmp_type(token, TOKEN_IDENTIFICATOR, SEM_NONE) && cmp_type(token, TOKEN_IDENTIFICATOR, SEM_NONE) && cmp_type(token, TOKEN_DOUBLE_DOT, SEM_NONE) &&
-                                D_TYPE(token) && P_SEP(token);
+                                D_TYPE(token, P_TYPE) && P_SEP(token);
         default: return false;
     }
 }   
@@ -224,7 +211,7 @@ bool RET_TYPE(Token **token) {
         // RET_TYPE -> eps
         case TOKEN_L_CURLY: return true;
         // RET_TYPE -> -> D_TYPE
-        case TOKEN_ARROW: return cmp_type(token, TOKEN_ARROW, SEM_NONE) && D_TYPE(token);
+        case TOKEN_ARROW: return cmp_type(token, TOKEN_ARROW, SEM_NONE) && D_TYPE(token, R_TYPE);
         default: return false;
     }
 }

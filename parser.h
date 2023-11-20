@@ -31,7 +31,7 @@
 #endif
 
 void get_token(Token **token);
-bool cmp_type(Token **token, Token_type type, Sem_type sem_type);
+bool cmp_type(Token **token, Token_type type, Sem_rule sem_rule);
 
 bool START(Token **token);
 bool STMT_LIST(Token **token);
@@ -39,8 +39,7 @@ bool STMT(Token **token);
 bool VAR_LET(Token **token);
 bool VAR_SCOPE(Token **token);
 bool TYPE_AND_ASIGN(Token **token);
-bool R_RIGID(Token **token);
-bool D_TYPE(Token **token);
+bool D_TYPE(Token **token, Sem_rule sem_rule);
 bool R_FLEX(Token **token);
 bool DEF_FUNC(Token **token);
 bool P_LIST(Token **token);
@@ -50,7 +49,6 @@ bool RET_TYPE(Token **token);
 bool FUNC_STMT_LIST(Token **token);
 bool FUNC_STMT(Token **token);
 bool RET(Token **token);
-bool AFTER_RET(Token **token);
 bool FUNC_WHILE(Token **token);
 bool FUNC_IF(Token **token);
 bool FUNC_ELSE_CLAUSE(Token **token);
