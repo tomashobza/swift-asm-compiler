@@ -27,11 +27,11 @@ typedef struct symtable_item
     bool is_init;    //
 
     struct symtable_item *next;
-} symtable_item_t;
+} symtable_item;
 
-typedef symtable_item_t **symtable_t;
+typedef symtable_item **symtable;
 
-DECLARE_STACK_FUNCTIONS(symtable_t);
+DECLARE_STACK_FUNCTIONS(symtable);
 
 /**
  * @brief Calculates the hashed value of a string. Source: https://en.wikipedia.org/wiki/Fowler%E2%80%93Noll%E2%80%93Vo_hash_function
@@ -44,46 +44,46 @@ uint32_t hash(char *input);
 /**
  * @brief Allocates a new symtable and initializes the items to NULL, then returns the address of the new symtable.
  *
- * @return symtable_t* - pointer to the new symtable
+ * @return symtable* - pointer to the new symtable
  */
-symtable_t symtable_init();
+symtable symtable_init();
 
 /**
  * @brief Adds a new symbol to the hash table of symbols.
  *
  * @param item item to be added
  * @param table table to put the symbol into
- * @return symtable_item_t*
+ * @return symtable_item*
  */
-symtable_item_t *symtable_add(symtable_item_t item, symtable_t table);
+symtable_item *symtable_add(symtable_item item, symtable table);
 
 /**
  * @brief Creates a new symbol object.
  *
  * @param item return a pointer to the new symbol
- * @return symtable_item_t*
+ * @return symtable_item*
  */
-symtable_item_t *init_symtable_item(symtable_item_t item);
+symtable_item *init_symtable_item(symtable_item item);
 
 /**
  * @brief Prints the content of the symtable.
  *
  * @param table table to print
  */
-void symtable_print(symtable_t table);
+void symtable_print(symtable table);
 
 /**
  * @brief Recursively free all the chained synonyms
  *
  * @param item synonym to start the freeing with
  */
-void free_synonyms(symtable_item_t *item);
+void free_synonyms(symtable_item *item);
 
 /**
  * @brief Free the memory used by the table and all it's items
  *
  * @param table table to free
  */
-void symtable_free(symtable_t table);
+void symtable_free(symtable table);
 
 #endif // SYMTABLE_H

@@ -474,7 +474,7 @@ bool canTokenBeEndOfExpression(Token_type token)
     }
 }
 
-PSA_Token readNextToken(PSA_TokenStack *s, char *next_token_error)
+PSA_Token readNextToken(PSA_Token_stack *s, char *next_token_error)
 {
     int ch = getchar();
     ungetc(ch, stdin);
@@ -515,7 +515,7 @@ PSA_Token readNextToken(PSA_TokenStack *s, char *next_token_error)
     return b;
 }
 
-void printStackRec(PSA_TokenNode *top)
+void printStackRec(PSA_Token_node *top)
 {
     if (top == NULL)
     {
@@ -528,7 +528,7 @@ void printStackRec(PSA_TokenNode *top)
 }
 
 // recursively prints the stack
-void printStack(PSA_TokenNode *top)
+void printStack(PSA_Token_node *top)
 {
     if (top == NULL)
     {
@@ -541,7 +541,7 @@ void printStack(PSA_TokenNode *top)
 
 psa_return_type parse_expression_base(bool is_param)
 {
-    PSA_TokenStack *s = PSA_Token_stack_init();
+    PSA_Token_stack *s = PSA_Token_stack_init();
     PSA_Token_stack_push(s, (PSA_Token){
                                 .type = (Token_type)TOKEN_EOF,
                                 .token_value = "$"});
