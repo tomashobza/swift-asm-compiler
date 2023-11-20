@@ -14,42 +14,36 @@
 
 int main(void)
 {
-    symtable_t st = symtable_init();
 
-    symtable_print(st);
+    psa_return_type psa_ret = parse_expression();
 
-    symtable_add()
+    printf_magenta("\n\n==== PSA RETURN ====\n");
+    printf("Is ok: ");
+    if (psa_ret.is_ok)
+    {
+        printf_green("true\n");
+    }
+    else
+    {
+        printf_red("false\n");
+    }
 
-        // psa_return_type psa_ret = parse_expression();
+    printf("Type: ");
+    print_expression_type(psa_ret.type);
 
-        // // // print type and is ok
-        // printf_magenta("\n\n==== PSA RETURN ====\n");
-        // printf("Is ok: ");
-        // if (psa_ret.is_ok)
-        // {
-        //     printf_green("true\n");
-        // }
-        // else
-        // {
-        //     printf_red("false\n");
-        // }
+    printf("End token: ");
+    print_token_type(psa_ret.end_token);
 
-        // printf("Type: ");
-        // print_expression_type(psa_ret.type);
+    printf("Can be nil: ");
+    if (psa_ret.canBeNil)
+    {
+        printf_green("true\n");
+    }
+    else
+    {
+        printf_red("false\n");
+    }
+    printf_magenta("====================\n");
 
-        // printf("End token: ");
-        // print_token_type(psa_ret.end_token);
-
-        // printf("Can be nil: ");
-        // if (psa_ret.canBeNil)
-        // {
-        //     printf_green("true\n");
-        // }
-        // else
-        // {
-        //     printf_red("false\n");
-        // }
-        // printf_magenta("====================\n");
-
-        return EXIT_SUCCESS;
+    return EXIT_SUCCESS;
 }

@@ -4,7 +4,7 @@ CFLAGS = -Iinclude
 TESTFLAGS = -g -fdiagnostics-color=always -D DEBUG=1
 
 # Source files (excluding main.c for test build)
-SRCS = $(filter-out src/main.c, $(wildcard src/*.c))
+SRCS = $(filter-out src/main.c, $(wildcard src/*.c)) $(filter-out src/main.c, $(wildcard src/**/*.c))
 
 # Test files in the test directory (explicitly list your test files here)
 TESTS = tests/test.c
