@@ -167,7 +167,7 @@ bool DEF_FUNC(Token **token) {
     switch((*token)->type) {
         //  DEF_FUNC -> func func_id ( P_LIST ) RET_TYPE { FUNC_STMT_LIST }	
         case TOKEN_FUNC: return cmp_type(token, TOKEN_FUNC, SEM_NONE) && cmp_type(token, TOKEN_FUNC_ID, FUNC_ID) && cmp_type(token, TOKEN_L_BRACKET, SEM_NONE) &&
-                                P_LIST(token) && cmp_type(token, TOKEN_R_BRACKET, SEM_NONE) && RET_TYPE(token) && cmp_type(token, TOKEN_L_CURLY, SEM_NONE) &&
+                                P_LIST(token) && cmp_type(token, TOKEN_R_BRACKET, SEM_NONE) && RET_TYPE(token) && cmp_type(token, TOKEN_L_CURLY, FUNC_HEADER_DONE) &&
                                 FUNC_STMT_LIST(token) && cmp_type(token, TOKEN_R_CURLY, SEM_NONE);
         default: return false;
     }

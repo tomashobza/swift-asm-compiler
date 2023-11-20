@@ -21,6 +21,7 @@ typedef enum {
     VAR_ID,
     VAR_TYPE,
     FUNC_ID,
+    FUNC_HEADER_DONE,
     P_NAME,
     P_ID,
     P_TYPE,

@@ -71,7 +71,7 @@ void reset_var() {
 
 void reset_func() {
     funcItem->id = NULL;
-    funcItem->data.func_data->return_type = NULL;
+    funcItem->data.func_data->return_type = "Void";
     funcItem->data.func_data->is_defined = false;
     free(funcItem->data.func_data->params);
     funcItem->data.func_data->params = NULL;
@@ -81,6 +81,7 @@ void reset_func() {
 }
 
 void semantic_destroy() {  
+    symtable_print(*stack_top(myStack));
     free(funcItem->data.func_data->params);
     free(funcItem->data.func_data);
     free(varItem->data.var_data);
@@ -131,11 +132,13 @@ int check_semantic(Token **token, Sem_rule sem_rule) {
             break;
         case R_TYPE:
             funcItem->data.func_data->return_type = (*token)->token_value;
-            symtable_add(*funcItem, *stack_top(myStack));
             break;
+        case FUNC_HEADER_DONE:
+            funcItem->data.func_data->is_defined = true;
+            symtable_add(*funcItem, *stack_top(myStack));
+
     }
 
-    symtable_print(*stack_top(myStack));
     print_items();
 
     return 0;
