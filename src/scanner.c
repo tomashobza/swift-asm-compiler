@@ -24,7 +24,7 @@ int main_scanner(Token *tok)
 {
     Token *token;
     token = malloc(sizeof(Token));
-    char code = '\0';
+    char *code = "\0";
     ret = generate_token(token, code);
     tok->type = (token->type);
     tok->token_value = (token->token_value);
