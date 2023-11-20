@@ -6,11 +6,12 @@
  *
  * Project: IFJ compiler
  */
-#include "error.h"
-#include <stdbool.h>
 
 #ifndef IFJ2023_SCANNER_H
 #define IFJ2023_SCANNER_H
+
+#include "error.h"
+#include <stdbool.h>
 
 /*
  * Declaration of scanners states
@@ -99,7 +100,9 @@ typedef enum
     TOKEN_SUBSTRING,       // Builtin function substring 52
     TOKEN_ORD,             // Builtin function ord 53
     TOKEN_CHR,             // Builtin function chr 54
-    TOKEN_COUNT            // Number of tokens 55
+    TOKEN_EXPRSN,          // E 58
+    TOKEN_SHIFT,           // < 59
+    TOKEN_UNSHIFT,         // > 60
 } Token_type;
 /*
  * Structure Token - used to store token type and token value read from stdin

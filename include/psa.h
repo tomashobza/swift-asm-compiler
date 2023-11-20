@@ -1,6 +1,21 @@
 #ifndef PSA_H
 #define PSA_H
 
+//! DEBUG
+#define DEBUG_PSA 0
+#if DEBUG && DEBUG_PSA
+#define DEBUG_CODE(code) \
+    do                   \
+    {                    \
+        code             \
+    } while (0)
+#else
+#define DEBUG_CODE(code) \
+    do                   \
+    {                    \
+    } while (0)
+#endif
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -28,8 +43,10 @@ typedef enum
  */
 typedef struct
 {
-    Token_type return_type;
-    bool is_ok;
+    Token_type end_token; // last token left
+    bool is_ok;           // is the expression valid?
+    Expression_type type; // type of the expression
+    bool canBeNil;        // can the expression be nil?
 } psa_return_type;
 
 typedef struct
@@ -46,13 +63,6 @@ typedef struct
  *
  */
 extern char P_TABLE[10][10];
-
-typedef enum
-{
-    TOKEN_EXPRSN = TOKEN_COUNT, // E - 58
-    TOKEN_SHIFT,                // < - 59
-    TOKEN_UNSHIFT,              // > - 60
-} PSA_Token_type;
 
 /**
  * @brief Rules for the precedent bottom-up parser.
