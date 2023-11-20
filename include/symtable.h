@@ -34,6 +34,13 @@ typedef symtable_item **symtable;
 DECLARE_STACK_FUNCTIONS(symtable);
 
 /**
+ * @brief Struct to hold the stack of symtables.
+ *
+ * @param stack stack of symtables
+ */
+void symtable_stack_free_all(symtable_stack *stack);
+
+/**
  * @brief Calculates the hashed value of a string. Source: https://en.wikipedia.org/wiki/Fowler%E2%80%93Noll%E2%80%93Vo_hash_function
  *
  * @param input value to be hashed
@@ -49,13 +56,31 @@ uint32_t hash(char *input);
 symtable symtable_init();
 
 /**
- * @brief Adds a new symbol to the hash table of symbols.
+ * @brief Adds a new symbol to the hash table of symbols. (Allows duplicates)
  *
  * @param item item to be added
  * @param table table to put the symbol into
- * @return symtable_item*
+ * @return symtable_item* - pointer to the new symbol
  */
 symtable_item *symtable_add(symtable_item item, symtable table);
+
+/**
+ * @brief Finds a symbol in the table and returns it's pointer.
+ *
+ * @param name name of the symbol to find
+ * @param table table to search in
+ * @return symtable_item* - pointer to the symbol or NULL if not found
+ */
+symtable_item *symtable_find(char *name, symtable table);
+
+/**
+ * @brief Finds a symbol in the table and returns it's pointer.
+ *
+ * @param name name of the symbol to find
+ * @param stack stack of symtables to search in
+ * @return symtable_item* - pointer to the symbol or NULL if not found
+ */
+symtable_item *symtable_find_in_stack(char *name, symtable_stack *stack);
 
 /**
  * @brief Creates a new symbol object.

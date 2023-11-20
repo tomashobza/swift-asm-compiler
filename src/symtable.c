@@ -24,6 +24,16 @@ uint32_t hash(char *input)
 
 DEFINE_STACK_FUNCTIONS(symtable)
 
+void symtable_stack_free_all(symtable_stack *stack)
+{
+    while (stack->size > 0)
+    {
+        symtable_free(symtable_stack_pop(stack));
+    }
+
+    free(stack);
+}
+
 symtable symtable_init()
 {
     symtable st = malloc(sizeof(symtable_item *) * SYMTABLE_MAX_ITEMS);
@@ -67,6 +77,43 @@ symtable_item *symtable_add(symtable_item item, symtable table)
     }
 
     return new_sti;
+}
+
+symtable_item *symtable_find(char *name, symtable table)
+{
+    const uint32_t item_hash = hash(name);
+    if (item_hash == (uint32_t)-1)
+    {
+        return NULL;
+    }
+
+    symtable_item *item = table[item_hash];
+    while (item != NULL)
+    {
+        if (strcmp(item->name, name) == 0)
+        {
+            return item;
+        }
+        item = item->next;
+    }
+
+    return NULL;
+}
+
+symtable_item *symtable_find_in_stack(char *name, symtable_stack *stack)
+{
+    symtable_node *node = stack->top;
+    while (node != NULL)
+    {
+        symtable_item *item = symtable_find(name, node->data);
+        if (item != NULL)
+        {
+            return item;
+        }
+        node = node->next;
+    }
+
+    return NULL;
 }
 
 symtable_item *init_symtable_item(symtable_item item)
