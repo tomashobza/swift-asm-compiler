@@ -185,7 +185,7 @@ void print_token_type(Token_type type)
     printf_cyan("\n");
 }
 
-void print_exprexpr_type(Expression_type type)
+void print_expression_type(Expression_type type)
 {
     switch (type)
     {

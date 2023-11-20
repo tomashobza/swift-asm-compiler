@@ -17,6 +17,6 @@ void print_token_type(Token_type type);
  *
  * @param type
  */
-void print_exprexpr_type(Expression_type type);
+void print_expression_type(Expression_type type);
 
 #endif // UTILS_H
