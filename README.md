@@ -18,4 +18,5 @@
 - `utils` - utility např. k vytváření precedenční tabulky
 
 **Pes:**
+
 ![Pes!](https://placedog.net/500?random)
