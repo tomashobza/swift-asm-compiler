@@ -10,25 +10,37 @@
 #include <stdlib.h>
 #include "scanner.h"
 #include "psa.h"
+#include "utils.h"
 
 int main(void)
 {
-    // printf("\n\n");
-    // Token *token = malloc(sizeof(Token));
-    // int ch = getchar();
-    // ;
-    // while (ch != EOF)
-    // {
-    //     ungetc(ch, stdin);
+    psa_return_type psa_ret = parse_expression();
 
-    //     Token *token = malloc(sizeof(Token));
-    //     generate_token(token, "\0", false);
-    //     printf("{ type: %d, value: '%s' }\n", token->type, token->token_value);
-
-    //     ch = getchar();
-    // }
-    // printf("Hello World!\n");
-    parse_expression();
+    // print type and is ok
+    printf_magenta("\n\n==== PSA RETURN ====\n");
+    printf("End token: ");
+    print_token_type(psa_ret.end_token);
+    printf("Is ok: ");
+    if (psa_ret.is_ok)
+    {
+        printf_green("true\n");
+    }
+    else
+    {
+        printf_red("false\n");
+    }
+    printf("Type: ");
+    print_exprexpr_type(psa_ret.type);
+    printf("Can be nil: ");
+    if (psa_ret.canBeNil)
+    {
+        printf_green("true\n");
+    }
+    else
+    {
+        printf_red("false\n");
+    }
+    printf_magenta("====================\n");
 
     return EXIT_SUCCESS;
 }
