@@ -22,7 +22,7 @@
 #include <stdint.h>
 #include <math.h>
 #include "colorful_printf.h"
-#include "stack/general_stack.h"
+#include "general_stack.h"
 #include "scanner.h"
 
 // STRUCTS, ENUMS & GLOBALS

@@ -11,7 +11,6 @@
 // #include "scanner.h"
 // #include "psa.h"
 // #include "utils.h"
-#include "stack.h"
 
 int main(void)
 {

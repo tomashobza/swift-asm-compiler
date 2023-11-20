@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include "stack.h" // Assuming the Stack and Node definitions are in stack.h
+#include "oldstack.h" // Assuming the Stack and Node definitions are in stack.h
 
 Stack *stack_init()
 {
