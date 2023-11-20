@@ -166,7 +166,7 @@ bool DEF_FUNC(Token **token) {
     DEBUG_CODE(printf("DEF_FUNC    token: %d   value: %s\n", (*token)->type, (*token)->token_value););
     switch((*token)->type) {
         //  DEF_FUNC -> func func_id ( P_LIST ) RET_TYPE { FUNC_STMT_LIST }	
-        case TOKEN_FUNC: return cmp_type(token, TOKEN_FUNC, SEM_NONE) && cmp_type(token, TOKEN_FUNC_ID, SEM_NONE) && cmp_type(token, TOKEN_L_BRACKET, SEM_NONE) &&
+        case TOKEN_FUNC: return cmp_type(token, TOKEN_FUNC, SEM_NONE) && cmp_type(token, TOKEN_FUNC_ID, FUNC_ID) && cmp_type(token, TOKEN_L_BRACKET, SEM_NONE) &&
                                 P_LIST(token) && cmp_type(token, TOKEN_R_BRACKET, SEM_NONE) && RET_TYPE(token) && cmp_type(token, TOKEN_L_CURLY, SEM_NONE) &&
                                 FUNC_STMT_LIST(token) && cmp_type(token, TOKEN_R_CURLY, SEM_NONE);
         default: return false;
@@ -188,7 +188,7 @@ bool PARAM(Token **token) {
     DEBUG_CODE(printf("PARAM    token: %d   value: %s\n", (*token)->type, (*token)->token_value););
     switch((*token)->type) {
         // PARAM -> id id : D_TYPE SEP
-        case TOKEN_IDENTIFICATOR: return cmp_type(token, TOKEN_IDENTIFICATOR, SEM_NONE) && cmp_type(token, TOKEN_IDENTIFICATOR, SEM_NONE) && cmp_type(token, TOKEN_DOUBLE_DOT, SEM_NONE) &&
+        case TOKEN_IDENTIFICATOR: return cmp_type(token, TOKEN_IDENTIFICATOR, P_NAME) && cmp_type(token, TOKEN_IDENTIFICATOR, P_ID) && cmp_type(token, TOKEN_DOUBLE_DOT, SEM_NONE) &&
                                 D_TYPE(token, P_TYPE) && P_SEP(token);
         default: return false;
     }

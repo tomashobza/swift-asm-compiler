@@ -15,7 +15,7 @@
 #include <stdbool.h>
 
 typedef enum {
-    T_INT, T_DOUBLE, T_STRING, T_BOOL, T_VOID, T_NIL
+    T_INT, T_DOUBLE, T_STRING, T_BOOL, T_VOID, T_NIL, T_NONE
 } DataType;
 
 typedef struct {
@@ -27,13 +27,15 @@ typedef struct {
 typedef struct {
     char *name;
     char *id;
-    DataType type;
+    char *type;
 } ParamData;
 
 typedef struct {
-    DataType return_type;
+    char *return_type;
     bool is_defined;
-    ParamData **params;
+    ParamData *params;
+    size_t params_count;
+    int capacity;
 } FunctionData;
 
 typedef struct symtable_item
