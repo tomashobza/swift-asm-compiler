@@ -1,20 +1,5 @@
 #include "psa.h"
 
-#define DEBUG 0
-
-#if DEBUG
-#define DEBUG_CODE(code) \
-    do                   \
-    {                    \
-        code             \
-    } while (0)
-#else
-#define DEBUG_CODE(code) \
-    do                   \
-    {                    \
-    } while (0)
-#endif
-
 char P_TABLE[10][10] = {
     //!	   */   +-  LOG   ??   i    (    )	  $
     {'-', '>', '>', '>', '>', '<', '<', '>', '>'}, // !
@@ -75,42 +60,30 @@ unsigned int getSymbolValue(Token_type token)
 uint32_t handleToUInt32(PSA_Token *handle, unsigned int len)
 {
     uint32_t result = 0;
-    printf("\n{");
     for (int i = 0; i < len; i++)
     {
         result = result << 8 | (char)(handle[i].type);
-        printf("%d, ", (handle[i].type));
     }
-    printf("}\n");
-    printf("handleToUInt32: %d\n", result);
     return result;
 }
 
 uint32_t reverseHandleToUInt32(PSA_Token *handle, unsigned int len)
 {
     uint32_t result = 0;
-    printf("\n{");
     for (int i = len - 1; i >= 0; i--)
     {
         result = result << 8 | (char)(handle[i].type);
-        printf("%d, ", (handle[i].type));
     }
-    printf("}\n");
-    printf("handleToUInt32: %d\n", result);
     return result;
 }
 
 uint32_t reverseHandleTypesToUInt32(Expression_type *types, unsigned int len)
 {
     uint32_t result = 0;
-    printf("\n{");
     for (int i = len - 1; i >= 0; i--)
     {
         result = result << 8 | (char)types[i];
-        printf("%d, ", types[i]);
     }
-    printf("}\n");
-    printf("handleTypesToUInt32: %d\n", result);
     return result;
 }
 
@@ -381,7 +354,6 @@ PSA_Token getRule(PSA_Token *handle, unsigned int len)
         return getHandleType(handle[0], handle[1].type, handle[2]);
     case RULE_8:
         DEBUG_CODE(printf_cyan("rule: E -> E+E\n"););
-        printf_red("getting shiw %d\n", getHandleType(handle[0], handle[1].type, handle[2]).expr_type);
         return getHandleType(handle[0], handle[1].type, handle[2]);
     case RULE_9:
         DEBUG_CODE(printf_cyan("rule: E -> E-E\n"););
@@ -468,7 +440,40 @@ bool isTokenBinaryOperator(Token_type token)
     }
 }
 
-PSA_Token readNextToken(Stack *s)
+bool canTokenBeStartOfExpression(Token_type token)
+{
+    switch (token)
+    {
+    case TOKEN_INT:
+    case TOKEN_DOUBLE:
+    case TOKEN_EXP:
+    case TOKEN_STRING:
+    case TOKEN_NOT:
+    case TOKEN_L_BRACKET:
+    case TOKEN_IDENTIFICATOR:
+        return true;
+    default:
+        return false;
+    }
+}
+
+bool canTokenBeEndOfExpression(Token_type token)
+{
+    switch (token)
+    {
+    case TOKEN_INT:
+    case TOKEN_DOUBLE:
+    case TOKEN_EXP:
+    case TOKEN_STRING:
+    case TOKEN_R_BRACKET:
+    case TOKEN_IDENTIFICATOR:
+        return true;
+    default:
+        return false;
+    }
+}
+
+PSA_Token readNextToken(Stack *s, char *next_token_error)
 {
     int ch = getchar();
     ungetc(ch, stdin);
@@ -493,54 +498,19 @@ PSA_Token readNextToken(Stack *s)
 
     PSA_Token a = psa_stack_top(s);
 
-    // detect expression end by no trailing operator
-    if (isTokenOperand(a.type) && isTokenOperand(b.type) && b.preceded_by_nl)
-    {
-        // b is EOF
-        b = (PSA_Token){
-            .type = (Token_type)TOKEN_EOF,
-            .token_value = "$",
-            .expr_type = TYPE_INVALID,
-            .canBeNil = false,
-        };
+    *next_token_error = 0;
+    // detect expression end by a missing operator between operands
+    *next_token_error += isTokenOperand(a.type) && !isTokenBinaryOperator(b.type) ? 1 : 0;
+    *next_token_error = *next_token_error << 1;
 
-        printf("Musim checknout newline!\n");
-        // TODO: check
-    }
-
-    // detect expression end
-    if (getSymbolValue(b.type) == 99)
-    {
-        if (b.preceded_by_nl)
-        {
-            // b is EOF
-            b = (PSA_Token){
-                .type = (Token_type)TOKEN_EOF,
-                .token_value = "$",
-                .expr_type = TYPE_INVALID,
-                .canBeNil = false,
-            };
-        }
-        else
-        {
-            printf_red("❌ | Error: invalid token! Token '%s' cannot be a part of an expression, add a newline as a separator. \n", b.token_value);
-        }
-    }
+    // detect expression end by an illegal token for expression being read
+    *next_token_error += (getSymbolValue(b.type) == 99) ? 1 : 0;
+    *next_token_error = *next_token_error << 1;
 
     // detect empty expression
-    if (a.type == (Token_type)TOKEN_EOF && b.preceded_by_nl)
-    {
-        printf_cyan("ℹ️ | Empty expression.\n");
-        // b is EOF
-        b = (PSA_Token){
-            .type = (Token_type)TOKEN_EOF,
-            .token_value = "$",
-            .expr_type = TYPE_INVALID,
-            .canBeNil = false,
-        };
-    }
+    *next_token_error += (a.type == (Token_type)TOKEN_EOF && !canTokenBeStartOfExpression(b.type)) ? 1 : 0;
+    *next_token_error = *next_token_error << 1;
 
-    printf("b: {'%s', %d}, top: {'%s', %d}\n", b.token_value, b.type, a.token_value, a.type);
     return b;
 }
 
@@ -582,7 +552,9 @@ psa_return_type parse_expression_base(bool is_param)
     */
 
     PSA_Token *a = general_stack_top(s);
-    PSA_Token b = readNextToken(s);
+
+    char next_token_error = 0;
+    PSA_Token b = readNextToken(s, &next_token_error);
 
     while (!(a->type == (Token_type)TOKEN_EXPRSN && s->size == 2 && b.type == (Token_type)TOKEN_EOF))
     {
@@ -591,6 +563,34 @@ psa_return_type parse_expression_base(bool is_param)
         {
             a = (PSA_Token *)(s->top->next->data);
         }
+
+        DEBUG_CODE(printf("Chyba: %d\n", next_token_error););
+
+        // // DETECT EMPTY EXPRESSION
+        // if (a->type == (Token_type)TOKEN_EOF && !canTokenBeStartOfExpression(b.type))
+        // {
+        //     // empty expression followed by EOL is valid
+        //     if (b.preceded_by_nl)
+        //     {
+        //         return (psa_return_type){
+        //             .end_token = TOKEN_EXPRSN,
+        //             .is_ok = true,
+        //             .canBeNil = false,
+        //             .type = TYPE_EMPTY,
+        //         };
+        //     }
+        //     else
+        //     { // empty expression followed by something else is invalid
+        //         printf_red("❌ | Error: invalid token! Token '%s' cannot be a part of an expression, add a newline as a separator. \n", b.token_value);
+
+        //         return (psa_return_type){
+        //             .end_token = TOKEN_EOF,
+        //             .is_ok = false,
+        //             .canBeNil = false,
+        //             .type = TYPE_INVALID,
+        //         };
+        //     }
+        // }
 
         DEBUG_CODE(printf("na stacku: ");
                    printStack(s->top);
@@ -605,11 +605,14 @@ psa_return_type parse_expression_base(bool is_param)
             printf_red("❌ | Error: invalid token! Unexpected token '%s'. \n", b.token_value);
 
             return (psa_return_type){
-                .return_type = TOKEN_EOF,
+                .end_token = TOKEN_EOF,
                 .is_ok = false,
+                .canBeNil = false,
+                .type = TYPE_INVALID,
             };
         }
 
+        // TODO: dodelat funkce
         if (a->type == (Token_type)TOKEN_IDENTIFICATOR && b.type == (Token_type)TOKEN_L_BRACKET)
         {
             printf_magenta("Je to funkce!\n");
@@ -619,7 +622,7 @@ psa_return_type parse_expression_base(bool is_param)
         {
         case '=':
             psa_stack_push(s, b);
-            b = readNextToken(s);
+            b = readNextToken(s, &next_token_error);
             break;
         case '<':
 
@@ -631,7 +634,7 @@ psa_return_type parse_expression_base(bool is_param)
                                       .token_value = "<"});
                 psa_stack_push(s, tmp);
                 psa_stack_push(s, b);
-                b = readNextToken(s);
+                b = readNextToken(s, &next_token_error);
             }
             else
             {
@@ -639,7 +642,7 @@ psa_return_type parse_expression_base(bool is_param)
                                       .type = (Token_type)TOKEN_SHIFT,
                                       .token_value = "<"});
                 psa_stack_push(s, b);
-                b = readNextToken(s);
+                b = readNextToken(s, &next_token_error);
             }
             break;
         case '>':
@@ -666,12 +669,6 @@ psa_return_type parse_expression_base(bool is_param)
                 handle[i - j - 1] = tmp;
             }
 
-            for (int k = 0; k < i; k++)
-            {
-                printf_cyan("%s:%d, ", handle[k].token_value, handle[k].expr_type);
-            }
-            printf("\n");
-
             PSA_Token rule = getRule(handle, i);
 
             if (rule.type != TOKEN_EOF)
@@ -683,8 +680,10 @@ psa_return_type parse_expression_base(bool is_param)
                 printf_red("❌ | Error: invalid expression! Unexpected token '%s' in expression. \n", b.token_value);
 
                 return (psa_return_type){
-                    .return_type = TOKEN_EOF,
+                    .end_token = TOKEN_EOF,
                     .is_ok = false,
+                    .canBeNil = false,
+                    .type = TYPE_INVALID,
                 };
             }
 
@@ -695,8 +694,10 @@ psa_return_type parse_expression_base(bool is_param)
             printf_red("❌ | Error: invalid combination of operands! '%s' and '%s' cannot be together, because it wasn't meant to be. \n", a->token_value, b.token_value);
 
             return (psa_return_type){
-                .return_type = TOKEN_EOF,
+                .end_token = TOKEN_EOF,
                 .is_ok = false,
+                .canBeNil = false,
+                .type = TYPE_INVALID,
             };
         }
 
@@ -709,8 +710,10 @@ psa_return_type parse_expression_base(bool is_param)
     printf_green("✅ | All good! \n");
 
     return (psa_return_type){
-        .return_type = TOKEN_EOF,
-        .is_ok = true,
+        .is_ok = a->expr_type != TYPE_INVALID,
+        .type = a->expr_type,
+        .end_token = a->type,
+        .canBeNil = a->canBeNil,
     };
 }
 
