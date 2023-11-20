@@ -1,0 +1,39 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "type": "shell",
+      "label": "build",
+      "command": "gcc",
+      "args": ["-g", "-fdiagnostics-color=always", "*.c", "-o", "ifjcompiler"],
+      "options": {
+        "cwd": "${workspaceFolder}",
+        "shell": {
+          "executable": "/bin/sh",
+          "args": ["-c"]
+        }
+      },
+      "problemMatcher": ["$gcc"],
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
+      "detail": "kompilátor: /usr/bin/gcc"
+    },
+
+    {
+      "label": "Clear Terminal",
+      "type": "shell",
+      "command": "clear",
+      "presentation": {
+        "reveal": "always",
+        "panel": "new"
+      }
+    },
+    {
+      "label": "Build and Clear",
+      "dependsOrder": "sequence",
+      "dependsOn": ["build", "Clear Terminal"]
+    }
+  ]
+}

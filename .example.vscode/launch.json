@@ -1,0 +1,15 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "lldb",
+      "request": "launch",
+      "name": "Launch",
+      "program": "${workspaceFolder}/ifjcompiler",
+      "stdio": "${workspaceFolder}/test_stdin.txt",
+      "cwd": "${workspaceFolder}",
+      "preLaunchTask": "Build and Clear",
+      "console": "integratedTerminal"
+    }
+  ]
+}
