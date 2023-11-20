@@ -289,7 +289,14 @@ int generate_token(Token *token, char *code)
                         return set_token(NEW_TOKEN, code, defined_tokens[i].token, token, code);
                     }
                 }
-                return set_token(NEW_TOKEN, code, TOKEN_IDENTIFICATOR, token, code);
+                c = (char) getchar();
+                if (c == '(') {
+                    ungetc(c, stdin);
+                    return set_token(NEW_TOKEN, code, TOKEN_FUNC_ID, token, code);
+                } else {
+                    ungetc(c, stdin);
+                    return set_token(NEW_TOKEN, code, TOKEN_IDENTIFICATOR, token, code);
+                }
             }
 
             /*

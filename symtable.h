@@ -21,6 +21,7 @@ typedef enum {
 typedef struct {
     DataType type;
     bool is_const;
+    bool is_initialized;
 } VariableData;
 
 typedef struct {

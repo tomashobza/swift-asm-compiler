@@ -6,6 +6,7 @@
 #include "scanner.h"
 #include "error.h"
 #include "stack.h"
+#include "semantic.h"
 
 #define RED   "\x1B[31m"
 #define GREEN "\x1B[32m"
@@ -30,7 +31,7 @@
 #endif
 
 void get_token(Token **token);
-bool cmp_type(Token **token, Token_type type);
+bool cmp_type(Token **token, Token_type type, Sem_type sem_type);
 
 bool START(Token **token);
 bool STMT_LIST(Token **token);
