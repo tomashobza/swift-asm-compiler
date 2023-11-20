@@ -12,21 +12,26 @@
 
 #include <stdint.h>
 #include <stdlib.h>
+#include <string.h>
+#include <stdio.h>
 #include <stdbool.h>
+#include "stack.h"
 
 typedef struct symtable_item
 {
     char *name;
-    char *type;   //
-    int size;     // size in bytes
-    char* params; // string of params
+    char *type;      //
+    int size;        // size in bytes
+    char *params;    // string of params
     int param_count; // number of params
-    bool is_init; //
+    bool is_init;    //
 
     struct symtable_item *next;
 } symtable_item_t;
 
 typedef symtable_item_t **symtable_t;
+
+DECLARE_STACK_FUNCTIONS(symtable_t);
 
 /**
  * @brief Calculates the hashed value of a string. Source: https://en.wikipedia.org/wiki/Fowler%E2%80%93Noll%E2%80%93Vo_hash_function
@@ -41,7 +46,7 @@ uint32_t hash(char *input);
  *
  * @return symtable_t* - pointer to the new symtable
  */
-symtable_t init_symtable();
+symtable_t symtable_init();
 
 /**
  * @brief Adds a new symbol to the hash table of symbols.

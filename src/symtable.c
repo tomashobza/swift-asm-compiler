@@ -1,6 +1,4 @@
 #include "symtable.h"
-#include <string.h>
-#include <stdio.h>
 
 const uint32_t FNV_PRIME = 16777619;
 const uint32_t FNV_OFFSET_BASIS = 2166136261;
@@ -24,7 +22,9 @@ uint32_t hash(char *input)
     return hash % SYMTABLE_MAX_ITEMS;
 }
 
-symtable_t init_symtable()
+DEFINE_STACK_FUNCTIONS(symtable_t)
+
+symtable_t symtable_init()
 {
     symtable_t st = malloc(sizeof(symtable_item_t *) * SYMTABLE_MAX_ITEMS);
 
