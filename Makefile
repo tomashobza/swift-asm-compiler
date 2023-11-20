@@ -26,8 +26,8 @@ test: $(SRCS) $(TESTS)
 	./bin/$(TEST_TARGET) <tests/test.in
 
 # clean, compile and run
-# run: clean all
-# 	./bin/$(TARGET) <tests/test.in
+run: clean all
+	./bin/$(TARGET)
 
 # Clean up
 clean:
