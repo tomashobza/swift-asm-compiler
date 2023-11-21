@@ -59,7 +59,7 @@ PSA_Token getHandleType(PSA_Token l_operand, Token_type operation, PSA_Token r_o
                 .canBeNil = false,
             };
         }
-
+        __attribute__((fallthrough));
     case TOKEN_MINUS:
     case TOKEN_MUL:
     case TOKEN_DIV:

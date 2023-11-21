@@ -36,7 +36,7 @@ typedef struct
     char *return_type;
     bool is_defined;
     ParamData *params;
-    size_t params_count;
+    int params_count;
     int capacity;
 } FunctionData;
 

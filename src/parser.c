@@ -314,6 +314,8 @@ bool FUNC_STMT(Token **token)
     // FUNC_STMT -> FUNC_IF
     case TOKEN_IF:
         return FUNC_IF(token);
+    default:
+        return false;
     }
 }
 
@@ -381,6 +383,8 @@ bool FUNC_ELSE_CLAUSE(Token **token)
     // FUNC_ELSE_CLAUSE -> else FUNC_AFTER_ELSE
     case TOKEN_ELSE:
         return cmp_type(token, TOKEN_ELSE, SEM_NONE) && FUNC_AFTER_ELSE(token);
+    default:
+        return false;
     }
 }
 
@@ -395,6 +399,8 @@ bool FUNC_AFTER_ELSE(Token **token)
     // FUNC_AFTER_ELSE -> FUNC_IF
     case TOKEN_IF:
         return FUNC_IF(token);
+    default:
+        return false;
     }
 }
 

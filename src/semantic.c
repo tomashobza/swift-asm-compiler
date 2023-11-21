@@ -108,7 +108,7 @@ void print_items()
     {
         printf(MAGENTA "PARAM: %s, id: %s, type: %s" RESET "\n", funcItem->data.func_data->params[i].name, funcItem->data.func_data->params[i].id, funcItem->data.func_data->params[i].type);
     }
-    printf(BLUE "VARIABLE: %s, type: %d, is const: %d" RESET "\n", varItem->id, varItem->data.var_data->type, varItem->data.var_data->is_const);
+    printf(BLUE "VARIABLE: %s, type: %s, is const: %d" RESET "\n", varItem->id, varItem->data.var_data->type, varItem->data.var_data->is_const);
 }
 
 int check_semantic(Token **token, Sem_rule sem_rule)
@@ -126,7 +126,7 @@ int check_semantic(Token **token, Sem_rule sem_rule)
         varItem->id = (*token)->token_value;
         break;
     case VAR_TYPE:
-        varItem->data.var_data->type = (*token)->type;
+        varItem->data.var_data->type = (*token)->token_value;
         // todo semantic checks
         // symtable_add(*varItem, *stack_top(myStack));
         reset_var();
@@ -136,6 +136,7 @@ int check_semantic(Token **token, Sem_rule sem_rule)
         break;
     case P_NAME:
         new_param.name = (*token)->token_value;
+        break;
     case P_ID:
         new_param.id = (*token)->token_value;
         break;

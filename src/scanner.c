@@ -28,7 +28,7 @@ int main_scanner(Token *tok)
     ret = generate_token(token, code);
     tok->type = (token->type);
     tok->token_value = (token->token_value);
-    free(code);
+    // free(code);
     free(token);
     token = NULL;
     code = NULL;
@@ -730,7 +730,7 @@ int generate_token(Token *token, char *code)
  */
 void check_length(int *code_len, int add, char *code)
 {
-    if (strlen(code) + add >= *code_len)
+    if (strlen(code) + add >= (long unsigned int)*code_len)
     {
         code = realloc(code, sizeof(char) * (*code_len *= 2));
         if (code == NULL)
@@ -746,6 +746,7 @@ void check_length(int *code_len, int add, char *code)
  */
 int set_token(int next_state, char *val, Token_type type, Token *token, char *code)
 {
+    code = code; // TODO smazte to
     char c = (char)getchar();
     int correct = 0;
     for (int i = 0; i < (int)CHAR_WTH_SPACE_LENGTH; i++)
