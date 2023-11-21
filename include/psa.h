@@ -271,4 +271,12 @@ void printStackRec(PSA_Token_node *top);
  */
 void printStack(PSA_Token_node *top);
 
+/**
+ * @brief Prints the token array.
+ *
+ * @param handle token array (handle)
+ * @param len length of the handle
+ */
+void printTokenArray(PSA_Token *handle, unsigned int len);
+
 #endif // PSA_H

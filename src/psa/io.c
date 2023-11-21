@@ -63,3 +63,13 @@ void printStack(PSA_Token_node *top)
     printStackRec(top);
     printf("\n");
 }
+
+void printTokenArray(PSA_Token *handle, unsigned int len)
+{
+    printf("handle: '");
+    for (unsigned int i = 0; i < len; i++)
+    {
+        printf("%s", handle[i].token_value);
+    }
+    printf("'\n");
+}
