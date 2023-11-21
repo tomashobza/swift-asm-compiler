@@ -482,7 +482,7 @@ int generate_token(Token *token, char *code)
                 else
                 {
                     check_length(&code_len, 0, code);
-                    code[strlen(code)] = c;
+                    strncat(code, &c, 1);
                     c = '\0';
                     c = (char)getchar();
                 }
@@ -519,7 +519,7 @@ int generate_token(Token *token, char *code)
                 break;
             case '\\':
                 check_length(&code_len, 0, code);
-                code[strlen(code)] = '\\';
+                strcat(code, "\\");
                 if (state == STRING_ESCAPE)
                 {
                     state = STRING;
@@ -531,7 +531,7 @@ int generate_token(Token *token, char *code)
                 break;
             case 'n':
                 check_length(&code_len, 0, code);
-                code[strlen(code)] = '\n';
+                strcat(code, "\n");
                 if (state == STRING_ESCAPE)
                 {
                     state = STRING;
@@ -543,7 +543,7 @@ int generate_token(Token *token, char *code)
                 break;
             case 't':
                 check_length(&code_len, 0, code);
-                code[strlen(code)] = '\t';
+                strcat(code, "\t");
                 if (state == STRING_ESCAPE)
                 {
                     state = STRING;
@@ -555,7 +555,7 @@ int generate_token(Token *token, char *code)
                 break;
             case 'r':
                 check_length(&code_len, 0, code);
-                code[strlen(code)] = '\r';
+                strcat(code, "\r");
                 if (state == STRING_ESCAPE)
                 {
                     state = STRING;
@@ -567,7 +567,7 @@ int generate_token(Token *token, char *code)
                 break;
             case '"':
                 check_length(&code_len, 0, code);
-                code[strlen(code)] = '\"';
+                strcat(code, "\"");
                 if (state == STRING_ESCAPE)
                 {
                     state = STRING;
@@ -579,9 +579,9 @@ int generate_token(Token *token, char *code)
                 break;
             default:
                 check_length(&code_len, 0, code);
-                code[strlen(code)] = '\\';
+                strcat(code, "\\");
                 check_length(&code_len, 0, code);
-                code[strlen(code)] = c;
+                strncat(code, &c, 1);
                 if (state == STRING_ESCAPE)
                 {
                     state = STRING;
