@@ -1,1 +1,2 @@
 var x : Int
+func foo( pname pid : Int) -> String { let y : Bool }

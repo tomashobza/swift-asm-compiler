@@ -1,6 +1,6 @@
 #include "semantic.h"
 
-// Stack *myStack;          // Stack for symtable
+symtable_stack *stack;
 symtable_item *varItem;  // Item to be added to symtable
 symtable_item *funcItem; // Item to be added to symtable
 symtable mySymtable;     // Symtable
@@ -8,7 +8,7 @@ ParamData new_param;     // ParamData to be added to FunctionData
 
 int semantic_init()
 {
-    // myStack = stack_init();
+    stack = symtable_stack_init();
     varItem = malloc(sizeof(symtable_item));
     funcItem = malloc(sizeof(symtable_item));
     VariableData *varData = malloc(sizeof(VariableData));
@@ -25,6 +25,7 @@ int semantic_init()
     // Inicializace symtable
     mySymtable = symtable_init();
     // stack_push(myStack, &mySymtable);
+    symtable_stack_push(stack, mySymtable);
 
     return 0; // tode errors
 }
@@ -91,7 +92,7 @@ void reset_func()
 
 void semantic_destroy()
 {
-    // symtable_print(*stack_top(myStack));
+    symtable_print(symtable_stack_top(stack));
     free(funcItem->data.func_data->params);
     free(funcItem->data.func_data);
     free(varItem->data.var_data);
@@ -128,7 +129,7 @@ int check_semantic(Token **token, Sem_rule sem_rule)
     case VAR_TYPE:
         varItem->data.var_data->type = (*token)->token_value;
         // todo semantic checks
-        // symtable_add(*varItem, *stack_top(myStack));
+        symtable_add(*varItem, symtable_stack_top(stack));
         reset_var();
         break;
     case FUNC_ID:
@@ -151,6 +152,7 @@ int check_semantic(Token **token, Sem_rule sem_rule)
     case FUNC_HEADER_DONE:
         funcItem->data.func_data->is_defined = true;
         // symtable_add(*funcItem, *stack_top(myStack));
+        symtable_add(*funcItem, symtable_stack_top(stack));
         break;
     default:
         break;
