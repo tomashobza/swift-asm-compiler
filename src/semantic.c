@@ -73,7 +73,7 @@ void reset_param()
 void reset_var()
 {
     varItem->id = NULL;
-    varItem->data.var_data->type = VARIABLE;
+    varItem->data.var_data->type = NULL;
     varItem->data.var_data->is_const = false;
     varItem->data.var_data->is_initialized = false;
 }
@@ -82,7 +82,6 @@ void reset_func()
 {
     funcItem->id = NULL;
     funcItem->data.func_data->return_type = "Void";
-    funcItem->data.func_data->is_defined = false;
     free(funcItem->data.func_data->params);
     funcItem->data.func_data->params = NULL;
     funcItem->data.func_data->params_count = 0;
@@ -103,7 +102,7 @@ void semantic_destroy()
 
 void print_items()
 {
-    printf(MAGENTA "FUNCTION: %s, return type: %s, is defined: %d" RESET "\n", funcItem->id, funcItem->data.func_data->return_type, funcItem->data.func_data->is_defined);
+    printf(MAGENTA "FUNCTION: %s, return type: %s" RESET "\n", funcItem->id, funcItem->data.func_data->return_type);
     for (int i = 0; i < funcItem->data.func_data->params_count; i++)
     {
         printf(MAGENTA "PARAM: %s, id: %s, type: %s" RESET "\n", funcItem->data.func_data->params[i].name, funcItem->data.func_data->params[i].id, funcItem->data.func_data->params[i].type);
@@ -149,7 +148,6 @@ int check_semantic(Token **token, Sem_rule sem_rule)
         funcItem->data.func_data->return_type = (*token)->token_value;
         break;
     case FUNC_HEADER_DONE:
-        funcItem->data.func_data->is_defined = true;
         // symtable_add(*funcItem, *stack_top(myStack));
         break;
     default:
