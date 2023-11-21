@@ -224,6 +224,11 @@ int check_semantic(Token **token, Sem_rule sem_rule)
         psa_return_type return_type4 = parse_expression(parser_stack);
         DEBUG_CODE(print_expression_type(return_type4.type););
         break;
+    case FUNC_CALL_PSA:
+        printf("FUNC_CALL_PSA\n");
+        psa_return_type return_type5 = parse_expression(parser_stack);
+        DEBUG_CODE(print_expression_type(return_type5.type););
+        break;
     default:
         break;
     }

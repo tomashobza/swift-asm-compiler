@@ -36,6 +36,7 @@ typedef enum
     COND_EXP,
     LOAD_IDENTIF,
     IDENTIF_EXP,
+    FUNC_CALL_PSA,
     PUSH_SCOPE,
     POP_SCOPE,
     SEM_NONE

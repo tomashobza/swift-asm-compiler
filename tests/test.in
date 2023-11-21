@@ -1,14 +1,1 @@
-var x : Int = 5
-func func foo( pname pid : Int) -> String { 
-    let y : Bool 
-    x = 1
-    return return 5+3
-    } }
-
-if 3==2 
-{ {
-    while 5==3 
-    {{
-        var x : String = 5
-    } }
-}
+foo(with : y)
