@@ -152,6 +152,7 @@ int check_semantic(Token **token, Sem_rule sem_rule)
         DEBUG_CODE(print_expression_type(return_type.type););
         break;
     case FUNC_ID:
+        reset_func();
         funcItem->id = (*token)->token_value;
         break;
     case P_NAME:
@@ -171,6 +172,27 @@ int check_semantic(Token **token, Sem_rule sem_rule)
     case FUNC_HEADER_DONE:
         funcItem->data.func_data->is_defined = true;
         symtable_add(*funcItem, symtable_stack_top(stack));
+        goto PUSH_SCOPE;
+        break;
+    case PUSH_SCOPE:
+    PUSH_SCOPE:
+        symtable symtable = symtable_init();
+        symtable_stack_push(stack, symtable);
+        break;
+    case POP_SCOPE:
+        symtable_stack_pop(stack);
+        break;
+    case R_EXP:
+        printf("R_EXP\n");
+        ungetc((*token)->token_value[0], stdin);
+        psa_return_type return_type2 = parse_expression();
+        DEBUG_CODE(print_expression_type(return_type2.type););
+        break;
+    case COND_EXP:
+        printf("COND_EXP\n");
+        ungetc((*token)->token_value[0], stdin);
+        psa_return_type return_type3 = parse_expression();
+        DEBUG_CODE(print_expression_type(return_type3.type););
         break;
     default:
         break;

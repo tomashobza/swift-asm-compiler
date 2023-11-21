@@ -32,6 +32,10 @@ typedef enum
     P_ID,
     P_TYPE,
     R_TYPE,
+    R_EXP,
+    COND_EXP,
+    PUSH_SCOPE,
+    POP_SCOPE,
     SEM_NONE
 } Sem_rule;
 
