@@ -280,7 +280,16 @@ void printTokenArray(PSA_Token *handle, unsigned int len);
  * @param id PSA_Token contaning the id of the function
  * @return PSA_Token derivation of the function call
  */
-PSA_Token parseFunctionCall(PSA_Token id, symtable_stack *st_stack);
+PSA_Token parseFunctionCall(PSA_Token_stack *main_s, PSA_Token id, symtable_stack *st_stack);
+
+/**
+ * @brief Checks if the parameter name matches the name of the parameter in the function definition (if there should be a name).
+ *
+ * @param main_s main expression token stack
+ * @return true
+ * @return false
+ */
+bool checkParamName(PSA_Token_stack *main_s, unsigned int param_index, symtable_item *found_func);
 
 #include "utils.h"
 
