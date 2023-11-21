@@ -34,7 +34,6 @@ typedef struct
 typedef struct
 {
     char *return_type;
-    bool is_defined;
     ParamData *params;
     int params_count;
     int capacity;
