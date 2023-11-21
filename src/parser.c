@@ -524,7 +524,7 @@ int parser_main()
 
     semantic_init();
 
-    generate_token(token, "\0");
+    get_token(&token);
     bool all_ok = START(&token);
     if (all_ok)
     {
