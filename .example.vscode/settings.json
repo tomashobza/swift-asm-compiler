@@ -1,0 +1,7 @@
+{
+  "files.associations": {
+    "general_stack.h": "c",
+    "scanner.h": "c",
+    "error.h": "c"
+  }
+}

@@ -1,3 +1,6 @@
+ifjcompiler.dSYM/Contents/Resources/Relocations/aarch64/ifjcompiler.yml
+ifjcompiler.dSYM/**/*
+ifjcompiler.dSYM
 stack_test
 test_stack.c
 ifjcompiler
@@ -5,4 +8,4 @@ ifjcompiler
 build
 input.txt
 token_types.txt
-
+bin
