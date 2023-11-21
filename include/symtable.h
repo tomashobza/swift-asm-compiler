@@ -17,9 +17,23 @@
 #include <stdbool.h>
 #include "stack.h"
 
+/**
+ * @brief Enum for the types of the expression.
+ */
+typedef enum
+{
+    TYPE_EMPTY = -2,   // empty expression
+    TYPE_INVALID = -1, // invalid expression
+    TYPE_INT = 0,      // int
+    TYPE_DOUBLE = 1,   // double
+    TYPE_STRING = 2,   // string
+    TYPE_BOOL = 3,     // bool
+    TYPE_NIL = 4,      // nil
+} Expression_type;
+
 typedef struct
 {
-    char *type;
+    Expression_type type;
     bool is_const;
     bool is_initialized;
 } VariableData;
@@ -28,12 +42,12 @@ typedef struct
 {
     char *name;
     char *id;
-    char *type;
+    Expression_type type;
 } ParamData;
 
 typedef struct
 {
-    char *return_type;
+    Expression_type return_type;
     bool is_defined;
     ParamData *params;
     int params_count;
