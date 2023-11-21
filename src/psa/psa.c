@@ -1,12 +1,8 @@
 #include "psa.h"
 DEFINE_STACK_FUNCTIONS(PSA_Token)
 
-psa_return_type parse_expression_base(bool is_param)
+psa_return_type parse_expression_base(bool is_param, symtable_stack *st_stack)
 {
-    if (is_param)
-    {
-        printf("is in a function\n");
-    }
 
     PSA_Token_stack *s = PSA_Token_stack_init();
     PSA_Token_stack_push(s, (PSA_Token){
@@ -33,6 +29,45 @@ psa_return_type parse_expression_base(bool is_param)
         }
 
         DEBUG_CODE(printf("Chyba: %d\n", next_token_error););
+
+        // if the next token is a function identificator, start parsing function call
+        if (b.type == TOKEN_FUNC_ID)
+        {
+            printf_magenta("Je to funkce!\n");
+            print_token_type(b.type);
+            parseFunctionCall(b, st_stack);
+        }
+        else
+        {
+            if (b.preceded_by_nl && next_token_error > 0)
+            {
+                next_token_error = 0;
+                b = (PSA_Token){
+                    .type = (Token_type)TOKEN_EOF,
+                    .token_value = "$",
+                    .expr_type = TYPE_INVALID,
+                    .canBeNil = false,
+                    .preceded_by_nl = true,
+                };
+            }
+        }
+
+        // if expression is a function parameter, the end of the expression is ) or ,
+        if (is_param)
+        {
+            printf("is in a function\n");
+            if (b.type == (Token_type)TOKEN_R_BRACKET || b.type == (Token_type)TOKEN_COMMA)
+            {
+                printf("end of function\n");
+                b = (PSA_Token){
+                    .type = (Token_type)TOKEN_EOF,
+                    .token_value = "$",
+                    .expr_type = TYPE_INVALID,
+                    .canBeNil = false,
+                    .preceded_by_nl = true,
+                };
+            }
+        }
 
         // // DETECT EMPTY EXPRESSION
         // if (a.type == (Token_type)TOKEN_EOF && !canTokenBeStartOfExpression(b.type))
@@ -78,12 +113,6 @@ psa_return_type parse_expression_base(bool is_param)
                 .canBeNil = false,
                 .type = TYPE_INVALID,
             };
-        }
-
-        // TODO: dodelat funkce
-        if (a.type == (Token_type)TOKEN_IDENTIFICATOR && b.type == (Token_type)TOKEN_L_BRACKET)
-        {
-            printf_magenta("Je to funkce!\n");
         }
 
         switch (P_TABLE[a_val][b_val])
@@ -186,12 +215,12 @@ psa_return_type parse_expression_base(bool is_param)
     };
 }
 
-psa_return_type parse_expression()
+psa_return_type parse_expression(symtable_stack *st_stack)
 {
-    return parse_expression_base(false);
+    return parse_expression_base(false, st_stack);
 }
 
-psa_return_type parse_expression_param()
+psa_return_type parse_expression_param(symtable_stack *st_stack)
 {
-    return parse_expression_base(true);
+    return parse_expression_base(true, st_stack);
 }

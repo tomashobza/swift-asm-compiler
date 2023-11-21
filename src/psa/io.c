@@ -13,7 +13,8 @@ PSA_Token readNextToken(PSA_Token_stack *s, char *next_token_error)
     }
 
     Token *tkn = malloc(sizeof(Token));
-    generate_token(tkn, "\0");
+    main_scanner(tkn);
+
     PSA_Token b = {
         .type = tkn->type,
         .token_value = tkn->token_value,
@@ -38,24 +39,6 @@ PSA_Token readNextToken(PSA_Token_stack *s, char *next_token_error)
     // detect empty expression
     *next_token_error += (a.type == (Token_type)TOKEN_EOF && !canTokenBeStartOfExpression(b.type)) ? 1 : 0;
     *next_token_error = *next_token_error << 1;
-
-    if (b.preceded_by_nl && *next_token_error > 0)
-    {
-        *next_token_error = 0;
-        b = (PSA_Token){
-            .type = (Token_type)TOKEN_EOF,
-            .token_value = "$",
-            .expr_type = TYPE_INVALID,
-            .canBeNil = false,
-            .preceded_by_nl = true,
-        };
-    }
-
-    // NEXT_TOKEN_ERROR CODES:
-    // next_token_error = 0b000 -> no error
-    // next_token_error = 0b001 -> missing operator
-    // next_token_error = 0b010 -> illegal token
-    // next_token_error = 0b100 -> empty expression
 
     printf_cyan("next_token_error: %d\n", *next_token_error);
 

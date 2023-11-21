@@ -169,6 +169,9 @@ void print_token_type(Token_type type)
     case TOKEN_CHR:
         printf_cyan("TOKEN_CHR");
         break;
+    case TOKEN_FUNC_ID:
+        printf_cyan("TOKEN_FUNC_ID");
+        break;
     case TOKEN_EXPRSN:
         printf_yellow("TOKEN_EXPRSN");
         break;

@@ -82,7 +82,6 @@ void reset_func()
 {
     funcItem->id = NULL;
     funcItem->data.func_data->return_type = TYPE_EMPTY;
-    funcItem->data.func_data->is_defined = false;
     free(funcItem->data.func_data->params);
     funcItem->data.func_data->params = NULL;
     funcItem->data.func_data->params_count = 0;
@@ -128,7 +127,7 @@ Expression_type get_expression_type(Token **token)
 
 void print_items()
 {
-    printf(MAGENTA "FUNCTION: %s, return type: %d, is defined: %d" RESET "\n", funcItem->id, funcItem->data.func_data->return_type, funcItem->data.func_data->is_defined);
+    printf(MAGENTA "FUNCTION: %s, return type: %d" RESET "\n", funcItem->id, funcItem->data.func_data->return_type);
     for (int i = 0; i < funcItem->data.func_data->params_count; i++)
     {
         printf(MAGENTA "PARAM: %s, id: %s, type: %d" RESET "\n", funcItem->data.func_data->params[i].name, funcItem->data.func_data->params[i].id, funcItem->data.func_data->params[i].type);
@@ -173,7 +172,7 @@ int check_semantic(Token **token, Sem_rule sem_rule)
     case VAR_EXP:
         printf("VAR_EXP\n");
         printf("TOKEN FOR PSA: %s\n", (*token)->token_value);
-        psa_return_type return_type = parse_expression();
+        psa_return_type return_type = parse_expression(parser_stack);
         DEBUG_CODE(print_expression_type(return_type.type););
         break;
     case FUNC_ID:
@@ -195,7 +194,6 @@ int check_semantic(Token **token, Sem_rule sem_rule)
         funcItem->data.func_data->return_type = get_expression_type(token);
         break;
     case FUNC_HEADER_DONE:
-        funcItem->data.func_data->is_defined = true;
         symtable_add(*funcItem, symtable_stack_top(parser_stack));
         goto PUSH_SCOPE;
         break;
@@ -209,12 +207,12 @@ int check_semantic(Token **token, Sem_rule sem_rule)
         break;
     case R_EXP:
         printf("R_EXP\n");
-        psa_return_type return_type2 = parse_expression();
+        psa_return_type return_type2 = parse_expression(parser_stack);
         DEBUG_CODE(print_expression_type(return_type2.type););
         break;
     case COND_EXP:
         printf("COND_EXP\n");
-        psa_return_type return_type3 = parse_expression();
+        psa_return_type return_type3 = parse_expression(parser_stack);
         DEBUG_CODE(print_expression_type(return_type3.type););
         break;
     case LOAD_IDENTIF:
@@ -223,7 +221,7 @@ int check_semantic(Token **token, Sem_rule sem_rule)
         break;
     case IDENTIF_EXP:
         printf("IDENTIF_EXP\n");
-        psa_return_type return_type4 = parse_expression();
+        psa_return_type return_type4 = parse_expression(parser_stack);
         DEBUG_CODE(print_expression_type(return_type4.type););
         break;
     default:
