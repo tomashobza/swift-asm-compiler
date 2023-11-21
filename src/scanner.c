@@ -21,12 +21,12 @@ Token_type state = NEW_TOKEN;                                                   
 char *char_without_space[] = {":", ".", "{", "}", "(", ")", ",", " ", "=", "!", "+", "-", "*", "/", "<", ">", "\n", "_"};
 
 int ret = 0;
-Token_stack *stack;
+Token_stack *scanner_stack;
 
 int main_scanner(Token *token)
 {
     ret = 0;
-    if (Token_stack_empty(stack))
+    if (Token_stack_empty(scanner_stack))
     {
         char *code = "\0";
         ret = generate_token(token, code);
@@ -34,7 +34,7 @@ int main_scanner(Token *token)
     }
     else
     {
-        *token = Token_stack_pop(stack);
+        *token = Token_stack_pop(scanner_stack);
     }
     return ret;
 }
@@ -776,10 +776,10 @@ int set_token(int next_state, char *val, Token_type type, Token *token)
 
 void scanner_init()
 {
-    stack = Token_stack_init();
+    scanner_stack = Token_stack_init();
 }
 
 void return_token(Token token)
 {
-    Token_stack_push(stack, token);
+    Token_stack_push(scanner_stack, token);
 }

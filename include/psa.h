@@ -15,20 +15,6 @@
 // STRUCTS, ENUMS & GLOBALS
 
 /**
- * @brief Enum for the types of the expression.
- */
-typedef enum
-{
-    TYPE_EMPTY = -2,   // empty expression
-    TYPE_INVALID = -1, // invalid expression
-    TYPE_INT = 0,      // int
-    TYPE_DOUBLE = 1,   // double
-    TYPE_STRING = 2,   // string
-    TYPE_BOOL = 3,     // bool
-    TYPE_NIL = 4,      // nil
-} Expression_type;
-
-/**
  * @brief Struct to hold the return type of the precedent bottom-up parser.
  */
 typedef struct
