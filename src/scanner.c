@@ -13,25 +13,28 @@
 #include <stdlib.h>
 #include <ctype.h>
 #include "scanner.h"
+#include "stack.h"
 
+DEFINE_STACK_FUNCTIONS(Token)
 #define CHAR_WTH_SPACE_LENGTH (sizeof(char_without_space) / sizeof(*char_without_space)) // length of array *char_without_space
 Token_type state = NEW_TOKEN;                                                            // initial state of scanner
 char *char_without_space[] = {":", ".", "{", "}", "(", ")", ",", " ", "=", "!", "+", "-", "*", "/", "<", ">", "\n", "_"};
 
-// TODO delete
+
 int ret = 0;
-int main_scanner(Token *tok)
+Token_stack *stack;
+
+
+int main_scanner(Token *token)
 {
-    Token *token;
-    token = malloc(sizeof(Token));
-    char *code = "\0";
-    ret = generate_token(token, code);
-    tok->type = (token->type);
-    tok->token_value = (token->token_value);
-    // free(code);
-    free(token);
-    token = NULL;
-    code = NULL;
+    ret = 0;
+    if(Token_stack_empty(stack)){
+        char *code = "\0";
+        ret = generate_token(token,code);
+        code = NULL;
+    }else{
+        *token = Token_stack_top(stack);
+    }
     return ret;
 }
 int generate_token(Token *token, char *code)
@@ -93,26 +96,26 @@ int generate_token(Token *token, char *code)
                 state = NEW_TOKEN;
                 break;
             case EOF:
-                return set_token(END_STATE, "", TOKEN_EOF, token, code);
+                return set_token(END_STATE, "", TOKEN_EOF, token);
             case ',':
-                return set_token(NEW_TOKEN, ",", TOKEN_COMMA, token, code);
+                return set_token(NEW_TOKEN, ",", TOKEN_COMMA, token);
             case ':':
-                return set_token(NEW_TOKEN, ":", TOKEN_DOUBLE_DOT, token, code);
+                return set_token(NEW_TOKEN, ":", TOKEN_DOUBLE_DOT, token);
             case '+':
-                return set_token(NEW_TOKEN, "+", TOKEN_PLUS, token, code);
+                return set_token(NEW_TOKEN, "+", TOKEN_PLUS, token);
             case '-':
                 c = getchar();
                 if (c == '>')
                 {
-                    return set_token(NEW_TOKEN, "->", TOKEN_ARROW, token, code);
+                    return set_token(NEW_TOKEN, "->", TOKEN_ARROW, token);
                 }
                 else
                 {
                     ungetc(c, stdin);
-                    return set_token(NEW_TOKEN, "-", TOKEN_MINUS, token, code);
+                    return set_token(NEW_TOKEN, "-", TOKEN_MINUS, token);
                 }
             case '*':
-                return set_token(NEW_TOKEN, "*", TOKEN_MUL, token, code);
+                return set_token(NEW_TOKEN, "*", TOKEN_MUL, token);
             case '/':
                 c = getchar();
                 /*
@@ -131,17 +134,17 @@ int generate_token(Token *token, char *code)
                 else
                 {
                     ungetc(c, stdin);
-                    return set_token(NEW_TOKEN, "/", TOKEN_DIV, token, code);
+                    return set_token(NEW_TOKEN, "/", TOKEN_DIV, token);
                 }
                 break;
             case ')':
-                return set_token(NEW_TOKEN, ")", TOKEN_R_BRACKET, token, code);
+                return set_token(NEW_TOKEN, ")", TOKEN_R_BRACKET, token);
             case '(':
-                return set_token(NEW_TOKEN, "(", TOKEN_L_BRACKET, token, code);
+                return set_token(NEW_TOKEN, "(", TOKEN_L_BRACKET, token);
             case '}':
-                return set_token(NEW_TOKEN, "}", TOKEN_R_CURLY, token, code);
+                return set_token(NEW_TOKEN, "}", TOKEN_R_CURLY, token);
             case '{':
-                return set_token(NEW_TOKEN, "{", TOKEN_L_CURLY, token, code);
+                return set_token(NEW_TOKEN, "{", TOKEN_L_CURLY, token);
             case '?':
                 c = (char)getchar();
                 /*
@@ -152,34 +155,34 @@ int generate_token(Token *token, char *code)
                  */
                 if (c == '?')
                 {
-                    return set_token(NEW_TOKEN, "??", TOKEN_BINARY_OPERATOR, token, code);
+                    return set_token(NEW_TOKEN, "??", TOKEN_BINARY_OPERATOR, token);
                 }
                 else
                 {
                     ungetc(c, stdin);
-                    return set_token(NEW_TOKEN, "?", TOKEN_TYPE_SUFFIX, token, code);
+                    return set_token(NEW_TOKEN, "?", TOKEN_TYPE_SUFFIX, token);
                 }
             case '<':
                 c = (char)getchar();
                 if (c == '=')
                 {
-                    return set_token(NEW_TOKEN, "<=", TOKEN_LESS_EQ, token, code);
+                    return set_token(NEW_TOKEN, "<=", TOKEN_LESS_EQ, token);
                 }
                 else
                 {
                     ungetc(c, stdin);
-                    return set_token(NEW_TOKEN, "<", TOKEN_LESS, token, code);
+                    return set_token(NEW_TOKEN, "<", TOKEN_LESS, token);
                 }
             case '>':
                 c = (char)getchar();
                 if (c == '=')
                 {
-                    return set_token(NEW_TOKEN, ">=", TOKEN_MORE_EQ, token, code);
+                    return set_token(NEW_TOKEN, ">=", TOKEN_MORE_EQ, token);
                 }
                 else
                 {
                     ungetc(c, stdin);
-                    return set_token(NEW_TOKEN, ">", TOKEN_MORE, token, code);
+                    return set_token(NEW_TOKEN, ">", TOKEN_MORE, token);
                 }
             case '=':
                 /*
@@ -189,12 +192,12 @@ int generate_token(Token *token, char *code)
                 c = (char)getchar();
                 if (c == '=')
                 {
-                    return set_token(NEW_TOKEN, "==", TOKEN_EQ, token, code);
+                    return set_token(NEW_TOKEN, "==", TOKEN_EQ, token);
                 }
                 else
                 {
                     ungetc(c, stdin);
-                    return set_token(NEW_TOKEN, "=", TOKEN_ASSIGN, token, code);
+                    return set_token(NEW_TOKEN, "=", TOKEN_ASSIGN, token);
                 }
             case '!':
                 /*
@@ -203,18 +206,18 @@ int generate_token(Token *token, char *code)
                 c = (char)getchar();
                 if (c == '=')
                 {
-                    return set_token(NEW_TOKEN, "!=", TOKEN_NEQ, token, code);
+                    return set_token(NEW_TOKEN, "!=", TOKEN_NEQ, token);
                 }
                 else
                 {
                     ungetc(c, stdin);
-                    return set_token(NEW_TOKEN, "!", TOKEN_NOT, token, code);
+                    return set_token(NEW_TOKEN, "!", TOKEN_NOT, token);
                 }
             case '&':
                 c = (char)getchar();
                 if (c == '&')
                 {
-                    return set_token(NEW_TOKEN, "&&", TOKEN_AND, token, code);
+                    return set_token(NEW_TOKEN, "&&", TOKEN_AND, token);
                 }
                 else
                 {
@@ -225,7 +228,7 @@ int generate_token(Token *token, char *code)
                 c = (char)getchar();
                 if (c == '|')
                 {
-                    return set_token(NEW_TOKEN, "||", TOKEN_OR, token, code);
+                    return set_token(NEW_TOKEN, "||", TOKEN_OR, token);
                 }
                 else
                 {
@@ -264,7 +267,7 @@ int generate_token(Token *token, char *code)
             }
             else if (c == ' ')
             {
-                return set_token(NEW_TOKEN, "_", TOKEN_UNDERSCORE, token, code);
+                return set_token(NEW_TOKEN, "_", TOKEN_UNDERSCORE, token);
             }
             else
             {
@@ -334,19 +337,19 @@ int generate_token(Token *token, char *code)
             {
                 if (strcmp(code, defined_tokens[i].code) == 0)
                 {
-                    return set_token(NEW_TOKEN, code, defined_tokens[i].token, token, code);
+                    return set_token(NEW_TOKEN, code, defined_tokens[i].token, token);
                 }
             }
             c = (char)getchar();
             if (c == '(')
             {
                 ungetc(c, stdin);
-                return set_token(NEW_TOKEN, code, TOKEN_FUNC_ID, token, code);
+                return set_token(NEW_TOKEN, code, TOKEN_FUNC_ID, token);
             }
             else
             {
                 ungetc(c, stdin);
-                return set_token(NEW_TOKEN, code, TOKEN_IDENTIFICATOR, token, code);
+                return set_token(NEW_TOKEN, code, TOKEN_IDENTIFICATOR, token);
             }
             // return set_token(NEW_TOKEN, code, TOKEN_IDENTIFICATOR, token, code);
         }
@@ -382,11 +385,11 @@ int generate_token(Token *token, char *code)
             {
                 if (state == INTEGER)
                 {
-                    return set_token(EXP_START, code, TOKEN_INT, token, code);
+                    return set_token(EXP_START, code, TOKEN_INT, token);
                 }
                 else
                 {
-                    return set_token(EXP_START, code, TOKEN_DOUBLE, token, code);
+                    return set_token(EXP_START, code, TOKEN_DOUBLE, token);
                 }
             }
             else if (c == '.' && state == INTEGER)
@@ -400,11 +403,11 @@ int generate_token(Token *token, char *code)
                 ungetc(c, stdin);
                 if (state == INTEGER)
                 {
-                    return set_token(NEW_TOKEN, code, TOKEN_INT, token, code);
+                    return set_token(NEW_TOKEN, code, TOKEN_INT, token);
                 }
                 else
                 {
-                    return set_token(NEW_TOKEN, code, TOKEN_DOUBLE, token, code);
+                    return set_token(NEW_TOKEN, code, TOKEN_DOUBLE, token);
                 }
             }
         }
@@ -441,7 +444,7 @@ int generate_token(Token *token, char *code)
                 *code = '0';
             }
             ungetc(c, stdin);
-            return set_token(NEW_TOKEN, code, TOKEN_EXP, token, code);
+            return set_token(NEW_TOKEN, code, TOKEN_EXP, token);
         }
             /*
              * either " or """  has been read
@@ -479,7 +482,7 @@ int generate_token(Token *token, char *code)
             }
             if (state == STRING)
             {
-                return set_token(NEW_TOKEN, code, TOKEN_STRING, token, code);
+                return set_token(NEW_TOKEN, code, TOKEN_STRING, token);
             }
             else if (state == STRING_BLOCK)
             {
@@ -678,7 +681,7 @@ int generate_token(Token *token, char *code)
             else
             {
                 ungetc(c, stdin);
-                return set_token(NEW_TOKEN, "", TOKEN_STRING, token, code);
+                return set_token(NEW_TOKEN, "", TOKEN_STRING, token);
             }
             break;
         }
@@ -711,7 +714,7 @@ int generate_token(Token *token, char *code)
                     {
                         memmove(code, code + start, len - start + 1);
                     }
-                    return set_token(NEW_TOKEN, code, TOKEN_STRING, token, code);
+                    return set_token(NEW_TOKEN, code, TOKEN_STRING, token);
                 }
             }
             else
@@ -744,9 +747,8 @@ void check_length(int *code_len, int add, char *code)
  * set_token is called when token is generated successfully
  * Checks whether valid characters is next from *char_without_space
  */
-int set_token(int next_state, char *val, Token_type type, Token *token, char *code)
+int set_token(int next_state, char *val, Token_type type, Token *token)
 {
-    code = code; // TODO smazte to
     char c = (char)getchar();
     int correct = 0;
     for (int i = 0; i < (int)CHAR_WTH_SPACE_LENGTH; i++)
@@ -762,10 +764,19 @@ int set_token(int next_state, char *val, Token_type type, Token *token, char *co
         state = next_state;
         token->type = type;
         token->token_value = val;
+        printf("type:%d, value:%s\n",token->type,token->token_value);
         return 0;
     }
     else
     {
         return LEXICAL_ERR;
     }
+}
+
+void scanner_init(){
+    stack = Token_stack_init();
+}
+
+void return_token(Token *token){
+    Token_stack_push(stack,*token);
 }
