@@ -46,7 +46,7 @@ typedef struct
 {
     Token_type type;
     char *token_value;
-    bool canBeNil;
+    bool canBeNil; // TODO: get rid of this
     Expression_type expr_type;
     bool preceded_by_nl;
 } PSA_Token;
