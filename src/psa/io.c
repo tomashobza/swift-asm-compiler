@@ -13,7 +13,8 @@ PSA_Token readNextToken(PSA_Token_stack *s, char *next_token_error)
     }
 
     Token *tkn = malloc(sizeof(Token));
-    generate_token(tkn, "\0");
+    main_scanner(tkn);
+
     PSA_Token b = {
         .type = tkn->type,
         .token_value = tkn->token_value,
