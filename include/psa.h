@@ -10,6 +10,7 @@
 #include "colorful_printf.h"
 #include "scanner.h"
 #include "stack.h"
+#include "symtable.h"
 
 // STRUCTS, ENUMS & GLOBALS
 
@@ -215,7 +216,7 @@ PSA_Token getHandleType(PSA_Token l_operand, Token_type operation, PSA_Token r_o
  *
  * @return psa_return_type
  */
-psa_return_type parse_expression();
+psa_return_type parse_expression(symtable_stack *st_stack);
 
 /**
  * @brief Parses the expression using the precedent bottom-up parser. Reads tokens from the scanner.
@@ -223,19 +224,25 @@ psa_return_type parse_expression();
  * @param is_param Is the expression a function parameter? (, will be the end of the expression)
  * @return psa_return_type
  */
-psa_return_type parse_expression_base(bool is_param);
+psa_return_type parse_expression_base(bool is_param, symtable_stack *st_stack);
 
 /**
  * @brief Parses the expression that is a function parameter using the precedent bottom-up parser. Reads tokens from the scanner.
  *
  * @return psa_return_type
  */
-psa_return_type parse_expression_param();
+psa_return_type parse_expression_param(symtable_stack *st_stack);
 
 // INPUT/OUTPUT FUNCTIONS
 
 /**
  * @brief Reads the next token from the scanner and returns it. If the token is invalid, returns TOKEN_EOF. It also checks for errors based on the token on the top of the stack and the token that is being read.
+ *
+ *
+    // next_token_error = 0b000 -> no error \
+    // next_token_error = 0b001 -> missing operator
+    // next_token_error = 0b010 -> illegal token
+    // next_token_error = 0b100 -> empty expression
  *
  * @param s stack of tokens
  * @param next_token_error error code
@@ -264,5 +271,17 @@ void printStack(PSA_Token_node *top);
  * @param len length of the handle
  */
 void printTokenArray(PSA_Token *handle, unsigned int len);
+
+// FUNCTION CALLING HANDLERS
+
+/**
+ * @brief Parses the calling of a function both syntactically and semantically.
+ *
+ * @param id PSA_Token contaning the id of the function
+ * @return PSA_Token derivation of the function call
+ */
+PSA_Token parseFunctionCall(PSA_Token id, symtable_stack *st_stack);
+
+#include "utils.h"
 
 #endif // PSA_H
