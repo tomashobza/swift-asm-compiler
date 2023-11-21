@@ -216,3 +216,23 @@ void print_expression_type(Expression_type type)
     }
     printf("\n");
 }
+
+Token convertPSATokenToToken(PSA_Token psa_tkn)
+{
+    return (Token){
+        .type = psa_tkn.type,
+        .token_value = psa_tkn.token_value,
+        .preceded_by_nl = psa_tkn.preceded_by_nl,
+    };
+}
+
+PSA_Token convertTokenToPSAToken(Token tkn)
+{
+    return (PSA_Token){
+        .type = tkn.type,
+        .token_value = tkn.token_value,
+        .preceded_by_nl = tkn.preceded_by_nl,
+        .expr_type = getTypeFromToken(tkn.type),
+        .canBeNil = false,
+    };
+}
