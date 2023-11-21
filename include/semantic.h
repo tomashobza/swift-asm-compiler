@@ -4,6 +4,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "scanner.h"
+#include "psa.h"
+#include "utils.h"
 #include "error.h"
 #include "stack.h"
 #include "symtable.h"
@@ -22,6 +24,8 @@ typedef enum
     VAR,
     VAR_ID,
     VAR_TYPE,
+    VAR_ASSIGN,
+    VAR_EXP,
     FUNC_ID,
     FUNC_HEADER_DONE,
     P_NAME,

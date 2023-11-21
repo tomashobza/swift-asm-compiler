@@ -48,7 +48,7 @@ bool WHILE_STMT(Token **token);
 bool LOAD_ID(Token **token);
 bool ALL_AFTER_ID(Token **token);
 bool FUNC_CALL(Token **token);
-bool EXP(Token **token);
+bool EXP(Token **token, Sem_rule sem_rule);
 
 int parser_main();
 

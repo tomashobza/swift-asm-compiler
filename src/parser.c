@@ -146,7 +146,7 @@ bool TYPE_AND_ASIGN(Token **token)
         return cmp_type(token, TOKEN_DOUBLE_DOT, SEM_NONE) && D_TYPE(token, VAR_TYPE) && R_FLEX(token);
     // TYPE_AND_ASIGN -> = EXP
     case TOKEN_ASSIGN:
-        return cmp_type(token, TOKEN_ASSIGN, SEM_NONE) && EXP(token);
+        return cmp_type(token, TOKEN_ASSIGN, VAR_ASSIGN) && EXP(token, VAR_EXP);
     default:
         return false;
     }
@@ -159,7 +159,7 @@ bool R_FLEX(Token **token)
     {
     // R_FLEX -> = EXP
     case TOKEN_ASSIGN:
-        return cmp_type(token, TOKEN_ASSIGN, SEM_NONE) && EXP(token);
+        return cmp_type(token, TOKEN_ASSIGN, SEM_NONE) && EXP(token, VAR_EXP);
     // R_FLEX -> eps
     case TOKEN_EOF:
     case TOKEN_IDENTIFICATOR:
@@ -326,7 +326,7 @@ bool RET(Token **token)
     {
     // RET -> return EXP
     case TOKEN_RETURN:
-        return cmp_type(token, TOKEN_RETURN, SEM_NONE) && EXP(token);
+        return cmp_type(token, TOKEN_RETURN, SEM_NONE) && EXP(token, SEM_NONE);
     default:
         return false;
     }
@@ -339,7 +339,7 @@ bool FUNC_WHILE(Token **token)
     {
     // FUNC_WHILE -> while EXP { FUNC_STMT_LIST }
     case TOKEN_WHILE:
-        return cmp_type(token, TOKEN_WHILE, SEM_NONE) && EXP(token) && cmp_type(token, TOKEN_L_CURLY, SEM_NONE) &&
+        return cmp_type(token, TOKEN_WHILE, SEM_NONE) && EXP(token, SEM_NONE) && cmp_type(token, TOKEN_L_CURLY, SEM_NONE) &&
                FUNC_STMT_LIST(token) && cmp_type(token, TOKEN_R_CURLY, SEM_NONE);
     default:
         return false;
@@ -353,7 +353,7 @@ bool FUNC_IF(Token **token)
     {
     // 	FUNC_IF -> if EXP { FUNC_STMT_LIST } FUNC_ELSE_CLAUSE
     case TOKEN_IF:
-        return cmp_type(token, TOKEN_IF, SEM_NONE) && EXP(token) && cmp_type(token, TOKEN_L_CURLY, SEM_NONE) &&
+        return cmp_type(token, TOKEN_IF, SEM_NONE) && EXP(token, SEM_NONE) && cmp_type(token, TOKEN_L_CURLY, SEM_NONE) &&
                FUNC_STMT_LIST(token) && cmp_type(token, TOKEN_R_CURLY, SEM_NONE) && FUNC_ELSE_CLAUSE(token);
     default:
         return false;
@@ -411,7 +411,7 @@ bool IF_STMT(Token **token)
     {
     // IF_STMT -> if EXP { STMT_LIST } ELSE_CLAUSE
     case TOKEN_IF:
-        return cmp_type(token, TOKEN_IF, SEM_NONE) && EXP(token) && cmp_type(token, TOKEN_L_CURLY, SEM_NONE) &&
+        return cmp_type(token, TOKEN_IF, SEM_NONE) && EXP(token, SEM_NONE) && cmp_type(token, TOKEN_L_CURLY, SEM_NONE) &&
                STMT_LIST(token) && cmp_type(token, TOKEN_R_CURLY, SEM_NONE) && ELSE_CLAUSE(token);
     default:
         return false;
@@ -469,7 +469,7 @@ bool WHILE_STMT(Token **token)
     {
     // WHILE_STMT -> while EXP { STMT_LIST }
     case TOKEN_WHILE:
-        return cmp_type(token, TOKEN_WHILE, SEM_NONE) && EXP(token) && cmp_type(token, TOKEN_L_CURLY, SEM_NONE) &&
+        return cmp_type(token, TOKEN_WHILE, SEM_NONE) && EXP(token, SEM_NONE) && cmp_type(token, TOKEN_L_CURLY, SEM_NONE) &&
                STMT_LIST(token) && cmp_type(token, TOKEN_R_CURLY, SEM_NONE);
     default:
         return false;
@@ -496,7 +496,7 @@ bool ALL_AFTER_ID(Token **token)
     {
     // ALL_AFTER_ID -> = EXP
     case TOKEN_ASSIGN:
-        return cmp_type(token, TOKEN_ASSIGN, SEM_NONE) && EXP(token);
+        return cmp_type(token, TOKEN_ASSIGN, SEM_NONE) && EXP(token, SEM_NONE);
     // ALL_AFTER_ID -> FUNC_CALL
     case TOKEN_L_BRACKET:
         return FUNC_CALL(token);
@@ -512,10 +512,11 @@ bool FUNC_CALL(Token **token)
     return true;
 }
 
-bool EXP(Token **token)
+bool EXP(Token **token, Sem_rule sem_rule)
 {
     DEBUG_CODE(printf("EXP    token: %d   value: %s\n", (*token)->type, (*token)->token_value););
-    token = token;
+    check_semantic(token, sem_rule);
+    generate_token(*token, "\0");
     return true;
 }
 

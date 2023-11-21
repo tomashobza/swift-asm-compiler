@@ -24,7 +24,6 @@ int semantic_init()
 
     // Inicializace symtable
     mySymtable = symtable_init();
-    // stack_push(myStack, &mySymtable);
     symtable_stack_push(stack, mySymtable);
 
     return 0; // tode errors
@@ -74,7 +73,7 @@ void reset_param()
 void reset_var()
 {
     varItem->id = NULL;
-    varItem->data.var_data->type = VARIABLE;
+    varItem->data.var_data->type = NULL;
     varItem->data.var_data->is_const = false;
     varItem->data.var_data->is_initialized = false;
 }
@@ -118,9 +117,11 @@ int check_semantic(Token **token, Sem_rule sem_rule)
     switch (sem_rule)
     {
     case LET:
+        reset_var();
         varItem->data.var_data->is_const = true;
         break;
     case VAR:
+        reset_var();
         varItem->data.var_data->is_const = false;
         break;
     case VAR_ID:
@@ -130,7 +131,25 @@ int check_semantic(Token **token, Sem_rule sem_rule)
         varItem->data.var_data->type = (*token)->token_value;
         // todo semantic checks
         symtable_add(*varItem, symtable_stack_top(stack));
-        reset_var();
+        break;
+    case VAR_ASSIGN:
+        // check if variable is in symtable
+        symtable_item *item = symtable_find_in_stack(varItem->id, stack);
+        if (item == NULL)
+        {
+            varItem->data.var_data->is_initialized = true;
+            symtable_add(*varItem, symtable_stack_top(stack));
+        }
+        else
+        { // it is in symtable, change its value
+            item->data.var_data->is_initialized = true;
+        }
+        break;
+    case VAR_EXP:
+        printf("VAR_EXP\n");
+        ungetc((*token)->token_value[0], stdin);
+        psa_return_type return_type = parse_expression();
+        DEBUG_CODE(print_expression_type(return_type.type););
         break;
     case FUNC_ID:
         funcItem->id = (*token)->token_value;
@@ -151,7 +170,6 @@ int check_semantic(Token **token, Sem_rule sem_rule)
         break;
     case FUNC_HEADER_DONE:
         funcItem->data.func_data->is_defined = true;
-        // symtable_add(*funcItem, *stack_top(myStack));
         symtable_add(*funcItem, symtable_stack_top(stack));
         break;
     default:

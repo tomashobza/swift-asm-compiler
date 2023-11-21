@@ -1,2 +1,2 @@
-var x : Int
+var x : Int = 5
 func foo( pname pid : Int) -> String { let y : Bool }
