@@ -23,7 +23,7 @@ int semantic_init()
     reset_param();
 
     // Inicializace symtable
-    mySymtable = init_symtable();
+    mySymtable = symtable_init();
     // stack_push(myStack, &mySymtable);
 
     return 0; // tode errors
