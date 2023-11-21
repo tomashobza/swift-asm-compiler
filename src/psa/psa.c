@@ -3,6 +3,11 @@ DEFINE_STACK_FUNCTIONS(PSA_Token)
 
 psa_return_type parse_expression_base(bool is_param)
 {
+    if (is_param)
+    {
+        printf("is in a function\n");
+    }
+
     PSA_Token_stack *s = PSA_Token_stack_init();
     PSA_Token_stack_push(s, (PSA_Token){
                                 .type = (Token_type)TOKEN_EOF,
@@ -140,6 +145,7 @@ psa_return_type parse_expression_base(bool is_param)
             }
             else
             {
+                printTokenArray(handle, i);
                 printf_red("❌ | Error: invalid expression! Unexpected token '%s' in expression. \n", b.token_value);
 
                 return (psa_return_type){

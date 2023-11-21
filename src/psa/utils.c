@@ -3,7 +3,7 @@
 uint32_t handleToUInt32(PSA_Token *handle, unsigned int len)
 {
     uint32_t result = 0;
-    for (int i = 0; i < len; i++)
+    for (unsigned int i = 0; i < len; i++)
     {
         result = result << 8 | (char)(handle[i].type);
     }
