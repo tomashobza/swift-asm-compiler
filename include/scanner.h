@@ -100,9 +100,10 @@ typedef enum
     TOKEN_SUBSTRING,       // Builtin function substring 52
     TOKEN_ORD,             // Builtin function ord 53
     TOKEN_CHR,             // Builtin function chr 54
-    TOKEN_EXPRSN,          // E 58
-    TOKEN_SHIFT,           // < 59
-    TOKEN_UNSHIFT,         // > 60
+    TOKEN_FUNC_ID,         // func_id 55
+    TOKEN_EXPRSN,          // E 56
+    TOKEN_SHIFT,           // < 57
+    TOKEN_UNSHIFT,         // > 58
 } Token_type;
 /*
  * Structure Token - used to store token type and token value read from stdin

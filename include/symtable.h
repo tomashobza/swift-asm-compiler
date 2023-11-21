@@ -17,15 +17,42 @@
 #include <stdbool.h>
 #include "stack.h"
 
-typedef struct symtable_item
+typedef struct
+{
+    char *type;
+    bool is_const;
+    bool is_initialized;
+} VariableData;
+
+typedef struct
 {
     char *name;
-    char *type;      //
-    int size;        // size in bytes
-    char *params;    // string of params
-    int param_count; // number of params
-    bool is_init;    //
+    char *id;
+    char *type;
+} ParamData;
 
+typedef struct
+{
+    char *return_type;
+    bool is_defined;
+    ParamData *params;
+    size_t params_count;
+    int capacity;
+} FunctionData;
+
+typedef struct symtable_item
+{
+    char *id;
+    enum
+    {
+        VARIABLE,
+        FUNCTION
+    } type; // typ symbolu
+    union
+    {
+        VariableData *var_data;
+        FunctionData *func_data;
+    } data;
     struct symtable_item *next;
 } symtable_item;
 

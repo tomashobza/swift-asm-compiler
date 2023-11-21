@@ -22,7 +22,7 @@ uint32_t hash(char *input)
     return hash % SYMTABLE_MAX_ITEMS;
 }
 
-DEFINE_STACK_FUNCTIONS(symtable)
+DEFINE_STACK_FUNCTIONS(symtable);
 
 void symtable_stack_free_all(symtable_stack *stack)
 {
@@ -90,7 +90,7 @@ symtable_item *symtable_find(char *name, symtable table)
     symtable_item *item = table[item_hash];
     while (item != NULL)
     {
-        if (strcmp(item->name, name) == 0)
+        if (strcmp(item->id, name) == 0)
         {
             return item;
         }

@@ -1,16 +1,16 @@
 #include "semantic.h"
 
-Stack *myStack;            // Stack for symtable
-symtable_item_t *varItem;  // Item to be added to symtable
-symtable_item_t *funcItem; // Item to be added to symtable
-symtable_t mySymtable;     // Symtable
-ParamData new_param;       // ParamData to be added to FunctionData
+// Stack *myStack;          // Stack for symtable
+symtable_item *varItem;  // Item to be added to symtable
+symtable_item *funcItem; // Item to be added to symtable
+symtable mySymtable;     // Symtable
+ParamData new_param;     // ParamData to be added to FunctionData
 
 int semantic_init()
 {
-    myStack = stack_init();
-    varItem = malloc(sizeof(symtable_item_t));
-    funcItem = malloc(sizeof(symtable_item_t));
+    // myStack = stack_init();
+    varItem = malloc(sizeof(symtable_item));
+    funcItem = malloc(sizeof(symtable_item));
     VariableData *varData = malloc(sizeof(VariableData));
     FunctionData *funcData = malloc(sizeof(FunctionData));
     ParamData *paramData = NULL;
@@ -24,7 +24,7 @@ int semantic_init()
 
     // Inicializace symtable
     mySymtable = init_symtable();
-    stack_push(myStack, &mySymtable);
+    // stack_push(myStack, &mySymtable);
 
     return 0; // tode errors
 }
@@ -91,14 +91,14 @@ void reset_func()
 
 void semantic_destroy()
 {
-    symtable_print(*stack_top(myStack));
+    // symtable_print(*stack_top(myStack));
     free(funcItem->data.func_data->params);
     free(funcItem->data.func_data);
     free(varItem->data.var_data);
     free(varItem);
     free(funcItem);
     symtable_free(mySymtable);
-    stack_free(myStack);
+    // stack_free(myStack);
 }
 
 void print_items()
@@ -128,7 +128,7 @@ int check_semantic(Token **token, Sem_rule sem_rule)
     case VAR_TYPE:
         varItem->data.var_data->type = (*token)->type;
         // todo semantic checks
-        symtable_add(*varItem, *stack_top(myStack));
+        // symtable_add(*varItem, *stack_top(myStack));
         reset_var();
         break;
     case FUNC_ID:
@@ -149,7 +149,10 @@ int check_semantic(Token **token, Sem_rule sem_rule)
         break;
     case FUNC_HEADER_DONE:
         funcItem->data.func_data->is_defined = true;
-        symtable_add(*funcItem, *stack_top(myStack));
+        // symtable_add(*funcItem, *stack_top(myStack));
+        break;
+    default:
+        break;
     }
 
     print_items();
