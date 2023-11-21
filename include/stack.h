@@ -86,6 +86,15 @@
             free(temp);                                                     \
         }                                                                   \
         free(stack);                                                        \
+    }                                                                       \
+                                                                            \
+    bool type##_stack_empty(type##_stack *stack)                            \
+    {                                                                       \
+        if (stack->top != NULL)                                             \
+        {                                                                   \
+            return false;                                                   \
+        }                                                                   \
+        return true;                                                        \
     }
 
 DECLARE_STACK_FUNCTIONS(int)

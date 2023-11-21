@@ -12,6 +12,7 @@
 
 #include "error.h"
 #include <stdbool.h>
+#include "stack.h"
 
 /*
  * Declaration of scanners states
@@ -37,11 +38,6 @@
 #define IDENTIFICATOR 51
 #define UNDERSCORE 52
 #define END_STATE 60
-/*
- * Declaration of global variables
- * END_TYPE - last index of type keyword from *keyword[]
- */
-#define END_TYPE 4
 
 typedef enum
 {
@@ -124,7 +120,10 @@ typedef struct
     int token;
 } Token_map;
 
-/*
+// STACK FUNCTIONS
+DECLARE_STACK_FUNCTIONS(Token);
+
+/**
  * Declaration of token map of builtin functions and keywords
  */
 extern Token_map defined_tokens[]; // Declaration of the variable
@@ -139,7 +138,7 @@ int generate_token(Token *token, char *code);
 
 /**
  * @def function check_lenght is called always when character needs to be added to dynamically allocated
- * char *code which contains all read characters in the same token, if needed the allocated memory is reallocated to twice its size
+ * char *code which contains all read characters in the same token, if needed the allocated memory is regit resallocated to twice its size
  * @param code_len current count of characters in code
  * @param add count of charactes that need to be added to string code
  * @param code pointer to char * that is being reallocated
@@ -148,19 +147,30 @@ void check_length(int *code_len, int add, char *code);
 
 /**
  * @def function main_scanner is called from parser.c after 1 token has already been parsed
- * @param tok address of allocated memory for token values to which read values will be inserted
+ * @param token address of allocated memory for token values to which read values will be inserted
  * @return returns potential error that could occur during lexical analysis
  */
-int main_scanner(Token *tok);
+int main_scanner(Token *token);
 
 /**
  * @def function set_token is called after proper token value and type has been read
  * @param next_state state in which will scanner be after reading current token
+ * @param val character sequence that contains the value of current token
  * @param type one of Token_type enums that will determine the type of the token
  * @param token address to which we are inserting the values type and code
- * @param code character sequence that contains the value of current token
  * @return returns potential error that could occur during lexical analysis
  */
-int set_token(int next_state, char *val, Token_type type, Token *token, char *code);
+int set_token(int next_state, char *val, Token_type type, Token *token);
+
+/**
+ * @def function initializes scanner stack
+ */
+void scanner_init();
+
+/**
+ * @def function pushes token into scanner stack
+ * @param token token which is to be pushed into the stack
+ */
+ void return_token(Token *token);
 
 #endif // IFJ2023_SCANNER_H
