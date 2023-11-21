@@ -40,7 +40,7 @@ PSA_Token readNextToken(PSA_Token_stack *s, char *next_token_error)
     *next_token_error += (a.type == (Token_type)TOKEN_EOF && !canTokenBeStartOfExpression(b.type)) ? 1 : 0;
     *next_token_error = *next_token_error << 1;
 
-    printf_cyan("next_token_error: %d\n", *next_token_error);
+    printf_cyan("'%s' next_token_error: %d\n", b.token_value, *next_token_error);
 
     return b;
 }
