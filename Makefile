@@ -1,7 +1,9 @@
+DEBUG?=1
+
 # Compiler and flags
 CC = gcc
 CFLAGS = -Iinclude -Werror -Wall -Wextra -std=c99 -fdiagnostics-color=always
-TESTFLAGS = -g -D DEBUG=1
+TESTFLAGS = -g -D DEBUG=$(DEBUG)
 
 # Source files (excluding main.c for test build)
 SRCS = $(filter-out src/main.c, $(wildcard src/*.c)) $(filter-out src/main.c, $(wildcard src/**/*.c))
