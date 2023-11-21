@@ -34,7 +34,7 @@ int main_scanner(Token *token)
     }
     else
     {
-        *token = Token_stack_top(scanner_stack);
+        *token = Token_stack_pop(scanner_stack);
     }
     return ret;
 }
