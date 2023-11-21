@@ -3,6 +3,7 @@ DEFINE_STACK_FUNCTIONS(PSA_Token)
 
 psa_return_type parse_expression_base(bool is_param, symtable_stack *st_stack)
 {
+    int num_of_brackets = 0; // number of brackets in the expression
 
     PSA_Token_stack *s = PSA_Token_stack_init();
     PSA_Token_stack_push(s, (PSA_Token){
@@ -30,12 +31,35 @@ psa_return_type parse_expression_base(bool is_param, symtable_stack *st_stack)
 
         DEBUG_CODE(printf("Chyba: %d\n", next_token_error););
 
+        // update the bracket counter
+        switch (b.type)
+        {
+        case TOKEN_L_BRACKET:
+            num_of_brackets++;
+            break;
+        case TOKEN_R_BRACKET:
+            num_of_brackets--;
+            break;
+        default:
+            break;
+        }
+        if (num_of_brackets < 0)
+        {
+            printf_red("PICO VOLE SPATNE ZAVORKY");
+        }
+
         // if the next token is a function identificator, start parsing function call
         if (b.type == TOKEN_FUNC_ID)
         {
-            printf_magenta("Je to funkce!\n");
+            printf_magenta("--------Je to funkce! --------\n");
             print_token_type(b.type);
-            parseFunctionCall(b, st_stack);
+
+            parseFunctionCall(s, b, st_stack);
+
+            printf_magenta("------------------------------\n");
+
+            // read the next token
+            b = readNextToken(s, &next_token_error);
         }
         else
         {
