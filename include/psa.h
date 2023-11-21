@@ -1,26 +1,12 @@
 #ifndef PSA_H
 #define PSA_H
 
-//! DEBUG
-#define DEBUG_PSA 0
-#if DEBUG && DEBUG_PSA
-#define DEBUG_CODE(code) \
-    do                   \
-    {                    \
-        code             \
-    } while (0)
-#else
-#define DEBUG_CODE(code) \
-    do                   \
-    {                    \
-    } while (0)
-#endif
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <stdint.h>
 #include <math.h>
+#include "debug.h"
 #include "colorful_printf.h"
 #include "scanner.h"
 #include "stack.h"

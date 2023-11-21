@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
+#include "debug.h"
 #include "scanner.h"
 #include "error.h"
 #include "stack.h"
@@ -16,20 +17,6 @@
 #define MAGENTA "\x1B[35m"
 #define CYAN "\x1B[36m"
 #define RESET "\x1B[0m"
-
-#define DEBUG 1
-#if DEBUG
-#define DEBUG_CODE(code) \
-    do                   \
-    {                    \
-        code             \
-    } while (0)
-#else
-#define DEBUG_CODE(code) \
-    do                   \
-    {                    \
-    } while (0)
-#endif
 
 void get_token(Token **token);
 bool cmp_type(Token **token, Token_type type, Sem_rule sem_rule);

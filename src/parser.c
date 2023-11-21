@@ -508,12 +508,14 @@ bool ALL_AFTER_ID(Token **token)
 bool FUNC_CALL(Token **token)
 {
     DEBUG_CODE(printf("FUNC_CALL    token: %d   value: %s\n", (*token)->type, (*token)->token_value););
+    token = token;
     return true;
 }
 
 bool EXP(Token **token)
 {
     DEBUG_CODE(printf("EXP    token: %d   value: %s\n", (*token)->type, (*token)->token_value););
+    token = token;
     return true;
 }
 
