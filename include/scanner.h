@@ -171,6 +171,6 @@ void scanner_init();
  * @def function pushes token into scanner stack
  * @param token token which is to be pushed into the stack
  */
- void return_token(Token *token);
+void return_token(Token token);
 
 #endif // IFJ2023_SCANNER_H
