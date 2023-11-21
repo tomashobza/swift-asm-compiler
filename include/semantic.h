@@ -34,6 +34,8 @@ typedef enum
     R_TYPE,
     R_EXP,
     COND_EXP,
+    LOAD_IDENTIF,
+    IDENTIF_EXP,
     PUSH_SCOPE,
     POP_SCOPE,
     SEM_NONE

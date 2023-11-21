@@ -1,7 +1,8 @@
 var x : Int = 5
 func func foo( pname pid : Int) -> String { 
     let y : Bool 
-    return 5+3
+    x = 1
+    return return 5+3
     } }
 
 if 3==2 

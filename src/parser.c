@@ -478,7 +478,7 @@ bool LOAD_ID(Token **token)
     {
     // LOAD_ID -> id ALL_AFTER_ID
     case TOKEN_IDENTIFICATOR:
-        return cmp_type(token, TOKEN_IDENTIFICATOR, SEM_NONE) && ALL_AFTER_ID(token);
+        return cmp_type(token, TOKEN_IDENTIFICATOR, LOAD_IDENTIF) && ALL_AFTER_ID(token);
     default:
         return false;
     }
@@ -491,7 +491,7 @@ bool ALL_AFTER_ID(Token **token)
     {
     // ALL_AFTER_ID -> = EXP
     case TOKEN_ASSIGN:
-        return cmp_type(token, TOKEN_ASSIGN, SEM_NONE) && EXP(token, SEM_NONE);
+        return cmp_type(token, TOKEN_ASSIGN, SEM_NONE) && EXP(token, IDENTIF_EXP);
     // ALL_AFTER_ID -> FUNC_CALL
     case TOKEN_L_BRACKET:
         return FUNC_CALL(token);
@@ -511,7 +511,7 @@ bool EXP(Token **token, Sem_rule sem_rule)
 {
     DEBUG_CODE(printf("EXP    token: %d   value: %s\n", (*token)->type, (*token)->token_value););
     check_semantic(token, sem_rule);
-    generate_token(*token, "\0");
+    get_token(token);
     return true;
 }
 

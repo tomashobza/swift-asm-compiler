@@ -194,6 +194,16 @@ int check_semantic(Token **token, Sem_rule sem_rule)
         psa_return_type return_type3 = parse_expression();
         DEBUG_CODE(print_expression_type(return_type3.type););
         break;
+    case LOAD_IDENTIF:
+        reset_var();
+        varItem->id = (*token)->token_value;
+        break;
+    case IDENTIF_EXP:
+        printf("IDENTIF_EXP\n");
+        ungetc((*token)->token_value[0], stdin);
+        psa_return_type return_type4 = parse_expression();
+        DEBUG_CODE(print_expression_type(return_type4.type););
+        break;
     default:
         break;
     }
