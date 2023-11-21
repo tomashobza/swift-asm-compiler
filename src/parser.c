@@ -16,7 +16,7 @@
 void get_token(Token **token)
 {
     DEBUG_CODE(printf(YELLOW "popped: %s" RESET "\n", (*token)->token_value););
-    generate_token(*token, "\0");
+    main_scanner(*token);
 }
 
 bool cmp_type(Token **token, Token_type type, Sem_rule sem_rule)
@@ -510,6 +510,7 @@ bool FUNC_CALL(Token **token)
 bool EXP(Token **token, Sem_rule sem_rule)
 {
     DEBUG_CODE(printf("EXP    token: %d   value: %s\n", (*token)->type, (*token)->token_value););
+    return_token(*token);
     check_semantic(token, sem_rule);
     get_token(token);
     return true;
@@ -522,6 +523,7 @@ int parser_main()
 {
     Token *token = malloc(sizeof(Token));
 
+    scanner_init();
     semantic_init();
 
     get_token(&token);

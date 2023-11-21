@@ -1,6 +1,6 @@
 #include "semantic.h"
 
-symtable_stack *stack;
+symtable_stack *parser_stack;
 symtable_item *varItem;  // Item to be added to symtable
 symtable_item *funcItem; // Item to be added to symtable
 symtable mySymtable;     // Symtable
@@ -8,7 +8,7 @@ ParamData new_param;     // ParamData to be added to FunctionData
 
 int semantic_init()
 {
-    stack = symtable_stack_init();
+    parser_stack = symtable_stack_init();
     varItem = malloc(sizeof(symtable_item));
     funcItem = malloc(sizeof(symtable_item));
     VariableData *varData = malloc(sizeof(VariableData));
@@ -24,7 +24,7 @@ int semantic_init()
 
     // Inicializace symtable
     mySymtable = symtable_init();
-    symtable_stack_push(stack, mySymtable);
+    symtable_stack_push(parser_stack, mySymtable);
 
     return 0; // tode errors
 }
@@ -91,7 +91,7 @@ void reset_func()
 
 void semantic_destroy()
 {
-    symtable_print(symtable_stack_top(stack));
+    symtable_print(symtable_stack_top(parser_stack));
     free(funcItem->data.func_data->params);
     free(funcItem->data.func_data);
     free(varItem->data.var_data);
@@ -155,15 +155,15 @@ int check_semantic(Token **token, Sem_rule sem_rule)
     case VAR_TYPE:
         varItem->data.var_data->type = get_expression_type(token);
         // todo semantic checks
-        symtable_add(*varItem, symtable_stack_top(stack));
+        symtable_add(*varItem, symtable_stack_top(parser_stack));
         break;
     case VAR_ASSIGN:
         // check if variable is in symtable
-        symtable_item *item = symtable_find_in_stack(varItem->id, stack);
+        symtable_item *item = symtable_find_in_stack(varItem->id, parser_stack);
         if (item == NULL)
         {
             varItem->data.var_data->is_initialized = true;
-            symtable_add(*varItem, symtable_stack_top(stack));
+            symtable_add(*varItem, symtable_stack_top(parser_stack));
         }
         else
         { // it is in symtable, change its value
@@ -172,7 +172,7 @@ int check_semantic(Token **token, Sem_rule sem_rule)
         break;
     case VAR_EXP:
         printf("VAR_EXP\n");
-        ungetc((*token)->token_value[0], stdin);
+        printf("TOKEN FOR PSA: %s\n", (*token)->token_value);
         psa_return_type return_type = parse_expression();
         DEBUG_CODE(print_expression_type(return_type.type););
         break;
@@ -196,26 +196,24 @@ int check_semantic(Token **token, Sem_rule sem_rule)
         break;
     case FUNC_HEADER_DONE:
         funcItem->data.func_data->is_defined = true;
-        symtable_add(*funcItem, symtable_stack_top(stack));
+        symtable_add(*funcItem, symtable_stack_top(parser_stack));
         goto PUSH_SCOPE;
         break;
     case PUSH_SCOPE:
     PUSH_SCOPE:
         symtable symtable = symtable_init();
-        symtable_stack_push(stack, symtable);
+        symtable_stack_push(parser_stack, symtable);
         break;
     case POP_SCOPE:
-        symtable_stack_pop(stack);
+        symtable_stack_pop(parser_stack);
         break;
     case R_EXP:
         printf("R_EXP\n");
-        ungetc((*token)->token_value[0], stdin);
         psa_return_type return_type2 = parse_expression();
         DEBUG_CODE(print_expression_type(return_type2.type););
         break;
     case COND_EXP:
         printf("COND_EXP\n");
-        ungetc((*token)->token_value[0], stdin);
         psa_return_type return_type3 = parse_expression();
         DEBUG_CODE(print_expression_type(return_type3.type););
         break;
@@ -225,7 +223,6 @@ int check_semantic(Token **token, Sem_rule sem_rule)
         break;
     case IDENTIF_EXP:
         printf("IDENTIF_EXP\n");
-        ungetc((*token)->token_value[0], stdin);
         psa_return_type return_type4 = parse_expression();
         DEBUG_CODE(print_expression_type(return_type4.type););
         break;
