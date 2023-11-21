@@ -125,6 +125,7 @@ symtable_item *init_symtable_item(symtable_item item)
     }
 
     *new_sti = item;
+    new_sti->next = NULL;
     return new_sti;
 }
 
