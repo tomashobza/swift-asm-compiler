@@ -234,12 +234,9 @@ psa_return_type parse_expression_param(symtable_stack *st_stack);
 
 /**
  * @brief Reads the next token from the scanner and returns it. If the token is invalid, returns TOKEN_EOF. It also checks for errors based on the token on the top of the stack and the token that is being read.
- *
- *
-    // next_token_error = 0b000 -> no error \
-    // next_token_error = 0b001 -> missing operator
-    // next_token_error = 0b010 -> illegal token
-    // next_token_error = 0b100 -> empty expression
+ * `next_token_error = 0b000 -> no error`
+ * `next_token_error = 0b001 -> missing operator`
+ * `next_token_error = 0b010 -> illegal token`
  *
  * @param s stack of tokens
  * @param next_token_error error code
