@@ -10,7 +10,7 @@ PSA_Token parseFunctionCall(PSA_Token_stack *main_s, PSA_Token id, symtable_stac
     {
         is_ok = false;
 
-        printf("Function %s not found!\n", id.token_value);
+        DEBUG_PSA_CODE(printf("Function %s not found!\n", id.token_value););
         // TODO: if not -> error (for now)
         return (PSA_Token){
             .type = TOKEN_EXPRSN,
@@ -20,7 +20,7 @@ PSA_Token parseFunctionCall(PSA_Token_stack *main_s, PSA_Token id, symtable_stac
             .preceded_by_nl = false};
     }
 
-    printf("Function '%s' found\n", id.token_value);
+    DEBUG_PSA_CODE(printf("Function '%s' found\n", id.token_value););
 
     // TODO: check if function should have parameters
     if (found_func->data.func_data->params_count == 0 || found_func->data.func_data->params == NULL)

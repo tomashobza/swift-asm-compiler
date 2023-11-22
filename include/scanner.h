@@ -13,6 +13,7 @@
 #include "error.h"
 #include <stdbool.h>
 #include "stack.h"
+#include "debug.h"
 
 /*
  * Declaration of scanners states

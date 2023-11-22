@@ -765,7 +765,7 @@ int set_token(int next_state, char *val, Token_type type, Token *token)
         state = next_state;
         token->type = type;
         token->token_value = val;
-        printf("type:%d, value:%s\n", token->type, token->token_value);
+        DEBUG_LEXER_CODE(printf("type:%d, value:%s\n", token->type, token->token_value););
         return 0;
     }
     else

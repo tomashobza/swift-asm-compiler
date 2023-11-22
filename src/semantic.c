@@ -90,7 +90,7 @@ void reset_func()
 
 void semantic_destroy()
 {
-    symtable_print(symtable_stack_top(parser_stack));
+    DEBUG_SEMANTIC_CODE(symtable_print(symtable_stack_top(parser_stack)););
     free(funcItem->data.func_data->params);
     free(funcItem->data.func_data);
     free(varItem->data.var_data);
@@ -124,12 +124,11 @@ Expression_type get_expression_type(Token *token)
 
 void print_items()
 {
-    printf(MAGENTA "FUNCTION: %s, return type: %d" RESET "\n", funcItem->id, funcItem->data.func_data->return_type);
-    for (int i = 0; i < funcItem->data.func_data->params_count; i++)
-    {
-        printf(MAGENTA "PARAM: %s, id: %s, type: %d" RESET "\n", funcItem->data.func_data->params[i].name, funcItem->data.func_data->params[i].id, funcItem->data.func_data->params[i].type);
-    }
-    printf(BLUE "VARIABLE: %s, type: %d, is const: %d" RESET "\n", varItem->id, varItem->data.var_data->type, varItem->data.var_data->is_const);
+    DEBUG_SEMANTIC_CODE(
+        printf(MAGENTA "FUNCTION: %s, return type: %d" RESET "\n", funcItem->id, funcItem->data.func_data->return_type);
+        for (int i = 0; i < funcItem->data.func_data->params_count; i++) {
+            printf(MAGENTA "PARAM: %s, id: %s, type: %d" RESET "\n", funcItem->data.func_data->params[i].name, funcItem->data.func_data->params[i].id, funcItem->data.func_data->params[i].type);
+        } printf(BLUE "VARIABLE: %s, type: %d, is const: %d" RESET "\n", varItem->id, varItem->data.var_data->type, varItem->data.var_data->is_const););
 }
 
 bool is_defined(char *name)
@@ -181,7 +180,6 @@ int check_semantic(Token *token, Sem_rule sem_rule)
         else
         { // it is in symtable, change its value
             item->data.var_data->is_initialized = true;
-            symtable_print(symtable_stack_top(parser_stack));
         }
         break;
     }
@@ -189,13 +187,11 @@ int check_semantic(Token *token, Sem_rule sem_rule)
         symtable_add(*varItem, symtable_stack_top(parser_stack));
         break;
     case VAR_EXP:
-        printf("VAR_EXP\n");
-        printf("TOKEN FOR PSA: %s\n", token->token_value);
         psa_return_type return_type = parse_expression(parser_stack);
         if (return_type.is_ok)
         {
         }
-        DEBUG_CODE(print_expression_type(return_type.type););
+        DEBUG_SEMANTIC_CODE(print_expression_type(return_type.type););
         break;
     case FUNC_ID:
         reset_func();
@@ -230,25 +226,22 @@ int check_semantic(Token *token, Sem_rule sem_rule)
         symtable_stack_pop(parser_stack);
         break;
     case R_EXP:
-        printf("R_EXP\n");
         psa_return_type return_type2 = parse_expression(parser_stack);
         if (return_type2.is_ok)
         {
         }
-        DEBUG_CODE(print_expression_type(return_type2.type););
+        DEBUG_SEMANTIC_CODE(print_expression_type(return_type2.type););
         break;
     case COND_EXP:
-        printf("COND_EXP\n");
         psa_return_type return_type3 = parse_expression(parser_stack);
         if (return_type3.is_ok)
         {
         }
-        DEBUG_CODE(print_expression_type(return_type3.type););
+        DEBUG_SEMANTIC_CODE(print_expression_type(return_type3.type););
         break;
     case LOAD_IDENTIF:
         reset_var();
         symtable_item *item = symtable_find_in_stack(token->token_value, parser_stack);
-        printf("item: %s %d %d\n", item->id, item->data.var_data->type, item->data.var_data->is_const);
         if (item == NULL)
         {
             fprintf(stderr, RED "Variable %s is not defined!\n", token->token_value);
@@ -262,20 +255,18 @@ int check_semantic(Token *token, Sem_rule sem_rule)
         varItem->id = token->token_value;
         break;
     case IDENTIF_EXP:
-        printf("IDENTIF_EXP\n");
         psa_return_type return_type4 = parse_expression(parser_stack);
         if (return_type4.is_ok)
         {
         }
-        DEBUG_CODE(print_expression_type(return_type4.type););
+        DEBUG_SEMANTIC_CODE(print_expression_type(return_type4.type););
         break;
     case FUNC_CALL_PSA:
-        printf("FUNC_CALL_PSA\n");
         psa_return_type return_type5 = parse_expression(parser_stack);
         if (return_type5.is_ok)
         {
         }
-        DEBUG_CODE(print_expression_type(return_type5.type););
+        DEBUG_SEMANTIC_CODE(print_expression_type(return_type5.type););
         break;
     default:
         break;

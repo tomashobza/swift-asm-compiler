@@ -9,7 +9,7 @@ Expression_type getTypeCombination(PSA_Token l_operand, PSA_Token r_operand)
     case ((char)TYPE_INT << 8) | TYPE_DOUBLE:
         if (l_operand.type != TOKEN_IDENTIFICATOR)
         {
-            DEBUG_CODE(printf("implicite Int2Double for left operand '%s'\n", l_operand.token_value););
+            DEBUG_PSA_CODE(printf("implicite Int2Double for left operand '%s'\n", l_operand.token_value););
             return TYPE_DOUBLE;
         }
         else
@@ -19,7 +19,7 @@ Expression_type getTypeCombination(PSA_Token l_operand, PSA_Token r_operand)
     case ((char)TYPE_DOUBLE << 8) | TYPE_INT:
         if (r_operand.type != TOKEN_IDENTIFICATOR)
         {
-            DEBUG_CODE(printf("impicite Int2Double for right operand '%s'\n", r_operand.token_value););
+            DEBUG_PSA_CODE(printf("impicite Int2Double for right operand '%s'\n", r_operand.token_value););
             return TYPE_DOUBLE;
         }
         else

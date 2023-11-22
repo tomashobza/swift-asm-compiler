@@ -16,6 +16,7 @@
 #include <stdio.h>
 #include <stdbool.h>
 #include "stack.h"
+#include "debug.h"
 
 /**
  * @brief Enum for the types of the expression.

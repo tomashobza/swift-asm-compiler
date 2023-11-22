@@ -24,7 +24,7 @@ psa_return_type parse_expression_base(bool is_param, symtable_stack *st_stack)
     // check for an empty expression
     if (a.type == TOKEN_EOF && b.type == TOKEN_EOF)
     {
-        printf("Empty expression!\n");
+        DEBUG_PSA_CODE(printf("Empty expression!\n"););
         return (psa_return_type){
             .end_token = TOKEN_EXPRSN,
             .is_ok = true,
@@ -41,7 +41,7 @@ psa_return_type parse_expression_base(bool is_param, symtable_stack *st_stack)
             a = s->top->next->data;
         }
 
-        DEBUG_CODE(printf("Chyba: %d\n", next_token_error););
+        DEBUG_PSA_CODE(printf("Chyba: %d\n", next_token_error););
 
         // update the bracket counter
         switch (b.type)
@@ -59,18 +59,18 @@ psa_return_type parse_expression_base(bool is_param, symtable_stack *st_stack)
         // check for an invalid number of brackets (for parameters, the number of brackets can be -1 when the expression is empty and the last of the parameters)
         if (num_of_brackets < 0 && !(is_param && num_of_brackets == -1))
         {
-            printf_red("PICO VOLE SPATNE ZAVORKY");
+            DEBUG_PSA_CODE(printf("PICO VOLE SPATNE ZAVORKY"););
         }
 
         // if the next token is a function identificator, start parsing function call
         if (b.type == TOKEN_FUNC_ID)
         {
-            printf_magenta("--------Je to funkce! --------\n");
-            print_token_type(b.type);
+            DEBUG_PSA_CODE(printf_magenta("--------Je to funkce! --------\n");
+                           print_token_type(b.type););
 
             b = parseFunctionCall(s, b, st_stack);
 
-            printf_magenta("------------------------------\n");
+            DEBUG_PSA_CODE(printf_magenta("------------------------------\n"););
 
             // read the next token
             // b = readNextToken(s, &next_token_error);
@@ -93,7 +93,7 @@ psa_return_type parse_expression_base(bool is_param, symtable_stack *st_stack)
         // if expression is a function parameter, the end of the expression is ) or ,
         if (is_param)
         {
-            printf("is in a function\n");
+            DEBUG_PSA_CODE(printf("is in a function\n"););
 
             switch (b.type)
             {
@@ -104,7 +104,7 @@ psa_return_type parse_expression_base(bool is_param, symtable_stack *st_stack)
                 }
                 __attribute__((fallthrough));
             case TOKEN_COMMA:
-                printf("end of parameter\n");
+                DEBUG_PSA_CODE(printf("end of parameter\n"););
                 b = (PSA_Token){
                     .type = TOKEN_EOF,
                     .token_value = "$",
@@ -144,10 +144,10 @@ psa_return_type parse_expression_base(bool is_param, symtable_stack *st_stack)
         //     }
         // }
 
-        DEBUG_CODE(printf("na stacku: ");
-                   printStack(s->top);
-                   printf_yellow("na vstupu: {'%s', %d}\n", b.token_value, b.type);
-                   printf_magenta("P_TABLE[{%d, '%s'}][{%d, '%s'}] = %c\n", getSymbolValue(a.type), a.token_value, (b.type), b.token_value, P_TABLE[getSymbolValue(a.type)][getSymbolValue(b.type)]););
+        DEBUG_PSA_CODE(printf("na stacku: ");
+                       printStack(s->top);
+                       printf_yellow("na vstupu: {'%s', %d}\n", b.token_value, b.type);
+                       printf_magenta("P_TABLE[{%d, '%s'}][{%d, '%s'}] = %c\n", getSymbolValue(a.type), a.token_value, (b.type), b.token_value, P_TABLE[getSymbolValue(a.type)][getSymbolValue(b.type)]););
 
         const unsigned int a_val = getSymbolValue(a.type);
         const unsigned int b_val = getSymbolValue(b.type);
@@ -248,13 +248,13 @@ psa_return_type parse_expression_base(bool is_param, symtable_stack *st_stack)
             };
         }
 
-        printStack(s->top);
-        DEBUG_CODE(printf("\n-----------\n\n"););
+        DEBUG_PSA_CODE(printStack(s->top);
+                       printf("\n-----------\n\n"););
 
         a = PSA_Token_stack_top(s);
     }
     printf("\n");
-    printf_green("✅ | All good! \n");
+    printf_green("PSA: ✅ | All good! \n");
 
     return (psa_return_type){
         .is_ok = a.expr_type != TYPE_INVALID,
