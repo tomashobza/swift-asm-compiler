@@ -24,7 +24,7 @@ psa_return_type parse_expression_base(bool is_param, symtable_stack *st_stack)
     // check for an empty expression
     if (a.type == TOKEN_EOF && b.type == TOKEN_EOF)
     {
-        printf("Empty expression!\n");
+        // printf("Empty expression!\n");
         return (psa_return_type){
             .end_token = TOKEN_EXPRSN,
             .is_ok = true,
@@ -41,7 +41,7 @@ psa_return_type parse_expression_base(bool is_param, symtable_stack *st_stack)
             a = s->top->next->data;
         }
 
-        DEBUG_CODE(printf("Chyba: %d\n", next_token_error););
+        // DEBUG_CODE(printf("Chyba: %d\n", next_token_error););
 
         // update the bracket counter
         switch (b.type)
@@ -56,12 +56,52 @@ psa_return_type parse_expression_base(bool is_param, symtable_stack *st_stack)
             break;
         }
 
+        // TODO: checking bracket count might be redundant because of handles
         // check for an invalid number of brackets (for parameters, the number of brackets can be -1 when the expression is empty and the last of the parameters)
         if (num_of_brackets < 0 && !(is_param && num_of_brackets == -1))
         {
-            printf_red("PICO VOLE SPATNE ZAVORKY");
+            throw_error(SYNTACTIC_ERR, line_num, "Invalid number of brackets in expression");
+
+            next_token_error = 0;
+            b = (PSA_Token){
+                .type = (Token_type)TOKEN_EOF,
+                .token_value = "$",
+                .expr_type = TYPE_INVALID,
+                .canBeNil = false,
+                .preceded_by_nl = true,
+            };
         }
 
+        // CHECK NEXT TOKEN FOR ERRORS
+        if (next_token_error > 0 || getSymbolValue(b.type) >= 99)
+        {
+            if (b.preceded_by_nl)
+            {
+                next_token_error = 0;
+                b = (PSA_Token){
+                    .type = (Token_type)TOKEN_EOF,
+                    .token_value = "$",
+                    .expr_type = TYPE_INVALID,
+                    .canBeNil = false,
+                    .preceded_by_nl = true,
+                };
+            }
+            else
+            {
+                throw_error(SYNTACTIC_ERR, line_num, "Missing separator (EOL) after expression.");
+
+                next_token_error = 0;
+                b = (PSA_Token){
+                    .type = (Token_type)TOKEN_EOF,
+                    .token_value = "$",
+                    .expr_type = TYPE_INVALID,
+                    .canBeNil = false,
+                    .preceded_by_nl = true,
+                };
+            }
+        }
+
+        // CHECK FOR FUNCTION CALL
         // if the next token is a function identificator, start parsing function call
         if (b.type == TOKEN_FUNC_ID)
         {
@@ -75,25 +115,12 @@ psa_return_type parse_expression_base(bool is_param, symtable_stack *st_stack)
             // read the next token
             // b = readNextToken(s, &next_token_error);
         }
-        else
-        {
-            if (b.preceded_by_nl && next_token_error > 0)
-            {
-                next_token_error = 0;
-                b = (PSA_Token){
-                    .type = (Token_type)TOKEN_EOF,
-                    .token_value = "$",
-                    .expr_type = TYPE_INVALID,
-                    .canBeNil = false,
-                    .preceded_by_nl = true,
-                };
-            }
-        }
 
+        // FOR PARAMETER EXPRESSIONS CHECK FOR END OF PARAMETER
         // if expression is a function parameter, the end of the expression is ) or ,
         if (is_param)
         {
-            printf("is in a function\n");
+            // printf("is in a function\n");
 
             switch (b.type)
             {
@@ -104,7 +131,6 @@ psa_return_type parse_expression_base(bool is_param, symtable_stack *st_stack)
                 }
                 __attribute__((fallthrough));
             case TOKEN_COMMA:
-                printf("end of parameter\n");
                 b = (PSA_Token){
                     .type = TOKEN_EOF,
                     .token_value = "$",
@@ -118,32 +144,6 @@ psa_return_type parse_expression_base(bool is_param, symtable_stack *st_stack)
             }
         }
 
-        // // DETECT EMPTY EXPRESSION
-        // if (a.type == (Token_type)TOKEN_EOF && !canTokenBeStartOfExpression(b.type))
-        // {
-        //     // empty expression followed by EOL is valid
-        //     if (b.preceded_by_nl)
-        //     {
-        //         return (psa_return_type){
-        //             .end_token = TOKEN_EXPRSN,
-        //             .is_ok = true,
-        //             .canBeNil = false,
-        //             .type = TYPE_EMPTY,
-        //         };
-        //     }
-        //     else
-        //     { // empty expression followed by something else is invalid
-        //         printf_red("❌ | Error: invalid token! Token '%s' cannot be a part of an expression, add a newline as a separator. \n", b.token_value);
-
-        //         return (psa_return_type){
-        //             .end_token = TOKEN_EOF,
-        //             .is_ok = false,
-        //             .canBeNil = false,
-        //             .type = TYPE_INVALID,
-        //         };
-        //     }
-        // }
-
         DEBUG_CODE(printf("na stacku: ");
                    printStack(s->top);
                    printf_yellow("na vstupu: {'%s', %d}\n", b.token_value, b.type);
@@ -152,26 +152,15 @@ psa_return_type parse_expression_base(bool is_param, symtable_stack *st_stack)
         const unsigned int a_val = getSymbolValue(a.type);
         const unsigned int b_val = getSymbolValue(b.type);
 
-        if (a_val == 99 || b_val == 99)
-        {
-            printf_red("❌ | Error: invalid token! Unexpected token '%s'. \n", b.token_value);
-
-            return (psa_return_type){
-                .end_token = TOKEN_EXPRSN,
-                .is_ok = false,
-                .canBeNil = false,
-                .type = TYPE_INVALID,
-            };
-        }
-
+        // choose further behaviour based on the value in the precedence table
         switch (P_TABLE[a_val][b_val])
         {
-        case '=':
+        case '=': // just push the token on the stack
             PSA_Token_stack_push(s, b);
             b = readNextToken(s, &next_token_error);
             break;
-        case '<':
 
+        case '<': // opening of a handle
             if (PSA_Token_stack_top(s).type == (Token_type)TOKEN_EXPRSN)
             {
                 PSA_Token tmp = PSA_Token_stack_pop(s);
@@ -191,8 +180,9 @@ psa_return_type parse_expression_base(bool is_param, symtable_stack *st_stack)
                 b = readNextToken(s, &next_token_error);
             }
             break;
-        case '>':
-        { // from the top of the stack, pop all tokens until the first < is found
+        case '>': // closing of a handle
+        {
+            // from the top of the stack, pop all tokens until the first < is found
             // put all the popped tokens->type into an array
             // getTheRule of the array
             // if the rule is not EOF, push the rule into the stack
@@ -255,6 +245,21 @@ psa_return_type parse_expression_base(bool is_param, symtable_stack *st_stack)
     }
     printf("\n");
     printf_green("✅ | All good! \n");
+
+    // TODO: checking bracket count might be redundant because of handles
+    if (num_of_brackets != 0)
+    {
+        throw_error(SYNTACTIC_ERR, line_num, num_of_brackets > 0 ? "Missing closing bracket" : "Missing opening bracket");
+
+        next_token_error = 0;
+        b = (PSA_Token){
+            .type = (Token_type)TOKEN_EOF,
+            .token_value = "$",
+            .expr_type = TYPE_INVALID,
+            .canBeNil = false,
+            .preceded_by_nl = true,
+        };
+    }
 
     return (psa_return_type){
         .is_ok = a.expr_type != TYPE_INVALID,
