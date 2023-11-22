@@ -2,16 +2,6 @@
 
 PSA_Token readNextToken(PSA_Token_stack *s, char *next_token_error)
 {
-    int ch = getchar();
-    ungetc(ch, stdin);
-    if (ch == EOF)
-    {
-        return (PSA_Token){
-            .type = (Token_type)TOKEN_EOF,
-            .token_value = "$",
-        };
-    }
-
     Token *tkn = malloc(sizeof(Token));
     main_scanner(tkn);
 
