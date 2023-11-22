@@ -24,7 +24,7 @@ int main(void)
         (ParamData){
             .name = "_",
             .id = "a",
-            .type = "int",
+            .type = TYPE_INT,
         },
         (ParamData){
             .name = "b",
@@ -38,7 +38,7 @@ int main(void)
         .type = FUNCTION,
         .data = {
             .func_data = &(FunctionData){
-                .return_type = "int",
+                .return_type = TYPE_INT,
                 .params = params,
                 .params_count = 2,
                 .capacity = 0,
