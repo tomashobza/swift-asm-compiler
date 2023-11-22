@@ -279,6 +279,19 @@ void printTokenArray(PSA_Token *handle, unsigned int len);
 PSA_Token parseFunctionCall(PSA_Token_stack *main_s, PSA_Token id, symtable_stack *st_stack);
 
 /**
+ * @brief Checks the validity of the parameters of the function call.
+ *
+ * @param main_s main PSA token stack
+ * @param param_index index of the parameter
+ * @param found_func symbol of the function from the symbol table
+ * @param parsed_param pointer to where the parsed parameter (return struct of the PSA) will be saved
+ * @param st_stack stack of symbol tables
+ * @return true - the parameter is both syntactically and semantically valid
+ * @return false - the parameter is not syntactically or semantically valid
+ */
+bool checkParameter(PSA_Token_stack *main_s, unsigned int param_index, symtable_item *found_func, psa_return_type *parsed_param, symtable_stack *st_stack);
+
+/**
  * @brief Checks if the parameter name matches the name of the parameter in the function definition (if there should be a name).
  *
  * @param main_s main expression token stack

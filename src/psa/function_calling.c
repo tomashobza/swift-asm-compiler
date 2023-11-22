@@ -39,24 +39,23 @@ PSA_Token parseFunctionCall(PSA_Token_stack *main_s, PSA_Token id, symtable_stac
 
     // parse the next n parameters using parse_expression_param
 
-    int param_counter = 0;
+    unsigned int param_counter = 0;
     bool params_ok = true;
     psa_return_type parsed_param;
 
-    do
+    while (param_counter < (unsigned int)found_func->data.func_data->params_count)
     {
-        printf("The name is: %s\n", checkParamName(main_s, param_counter, found_func) ? "ok" : "not ok");
-
-        psa_return_type parsed_param = parse_expression_param(st_stack);
-
-        printf("param[%d] has type: ", param_counter);
-        print_expression_type(parsed_param.type);
-        printf("\n");
-
-        params_ok = params_ok && parsed_param.is_ok && parsed_param.type == found_func->data.func_data->params[param_counter].type;
+        params_ok = params_ok && checkParameter(main_s, param_counter, found_func, &parsed_param, st_stack);
 
         param_counter++;
-    } while (param_counter < found_func->data.func_data->params_count && parsed_param.type != TYPE_EMPTY);
+
+        if (parsed_param.type == TYPE_EMPTY)
+        {
+            break;
+        }
+    }
+
+    // TODO:check if the correct number of parameters was provided
 
     is_ok = is_ok && params_ok;
 
@@ -86,6 +85,23 @@ PSA_Token parseFunctionCall(PSA_Token_stack *main_s, PSA_Token id, symtable_stac
         .preceded_by_nl = false};
 }
 
+bool checkParameter(PSA_Token_stack *main_s, unsigned int param_index, symtable_item *found_func, psa_return_type *parsed_param, symtable_stack *st_stack)
+{
+    // TODO: handle param errors
+
+    bool name_ok = checkParamName(main_s, param_index, found_func);
+
+    printf("The name is: %s\n", name_ok ? "ok" : "not ok");
+
+    (*parsed_param) = parse_expression_param(st_stack);
+
+    printf("param[%d] has type: ", param_index);
+    print_expression_type((*parsed_param).type);
+    printf("\n");
+
+    return (*parsed_param).is_ok && (*parsed_param).type == found_func->data.func_data->params[param_index].type && name_ok;
+}
+
 bool checkParamName(PSA_Token_stack *main_s, unsigned int param_index, symtable_item *found_func)
 {
     // read the first token (should be an identificator)
@@ -104,7 +120,7 @@ bool checkParamName(PSA_Token_stack *main_s, unsigned int param_index, symtable_
         return_token(convertPSATokenToToken(id));
     }
 
-    bool should_have_name = param_index < (unsigned int)found_func->data.func_data->params_count && !strcmp(found_func->data.func_data->params[param_index].name, "_");
+    bool should_have_name = param_index < (unsigned int)found_func->data.func_data->params_count && strcmp(found_func->data.func_data->params[param_index].name, "_");
 
     bool name_is_ok = false;
 
