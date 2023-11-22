@@ -39,6 +39,8 @@
 #define UNDERSCORE 52
 #define END_STATE 60
 
+extern unsigned int line_num;
+
 typedef enum
 {
     TOKEN_IF,              // Keyword if 0
