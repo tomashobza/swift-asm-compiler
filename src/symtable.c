@@ -208,7 +208,7 @@ void symtable_print(symtable table)
             {
                 if (item->type == VARIABLE)
                 {
-                    printf("id: %s, type: %d, is_const: %d", item->id, item->data.var_data->type, item->data.var_data->is_const);
+                    printf("id: %s, type: %d, is_const: %d, is_init: %d", item->id, item->data.var_data->type, item->data.var_data->is_const, item->data.var_data->is_initialized);
                 }
                 else if (item->type == FUNCTION)
                 {

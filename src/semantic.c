@@ -188,30 +188,32 @@ int check_semantic(Token *token, Sem_rule sem_rule)
     case VAR_EXP:
         psa_return_type return_type = parse_expression(parser_stack);
         DEBUG_SEMANTIC_CODE(print_expression_type(return_type.type););
-        if (return_type.is_ok)
+        if (return_type.is_ok == false)
         {
-            if (return_type.type == TYPE_NIL)
+            fprintf(stderr, RED "Unrecognizable type of variable: %s\n" RESET, varItem->id);
+            return -1;
+        }
+        if (return_type.type == TYPE_NIL)
+        {
+            if (varItem->data.var_data->type == TYPE_EMPTY)
             {
-                if (varItem->data.var_data->type == TYPE_EMPTY)
-                {
-                    fprintf(stderr, RED "Couldn't decide the type of %s from type NIL!\n" RESET, varItem->id);
-                    return -1;
-                }
-                else if (varItem->data.var_data->type != TYPE_NIL)
-                {
-                    fprintf(stderr, RED "Expression type: %d and type: %d of variable: %s do NOT match!\n" RESET, return_type.type, varItem->data.var_data->type, varItem->id);
-                    return -1;
-                }
-            }
-            else if (varItem->data.var_data->type == TYPE_EMPTY)
-            {
-                (symtable_find(varItem->id, symtable_stack_top(parser_stack)))->data.var_data->type = return_type.type;
-            }
-            else if (varItem->data.var_data->type != return_type.type)
-            {
-                fprintf(stderr, RED "Expression type: %d and type: %d of variable: %s do not match!\n" RESET, return_type.type, varItem->data.var_data->type, varItem->id);
+                fprintf(stderr, RED "Couldn't decide the type of %s from type NIL!\n" RESET, varItem->id);
                 return -1;
             }
+            else if (varItem->data.var_data->type != TYPE_NIL)
+            {
+                fprintf(stderr, RED "Expression type: %d and type: %d of variable: %s do NOT match!\n" RESET, return_type.type, varItem->data.var_data->type, varItem->id);
+                return -1;
+            }
+        }
+        else if (varItem->data.var_data->type == TYPE_EMPTY)
+        {
+            (symtable_find(varItem->id, symtable_stack_top(parser_stack)))->data.var_data->type = return_type.type;
+        }
+        else if (varItem->data.var_data->type != return_type.type)
+        {
+            fprintf(stderr, RED "Expression type: %d and type: %d of variable: %s do not match!\n" RESET, return_type.type, varItem->data.var_data->type, varItem->id);
+            return -1;
         }
         DEBUG_SEMANTIC_CODE(symtable_print(symtable_stack_top(parser_stack)););
         // data_type check
@@ -280,13 +282,23 @@ int check_semantic(Token *token, Sem_rule sem_rule)
         }
         DEBUG_SEMANTIC_CODE(printf("FOUND: %s, type: %d, const: %d\n", item->id, item->data.var_data->type, item->data.var_data->is_const););
         varItem->id = token->token_value;
+        print_items();
         break;
     case IDENTIF_EXP:
         psa_return_type return_type4 = parse_expression(parser_stack);
-        if (return_type4.is_ok)
-        {
-        }
         DEBUG_SEMANTIC_CODE(print_expression_type(return_type4.type););
+        if (return_type4.is_ok == false)
+        {
+            fprintf(stderr, RED "Unrecognizable type of variable: %s \n" RESET, varItem->id);
+            return -1;
+        }
+        symtable_item *identif_exp_item = symtable_find_in_stack(varItem->id, parser_stack);
+        if (return_type4.type != identif_exp_item->data.var_data->type)
+        {
+            fprintf(stderr, RED "Expression type: %d and type: %d of variable: %s do not match!\n" RESET, return_type4.type, identif_exp_item->data.var_data->type, varItem->id);
+            return -1;
+        }
+        identif_exp_item->data.var_data->is_initialized = true;
         break;
     case FUNC_CALL_PSA:
         psa_return_type return_type5 = parse_expression(parser_stack);

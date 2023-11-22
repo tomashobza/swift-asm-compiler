@@ -1,2 +1,3 @@
-let x = "blee"
-eat_me_daddy var y : Int
+var x : Int
+x = 5 
+eat_me_daddy let y : Bool
