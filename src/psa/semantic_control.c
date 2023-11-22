@@ -156,3 +156,22 @@ PSA_Token getHandleType(PSA_Token l_operand, Token_type operation, PSA_Token r_o
         .canBeNil = false,
     };
 }
+
+Expression_type getIdType(PSA_Token id, symtable_stack *st_stack)
+{
+    symtable_item *found_id = symtable_find_in_stack(id.token_value, st_stack);
+    if (found_id == NULL)
+    {
+        return TYPE_INVALID;
+    }
+
+    switch (found_id->type)
+    {
+    case FUNCTION:
+        return found_id->data.func_data->return_type;
+    case VARIABLE:
+        return found_id->data.var_data->type;
+    default:
+        return TYPE_INVALID;
+    }
+}

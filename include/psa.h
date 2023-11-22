@@ -196,6 +196,15 @@ Expression_type getTypeCombination(PSA_Token l_operand, PSA_Token r_operand);
  */
 PSA_Token getHandleType(PSA_Token l_operand, Token_type operation, PSA_Token r_operand);
 
+/**
+ * @brief Returns the expression type of an identifier from the symbol table.
+ *
+ * @param id token of the identifier
+ * @param st_stack stack of symbol tables
+ * @return Expression_type
+ */
+Expression_type getIdType(PSA_Token id, symtable_stack *st_stack);
+
 // PSA MAIN FUNCTION
 
 /**
