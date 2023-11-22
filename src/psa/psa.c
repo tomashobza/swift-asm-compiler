@@ -21,6 +21,18 @@ psa_return_type parse_expression_base(bool is_param, symtable_stack *st_stack)
     char next_token_error = 0;
     PSA_Token b = readNextToken(s, &next_token_error);
 
+    // check for an empty expression
+    if (a.type == TOKEN_EOF && b.type == TOKEN_EOF)
+    {
+        printf("Empty expression!\n");
+        return (psa_return_type){
+            .end_token = TOKEN_EXPRSN,
+            .is_ok = true,
+            .canBeNil = false,
+            .type = TYPE_EMPTY,
+        };
+    }
+
     while (!(a.type == (Token_type)TOKEN_EXPRSN && s->size == 2 && b.type == (Token_type)TOKEN_EOF))
     {
         // if the stack top is of type (Token_type)TOKEN_EXPRSN, then we need to use the second top of the stack to determine the rule
@@ -43,7 +55,9 @@ psa_return_type parse_expression_base(bool is_param, symtable_stack *st_stack)
         default:
             break;
         }
-        if (num_of_brackets < 0)
+
+        // check for an invalid number of brackets (for parameters, the number of brackets can be -1 when the expression is empty and the last of the parameters)
+        if (num_of_brackets < 0 && !(is_param && num_of_brackets == -1))
         {
             printf_red("PICO VOLE SPATNE ZAVORKY");
         }
@@ -54,12 +68,12 @@ psa_return_type parse_expression_base(bool is_param, symtable_stack *st_stack)
             printf_magenta("--------Je to funkce! --------\n");
             print_token_type(b.type);
 
-            parseFunctionCall(s, b, st_stack);
+            b = parseFunctionCall(s, b, st_stack);
 
             printf_magenta("------------------------------\n");
 
             // read the next token
-            b = readNextToken(s, &next_token_error);
+            // b = readNextToken(s, &next_token_error);
         }
         else
         {
@@ -80,16 +94,27 @@ psa_return_type parse_expression_base(bool is_param, symtable_stack *st_stack)
         if (is_param)
         {
             printf("is in a function\n");
-            if (b.type == (Token_type)TOKEN_R_BRACKET || b.type == (Token_type)TOKEN_COMMA)
+
+            switch (b.type)
             {
-                printf("end of function\n");
+            case TOKEN_R_BRACKET:
+                if (num_of_brackets < 0)
+                {
+                    return_token(convertPSATokenToToken(b));
+                }
+                __attribute__((fallthrough));
+            case TOKEN_COMMA:
+                printf("end of parameter\n");
                 b = (PSA_Token){
-                    .type = (Token_type)TOKEN_EOF,
+                    .type = TOKEN_EOF,
                     .token_value = "$",
                     .expr_type = TYPE_INVALID,
                     .canBeNil = false,
                     .preceded_by_nl = true,
                 };
+                break;
+            default:
+                break;
             }
         }
 
@@ -132,7 +157,7 @@ psa_return_type parse_expression_base(bool is_param, symtable_stack *st_stack)
             printf_red("❌ | Error: invalid token! Unexpected token '%s'. \n", b.token_value);
 
             return (psa_return_type){
-                .end_token = TOKEN_EOF,
+                .end_token = TOKEN_EXPRSN,
                 .is_ok = false,
                 .canBeNil = false,
                 .type = TYPE_INVALID,
@@ -202,7 +227,7 @@ psa_return_type parse_expression_base(bool is_param, symtable_stack *st_stack)
                 printf_red("❌ | Error: invalid expression! Unexpected token '%s' in expression. \n", b.token_value);
 
                 return (psa_return_type){
-                    .end_token = TOKEN_EOF,
+                    .end_token = TOKEN_EXPRSN,
                     .is_ok = false,
                     .canBeNil = false,
                     .type = TYPE_INVALID,
