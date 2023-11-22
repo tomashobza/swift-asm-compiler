@@ -497,7 +497,7 @@ bool LOAD_ID(Token **token)
 bool EXP(Token **token, Sem_rule sem_rule)
 {
     DEBUG_CODE(printf("EXP    token: %d   value: %s\n", (*token)->type, (*token)->token_value););
-    return_token(*token);
+    return_token(**token);
     check_semantic(token, sem_rule);
     get_token(token);
     return true;

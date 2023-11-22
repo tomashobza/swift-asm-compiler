@@ -157,7 +157,7 @@ int check_semantic(Token **token, Sem_rule sem_rule)
         symtable_add(*varItem, symtable_stack_top(parser_stack));
         break;
     case VAR_ASSIGN:
-        // check if variable is in symtable
+    { // check if variable is in symtable
         symtable_item *item = symtable_find_in_stack(varItem->id, parser_stack);
         if (item == NULL)
         {
@@ -169,10 +169,14 @@ int check_semantic(Token **token, Sem_rule sem_rule)
             item->data.var_data->is_initialized = true;
         }
         break;
+    }
     case VAR_EXP:
         printf("VAR_EXP\n");
         printf("TOKEN FOR PSA: %s\n", (*token)->token_value);
         psa_return_type return_type = parse_expression(parser_stack);
+        if (return_type.is_ok)
+        {
+        }
         DEBUG_CODE(print_expression_type(return_type.type););
         break;
     case FUNC_ID:
@@ -199,20 +203,28 @@ int check_semantic(Token **token, Sem_rule sem_rule)
         break;
     case PUSH_SCOPE:
     PUSH_SCOPE:
+    {
         symtable symtable = symtable_init();
         symtable_stack_push(parser_stack, symtable);
-        break;
+    }
+    break;
     case POP_SCOPE:
         symtable_stack_pop(parser_stack);
         break;
     case R_EXP:
         printf("R_EXP\n");
         psa_return_type return_type2 = parse_expression(parser_stack);
+        if (return_type2.is_ok)
+        {
+        }
         DEBUG_CODE(print_expression_type(return_type2.type););
         break;
     case COND_EXP:
         printf("COND_EXP\n");
         psa_return_type return_type3 = parse_expression(parser_stack);
+        if (return_type3.is_ok)
+        {
+        }
         DEBUG_CODE(print_expression_type(return_type3.type););
         break;
     case LOAD_IDENTIF:
@@ -222,11 +234,17 @@ int check_semantic(Token **token, Sem_rule sem_rule)
     case IDENTIF_EXP:
         printf("IDENTIF_EXP\n");
         psa_return_type return_type4 = parse_expression(parser_stack);
+        if (return_type4.is_ok)
+        {
+        }
         DEBUG_CODE(print_expression_type(return_type4.type););
         break;
     case FUNC_CALL_PSA:
         printf("FUNC_CALL_PSA\n");
         psa_return_type return_type5 = parse_expression(parser_stack);
+        if (return_type5.is_ok)
+        {
+        }
         DEBUG_CODE(print_expression_type(return_type5.type););
         break;
     default:
