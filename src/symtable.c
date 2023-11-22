@@ -102,15 +102,18 @@ symtable_item *symtable_find(char *name, symtable table)
 
 symtable_item *symtable_find_in_stack(char *name, symtable_stack *stack)
 {
+    int cnt = 0;
     symtable_node *node = stack->top;
     while (node != NULL)
     {
         symtable_item *item = symtable_find(name, node->data);
         if (item != NULL)
         {
+            printf("Found %s in %d. symtable\n", name, cnt);
             return item;
         }
         node = node->next;
+        cnt++;
     }
 
     return NULL;
@@ -165,7 +168,14 @@ void symtable_print(symtable table)
             symtable_item *item = table[i];
             while (item != NULL)
             {
-                printf("id: %s, type: %d", item->id, item->type);
+                if (item->type == VARIABLE)
+                {
+                    printf("id: %s, type: %d, is_const: %d", item->id, item->data.var_data->type, item->data.var_data->is_const);
+                }
+                else if (item->type == FUNCTION)
+                {
+                    printf("id: %s, return_type: %d", item->id, item->data.func_data->return_type);
+                }
                 item = item->next;
             }
             printf("\n");

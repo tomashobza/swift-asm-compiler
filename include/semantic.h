@@ -24,6 +24,7 @@ typedef enum
     VAR,
     VAR_ID,
     VAR_TYPE,
+    VAR_ASSIGN1,
     VAR_ASSIGN,
     VAR_EXP,
     FUNC_ID,
@@ -46,6 +47,6 @@ int semantic_init();
 void add_param(FunctionData *func, ParamData new_param);
 void reset_param();
 void semantic_destroy();
-int check_semantic(Token **token, Sem_rule sem_rule);
+int check_semantic(Token *token, Sem_rule sem_rule);
 
 #endif // SEMANTIC_H

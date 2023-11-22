@@ -100,9 +100,9 @@ void semantic_destroy()
     // stack_free(myStack);
 }
 
-Expression_type get_expression_type(Token **token)
+Expression_type get_expression_type(Token *token)
 {
-    switch ((*token)->type)
+    switch (token->type)
     {
     case TOKEN_TYPE_INT:
         return TYPE_INT;
@@ -144,7 +144,7 @@ bool is_defined(char *name)
     }
 }
 
-int check_semantic(Token **token, Sem_rule sem_rule)
+int check_semantic(Token *token, Sem_rule sem_rule)
 {
 
     switch (sem_rule)
@@ -158,12 +158,12 @@ int check_semantic(Token **token, Sem_rule sem_rule)
         varItem->data.var_data->is_const = false;
         break;
     case VAR_ID:
-        if (is_defined((*token)->token_value))
+        if (is_defined(token->token_value))
         {
-            fprintf(stderr, RED "Variable %s is already defined!" RESET "\n", (*token)->token_value);
-            return -1;
+            fprintf(stderr, RED "Variable %s is already defined!" RESET "\n", token->token_value);
+            return 3;
         }
-        varItem->id = (*token)->token_value;
+        varItem->id = token->token_value;
         break;
     case VAR_TYPE:
         varItem->data.var_data->type = get_expression_type(token);
@@ -181,12 +181,16 @@ int check_semantic(Token **token, Sem_rule sem_rule)
         else
         { // it is in symtable, change its value
             item->data.var_data->is_initialized = true;
+            symtable_print(symtable_stack_top(parser_stack));
         }
         break;
     }
+    case VAR_ASSIGN1:
+        symtable_add(*varItem, symtable_stack_top(parser_stack));
+        break;
     case VAR_EXP:
         printf("VAR_EXP\n");
-        printf("TOKEN FOR PSA: %s\n", (*token)->token_value);
+        printf("TOKEN FOR PSA: %s\n", token->token_value);
         psa_return_type return_type = parse_expression(parser_stack);
         if (return_type.is_ok)
         {
@@ -195,13 +199,13 @@ int check_semantic(Token **token, Sem_rule sem_rule)
         break;
     case FUNC_ID:
         reset_func();
-        funcItem->id = (*token)->token_value;
+        funcItem->id = token->token_value;
         break;
     case P_NAME:
-        new_param.name = (*token)->token_value;
+        new_param.name = token->token_value;
         break;
     case P_ID:
-        new_param.id = (*token)->token_value;
+        new_param.id = token->token_value;
         break;
     case P_TYPE:
         new_param.type = get_expression_type(token);
@@ -243,7 +247,19 @@ int check_semantic(Token **token, Sem_rule sem_rule)
         break;
     case LOAD_IDENTIF:
         reset_var();
-        varItem->id = (*token)->token_value;
+        symtable_item *item = symtable_find_in_stack(token->token_value, parser_stack);
+        printf("item: %s %d %d\n", item->id, item->data.var_data->type, item->data.var_data->is_const);
+        if (item == NULL)
+        {
+            fprintf(stderr, RED "Variable %s is not defined!\n", token->token_value);
+            return 99;
+        }
+        else if (item->data.var_data->is_const == true)
+        {
+            fprintf(stderr, RED "Variable %s is const!\n", token->token_value);
+            return 99;
+        }
+        varItem->id = token->token_value;
         break;
     case IDENTIF_EXP:
         printf("IDENTIF_EXP\n");
