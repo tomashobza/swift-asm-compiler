@@ -500,7 +500,6 @@ bool EXP(Token *token, Sem_rule sem_rule)
     return_token(*token);
     check_semantic(token, sem_rule);
     get_token(token);
-    fprintf(stderr, RED "EXP    token: %d   value: %s\n" RESET, token->type, token->token_value);
     return true;
 }
 

@@ -1,6 +1,2 @@
-let x : Bool
-var y : Int
-let z : String
-let a : Double
-var b : Bool
-let c : Int
+let x = "blee"
+eat_me_daddy var y : Int

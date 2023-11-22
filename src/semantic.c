@@ -187,11 +187,34 @@ int check_semantic(Token *token, Sem_rule sem_rule)
         break;
     case VAR_EXP:
         psa_return_type return_type = parse_expression(parser_stack);
+        DEBUG_SEMANTIC_CODE(print_expression_type(return_type.type););
         if (return_type.is_ok)
         {
+            if (return_type.type == TYPE_NIL)
+            {
+                if (varItem->data.var_data->type == TYPE_EMPTY)
+                {
+                    fprintf(stderr, RED "Couldn't decide the type of %s from type NIL!\n" RESET, varItem->id);
+                    return -1;
+                }
+                else if (varItem->data.var_data->type != TYPE_NIL)
+                {
+                    fprintf(stderr, RED "Expression type: %d and type: %d of variable: %s do NOT match!\n" RESET, return_type.type, varItem->data.var_data->type, varItem->id);
+                    return -1;
+                }
+            }
+            else if (varItem->data.var_data->type == TYPE_EMPTY)
+            {
+                (symtable_find(varItem->id, symtable_stack_top(parser_stack)))->data.var_data->type = return_type.type;
+            }
+            else if (varItem->data.var_data->type != return_type.type)
+            {
+                fprintf(stderr, RED "Expression type: %d and type: %d of variable: %s do not match!\n" RESET, return_type.type, varItem->data.var_data->type, varItem->id);
+                return -1;
+            }
         }
-        DEBUG_SEMANTIC_CODE(print_expression_type(return_type.type););
         DEBUG_SEMANTIC_CODE(symtable_print(symtable_stack_top(parser_stack)););
+        // data_type check
         break;
     case FUNC_ID:
         reset_func();

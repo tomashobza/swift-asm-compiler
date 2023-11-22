@@ -191,27 +191,6 @@ symtable_item *init_symtable_item(symtable_item item)
     return new_sti;
 }
 
-// symtable_item_t *symtable_get(char *id, symtable_t table)
-// {
-//     const uint32_t item_hash = hash(id);
-//     if (item_hash == (uint32_t)-1)
-//     {
-//         return NULL;
-//     }
-
-//     symtable_item_t *item = table[item_hash];
-//     while (item != NULL)
-//     {
-//         if (strcmp(item->id, id) == 0)
-//         {
-//             return item;
-//         }
-//         item = item->next;
-//     }
-
-//     return NULL;
-// }
-
 // void symtable_print(symtable_t table)
 void symtable_print(symtable table)
 {
