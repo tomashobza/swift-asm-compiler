@@ -11,6 +11,7 @@
 #include "scanner.h"
 #include "stack.h"
 #include "symtable.h"
+#include "error.h"
 
 // STRUCTS, ENUMS & GLOBALS
 
