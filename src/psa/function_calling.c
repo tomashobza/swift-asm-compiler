@@ -41,7 +41,7 @@ PSA_Token parseFunctionCall(PSA_Token_stack *main_s, PSA_Token id, symtable_stac
 
     int param_counter = 0;
     bool params_ok = true;
-    psa_return_type parsed_param;
+    psa_return_type parsed_param = {0};
 
     do
     {

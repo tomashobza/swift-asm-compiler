@@ -104,20 +104,17 @@ Expression_type get_expression_type(Token **token)
 {
     switch ((*token)->type)
     {
-    case TOKEN_INT:
+    case TOKEN_TYPE_INT:
         return TYPE_INT;
         break;
-    case TOKEN_DOUBLE:
+    case TOKEN_TYPE_DOUBLE:
         return TYPE_DOUBLE;
         break;
-    case TOKEN_STRING:
+    case TOKEN_TYPE_STRING:
         return TYPE_STRING;
         break;
-    case TOKEN_BOOL:
+    case TOKEN_TYPE_BOOL:
         return TYPE_BOOL;
-        break;
-    case TOKEN_NIL:
-        return TYPE_NIL;
         break;
     default:
         return TYPE_INVALID;
@@ -135,6 +132,18 @@ void print_items()
     printf(BLUE "VARIABLE: %s, type: %d, is const: %d" RESET "\n", varItem->id, varItem->data.var_data->type, varItem->data.var_data->is_const);
 }
 
+bool is_defined(char *name)
+{
+    if (symtable_find(name, symtable_stack_top(parser_stack)) == NULL)
+    {
+        return false;
+    }
+    else
+    {
+        return true;
+    }
+}
+
 int check_semantic(Token **token, Sem_rule sem_rule)
 {
 
@@ -149,6 +158,11 @@ int check_semantic(Token **token, Sem_rule sem_rule)
         varItem->data.var_data->is_const = false;
         break;
     case VAR_ID:
+        if (is_defined((*token)->token_value))
+        {
+            fprintf(stderr, RED "Variable %s is already defined!" RESET "\n", (*token)->token_value);
+            return -1;
+        }
         varItem->id = (*token)->token_value;
         break;
     case VAR_TYPE:
