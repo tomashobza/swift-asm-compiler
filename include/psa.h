@@ -68,6 +68,7 @@ extern char P_TABLE[10][10];
 */
 typedef enum
 {
+    RULE_0 = TOKEN_FUNC_ID,                                                                    // E -> f
     RULE_1a = TOKEN_IDENTIFICATOR,                                                             // E -> i
     RULE_1b = TOKEN_INT,                                                                       // E -> i
     RULE_1c = TOKEN_DOUBLE,                                                                    // E -> i
@@ -213,7 +214,7 @@ psa_return_type parse_expression(symtable_stack *st_stack);
 psa_return_type parse_expression_base(bool is_param, symtable_stack *st_stack);
 
 /**
- * @brief Parses the expression that is a function parameter using the precedent bottom-up parser. Reads tokens from the scanner.
+ * @brief Parses the expression that is a function parameter using the precedent bottom-up parser. Reads tokens from the scanner. Separating commas (,) are consumed, but closing bracket (]) is not.
  *
  * @return psa_return_type
  */
