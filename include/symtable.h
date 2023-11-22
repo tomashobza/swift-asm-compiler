@@ -123,6 +123,10 @@ symtable_item *symtable_find(char *name, symtable table);
  */
 symtable_item *symtable_find_in_stack(char *name, symtable_stack *stack);
 
+FunctionData *init_func_data();
+VariableData *init_var_data();
+ParamData *init_param_data();
+
 /**
  * @brief Creates a new symbol object.
  *
