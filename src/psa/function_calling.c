@@ -2,11 +2,14 @@
 
 PSA_Token parseFunctionCall(PSA_Token_stack *main_s, PSA_Token id, symtable_stack *st_stack)
 {
+    bool is_ok = true;
+
     // check if the id of the function is in the symtable
     symtable_item *found_func = symtable_find_in_stack(id.token_value, st_stack);
     if (found_func == NULL)
     {
-        // if yes, save the symbol
+        is_ok = false;
+
         printf("Function %s not found!\n", id.token_value);
         // TODO: if not -> error (for now)
         return (PSA_Token){
@@ -31,35 +34,52 @@ PSA_Token parseFunctionCall(PSA_Token_stack *main_s, PSA_Token id, symtable_stac
     {
         // if not -> error
         // TODO: throw error
+        is_ok = false;
     }
 
     // parse the next n parameters using parse_expression_param
 
     int param_counter = 0;
+    bool params_ok = true;
     psa_return_type parsed_param;
 
     do
     {
         printf("The name is: %s\n", checkParamName(main_s, param_counter, found_func) ? "ok" : "not ok");
+
         psa_return_type parsed_param = parse_expression_param(st_stack);
+
         printf("param[%d] has type: ", param_counter);
         print_expression_type(parsed_param.type);
         printf("\n");
-    } while (parsed_param.end_token != TOKEN_R_BRACKET);
 
-    // PSA_Token next_token = (PSA_Token){
-    //     .type = parsed_param.end_token,
-    //     .token_value = "E",
-    //     .expr_type = parsed_param.type,
-    //     .canBeNil = parsed_param.canBeNil,
-    //     .preceded_by_nl = false};
+        params_ok = params_ok && parsed_param.is_ok && parsed_param.type == found_func->data.func_data->params[param_counter].type;
 
-    // for each parameter print out the tokens making it
+        param_counter++;
+    } while (param_counter < found_func->data.func_data->params_count && parsed_param.type != TYPE_EMPTY);
 
-    // if the number of read tokens is not n or the next token isn't ), the wrong number of parameters was provided -> error
+    is_ok = is_ok && params_ok;
+
+    // read the next token (should be ) token)
+    if (readNextToken(main_s, &next_token_error).type != TOKEN_R_BRACKET)
+    {
+        // if not -> error
+        // TODO: throw error
+        is_ok = false;
+    }
+
+    if (is_ok)
+    {
+        return (PSA_Token){
+            .type = TOKEN_FUNC_ID,
+            .token_value = found_func->id,
+            .canBeNil = false,
+            .expr_type = found_func->data.func_data->return_type,
+            .preceded_by_nl = id.preceded_by_nl};
+    }
 
     return (PSA_Token){
-        .type = TOKEN_EXPRSN,
+        .type = TOKEN_EOF,
         .token_value = "E",
         .canBeNil = false,
         .expr_type = TYPE_INVALID,
@@ -76,9 +96,6 @@ bool checkParamName(PSA_Token_stack *main_s, unsigned int param_index, symtable_
     PSA_Token colon = readNextToken(main_s, &next_token_error);
 
     bool has_name = id.type == TOKEN_IDENTIFICATOR && colon.type == TOKEN_DOUBLE_DOT;
-    bool should_have_name = !strcmp(found_func->data.func_data->params[param_index].name, "_");
-
-    bool name_is_ok = false;
 
     // if the tokens don't match the pattern of a parameter name, return them
     if (!has_name)
@@ -86,6 +103,10 @@ bool checkParamName(PSA_Token_stack *main_s, unsigned int param_index, symtable_
         return_token(convertPSATokenToToken(colon));
         return_token(convertPSATokenToToken(id));
     }
+
+    bool should_have_name = param_index < (unsigned int)found_func->data.func_data->params_count && !strcmp(found_func->data.func_data->params[param_index].name, "_");
+
+    bool name_is_ok = false;
 
     /*
         SEMANTIC RULES FOR PARAMETER NAME:
