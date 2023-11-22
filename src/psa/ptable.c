@@ -41,6 +41,7 @@ unsigned int getSymbolValue(Token_type token)
     case TOKEN_BINARY_OPERATOR:
         return 4;
     case TOKEN_IDENTIFICATOR:
+    case TOKEN_FUNC_ID:
     case TOKEN_INT:
     case TOKEN_DOUBLE:
     case TOKEN_EXP:
