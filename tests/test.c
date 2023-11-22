@@ -8,6 +8,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include "error.h"
 #include "psa.h"
 #include "parser.h"
 #include "utils.h"
@@ -79,6 +80,15 @@ int main(void)
     printf_magenta("====================\n");
 
     // parser_main();
+
+    // throw_error(SYNTACTIC_ERR, 3, "This is a syntactic error");
+    // throw_error(LEXICAL_ERR, 9, "This is a lexical error");
+    // throw_error(SEMANTICS_ERR, 5, "This is a semantic error");
+    // throw_error(INTERNAL_ERR, 1, "This is an internal error");
+    // throw_error(TYPE_ERR, 7, "This is a type error");
+
+    // print errors
+    print_errors();
 
     return EXIT_SUCCESS;
 }
