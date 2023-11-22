@@ -10,6 +10,7 @@
 #define IFJ23_ERROR_H
 
 #include "colorful_printf.h"
+#include "scanner.h"
 
 /*
 • 1- chybavprogramuvrámcilexikálníanalýzy(chybnástrukturaaktuálníholexému).
@@ -49,6 +50,15 @@ typedef struct
 
 DECLARE_STACK_FUNCTIONS(Error)
 
+// Macro for formatted error messages
+#define throw_error(code, fmt, ...)                                                 \
+    do                                                                              \
+    {                                                                               \
+        char formatted_message[256];                                                \
+        snprintf(formatted_message, sizeof(formatted_message), fmt, ##__VA_ARGS__); \
+        throw_error_base(code, formatted_message);                                  \
+    } while (0);
+
 /**
  * @brief Adds an error structure to the global error stack.
  *
@@ -56,7 +66,7 @@ DECLARE_STACK_FUNCTIONS(Error)
  * @param line_num the line number where the error situates
  * @param message message to go along with the error
  */
-void throw_error(Error_code code, unsigned int line_num, char *message);
+void throw_error_base(Error_code code, char *message);
 
 /**
  * @brief Sorts and prints all the errors in the stack ordered by the line number.

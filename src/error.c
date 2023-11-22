@@ -4,7 +4,8 @@ DEFINE_STACK_FUNCTIONS(Error)
 
 static Error_stack *error_st = NULL;
 
-void throw_error(Error_code code, unsigned int line_num, char *message)
+// TODO: make this into a macro that alows for printing to the message
+void throw_error_base(Error_code code, char *message)
 {
     if (error_st == NULL)
     {
