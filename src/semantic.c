@@ -128,7 +128,8 @@ void print_items()
         printf(MAGENTA "FUNCTION: %s, return type: %d" RESET "\n", funcItem->id, funcItem->data.func_data->return_type);
         for (int i = 0; i < funcItem->data.func_data->params_count; i++) {
             printf(MAGENTA "PARAM: %s, id: %s, type: %d" RESET "\n", funcItem->data.func_data->params[i].name, funcItem->data.func_data->params[i].id, funcItem->data.func_data->params[i].type);
-        } printf(BLUE "VARIABLE: %s, type: %d, is const: %d" RESET "\n", varItem->id, varItem->data.var_data->type, varItem->data.var_data->is_const););
+        } printf(BLUE "VARIABLE: %s, type: %d, is const: %d" RESET "\n", varItem->id, varItem->data.var_data->type, varItem->data.var_data->is_const);
+        printf("\n"););
 }
 
 bool is_defined(char *name)
@@ -167,24 +168,22 @@ int check_semantic(Token *token, Sem_rule sem_rule)
     case VAR_TYPE:
         varItem->data.var_data->type = get_expression_type(token);
         // todo semantic checks
+        DEBUG_SEMANTIC_CODE(printf(YELLOW "ADDING VAR: %s, type: %d, const: %d\n", varItem->id, varItem->data.var_data->type, varItem->data.var_data->is_const););
         symtable_add(*varItem, symtable_stack_top(parser_stack));
+        DEBUG_SEMANTIC_CODE(symtable_print(symtable_stack_top(parser_stack)););
         break;
-    case VAR_ASSIGN:
-    { // check if variable is in symtable
-        symtable_item *item = symtable_find_in_stack(varItem->id, parser_stack);
-        if (item == NULL)
-        {
-            varItem->data.var_data->is_initialized = true;
-            symtable_add(*varItem, symtable_stack_top(parser_stack));
-        }
-        else
-        { // it is in symtable, change its value
-            item->data.var_data->is_initialized = true;
-        }
-        break;
-    }
     case VAR_ASSIGN1:
+        printf("VAR_ASSIGN2\n");
+        DEBUG_SEMANTIC_CODE(printf(YELLOW "ADDING VAR: %s, type: %d, const: %d\n", varItem->id, varItem->data.var_data->type, varItem->data.var_data->is_const););
         symtable_add(*varItem, symtable_stack_top(parser_stack));
+        DEBUG_SEMANTIC_CODE(symtable_print(symtable_stack_top(parser_stack)););
+        break;
+    case VAR_ASSIGN2:
+        printf("VAR_ASSIGN2\n");
+        DEBUG_SEMANTIC_CODE(printf(YELLOW "ADDING VAR: %s, type: %d, const: %d\n", varItem->id, varItem->data.var_data->type, varItem->data.var_data->is_const););
+        symtable_item *var_ass_item = symtable_find_in_stack(varItem->id, parser_stack);
+        var_ass_item->data.var_data->is_initialized = true;
+        DEBUG_SEMANTIC_CODE(symtable_print(symtable_stack_top(parser_stack)););
         break;
     case VAR_EXP:
         psa_return_type return_type = parse_expression(parser_stack);
@@ -192,6 +191,7 @@ int check_semantic(Token *token, Sem_rule sem_rule)
         {
         }
         DEBUG_SEMANTIC_CODE(print_expression_type(return_type.type););
+        DEBUG_SEMANTIC_CODE(symtable_print(symtable_stack_top(parser_stack)););
         break;
     case FUNC_ID:
         reset_func();
@@ -212,6 +212,7 @@ int check_semantic(Token *token, Sem_rule sem_rule)
         funcItem->data.func_data->return_type = get_expression_type(token);
         break;
     case FUNC_HEADER_DONE:
+        DEBUG_SEMANTIC_CODE(printf(YELLOW "ADDING FUNC: %s, return type: %d\n", funcItem->id, funcItem->data.func_data->return_type););
         symtable_add(*funcItem, symtable_stack_top(parser_stack));
         goto PUSH_SCOPE;
         break;
@@ -240,7 +241,9 @@ int check_semantic(Token *token, Sem_rule sem_rule)
         DEBUG_SEMANTIC_CODE(print_expression_type(return_type3.type););
         break;
     case LOAD_IDENTIF:
-        reset_var();
+        // reset_var();
+        DEBUG_SEMANTIC_CODE(printf(CYAN);
+                            symtable_print(symtable_stack_top(parser_stack)););
         symtable_item *item = symtable_find_in_stack(token->token_value, parser_stack);
         if (item == NULL)
         {
@@ -252,6 +255,7 @@ int check_semantic(Token *token, Sem_rule sem_rule)
             fprintf(stderr, RED "Variable %s is const!\n", token->token_value);
             return 99;
         }
+        DEBUG_SEMANTIC_CODE(printf("FOUND: %s, type: %d, const: %d\n", item->id, item->data.var_data->type, item->data.var_data->is_const););
         varItem->id = token->token_value;
         break;
     case IDENTIF_EXP:

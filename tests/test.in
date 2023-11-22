@@ -1,4 +1,6 @@
-let y : Bool = 5
-y y = 69
-let let x : Int = 3
-let let x : Int
+let x : Bool
+var y : Int
+let z : String
+let a : Double
+var b : Bool
+let c : Int

@@ -162,7 +162,7 @@ bool R_FLEX(Token *token)
     {
     // R_FLEX -> = EXP
     case TOKEN_ASSIGN:
-        return cmp_type(token, TOKEN_ASSIGN, VAR_ASSIGN) && EXP(token, VAR_EXP);
+        return cmp_type(token, TOKEN_ASSIGN, VAR_ASSIGN2) && EXP(token, VAR_EXP);
     // R_FLEX -> eps
     case TOKEN_EOF:
     case TOKEN_IDENTIFICATOR:
@@ -500,6 +500,7 @@ bool EXP(Token *token, Sem_rule sem_rule)
     return_token(*token);
     check_semantic(token, sem_rule);
     get_token(token);
+    fprintf(stderr, RED "EXP    token: %d   value: %s\n" RESET, token->type, token->token_value);
     return true;
 }
 

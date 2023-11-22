@@ -119,8 +119,54 @@ symtable_item *symtable_find_in_stack(char *name, symtable_stack *stack)
     return NULL;
 }
 
+VariableData *init_var_data()
+{
+    VariableData *var_data = malloc(sizeof(VariableData));
+    if (var_data == NULL)
+    {
+        return NULL;
+    }
+
+    var_data->is_const = false;
+    var_data->is_initialized = false;
+    var_data->type = TYPE_EMPTY;
+
+    return var_data;
+}
+ParamData *init_param_data()
+{
+    ParamData *param_data = malloc(sizeof(ParamData));
+    if (param_data == NULL)
+    {
+        return NULL;
+    }
+
+    param_data->id = NULL;
+    param_data->name = NULL;
+    param_data->type = TYPE_EMPTY;
+
+    return param_data;
+}
+
+FunctionData *init_func_data()
+{
+    FunctionData *func_data = malloc(sizeof(FunctionData));
+    if (func_data == NULL)
+    {
+        return NULL;
+    }
+
+    func_data->params = init_param_data();
+    func_data->params_count = 0;
+    func_data->capacity = 0;
+    func_data->return_type = TYPE_EMPTY;
+
+    return func_data;
+}
+
 symtable_item *init_symtable_item(symtable_item item)
 {
+
     symtable_item *new_sti = malloc(sizeof(symtable_item));
     if (new_sti == NULL)
     {
@@ -128,7 +174,20 @@ symtable_item *init_symtable_item(symtable_item item)
     }
 
     *new_sti = item;
+
+    if (item.type == VARIABLE)
+    {
+        new_sti->data.var_data = init_var_data();
+        *(new_sti->data.var_data) = *(item.data.var_data);
+    }
+    else if (item.type == FUNCTION)
+    {
+        new_sti->data.func_data = init_func_data();
+        *(new_sti->data.func_data) = *(item.data.func_data);
+        *(new_sti->data.func_data->params) = *(item.data.func_data->params);
+    }
     new_sti->next = NULL;
+
     return new_sti;
 }
 
