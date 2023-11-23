@@ -145,6 +145,15 @@ bool isTokenOperand(Token_type token);
 bool isTokenBinaryOperator(Token_type token);
 
 /**
+ * @brief Checks if the token is a bracket.
+ *
+ * @param token token to check
+ * @return true
+ * @return false
+ */
+bool isTokenBracket(Token_type token);
+
+/**
  * @brief Checks if the token can be at the beginning of an expression.
  *
  * @param token token to check
