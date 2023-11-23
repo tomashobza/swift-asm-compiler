@@ -1,4 +1,7 @@
-DEBUG?=1
+DEBUG_PSA?=0
+DEBUG_SEMANTIC?=0
+DEBUG_SYNTAX?=0
+DEBUG_LEXER?=0
 
 # Compiler and flags
 CC = gcc
