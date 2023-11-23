@@ -93,10 +93,10 @@ typedef enum
     TOKEN_AND,             // && has been read 45
     TOKEN_OR,              // || has been read 46
     TOKEN_UNDERSCORE,      // _ has been read 47
-    TOKEN_FUNC_ID,         // func_id 58
-    TOKEN_EXPRSN,          // E 59
-    TOKEN_SHIFT,           // < 60
-    TOKEN_UNSHIFT,         // > 61
+    TOKEN_FUNC_ID,         // func_id 48
+    TOKEN_EXPRSN,          // E 49
+    TOKEN_SHIFT,           // < 50
+    TOKEN_UNSHIFT,         // > 51
 } Token_type;
 
 /*
