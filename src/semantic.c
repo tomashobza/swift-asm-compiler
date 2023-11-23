@@ -419,6 +419,7 @@ int check_semantic(Token *token, Sem_rule sem_rule)
     case FUNC_HEADER_DONE:
         DEBUG_SEMANTIC_CODE(printf(YELLOW "ADDING FUNC: %s, return type: %d\n", funcItem->id, funcItem->data.func_data->return_type););
         symtable_add(*funcItem, symtable_stack_top(parser_stack));
+        DEBUG_SEMANTIC_CODE(symtable_print(symtable_stack_top(parser_stack)););
         goto PUSH_SCOPE;
         break;
     case PUSH_SCOPE:
@@ -466,6 +467,7 @@ int check_semantic(Token *token, Sem_rule sem_rule)
         if (func_body_item->data.func_data->found_return == false && func_body_item->data.func_data->return_type != TYPE_EMPTY)
         {
             fprintf(stderr, RED "Function %s of type: %d does not have a return statement!\n" RESET, funcItem->id, func_body_item->data.func_data->return_type);
+            goto POP_SCOPE;
             return -1;
         }
         goto POP_SCOPE;

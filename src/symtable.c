@@ -212,7 +212,12 @@ void symtable_print(symtable table)
                 }
                 else if (item->type == FUNCTION)
                 {
-                    printf("id: %s, return_type: %d", item->id, item->data.func_data->return_type);
+                    printf("id: %s, return_type: %d ", item->id, item->data.func_data->return_type);
+                    for (int i = 0; i < item->data.func_data->params_count; i++)
+                    {
+                        printf("\n");
+                        printf("%s: param %d: %s, %d \n", item->id, i, item->data.func_data->params[i].id, item->data.func_data->params[i].type);
+                    }
                 }
                 item = item->next;
             }
