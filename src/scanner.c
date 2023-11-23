@@ -50,6 +50,10 @@ int generate_token(Token *token, char *code)
         {"String", TOKEN_TYPE_STRING},
         {"Int", TOKEN_TYPE_INT},
         {"Bool", TOKEN_TYPE_BOOL},
+        {"Double?", TOKEN_TYPE_DOUBLE_NIL},
+        {"String?", TOKEN_TYPE_STRING_NIL},
+        {"Int?", TOKEN_TYPE_INT_NIL},
+        {"Bool?", TOKEN_TYPE_BOOL_NIL},
         {"func", TOKEN_FUNC},
         {"nil", TOKEN_NIL},
         {"if", TOKEN_IF},
@@ -166,8 +170,8 @@ int generate_token(Token *token, char *code)
                 }
                 else
                 {
-                    ungetc(c, stdin);
-                    return set_token(NEW_TOKEN, "?", TOKEN_TYPE_SUFFIX, token);
+                    ret = LEXICAL_ERR;
+                    return LEXICAL_ERR;
                 }
             case '<':
                 c = (char)getchar();
@@ -336,10 +340,15 @@ int generate_token(Token *token, char *code)
             while ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || (c >= '0' && c <= '9') || c == '_')
             {
                 check_length(&code_len, 0, code);
-                code[strlen(code)] = c;
+                strncat(code, &c, 1);
                 c = (char)getchar();
             }
-            ungetc(c, stdin);
+            if(c == '?' && (strcmp(code,"Double") == 0 || strcmp(code,"Int") == 0 || strcmp(code,"String") == 0 || strcmp(code,"Bool") == 0)){
+                check_length(&code_len, 0, code);
+                strncat(code, &c, 1);
+            }else{
+                ungetc(c, stdin);
+            }
             for (size_t i = 0; i < sizeof(defined_tokens) / sizeof(defined_tokens[0]); i++)
             {
                 if (strcmp(code, defined_tokens[i].code) == 0)
@@ -380,7 +389,7 @@ int generate_token(Token *token, char *code)
                 if (c != '0' || *code != '\0')
                 {
                     check_length(&code_len, 0, code);
-                    code[strlen(code)] = c;
+                    strncat(code, &c, 1);
                 }
                 c = (char)getchar();
             }
@@ -401,7 +410,8 @@ int generate_token(Token *token, char *code)
             }
             else if (c == '.' && state == INTEGER)
             {
-                code[strlen(code)] = c;
+                check_length(&code_len, 0, code);
+                strncat(code, &c, 1);
                 state = DEC_POINT;
                 break;
             }
@@ -426,7 +436,8 @@ int generate_token(Token *token, char *code)
             char c = (char)getchar();
             if (c == '+' || c == '-')
             {
-                code[strlen(code)] = c;
+                check_length(&code_len, 0, code);
+                strncat(code, &c, 1);
                 c = (char)getchar();
             }
             if (c >= '0' && c <= '9')
@@ -437,7 +448,7 @@ int generate_token(Token *token, char *code)
                         (code[strlen(code) - 1] != '-' && code[strlen(code) - 1] != '+' && code[0] != '\0'))
                     {
                         check_length(&code_len, 0, code);
-                        code[strlen(code)] = c;
+                        strncat(code, &c, 1);
                     }
                     c = (char)getchar();
                 }
@@ -482,7 +493,7 @@ int generate_token(Token *token, char *code)
                 else
                 {
                     check_length(&code_len, 0, code);
-                    code[strlen(code)] = c;
+                    strncat(code, &c, 1);
                     c = '\0';
                     c = (char)getchar();
                 }
@@ -519,7 +530,7 @@ int generate_token(Token *token, char *code)
                 break;
             case '\\':
                 check_length(&code_len, 0, code);
-                code[strlen(code)] = '\\';
+                strcat(code, "\\");
                 if (state == STRING_ESCAPE)
                 {
                     state = STRING;
@@ -531,7 +542,7 @@ int generate_token(Token *token, char *code)
                 break;
             case 'n':
                 check_length(&code_len, 0, code);
-                code[strlen(code)] = '\n';
+                strcat(code, "\n");
                 if (state == STRING_ESCAPE)
                 {
                     state = STRING;
@@ -543,7 +554,7 @@ int generate_token(Token *token, char *code)
                 break;
             case 't':
                 check_length(&code_len, 0, code);
-                code[strlen(code)] = '\t';
+                strcat(code, "\t");
                 if (state == STRING_ESCAPE)
                 {
                     state = STRING;
@@ -555,7 +566,7 @@ int generate_token(Token *token, char *code)
                 break;
             case 'r':
                 check_length(&code_len, 0, code);
-                code[strlen(code)] = '\r';
+                strcat(code, "\r");
                 if (state == STRING_ESCAPE)
                 {
                     state = STRING;
@@ -567,7 +578,7 @@ int generate_token(Token *token, char *code)
                 break;
             case '"':
                 check_length(&code_len, 0, code);
-                code[strlen(code)] = '\"';
+                strcat(code, "\"");
                 if (state == STRING_ESCAPE)
                 {
                     state = STRING;
@@ -579,9 +590,9 @@ int generate_token(Token *token, char *code)
                 break;
             default:
                 check_length(&code_len, 0, code);
-                code[strlen(code)] = '\\';
+                strcat(code, "\\");
                 check_length(&code_len, 0, code);
-                code[strlen(code)] = c;
+                strncat(code, &c, 1);
                 if (state == STRING_ESCAPE)
                 {
                     state = STRING;
