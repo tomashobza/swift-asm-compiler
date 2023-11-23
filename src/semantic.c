@@ -144,6 +144,177 @@ bool is_defined(char *name)
     }
 }
 
+int push_token_get_next(Token *token, Token_stack *token_stack)
+{
+    Token_stack_push(token_stack, *token);
+    return main_scanner(token);
+}
+
+bool get_func_definition(Token *token, char *name, symtable_item *psa_item)
+{
+    Token_stack *token_stack = Token_stack_init();
+    while (token->token_value != name || token->type != TOKEN_FUNC_ID)
+    {
+        push_token_get_next(token, token_stack);
+    }
+
+    typedef enum
+    {
+        FUNC_ID,
+        L_BRACKET,
+        P_LIST,
+        PARAM,
+        P_NAME,
+        P_ID,
+        P_TYPE,
+        P_SEP,
+        R_BRACKET,
+        RET_TYPE,
+        DONE
+    } nstate_t;
+    nstate_t nstate = FUNC_ID;
+    //  DEF_FUNC -> func func_id ( P_LIST ) RET_TYPE { FUNC_STMT_LIST }
+    while (nstate != DONE)
+    {
+        switch (nstate)
+        {
+        case FUNC_ID:
+            if (token->type == TOKEN_FUNC_ID)
+            {
+                nstate = L_BRACKET;
+                psa_item->id = token->token_value;
+            }
+            else
+            {
+                return false;
+            }
+            push_token_get_next(token, token_stack);
+            break;
+        case L_BRACKET:
+            if (token->type == TOKEN_L_BRACKET)
+            {
+                nstate = P_LIST;
+            }
+            else
+            {
+                return false;
+            }
+            push_token_get_next(token, token_stack);
+            break;
+        case P_LIST:
+            if (token->type == TOKEN_R_BRACKET)
+            {
+                nstate = R_BRACKET;
+            }
+            else if (token->type == TOKEN_IDENTIFICATOR)
+            {
+                nstate = PARAM;
+            }
+            else
+            {
+                return false;
+            }
+            push_token_get_next(token, token_stack);
+            break;
+        case PARAM:
+            ParamData new_psa_param;
+
+            if (token->type == TOKEN_IDENTIFICATOR)
+            {
+                new_psa_param.name = token->token_value;
+                push_token_get_next(token, token_stack);
+                if (token->type == TOKEN_IDENTIFICATOR)
+                {
+                    new_psa_param.id = token->token_value;
+                    push_token_get_next(token, token_stack);
+                    if (token->type == TOKEN_DOUBLE_DOT)
+                    {
+                        push_token_get_next(token, token_stack);
+                        if (token->type == TOKEN_TYPE_INT || token->type == TOKEN_TYPE_DOUBLE || token->type == TOKEN_TYPE_STRING || token->type == TOKEN_TYPE_BOOL)
+                        {
+                            new_psa_param.type = get_expression_type(token);
+                            add_param(psa_item->data.func_data, new_psa_param);
+                            nstate = P_SEP;
+                        }
+                        else
+                        {
+                            return false;
+                        }
+                    }
+                    else
+                    {
+                        return false;
+                    }
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            else
+            {
+                return false;
+            }
+            push_token_get_next(token, token_stack);
+            break;
+        case P_SEP:
+            if (token->type == TOKEN_COMMA)
+            {
+                nstate = PARAM;
+            }
+            else if (token->type == TOKEN_R_BRACKET)
+            {
+                nstate = R_BRACKET;
+            }
+            else
+            {
+                return false;
+            }
+            push_token_get_next(token, token_stack);
+            break;
+        case R_BRACKET:
+            if (token->type == TOKEN_ARROW)
+            {
+                nstate = RET_TYPE;
+            }
+            else if (token->type == TOKEN_L_CURLY)
+            {
+                nstate = DONE;
+            }
+            else
+            {
+                return false;
+            }
+            push_token_get_next(token, token_stack);
+            break;
+        case RET_TYPE:
+            if (token->type == TOKEN_TYPE_INT || token->type == TOKEN_TYPE_DOUBLE || token->type == TOKEN_TYPE_STRING || token->type == TOKEN_TYPE_BOOL)
+            {
+                psa_item->data.func_data->return_type = get_expression_type(token);
+                nstate = DONE;
+            }
+            else
+            {
+                return false;
+            }
+            push_token_get_next(token, token_stack);
+            break;
+        default:
+            return false;
+        }
+    }
+
+    // return tokens to scanner
+    return_token(*token);
+    while (Token_stack_empty(token_stack) != false)
+    {
+        Token_stack_pop(token_stack);
+        return_token(*token);
+    }
+
+    return true;
+}
+
 int check_semantic(Token *token, Sem_rule sem_rule)
 {
 

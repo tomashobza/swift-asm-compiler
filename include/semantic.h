@@ -47,6 +47,8 @@ int semantic_init();
 void add_param(FunctionData *func, ParamData new_param);
 void reset_param();
 void semantic_destroy();
+int push_token_get_next(Token *token, Token_stack *token_stack);
+bool get_func_definition(Token *token, char *name, symtable_item *psa_item);
 int check_semantic(Token *token, Sem_rule sem_rule);
 
 #endif // SEMANTIC_H

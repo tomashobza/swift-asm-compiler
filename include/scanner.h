@@ -102,6 +102,7 @@ typedef enum
     TOKEN_SHIFT,           // < 57
     TOKEN_UNSHIFT,         // > 58
 } Token_type;
+
 /*
  * Structure Token - used to store token type and token value read from stdin
  */
