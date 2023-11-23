@@ -81,7 +81,7 @@ symtable_item *symtable_add(symtable_item item, symtable table)
     return new_sti;
 }
 
-symtable_item *symtable_find(char *name, symtable table)
+symtable_item *symtable_find(char *name, symtable table, bool is_func)
 {
     const uint32_t item_hash = hash(name);
     if (item_hash == (uint32_t)-1)
@@ -92,7 +92,7 @@ symtable_item *symtable_find(char *name, symtable table)
     symtable_item *item = table[item_hash];
     while (item != NULL)
     {
-        if (strcmp(item->id, name) == 0)
+        if (strcmp(item->id, name) == 0 && item->type == is_func)
         {
             return item;
         }
@@ -102,24 +102,73 @@ symtable_item *symtable_find(char *name, symtable table)
     return NULL;
 }
 
-symtable_item *symtable_find_in_stack(char *name, symtable_stack *stack)
+symtable_item *symtable_find_in_stack(char *name, symtable_stack *stack, bool is_func)
 {
+    int cnt = 0;
     symtable_node *node = stack->top;
     while (node != NULL)
     {
-        symtable_item *item = symtable_find(name, node->data);
+        symtable_item *item = symtable_find(name, node->data, is_func);
         if (item != NULL)
         {
+            DEBUG_SEMANTIC_CODE(printf("Found %s in %d. symtable\n", name, cnt););
             return item;
         }
         node = node->next;
+        cnt++;
     }
 
     return NULL;
 }
 
+VariableData *init_var_data()
+{
+    VariableData *var_data = malloc(sizeof(VariableData));
+    if (var_data == NULL)
+    {
+        return NULL;
+    }
+
+    var_data->is_const = false;
+    var_data->is_initialized = false;
+    var_data->type = TYPE_EMPTY;
+
+    return var_data;
+}
+ParamData *init_param_data()
+{
+    ParamData *param_data = malloc(sizeof(ParamData));
+    if (param_data == NULL)
+    {
+        return NULL;
+    }
+
+    param_data->id = NULL;
+    param_data->name = NULL;
+    param_data->type = TYPE_EMPTY;
+
+    return param_data;
+}
+
+FunctionData *init_func_data()
+{
+    FunctionData *func_data = malloc(sizeof(FunctionData));
+    if (func_data == NULL)
+    {
+        return NULL;
+    }
+
+    func_data->params = init_param_data();
+    func_data->params_count = 0;
+    func_data->capacity = 0;
+    func_data->return_type = TYPE_EMPTY;
+
+    return func_data;
+}
+
 symtable_item *init_symtable_item(symtable_item item)
 {
+
     symtable_item *new_sti = malloc(sizeof(symtable_item));
     if (new_sti == NULL)
     {
@@ -127,30 +176,22 @@ symtable_item *init_symtable_item(symtable_item item)
     }
 
     *new_sti = item;
+
+    if (item.type == VARIABLE)
+    {
+        new_sti->data.var_data = init_var_data();
+        *(new_sti->data.var_data) = *(item.data.var_data);
+    }
+    else if (item.type == FUNCTION)
+    {
+        new_sti->data.func_data = init_func_data();
+        *(new_sti->data.func_data) = *(item.data.func_data);
+        (new_sti->data.func_data->params) = (item.data.func_data->params);
+    }
     new_sti->next = NULL;
+
     return new_sti;
 }
-
-// symtable_item_t *symtable_get(char *id, symtable_t table)
-// {
-//     const uint32_t item_hash = hash(id);
-//     if (item_hash == (uint32_t)-1)
-//     {
-//         return NULL;
-//     }
-
-//     symtable_item_t *item = table[item_hash];
-//     while (item != NULL)
-//     {
-//         if (strcmp(item->id, id) == 0)
-//         {
-//             return item;
-//         }
-//         item = item->next;
-//     }
-
-//     return NULL;
-// }
 
 // void symtable_print(symtable_t table)
 void symtable_print(symtable table)
@@ -167,7 +208,19 @@ void symtable_print(symtable table)
             symtable_item *item = table[i];
             while (item != NULL)
             {
-                printf("id: %s, type: %d", item->id, item->type);
+                if (item->type == VARIABLE)
+                {
+                    printf("id: %s, type: %d, is_const: %d, is_init: %d", item->id, item->data.var_data->type, item->data.var_data->is_const, item->data.var_data->is_initialized);
+                }
+                else if (item->type == FUNCTION)
+                {
+                    printf("id: %s, return_type: %d ", item->id, item->data.func_data->return_type);
+                    for (int i = 0; i < item->data.func_data->params_count; i++)
+                    {
+                        printf("\n");
+                        printf("%s: param %d: %s, %d \n", item->id, i, item->data.func_data->params[i].id, item->data.func_data->params[i].type);
+                    }
+                }
                 item = item->next;
             }
             printf("\n");

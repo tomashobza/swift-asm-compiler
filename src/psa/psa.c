@@ -24,6 +24,18 @@ psa_return_type parse_expression_base(bool is_param)
     char next_token_error = 0;
     PSA_Token b = readNextToken(s, &next_token_error, &num_of_brackets);
 
+    // check for an empty expression
+    if (a.type == TOKEN_EOF && b.type == TOKEN_EOF)
+    {
+        DEBUG_PSA_CODE(printf("Empty expression!\n"););
+        return (psa_return_type){
+            .end_token = TOKEN_EXPRSN,
+            .is_ok = true,
+            .canBeNil = false,
+            .type = TYPE_EMPTY,
+        };
+    }
+
     while (!(a.type == (Token_type)TOKEN_EXPRSN && s->size == 2 && b.type == (Token_type)TOKEN_EOF))
     {
         // if the stack top is of type (Token_type)TOKEN_EXPRSN, then we need to use the second top of the stack to determine the rule
@@ -129,11 +141,11 @@ psa_return_type parse_expression_base(bool is_param)
             };
         }
 
-        DEBUG_CODE(printf_blue("Bracket count: %d\n", num_of_brackets););
-        DEBUG_CODE(printf("na stacku: ");
-                   printStack(s->top);
-                   printf_yellow("na vstupu: {'%s', %d}\n", b.token_value, b.type);
-                   printf_magenta("P_TABLE[{%d, '%s'}][{%d, '%s'}] = %c\n", getSymbolValue(a.type), a.token_value, (b.type), b.token_value, P_TABLE[getSymbolValue(a.type)][getSymbolValue(b.type)]););
+        DEBUG_PSA_CODE(printf_blue("Bracket count: %d\n", num_of_brackets););
+        DEBUG_PSA_CODE(printf("na stacku: ");
+                       printStack(s->top);
+                       printf_yellow("na vstupu: {'%s', %d}\n", b.token_value, b.type);
+                       printf_magenta("P_TABLE[{%d, '%s'}][{%d, '%s'}] = %c\n", getSymbolValue(a.type), a.token_value, (b.type), b.token_value, P_TABLE[getSymbolValue(a.type)][getSymbolValue(b.type)]););
 
         const unsigned int a_val = getSymbolValue(a.type);
         const unsigned int b_val = getSymbolValue(b.type);
@@ -224,13 +236,13 @@ psa_return_type parse_expression_base(bool is_param)
             };
         }
 
-        printStack(s->top);
-        DEBUG_CODE(printf("\n-----------\n\n"););
+        DEBUG_PSA_CODE(printStack(s->top);
+                       printf("\n-----------\n\n"););
 
         a = PSA_Token_stack_top(s);
     }
     printf("\n");
-    printf_green("✅ | All good! \n");
+    printf_green("PSA: ✅ | All good! \n");
 
     // TODO: checking bracket count might be redundant because of handles
     if (num_of_brackets != 0 && !(is_param && num_of_brackets == -1))

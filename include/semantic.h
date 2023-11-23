@@ -26,7 +26,8 @@ typedef enum
     VAR,
     VAR_ID,
     VAR_TYPE,
-    VAR_ASSIGN,
+    VAR_ASSIGN1,
+    VAR_ASSIGN2,
     VAR_EXP,
     FUNC_ID,
     FUNC_HEADER_DONE,
@@ -35,6 +36,7 @@ typedef enum
     P_TYPE,
     R_TYPE,
     R_EXP,
+    FUNC_BODY_DONE,
     COND_EXP,
     LOAD_IDENTIF,
     IDENTIF_EXP,
@@ -48,6 +50,8 @@ int semantic_init();
 void add_param(FunctionData *func, ParamData new_param);
 void reset_param();
 void semantic_destroy();
-int check_semantic(Token **token, Sem_rule sem_rule);
+int push_token_get_next(Token *token, Token_stack *token_stack);
+bool get_func_definition(Token *token, char *name, symtable_item *psa_item);
+int check_semantic(Token *token, Sem_rule sem_rule);
 
 #endif // SEMANTIC_H

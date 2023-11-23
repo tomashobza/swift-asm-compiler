@@ -22,7 +22,7 @@ PSA_Token parseFunctionCall(PSA_Token_stack *main_s, PSA_Token id)
         throw_error(FUNCTIONS_ERR, "Function '%s' not found!", id.token_value);
     }
 
-    printf("Function '%s' found\n", id.token_value);
+    DEBUG_PSA_CODE(printf("Function '%s' found\n", id.token_value););
 
     // read the next token (should be ( token)
     char next_token_error = 0;
