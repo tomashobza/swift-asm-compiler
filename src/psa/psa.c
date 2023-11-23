@@ -67,7 +67,7 @@ psa_return_type parse_expression_base(bool is_param)
         }
 
         // CHECK NEXT TOKEN FOR ERRORS
-        if (next_token_error > 0)
+        if (next_token_error > 0 && b.type != TOKEN_EOF)
         {
             return_token(convertPSATokenToToken(b));
             if (b.preceded_by_nl)
