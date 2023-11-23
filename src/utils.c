@@ -210,6 +210,9 @@ void print_expression_type(Expression_type type)
     case TYPE_NIL:
         printf_cyan("TYPE_NIL");
         break;
+    case TYPE_EMPTY:
+        printf_cyan("TYPE_EMPTY");
+        break;
     default:
         printf_red("[invalid type]");
         break;
