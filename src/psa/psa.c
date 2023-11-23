@@ -1,8 +1,11 @@
 #include "psa.h"
 DEFINE_STACK_FUNCTIONS(PSA_Token)
 
-psa_return_type parse_expression_base(bool is_param, symtable_stack *st_stack)
+psa_return_type parse_expression_base(bool is_param)
 {
+
+    // TODO: add nil
+    // TODO: add boolean literals
     int num_of_brackets = 0; // number of brackets in the expression
 
     PSA_Token_stack *s = PSA_Token_stack_init();
@@ -19,19 +22,7 @@ psa_return_type parse_expression_base(bool is_param, symtable_stack *st_stack)
     PSA_Token a = PSA_Token_stack_top(s);
 
     char next_token_error = 0;
-    PSA_Token b = readNextToken(s, &next_token_error);
-
-    // check for an empty expression
-    if (a.type == TOKEN_EOF && b.type == TOKEN_EOF)
-    {
-        // printf("Empty expression!\n");
-        return (psa_return_type){
-            .end_token = TOKEN_EXPRSN,
-            .is_ok = true,
-            .canBeNil = false,
-            .type = TYPE_EMPTY,
-        };
-    }
+    PSA_Token b = readNextToken(s, &next_token_error, &num_of_brackets);
 
     while (!(a.type == (Token_type)TOKEN_EXPRSN && s->size == 2 && b.type == (Token_type)TOKEN_EOF))
     {
@@ -43,38 +34,42 @@ psa_return_type parse_expression_base(bool is_param, symtable_stack *st_stack)
 
         // DEBUG_CODE(printf("Chyba: %d\n", next_token_error););
 
-        // update the bracket counter
-        switch (b.type)
+        // FOR PARAMETER EXPRESSIONS CHECK FOR END OF PARAMETER
+        // if expression is a function parameter, the end of the expression is ) or ,
+        if (is_param)
         {
-        case TOKEN_L_BRACKET:
-            num_of_brackets++;
-            break;
-        case TOKEN_R_BRACKET:
-            num_of_brackets--;
-            break;
-        default:
-            break;
-        }
+            // printf("is in a function\n");
 
-        // TODO: checking bracket count might be redundant because of handles
-        // check for an invalid number of brackets (for parameters, the number of brackets can be -1 when the expression is empty and the last of the parameters)
-        if (num_of_brackets < 0 && !(is_param && num_of_brackets == -1))
-        {
-            throw_error(SYNTACTIC_ERR, line_num, "Invalid number of brackets in expression");
+            switch (b.type)
+            {
+            case TOKEN_R_BRACKET:
+                if (num_of_brackets >= 0)
+                {
+                    break;
+                }
 
-            next_token_error = 0;
-            b = (PSA_Token){
-                .type = (Token_type)TOKEN_EOF,
-                .token_value = "$",
-                .expr_type = TYPE_INVALID,
-                .canBeNil = false,
-                .preceded_by_nl = true,
-            };
+                return_token(convertPSATokenToToken(b));
+
+                __attribute__((fallthrough));
+            case TOKEN_COMMA:
+                next_token_error = 0;
+                b = (PSA_Token){
+                    .type = TOKEN_EOF,
+                    .token_value = "$",
+                    .expr_type = TYPE_INVALID,
+                    .canBeNil = false,
+                    .preceded_by_nl = true,
+                };
+                break;
+            default:
+                break;
+            }
         }
 
         // CHECK NEXT TOKEN FOR ERRORS
-        if (next_token_error > 0 || getSymbolValue(b.type) >= 99)
+        if (next_token_error > 0)
         {
+            return_token(convertPSATokenToToken(b));
             if (b.preceded_by_nl)
             {
                 next_token_error = 0;
@@ -88,7 +83,7 @@ psa_return_type parse_expression_base(bool is_param, symtable_stack *st_stack)
             }
             else
             {
-                throw_error(SYNTACTIC_ERR, line_num, "Missing separator (EOL) after expression.");
+                throw_error(SYNTACTIC_ERR, "Missing separator (EOL) after expression, before '%s'.", b.token_value);
 
                 next_token_error = 0;
                 b = (PSA_Token){
@@ -108,42 +103,33 @@ psa_return_type parse_expression_base(bool is_param, symtable_stack *st_stack)
             printf_magenta("--------Je to funkce! --------\n");
             print_token_type(b.type);
 
-            b = parseFunctionCall(s, b, st_stack);
+            b = parseFunctionCall(s, b);
+            PSA_Token_stack_push(s, b);
+            a = PSA_Token_stack_top(s);
+
+            b = readNextToken(s, &next_token_error, &num_of_brackets);
 
             printf_magenta("------------------------------\n");
 
+            continue;
+
             // read the next token
-            // b = readNextToken(s, &next_token_error);
+            // b = readNextToken(s, &next_token_error, num_of_brackets);
         }
 
-        // FOR PARAMETER EXPRESSIONS CHECK FOR END OF PARAMETER
-        // if expression is a function parameter, the end of the expression is ) or ,
-        if (is_param)
+        // check for an empty expression
+        if (a.type == TOKEN_EOF && b.type == TOKEN_EOF)
         {
-            // printf("is in a function\n");
-
-            switch (b.type)
-            {
-            case TOKEN_R_BRACKET:
-                if (num_of_brackets < 0)
-                {
-                    return_token(convertPSATokenToToken(b));
-                }
-                __attribute__((fallthrough));
-            case TOKEN_COMMA:
-                b = (PSA_Token){
-                    .type = TOKEN_EOF,
-                    .token_value = "$",
-                    .expr_type = TYPE_INVALID,
-                    .canBeNil = false,
-                    .preceded_by_nl = true,
-                };
-                break;
-            default:
-                break;
-            }
+            // printf("Empty expression!\n");
+            return (psa_return_type){
+                .end_token = TOKEN_EXPRSN,
+                .is_ok = true,
+                .canBeNil = false,
+                .type = TYPE_EMPTY,
+            };
         }
 
+        DEBUG_CODE(printf_blue("Bracket count: %d\n", num_of_brackets););
         DEBUG_CODE(printf("na stacku: ");
                    printStack(s->top);
                    printf_yellow("na vstupu: {'%s', %d}\n", b.token_value, b.type);
@@ -157,7 +143,7 @@ psa_return_type parse_expression_base(bool is_param, symtable_stack *st_stack)
         {
         case '=': // just push the token on the stack
             PSA_Token_stack_push(s, b);
-            b = readNextToken(s, &next_token_error);
+            b = readNextToken(s, &next_token_error, &num_of_brackets);
             break;
 
         case '<': // opening of a handle
@@ -169,7 +155,7 @@ psa_return_type parse_expression_base(bool is_param, symtable_stack *st_stack)
                                             .token_value = "<"});
                 PSA_Token_stack_push(s, tmp);
                 PSA_Token_stack_push(s, b);
-                b = readNextToken(s, &next_token_error);
+                b = readNextToken(s, &next_token_error, &num_of_brackets);
             }
             else
             {
@@ -177,7 +163,7 @@ psa_return_type parse_expression_base(bool is_param, symtable_stack *st_stack)
                                             .type = (Token_type)TOKEN_SHIFT,
                                             .token_value = "<"});
                 PSA_Token_stack_push(s, b);
-                b = readNextToken(s, &next_token_error);
+                b = readNextToken(s, &next_token_error, &num_of_brackets);
             }
             break;
         case '>': // closing of a handle
@@ -247,9 +233,9 @@ psa_return_type parse_expression_base(bool is_param, symtable_stack *st_stack)
     printf_green("✅ | All good! \n");
 
     // TODO: checking bracket count might be redundant because of handles
-    if (num_of_brackets != 0)
+    if (num_of_brackets != 0 && !(is_param && num_of_brackets == -1))
     {
-        throw_error(SYNTACTIC_ERR, line_num, num_of_brackets > 0 ? "Missing closing bracket" : "Missing opening bracket");
+        throw_error(SYNTACTIC_ERR, num_of_brackets > 0 ? "Missing closing bracket" : "Missing opening bracket");
 
         next_token_error = 0;
         b = (PSA_Token){
@@ -269,12 +255,12 @@ psa_return_type parse_expression_base(bool is_param, symtable_stack *st_stack)
     };
 }
 
-psa_return_type parse_expression(symtable_stack *st_stack)
+psa_return_type parse_expression()
 {
-    return parse_expression_base(false, st_stack);
+    return parse_expression_base(false);
 }
 
-psa_return_type parse_expression_param(symtable_stack *st_stack)
+psa_return_type parse_expression_param()
 {
-    return parse_expression_base(true, st_stack);
+    return parse_expression_base(true);
 }
