@@ -34,6 +34,7 @@ typedef enum
     P_TYPE,
     R_TYPE,
     R_EXP,
+    FUNC_BODY_DONE,
     COND_EXP,
     LOAD_IDENTIF,
     IDENTIF_EXP,

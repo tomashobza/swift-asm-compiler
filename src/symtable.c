@@ -184,7 +184,7 @@ symtable_item *init_symtable_item(symtable_item item)
     {
         new_sti->data.func_data = init_func_data();
         *(new_sti->data.func_data) = *(item.data.func_data);
-        *(new_sti->data.func_data->params) = *(item.data.func_data->params);
+        (new_sti->data.func_data->params) = (item.data.func_data->params);
     }
     new_sti->next = NULL;
 

@@ -49,6 +49,7 @@ typedef struct
 typedef struct
 {
     Expression_type return_type;
+    bool found_return;
     ParamData *params;
     int params_count;
     int capacity;

@@ -429,13 +429,22 @@ int check_semantic(Token *token, Sem_rule sem_rule)
     }
     break;
     case POP_SCOPE:
+    POP_SCOPE:
         symtable_stack_pop(parser_stack);
         break;
     case R_EXP:
         psa_return_type return_type2 = parse_expression(parser_stack);
-        if (return_type2.is_ok)
+        if (return_type2.is_ok == false)
         {
+            fprintf(stderr, RED "Unrecognizable type of variable: %s \n" RESET, varItem->id);
+            return -1;
         }
+        if (return_type2.type != funcItem->data.func_data->return_type)
+        {
+            fprintf(stderr, RED "Expression type: %d and type: %d of variable: %s do not match!\n" RESET, return_type2.type, funcItem->data.func_data->return_type, varItem->id);
+            return -1;
+        }
+        symtable_find_in_stack(varItem->id, parser_stack, true)->data.func_data->found_return = true;
         DEBUG_SEMANTIC_CODE(print_expression_type(return_type2.type););
         break;
     case COND_EXP:
@@ -451,6 +460,15 @@ int check_semantic(Token *token, Sem_rule sem_rule)
             return -1;
         }
         DEBUG_SEMANTIC_CODE(print_expression_type(return_type3.type););
+        break;
+    case FUNC_BODY_DONE:
+        symtable_item *func_body_item = symtable_find_in_stack(funcItem->id, parser_stack, true);
+        if (func_body_item->data.func_data->found_return == false && func_body_item->data.func_data->return_type != TYPE_EMPTY)
+        {
+            fprintf(stderr, RED "Function %s of type: %d does not have a return statement!\n" RESET, funcItem->id, func_body_item->data.func_data->return_type);
+            return -1;
+        }
+        goto POP_SCOPE;
         break;
     case LOAD_IDENTIF:
         // reset_var();
