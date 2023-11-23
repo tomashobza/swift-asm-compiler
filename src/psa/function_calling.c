@@ -12,7 +12,7 @@ PSA_Token parseFunctionCall(PSA_Token_stack *main_s, PSA_Token id)
     bool is_ok = true;
 
     // check if the id of the function is in the symtable
-    symtable_item *found_func = symtable_find_in_stack(id.token_value, sym_st);
+    symtable_item *found_func = symtable_find_in_stack(id.token_value, sym_st, true);
     if (found_func == NULL)
     {
         is_ok = false;

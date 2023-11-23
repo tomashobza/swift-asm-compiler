@@ -115,7 +115,7 @@ symtable_item *symtable_find_in_stack(char *name, symtable_stack *stack, bool is
             return item;
         }
         node = node->next;
-        cnt++;
+        cnt = cnt + 1;
     }
 
     return NULL;

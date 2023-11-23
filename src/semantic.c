@@ -215,6 +215,7 @@ bool get_func_definition(Token *token, char *name, symtable_item *psa_item)
             push_token_get_next(token, token_stack);
             break;
         case PARAM:
+        {
             ParamData new_psa_param;
 
             if (token->type == TOKEN_IDENTIFICATOR)
@@ -255,6 +256,7 @@ bool get_func_definition(Token *token, char *name, symtable_item *psa_item)
             }
             push_token_get_next(token, token_stack);
             break;
+        }
         case P_SEP:
             if (token->type == TOKEN_COMMA)
             {
@@ -355,7 +357,8 @@ int check_semantic(Token *token, Sem_rule sem_rule)
         DEBUG_SEMANTIC_CODE(symtable_print(symtable_stack_top(sym_st)););
         break;
     case VAR_EXP:
-        psa_return_type return_type = parse_expression(sym_st);
+    {
+        psa_return_type return_type = parse_expression();
         DEBUG_SEMANTIC_CODE(print_expression_type(return_type.type););
         if (return_type.is_ok == false)
         {
@@ -387,6 +390,7 @@ int check_semantic(Token *token, Sem_rule sem_rule)
         DEBUG_SEMANTIC_CODE(symtable_print(symtable_stack_top(sym_st)););
         // data_type check
         break;
+    }
     case FUNC_ID:
         reset_func();
         symtable_item *func_id_item = symtable_find_in_stack(token->token_value, sym_st, true);
@@ -432,7 +436,8 @@ int check_semantic(Token *token, Sem_rule sem_rule)
         symtable_stack_pop(sym_st);
         break;
     case R_EXP:
-        psa_return_type return_type2 = parse_expression(sym_st);
+    {
+        psa_return_type return_type2 = parse_expression();
         if (return_type2.is_ok == false)
         {
             fprintf(stderr, RED "Unrecognizable type of variable: %s \n" RESET, varItem->id);
@@ -446,8 +451,10 @@ int check_semantic(Token *token, Sem_rule sem_rule)
         symtable_find_in_stack(varItem->id, sym_st, true)->data.func_data->found_return = true;
         DEBUG_SEMANTIC_CODE(print_expression_type(return_type2.type););
         break;
+    }
     case COND_EXP:
-        psa_return_type return_type3 = parse_expression(sym_st);
+    {
+        psa_return_type return_type3 = parse_expression();
         if (return_type3.is_ok == false)
         {
             fprintf(stderr, RED "Unrecognizable type of variable: %s \n" RESET, varItem->id);
@@ -460,7 +467,9 @@ int check_semantic(Token *token, Sem_rule sem_rule)
         }
         DEBUG_SEMANTIC_CODE(print_expression_type(return_type3.type););
         break;
+    }
     case FUNC_BODY_DONE:
+    {
         symtable_item *func_body_item = symtable_find_in_stack(funcItem->id, sym_st, true);
         if (func_body_item->data.func_data->found_return == false && func_body_item->data.func_data->return_type != TYPE_EMPTY)
         {
@@ -470,6 +479,7 @@ int check_semantic(Token *token, Sem_rule sem_rule)
         }
         goto POP_SCOPE;
         break;
+    }
     case LOAD_IDENTIF:
         // reset_var();
         DEBUG_SEMANTIC_CODE(printf(CYAN);
@@ -490,7 +500,8 @@ int check_semantic(Token *token, Sem_rule sem_rule)
         print_items();
         break;
     case IDENTIF_EXP:
-        psa_return_type return_type4 = parse_expression(sym_st);
+    {
+        psa_return_type return_type4 = parse_expression();
         DEBUG_SEMANTIC_CODE(print_expression_type(return_type4.type););
         if (return_type4.is_ok == false)
         {
@@ -505,13 +516,16 @@ int check_semantic(Token *token, Sem_rule sem_rule)
         }
         identif_exp_item->data.var_data->is_initialized = true;
         break;
+    }
     case FUNC_CALL_PSA:
-        psa_return_type return_type5 = parse_expression(sym_st);
+    {
+        psa_return_type return_type5 = parse_expression();
         if (return_type5.is_ok)
         {
         }
         DEBUG_SEMANTIC_CODE(print_expression_type(return_type5.type););
         break;
+    }
     default:
         break;
     }
