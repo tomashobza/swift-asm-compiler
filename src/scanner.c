@@ -65,8 +65,7 @@ int generate_token(Token *token, char *code)
         {"var", TOKEN_VAR},
         {"let", TOKEN_LET},
         {"break", TOKEN_BREAK},
-        {"continue", TOKEN_CONTINUE}
-    };
+        {"continue", TOKEN_CONTINUE}};
     token->preceded_by_nl = false;
     int code_len = 1;
     code = malloc(sizeof(char) * code_len);
@@ -291,11 +290,6 @@ int generate_token(Token *token, char *code)
             char c = (char)getchar();
             while (c != '\n' && c != EOF)
             {
-<<<<<<< HEAD
-                // check_length(&code_len, 0, code);
-                //   code[strlen(code)] = c;
-=======
->>>>>>> 250efada2747b99cc8dc57a3cca6ca1cf1bbcdfe
                 c = (char)getchar();
             }
             state = NEW_TOKEN;
@@ -317,21 +311,11 @@ int generate_token(Token *token, char *code)
                         state = NEW_TOKEN;
                         break;
                     }
-<<<<<<< HEAD
-                    // check_length(&code_len, 0, code);
-                    // code[strlen(code)] = c;
-=======
->>>>>>> 250efada2747b99cc8dc57a3cca6ca1cf1bbcdfe
                 }
                 if (c == EOF)
                 {
                     return LEXICAL_ERR;
                 }
-<<<<<<< HEAD
-                // check_length(&code_len, 0, code);
-                // code[strlen(code)] = c;
-=======
->>>>>>> 250efada2747b99cc8dc57a3cca6ca1cf1bbcdfe
                 c = (char)getchar();
             }
             break;
