@@ -32,13 +32,6 @@ PSA_Token readNextToken(PSA_Token_stack *s, char *next_token_error, int *num_of_
     *next_token_error += (getSymbolValue(b.type) >= 99) ? 1 : 0;
     *next_token_error = *next_token_error << 1;
 
-    // TODO: remove
-    // detect empty expression
-    // *next_token_error += (a.type == (Token_type)TOKEN_EOF && !canTokenBeStartOfExpression(b.type)) ? 1 : 0;
-    // *next_token_error = *next_token_error << 1;
-
-    DEBUG_PSA_CODE(printf_cyan("'%s' next_token_error: %d\n", b.token_value, *next_token_error););
-
     // update the bracket counter
     if (num_of_brackets != NULL)
     {

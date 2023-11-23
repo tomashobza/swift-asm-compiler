@@ -31,6 +31,9 @@ Expression_type getTypeFromToken(Token_type token)
     case TOKEN_IDENTIFICATOR: // TODO: delete and for id use symbol table
         return (Expression_type)TYPE_DOUBLE;
 
+    case TOKEN_BOOL:
+        return (Expression_type)TYPE_BOOL;
+
     case TOKEN_STRING:
         return (Expression_type)TYPE_STRING;
     default:
@@ -45,6 +48,7 @@ bool isTokenOperand(Token_type token)
     case TOKEN_INT:
     case TOKEN_DOUBLE:
     case TOKEN_EXP:
+    case TOKEN_BOOL:
     case TOKEN_STRING:
     case TOKEN_EXPRSN:
     case TOKEN_IDENTIFICATOR:
@@ -96,6 +100,7 @@ bool canTokenBeStartOfExpression(Token_type token)
     case TOKEN_INT:
     case TOKEN_DOUBLE:
     case TOKEN_EXP:
+    case TOKEN_BOOL:
     case TOKEN_STRING:
     case TOKEN_NOT:
     case TOKEN_L_BRACKET:
@@ -113,6 +118,7 @@ bool canTokenBeEndOfExpression(Token_type token)
     case TOKEN_INT:
     case TOKEN_DOUBLE:
     case TOKEN_EXP:
+    case TOKEN_BOOL:
     case TOKEN_STRING:
     case TOKEN_R_BRACKET:
     case TOKEN_IDENTIFICATOR:

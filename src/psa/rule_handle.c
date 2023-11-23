@@ -39,6 +39,7 @@ PSA_Token getRule(PSA_Token *handle, unsigned int len)
     case RULE_1c:
     case RULE_1d:
     case RULE_1e:
+    case RULE_1f:
         DEBUG_PSA_CODE(printf_cyan("rule: E -> i\n"););
         return (PSA_Token){
             .type = (Token_type)TOKEN_EXPRSN,

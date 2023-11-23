@@ -24,19 +24,7 @@ psa_return_type parse_expression_base(bool is_param)
     char next_token_error = 0;
     PSA_Token b = readNextToken(s, &next_token_error, &num_of_brackets);
 
-    // check for an empty expression
-    if (a.type == TOKEN_EOF && b.type == TOKEN_EOF)
-    {
-        DEBUG_PSA_CODE(printf("Empty expression!\n"););
-        return (psa_return_type){
-            .end_token = TOKEN_EXPRSN,
-            .is_ok = true,
-            .canBeNil = false,
-            .type = TYPE_EMPTY,
-        };
-    }
-
-    while (!(a.type == (Token_type)TOKEN_EXPRSN && s->size == 2 && b.type == (Token_type)TOKEN_EOF))
+    while (!(a.type == (Token_type)TOKEN_EXPRSN && s->size == 2 && (b.type == (Token_type)TOKEN_EOF)))
     {
         // if the stack top is of type (Token_type)TOKEN_EXPRSN, then we need to use the second top of the stack to determine the rule
         if (a.type == (Token_type)TOKEN_EXPRSN)
@@ -44,7 +32,7 @@ psa_return_type parse_expression_base(bool is_param)
             a = s->top->next->data;
         }
 
-        // DEBUG_CODE(printf("Chyba: %d\n", next_token_error););
+        // DEBUG_PSA_CODE(printf("Chyba: %d\n", next_token_error););
 
         // FOR PARAMETER EXPRESSIONS CHECK FOR END OF PARAMETER
         // if expression is a function parameter, the end of the expression is ) or ,
@@ -112,8 +100,9 @@ psa_return_type parse_expression_base(bool is_param)
         // if the next token is a function identificator, start parsing function call
         if (b.type == TOKEN_FUNC_ID)
         {
-            printf_magenta("--------Je to funkce! --------\n");
-            print_token_type(b.type);
+            DEBUG_PSA_CODE(
+                printf_magenta("--------Je to funkce! --------\n");
+                print_token_type(b.type););
 
             b = parseFunctionCall(s, b);
             PSA_Token_stack_push(s, b);
@@ -121,7 +110,37 @@ psa_return_type parse_expression_base(bool is_param)
 
             b = readNextToken(s, &next_token_error, &num_of_brackets);
 
-            printf_magenta("------------------------------\n");
+            DEBUG_PSA_CODE(printf_magenta("------------------------------\n"););
+
+            // CHECK NEXT TOKEN FOR ERRORS
+            if (next_token_error > 0)
+            {
+                return_token(convertPSATokenToToken(b));
+                if (b.preceded_by_nl)
+                {
+                    next_token_error = 0;
+                    b = (PSA_Token){
+                        .type = (Token_type)TOKEN_EOF,
+                        .token_value = "$",
+                        .expr_type = TYPE_INVALID,
+                        .canBeNil = false,
+                        .preceded_by_nl = true,
+                    };
+                }
+                else
+                {
+                    throw_error(SYNTACTIC_ERR, "Missing separator (EOL) after expression, before '%s'.", b.token_value);
+
+                    next_token_error = 0;
+                    b = (PSA_Token){
+                        .type = (Token_type)TOKEN_EOF,
+                        .token_value = "$",
+                        .expr_type = TYPE_INVALID,
+                        .canBeNil = false,
+                        .preceded_by_nl = true,
+                    };
+                }
+            }
 
             continue;
 
@@ -211,7 +230,8 @@ psa_return_type parse_expression_base(bool is_param)
             }
             else
             {
-                printTokenArray(handle, i);
+                DEBUG_PSA_CODE(printTokenArray(handle, i););
+
                 printf_red("❌ | Error: invalid expression! Unexpected token '%s' in expression. \n", b.token_value);
 
                 return (psa_return_type){
