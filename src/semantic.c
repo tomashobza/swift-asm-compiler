@@ -1,6 +1,5 @@
 #include "semantic.h"
 
-symtable_stack *parser_stack;
 symtable_item *varItem;  // Item to be added to symtable
 symtable_item *funcItem; // Item to be added to symtable
 symtable mySymtable;     // Symtable
@@ -8,7 +7,6 @@ ParamData new_param;     // ParamData to be added to FunctionData
 
 int semantic_init()
 {
-    parser_stack = symtable_stack_init();
     varItem = malloc(sizeof(symtable_item));
     funcItem = malloc(sizeof(symtable_item));
     VariableData *varData = malloc(sizeof(VariableData));
@@ -24,7 +22,7 @@ int semantic_init()
 
     // Inicializace symtable
     mySymtable = symtable_init();
-    symtable_stack_push(parser_stack, mySymtable);
+    symtable_stack_push(sym_st, mySymtable);
 
     return 0; // tode errors
 }
@@ -90,7 +88,7 @@ void reset_func()
 
 void semantic_destroy()
 {
-    DEBUG_SEMANTIC_CODE(symtable_print(symtable_stack_top(parser_stack)););
+    DEBUG_SEMANTIC_CODE(symtable_print(symtable_stack_top(sym_st)););
     free(funcItem->data.func_data->params);
     free(funcItem->data.func_data);
     free(varItem->data.var_data);
@@ -134,7 +132,7 @@ void print_items()
 
 bool is_defined(char *name)
 {
-    if (symtable_find(name, symtable_stack_top(parser_stack), false) == NULL)
+    if (symtable_find(name, symtable_stack_top(sym_st), false) == NULL)
     {
         return false;
     }
@@ -340,24 +338,24 @@ int check_semantic(Token *token, Sem_rule sem_rule)
         varItem->data.var_data->type = get_expression_type(token);
         // todo semantic checks
         DEBUG_SEMANTIC_CODE(printf(YELLOW "ADDING VAR: %s, type: %d, const: %d\n", varItem->id, varItem->data.var_data->type, varItem->data.var_data->is_const););
-        symtable_add(*varItem, symtable_stack_top(parser_stack));
-        DEBUG_SEMANTIC_CODE(symtable_print(symtable_stack_top(parser_stack)););
+        symtable_add(*varItem, symtable_stack_top(sym_st));
+        DEBUG_SEMANTIC_CODE(symtable_print(symtable_stack_top(sym_st)););
         break;
     case VAR_ASSIGN1:
         printf("VAR_ASSIGN2\n");
         DEBUG_SEMANTIC_CODE(printf(YELLOW "ADDING VAR: %s, type: %d, const: %d\n", varItem->id, varItem->data.var_data->type, varItem->data.var_data->is_const););
-        symtable_add(*varItem, symtable_stack_top(parser_stack));
-        DEBUG_SEMANTIC_CODE(symtable_print(symtable_stack_top(parser_stack)););
+        symtable_add(*varItem, symtable_stack_top(sym_st));
+        DEBUG_SEMANTIC_CODE(symtable_print(symtable_stack_top(sym_st)););
         break;
     case VAR_ASSIGN2:
         printf("VAR_ASSIGN2\n");
         DEBUG_SEMANTIC_CODE(printf(YELLOW "ADDING VAR: %s, type: %d, const: %d\n", varItem->id, varItem->data.var_data->type, varItem->data.var_data->is_const););
-        symtable_item *var_ass_item = symtable_find_in_stack(varItem->id, parser_stack, false);
+        symtable_item *var_ass_item = symtable_find_in_stack(varItem->id, sym_st, false);
         var_ass_item->data.var_data->is_initialized = true;
-        DEBUG_SEMANTIC_CODE(symtable_print(symtable_stack_top(parser_stack)););
+        DEBUG_SEMANTIC_CODE(symtable_print(symtable_stack_top(sym_st)););
         break;
     case VAR_EXP:
-        psa_return_type return_type = parse_expression(parser_stack);
+        psa_return_type return_type = parse_expression(sym_st);
         DEBUG_SEMANTIC_CODE(print_expression_type(return_type.type););
         if (return_type.is_ok == false)
         {
@@ -379,19 +377,19 @@ int check_semantic(Token *token, Sem_rule sem_rule)
         }
         else if (varItem->data.var_data->type == TYPE_EMPTY)
         {
-            (symtable_find(varItem->id, symtable_stack_top(parser_stack), false))->data.var_data->type = return_type.type;
+            (symtable_find(varItem->id, symtable_stack_top(sym_st), false))->data.var_data->type = return_type.type;
         }
         else if (varItem->data.var_data->type != return_type.type)
         {
             fprintf(stderr, RED "Expression type: %d and type: %d of variable: %s do not match!\n" RESET, return_type.type, varItem->data.var_data->type, varItem->id);
             return -1;
         }
-        DEBUG_SEMANTIC_CODE(symtable_print(symtable_stack_top(parser_stack)););
+        DEBUG_SEMANTIC_CODE(symtable_print(symtable_stack_top(sym_st)););
         // data_type check
         break;
     case FUNC_ID:
         reset_func();
-        symtable_item *func_id_item = symtable_find_in_stack(token->token_value, parser_stack, true);
+        symtable_item *func_id_item = symtable_find_in_stack(token->token_value, sym_st, true);
         if (func_id_item != NULL) // is in stack
         {
             if (func_id_item->type == FUNCTION)
@@ -418,23 +416,23 @@ int check_semantic(Token *token, Sem_rule sem_rule)
         break;
     case FUNC_HEADER_DONE:
         DEBUG_SEMANTIC_CODE(printf(YELLOW "ADDING FUNC: %s, return type: %d\n", funcItem->id, funcItem->data.func_data->return_type););
-        symtable_add(*funcItem, symtable_stack_top(parser_stack));
-        DEBUG_SEMANTIC_CODE(symtable_print(symtable_stack_top(parser_stack)););
+        symtable_add(*funcItem, symtable_stack_top(sym_st));
+        DEBUG_SEMANTIC_CODE(symtable_print(symtable_stack_top(sym_st)););
         goto PUSH_SCOPE;
         break;
     case PUSH_SCOPE:
     PUSH_SCOPE:
     {
         symtable symtable = symtable_init();
-        symtable_stack_push(parser_stack, symtable);
+        symtable_stack_push(sym_st, symtable);
     }
     break;
     case POP_SCOPE:
     POP_SCOPE:
-        symtable_stack_pop(parser_stack);
+        symtable_stack_pop(sym_st);
         break;
     case R_EXP:
-        psa_return_type return_type2 = parse_expression(parser_stack);
+        psa_return_type return_type2 = parse_expression(sym_st);
         if (return_type2.is_ok == false)
         {
             fprintf(stderr, RED "Unrecognizable type of variable: %s \n" RESET, varItem->id);
@@ -445,11 +443,11 @@ int check_semantic(Token *token, Sem_rule sem_rule)
             fprintf(stderr, RED "Expression type: %d and type: %d of variable: %s do not match!\n" RESET, return_type2.type, funcItem->data.func_data->return_type, varItem->id);
             return -1;
         }
-        symtable_find_in_stack(varItem->id, parser_stack, true)->data.func_data->found_return = true;
+        symtable_find_in_stack(varItem->id, sym_st, true)->data.func_data->found_return = true;
         DEBUG_SEMANTIC_CODE(print_expression_type(return_type2.type););
         break;
     case COND_EXP:
-        psa_return_type return_type3 = parse_expression(parser_stack);
+        psa_return_type return_type3 = parse_expression(sym_st);
         if (return_type3.is_ok == false)
         {
             fprintf(stderr, RED "Unrecognizable type of variable: %s \n" RESET, varItem->id);
@@ -463,7 +461,7 @@ int check_semantic(Token *token, Sem_rule sem_rule)
         DEBUG_SEMANTIC_CODE(print_expression_type(return_type3.type););
         break;
     case FUNC_BODY_DONE:
-        symtable_item *func_body_item = symtable_find_in_stack(funcItem->id, parser_stack, true);
+        symtable_item *func_body_item = symtable_find_in_stack(funcItem->id, sym_st, true);
         if (func_body_item->data.func_data->found_return == false && func_body_item->data.func_data->return_type != TYPE_EMPTY)
         {
             fprintf(stderr, RED "Function %s of type: %d does not have a return statement!\n" RESET, funcItem->id, func_body_item->data.func_data->return_type);
@@ -475,8 +473,8 @@ int check_semantic(Token *token, Sem_rule sem_rule)
     case LOAD_IDENTIF:
         // reset_var();
         DEBUG_SEMANTIC_CODE(printf(CYAN);
-                            symtable_print(symtable_stack_top(parser_stack)););
-        symtable_item *item = symtable_find_in_stack(token->token_value, parser_stack, false);
+                            symtable_print(symtable_stack_top(sym_st)););
+        symtable_item *item = symtable_find_in_stack(token->token_value, sym_st, false);
         if (item == NULL)
         {
             fprintf(stderr, RED "Variable %s is not defined!\n", token->token_value);
@@ -492,14 +490,14 @@ int check_semantic(Token *token, Sem_rule sem_rule)
         print_items();
         break;
     case IDENTIF_EXP:
-        psa_return_type return_type4 = parse_expression(parser_stack);
+        psa_return_type return_type4 = parse_expression(sym_st);
         DEBUG_SEMANTIC_CODE(print_expression_type(return_type4.type););
         if (return_type4.is_ok == false)
         {
             fprintf(stderr, RED "Unrecognizable type of variable: %s \n" RESET, varItem->id);
             return -1;
         }
-        symtable_item *identif_exp_item = symtable_find_in_stack(varItem->id, parser_stack, false);
+        symtable_item *identif_exp_item = symtable_find_in_stack(varItem->id, sym_st, false);
         if (return_type4.type != identif_exp_item->data.var_data->type)
         {
             fprintf(stderr, RED "Expression type: %d and type: %d of variable: %s do not match!\n" RESET, return_type4.type, identif_exp_item->data.var_data->type, varItem->id);
@@ -508,7 +506,7 @@ int check_semantic(Token *token, Sem_rule sem_rule)
         identif_exp_item->data.var_data->is_initialized = true;
         break;
     case FUNC_CALL_PSA:
-        psa_return_type return_type5 = parse_expression(parser_stack);
+        psa_return_type return_type5 = parse_expression(sym_st);
         if (return_type5.is_ok)
         {
         }

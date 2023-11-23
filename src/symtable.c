@@ -3,6 +3,8 @@
 const uint32_t FNV_PRIME = 16777619;
 const uint32_t FNV_OFFSET_BASIS = 2166136261;
 
+// TODO: make symtable stack global
+
 uint32_t hash(char *input)
 {
     int len = 0;

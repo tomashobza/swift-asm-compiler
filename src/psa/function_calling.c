@@ -1,99 +1,116 @@
 #include "psa.h"
 
-PSA_Token parseFunctionCall(PSA_Token_stack *main_s, PSA_Token id, symtable_stack *st_stack)
+PSA_Token parseFunctionCall(PSA_Token_stack *main_s, PSA_Token id)
 {
+    PSA_Token ERROR_TOKEN = (PSA_Token){
+        .type = TOKEN_EXPRSN,
+        .token_value = id.token_value,
+        .canBeNil = false,
+        .expr_type = TYPE_INVALID,
+        .preceded_by_nl = false};
+
     bool is_ok = true;
 
     // check if the id of the function is in the symtable
-    symtable_item *found_func = symtable_find_in_stack(id.token_value, st_stack, true);
+    symtable_item *found_func = symtable_find_in_stack(id.token_value, sym_st);
     if (found_func == NULL)
     {
         is_ok = false;
 
-        DEBUG_PSA_CODE(printf("Function %s not found!\n", id.token_value););
-        // TODO: if not -> error (for now)
-        return (PSA_Token){
-            .type = TOKEN_EXPRSN,
-            .token_value = "E",
-            .canBeNil = false,
-            .expr_type = TYPE_INVALID,
-            .preceded_by_nl = false};
+        // TODO: if not -> error (for now), call the function checking the rest of the input source
+
+        throw_error(FUNCTIONS_ERR, "Function '%s' not found!", id.token_value);
     }
 
     DEBUG_PSA_CODE(printf("Function '%s' found\n", id.token_value););
 
-    // TODO: check if function should have parameters
-    if (found_func->data.func_data->params_count == 0 || found_func->data.func_data->params == NULL)
-    {
-        // TODO: handle function without parameters
-    }
-
     // read the next token (should be ( token)
     char next_token_error = 0;
-    if (readNextToken(main_s, &next_token_error).type != TOKEN_L_BRACKET)
+    if (readNextToken(main_s, &next_token_error, NULL).type != TOKEN_L_BRACKET)
     {
-        // if not -> error
-        // TODO: throw error
+        throw_error(SYNTACTIC_ERR, "Missing '(' after function name!");
+
         is_ok = false;
+
+        return ERROR_TOKEN;
     }
 
     // parse the next n parameters using parse_expression_param
 
-    int param_counter = 0;
+    unsigned int param_counter = 0;
     bool params_ok = true;
-    psa_return_type parsed_param = {0};
+    psa_return_type parsed_param;
 
-    do
+    while (found_func == NULL || param_counter < (unsigned int)found_func->data.func_data->params_count)
     {
-        printf("The name is: %s\n", checkParamName(main_s, param_counter, found_func) ? "ok" : "not ok");
+        params_ok = params_ok && checkParameter(main_s, param_counter, found_func, &parsed_param);
 
-        psa_return_type parsed_param = parse_expression_param(st_stack);
-
-        printf("param[%d] has type: ", param_counter);
-        print_expression_type(parsed_param.type);
-        printf("\n");
-
-        params_ok = params_ok && parsed_param.is_ok && parsed_param.type == found_func->data.func_data->params[param_counter].type;
+        // TODO: save parameters for later checking if the function is not in the symtable
 
         param_counter++;
-    } while (param_counter < found_func->data.func_data->params_count && parsed_param.type != TYPE_EMPTY);
 
-    is_ok = is_ok && params_ok;
-
+        // parameter will be empty if the next token is a ) token (end of the parameter list)
+        if (parsed_param.type == TYPE_EMPTY || parsed_param.type == TYPE_INVALID)
+        {
+            break;
+        }
+    }
     // read the next token (should be ) token)
-    if (readNextToken(main_s, &next_token_error).type != TOKEN_R_BRACKET)
+    if (readNextToken(main_s, &next_token_error, NULL).type != TOKEN_R_BRACKET)
     {
         // if not -> error
         // TODO: throw error
         is_ok = false;
     }
 
+    // TODO:check if the correct number of parameters was provided
+
+    is_ok = is_ok && params_ok;
+
     if (is_ok)
     {
         return (PSA_Token){
-            .type = TOKEN_FUNC_ID,
+            .type = TOKEN_EXPRSN,
             .token_value = found_func->id,
             .canBeNil = false,
             .expr_type = found_func->data.func_data->return_type,
             .preceded_by_nl = id.preceded_by_nl};
     }
 
-    return (PSA_Token){
-        .type = TOKEN_EOF,
-        .token_value = "E",
-        .canBeNil = false,
-        .expr_type = TYPE_INVALID,
-        .preceded_by_nl = false};
+    return ERROR_TOKEN;
+}
+
+bool checkParameter(PSA_Token_stack *main_s, unsigned int param_index, symtable_item *found_func, psa_return_type *parsed_param)
+{
+    // TODO: handle param errors
+
+    bool name_ok = checkParamName(main_s, param_index, found_func);
+
+    printf("The name is: %s\n", name_ok ? "ok" : "not ok");
+
+    (*parsed_param) = parse_expression_param();
+
+    printf("param[%d] has type: ", param_index);
+    print_expression_type((*parsed_param).type);
+    printf("\n");
+
+    if (found_func == NULL)
+    {
+        // TODO: save for later checking
+        return true;
+    }
+
+    return (*parsed_param).is_ok && (*parsed_param).type == found_func->data.func_data->params[param_index].type && name_ok;
 }
 
 bool checkParamName(PSA_Token_stack *main_s, unsigned int param_index, symtable_item *found_func)
 {
     // read the first token (should be an identificator)
     char next_token_error = 0;
-    PSA_Token id = readNextToken(main_s, &next_token_error);
+    PSA_Token id = readNextToken(main_s, &next_token_error, NULL);
 
     // read the second token (should be : token)
-    PSA_Token colon = readNextToken(main_s, &next_token_error);
+    PSA_Token colon = readNextToken(main_s, &next_token_error, NULL);
 
     bool has_name = id.type == TOKEN_IDENTIFICATOR && colon.type == TOKEN_DOUBLE_DOT;
 
@@ -104,7 +121,13 @@ bool checkParamName(PSA_Token_stack *main_s, unsigned int param_index, symtable_
         return_token(convertPSATokenToToken(id));
     }
 
-    bool should_have_name = param_index < (unsigned int)found_func->data.func_data->params_count && !strcmp(found_func->data.func_data->params[param_index].name, "_");
+    if (found_func == NULL)
+    {
+        // TODO: save for later checking
+        return true;
+    }
+
+    bool should_have_name = param_index < (unsigned int)found_func->data.func_data->params_count && strcmp(found_func->data.func_data->params[param_index].name, "_");
 
     bool name_is_ok = false;
 

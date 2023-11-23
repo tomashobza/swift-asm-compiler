@@ -21,6 +21,7 @@ Token_type state = NEW_TOKEN;                                                   
 char *char_without_space[] = {":", ".", "{", "}", "(", ")", ",", " ", "=", "!", "+", "-", "*", "/", "<", ">", "\n", "_"};
 
 int ret = 0;
+unsigned int line_num = 0;
 Token_stack *scanner_stack;
 
 int main_scanner(Token *token)
@@ -35,6 +36,10 @@ int main_scanner(Token *token)
     else
     {
         *token = Token_stack_pop(scanner_stack);
+    }
+    if (token->preceded_by_nl)
+    {
+        line_num++;
     }
     return ret;
 }
@@ -99,6 +104,7 @@ int generate_token(Token *token, char *code)
             case '\n':
                 token->preceded_by_nl = true;
                 state = NEW_TOKEN;
+                line_num++;
                 break;
             case EOF:
                 return set_token(END_STATE, "", TOKEN_EOF, token);
@@ -337,10 +343,13 @@ int generate_token(Token *token, char *code)
                 strncat(code, &c, 1);
                 c = (char)getchar();
             }
-            if(c == '?' && (strcmp(code,"Double") == 0 || strcmp(code,"Int") == 0 || strcmp(code,"String") == 0 || strcmp(code,"Bool") == 0)){
+            if (c == '?' && (strcmp(code, "Double") == 0 || strcmp(code, "Int") == 0 || strcmp(code, "String") == 0 || strcmp(code, "Bool") == 0))
+            {
                 check_length(&code_len, 0, code);
                 strncat(code, &c, 1);
-            }else{
+            }
+            else
+            {
                 ungetc(c, stdin);
             }
             for (size_t i = 0; i < sizeof(defined_tokens) / sizeof(defined_tokens[0]); i++)
@@ -792,5 +801,9 @@ void scanner_init()
 
 void return_token(Token token)
 {
+    if (token.preceded_by_nl)
+    {
+        line_num--;
+    }
     Token_stack_push(scanner_stack, token);
 }

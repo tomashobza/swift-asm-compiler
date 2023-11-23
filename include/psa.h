@@ -6,11 +6,16 @@
 #include <string.h>
 #include <stdint.h>
 #include <math.h>
+
 #include "debug.h"
 #include "colorful_printf.h"
 #include "scanner.h"
 #include "stack.h"
 #include "symtable.h"
+
+extern symtable_stack *sym_st;
+
+#include "error.h"
 
 // STRUCTS, ENUMS & GLOBALS
 
@@ -140,6 +145,15 @@ bool isTokenOperand(Token_type token);
 bool isTokenBinaryOperator(Token_type token);
 
 /**
+ * @brief Checks if the token is a bracket.
+ *
+ * @param token token to check
+ * @return true
+ * @return false
+ */
+bool isTokenBracket(Token_type token);
+
+/**
  * @brief Checks if the token can be at the beginning of an expression.
  *
  * @param token token to check
@@ -196,6 +210,14 @@ Expression_type getTypeCombination(PSA_Token l_operand, PSA_Token r_operand);
  */
 PSA_Token getHandleType(PSA_Token l_operand, Token_type operation, PSA_Token r_operand);
 
+/**
+ * @brief Returns the expression type of an identifier from the symbol table.
+ *
+ * @param id token of the identifier
+ * @return Expression_type
+ */
+Expression_type getIdType(PSA_Token id);
+
 // PSA MAIN FUNCTION
 
 /**
@@ -203,7 +225,7 @@ PSA_Token getHandleType(PSA_Token l_operand, Token_type operation, PSA_Token r_o
  *
  * @return psa_return_type
  */
-psa_return_type parse_expression(symtable_stack *st_stack);
+psa_return_type parse_expression();
 
 /**
  * @brief Parses the expression using the precedent bottom-up parser. Reads tokens from the scanner.
@@ -211,31 +233,29 @@ psa_return_type parse_expression(symtable_stack *st_stack);
  * @param is_param Is the expression a function parameter? (, will be the end of the expression)
  * @return psa_return_type
  */
-psa_return_type parse_expression_base(bool is_param, symtable_stack *st_stack);
+psa_return_type parse_expression_base(bool is_param);
 
 /**
  * @brief Parses the expression that is a function parameter using the precedent bottom-up parser. Reads tokens from the scanner. Separating commas (,) are consumed, but closing bracket (]) is not.
  *
  * @return psa_return_type
  */
-psa_return_type parse_expression_param(symtable_stack *st_stack);
+psa_return_type parse_expression_param();
 
 // INPUT/OUTPUT FUNCTIONS
 
 /**
  * @brief Reads the next token from the scanner and returns it. If the token is invalid, returns TOKEN_EOF. It also checks for errors based on the token on the top of the stack and the token that is being read.
- *
- *
-    // next_token_error = 0b000 -> no error \
-    // next_token_error = 0b001 -> missing operator
-    // next_token_error = 0b010 -> illegal token
-    // next_token_error = 0b100 -> empty expression
+ * `next_token_error = 0b000 -> no error`
+ * `next_token_error = 0b001 -> missing operator`
+ * `next_token_error = 0b010 -> illegal token`
  *
  * @param s stack of tokens
  * @param next_token_error error code
+ * @param num_of_brackets number of brackets in the expression (NULL if not needed)
  * @return PSA_Token - next token
  */
-PSA_Token readNextToken(PSA_Token_stack *s, char *next_token_error);
+PSA_Token readNextToken(PSA_Token_stack *s, char *next_token_error, int *num_of_brackets);
 
 /**
  * @brief Prints the stack of tokens recursively.
@@ -267,7 +287,19 @@ void printTokenArray(PSA_Token *handle, unsigned int len);
  * @param id PSA_Token contaning the id of the function
  * @return PSA_Token derivation of the function call
  */
-PSA_Token parseFunctionCall(PSA_Token_stack *main_s, PSA_Token id, symtable_stack *st_stack);
+PSA_Token parseFunctionCall(PSA_Token_stack *main_s, PSA_Token id);
+
+/**
+ * @brief Checks the validity of the parameters of the function call.
+ *
+ * @param main_s main PSA token stack
+ * @param param_index index of the parameter
+ * @param found_func symbol of the function from the symbol table
+ * @param parsed_param pointer to where the parsed parameter (return struct of the PSA) will be saved
+ * @return true - the parameter is both syntactically and semantically valid
+ * @return false - the parameter is not syntactically or semantically valid
+ */
+bool checkParameter(PSA_Token_stack *main_s, unsigned int param_index, symtable_item *found_func, psa_return_type *parsed_param);
 
 /**
  * @brief Checks if the parameter name matches the name of the parameter in the function definition (if there should be a name).

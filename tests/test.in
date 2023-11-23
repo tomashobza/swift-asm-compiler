@@ -1,5 +1,3 @@
-func fee(name0 id0 : Int) ->Bool {}
-func foo(name1 id1 : Bool) ->String {}
-func frr(name2 id2 : Double) ->Double {}
-func fii(name3 id3 : String) ->Int {}
-func fss() ->String {}
+1
++
+2 if                                                                    
