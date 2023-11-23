@@ -1,9 +1,12 @@
-DEBUG?=1
+DEBUG_PSA?=0
+DEBUG_SEMANTIC?=0
+DEBUG_SYNTAX?=0
+DEBUG_LEXER?=0
 
 # Compiler and flags
 CC = gcc
 CFLAGS = -Iinclude -Werror -Wall -Wextra -std=c99 -fdiagnostics-color=always
-TESTFLAGS = -g -D DEBUG=$(DEBUG)
+TESTFLAGS = -g -DDEBUG_PSA=$(DEBUG_PSA) -DDEBUG_SEMANTIC=$(DEBUG_SEMANTIC) -DDEBUG_SYNTAX=$(DEBUG_SYNTAX) -DDEBUG_LEXER=$(DEBUG_LEXER)
 
 # Source files (excluding main.c for test build)
 SRCS = $(filter-out src/main.c, $(wildcard src/*.c)) $(filter-out src/main.c, $(wildcard src/**/*.c))

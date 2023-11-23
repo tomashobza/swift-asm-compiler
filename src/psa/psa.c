@@ -32,7 +32,7 @@ psa_return_type parse_expression_base(bool is_param)
             a = s->top->next->data;
         }
 
-        // DEBUG_CODE(printf("Chyba: %d\n", next_token_error););
+        // DEBUG_PSA_CODE(printf("Chyba: %d\n", next_token_error););
 
         // FOR PARAMETER EXPRESSIONS CHECK FOR END OF PARAMETER
         // if expression is a function parameter, the end of the expression is ) or ,
@@ -100,7 +100,7 @@ psa_return_type parse_expression_base(bool is_param)
         // if the next token is a function identificator, start parsing function call
         if (b.type == TOKEN_FUNC_ID)
         {
-            DEBUG_CODE(
+            DEBUG_PSA_CODE(
                 printf_magenta("--------Je to funkce! --------\n");
                 print_token_type(b.type););
 
@@ -110,7 +110,7 @@ psa_return_type parse_expression_base(bool is_param)
 
             b = readNextToken(s, &next_token_error, &num_of_brackets);
 
-            DEBUG_CODE(printf_magenta("------------------------------\n"););
+            DEBUG_PSA_CODE(printf_magenta("------------------------------\n"););
 
             // CHECK NEXT TOKEN FOR ERRORS
             if (next_token_error > 0)
@@ -160,11 +160,11 @@ psa_return_type parse_expression_base(bool is_param)
             };
         }
 
-        DEBUG_CODE(printf_blue("Bracket count: %d\n", num_of_brackets););
-        DEBUG_CODE(printf("na stacku: ");
-                   printStack(s->top);
-                   printf_yellow("na vstupu: {'%s', %d}\n", b.token_value, b.type);
-                   printf_magenta("P_TABLE[{%d, '%s'}][{%d, '%s'}] = %c\n", getSymbolValue(a.type), a.token_value, (b.type), b.token_value, P_TABLE[getSymbolValue(a.type)][getSymbolValue(b.type)]););
+        DEBUG_PSA_CODE(printf_blue("Bracket count: %d\n", num_of_brackets););
+        DEBUG_PSA_CODE(printf("na stacku: ");
+                       printStack(s->top);
+                       printf_yellow("na vstupu: {'%s', %d}\n", b.token_value, b.type);
+                       printf_magenta("P_TABLE[{%d, '%s'}][{%d, '%s'}] = %c\n", getSymbolValue(a.type), a.token_value, (b.type), b.token_value, P_TABLE[getSymbolValue(a.type)][getSymbolValue(b.type)]););
 
         const unsigned int a_val = getSymbolValue(a.type);
         const unsigned int b_val = getSymbolValue(b.type);
@@ -230,7 +230,8 @@ psa_return_type parse_expression_base(bool is_param)
             }
             else
             {
-                DEBUG_CODE(printTokenArray(handle, i););
+                DEBUG_PSA_CODE(printTokenArray(handle, i););
+
                 printf_red("❌ | Error: invalid expression! Unexpected token '%s' in expression. \n", b.token_value);
 
                 return (psa_return_type){
@@ -255,13 +256,13 @@ psa_return_type parse_expression_base(bool is_param)
             };
         }
 
-        DEBUG_CODE(printStack(s->top););
-        DEBUG_CODE(printf("\n-----------\n\n"););
+        DEBUG_PSA_CODE(printStack(s->top);
+                       printf("\n-----------\n\n"););
 
         a = PSA_Token_stack_top(s);
     }
     printf("\n");
-    printf_green("✅ | All good! \n");
+    printf_green("PSA: ✅ | All good! \n");
 
     // TODO: checking bracket count might be redundant because of handles
     if (num_of_brackets != 0 && !(is_param && num_of_brackets == -1))

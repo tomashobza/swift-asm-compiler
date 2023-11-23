@@ -16,6 +16,7 @@
 #include <stdio.h>
 #include <stdbool.h>
 #include "stack.h"
+#include "debug.h"
 
 /**
  * @brief Enum for the types of the expression.
@@ -48,6 +49,7 @@ typedef struct
 typedef struct
 {
     Expression_type return_type;
+    bool found_return;
     ParamData *params;
     int params_count;
     int capacity;
@@ -58,8 +60,8 @@ typedef struct symtable_item
     char *id;
     enum
     {
-        VARIABLE,
-        FUNCTION
+        VARIABLE = 0,
+        FUNCTION = 1
     } type; // typ symbolu
     union
     {
@@ -111,18 +113,24 @@ symtable_item *symtable_add(symtable_item item, symtable table);
  *
  * @param name name of the symbol to find
  * @param table table to search in
+ * @param is_func if the symbol is a function
  * @return symtable_item* - pointer to the symbol or NULL if not found
  */
-symtable_item *symtable_find(char *name, symtable table);
+symtable_item *symtable_find(char *name, symtable table, bool is_func);
 
 /**
  * @brief Finds a symbol in the table and returns it's pointer.
  *
  * @param name name of the symbol to find
  * @param stack stack of symtables to search in
+ * @param is_func if the symbol is a function
  * @return symtable_item* - pointer to the symbol or NULL if not found
  */
-symtable_item *symtable_find_in_stack(char *name, symtable_stack *stack);
+symtable_item *symtable_find_in_stack(char *name, symtable_stack *stack, bool is_func);
+
+FunctionData *init_func_data();
+VariableData *init_var_data();
+ParamData *init_param_data();
 
 /**
  * @brief Creates a new symbol object.

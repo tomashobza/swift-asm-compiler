@@ -343,10 +343,13 @@ int generate_token(Token *token, char *code)
                 strncat(code, &c, 1);
                 c = (char)getchar();
             }
-            if(c == '?' && (strcmp(code,"Double") == 0 || strcmp(code,"Int") == 0 || strcmp(code,"String") == 0 || strcmp(code,"Bool") == 0)){
+            if (c == '?' && (strcmp(code, "Double") == 0 || strcmp(code, "Int") == 0 || strcmp(code, "String") == 0 || strcmp(code, "Bool") == 0))
+            {
                 check_length(&code_len, 0, code);
                 strncat(code, &c, 1);
-            }else{
+            }
+            else
+            {
                 ungetc(c, stdin);
             }
             for (size_t i = 0; i < sizeof(defined_tokens) / sizeof(defined_tokens[0]); i++)
@@ -782,7 +785,7 @@ int set_token(int next_state, char *val, Token_type type, Token *token)
         state = next_state;
         token->type = type;
         token->token_value = val;
-        // printf("type:%d, value:%s\n", token->type, token->token_value);
+        DEBUG_LEXER_CODE(printf("type:%d, value:%s\n", token->type, token->token_value););
         return 0;
     }
     else

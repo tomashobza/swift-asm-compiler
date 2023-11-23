@@ -12,7 +12,7 @@ PSA_Token parseFunctionCall(PSA_Token_stack *main_s, PSA_Token id)
     bool is_ok = true;
 
     // check if the id of the function is in the symtable
-    symtable_item *found_func = symtable_find_in_stack(id.token_value, sym_st);
+    symtable_item *found_func = symtable_find_in_stack(id.token_value, sym_st, true);
     if (found_func == NULL)
     {
         is_ok = false;
@@ -22,7 +22,7 @@ PSA_Token parseFunctionCall(PSA_Token_stack *main_s, PSA_Token id)
         throw_error(FUNCTIONS_ERR, "Function '%s' not found!", id.token_value);
     }
 
-    printf("Function '%s' found\n", id.token_value);
+    DEBUG_PSA_CODE(printf("Function '%s' found\n", id.token_value););
 
     // read the next token (should be ( token)
     char next_token_error = 0;

@@ -24,7 +24,8 @@
     void type##_stack_push(type##_stack *stack, type value); \
     type type##_stack_pop(type##_stack *stack);              \
     type type##_stack_top(type##_stack *stack);              \
-    void type##_stack_free(type##_stack *stack);
+    void type##_stack_free(type##_stack *stack);             \
+    bool type##_stack_empty(type##_stack *stack);
 
 #define DEFINE_STACK_FUNCTIONS(type)                                        \
     type##_stack *type##_stack_init()                                       \
