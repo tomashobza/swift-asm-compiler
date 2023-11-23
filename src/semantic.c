@@ -123,7 +123,7 @@ Expression_type get_expression_type(Token *token)
 void print_items()
 {
     DEBUG_SEMANTIC_CODE(
-        printf(MAGENTA "FUNCTION: %s, return type: %d" RESET "\n", funcItem->id, funcItem->data.func_data->return_type);
+        printf(MAGENTA "FUNCTION: %s, return type: %d, param_count: %d" RESET "\n", funcItem->id, funcItem->data.func_data->return_type, funcItem->data.func_data->params_count);
         for (int i = 0; i < funcItem->data.func_data->params_count; i++) {
             printf(MAGENTA "PARAM: %s, id: %s, type: %d" RESET "\n", funcItem->data.func_data->params[i].name, funcItem->data.func_data->params[i].id, funcItem->data.func_data->params[i].type);
         } printf(BLUE "VARIABLE: %s, type: %d, is const: %d" RESET "\n", varItem->id, varItem->data.var_data->type, varItem->data.var_data->is_const);
@@ -413,6 +413,7 @@ int check_semantic(Token *token, Sem_rule sem_rule)
     case P_TYPE:
         new_param.type = get_expression_type(token);
         add_param(funcItem->data.func_data, new_param);
+        DEBUG_PSA_CODE(printf(CYAN "ADDING PARAM: %s, id: %s, type: %d\n", new_param.name, new_param.id, new_param.type););
         reset_param();
         break;
     case R_TYPE:

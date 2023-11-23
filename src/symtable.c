@@ -135,9 +135,9 @@ VariableData *init_var_data()
 
     return var_data;
 }
-ParamData *init_param_data()
+ParamData *init_param_data(int count)
 {
-    ParamData *param_data = malloc(sizeof(ParamData));
+    ParamData *param_data = malloc(count * sizeof(ParamData));
     if (param_data == NULL)
     {
         return NULL;
@@ -158,7 +158,6 @@ FunctionData *init_func_data()
         return NULL;
     }
 
-    func_data->params = init_param_data();
     func_data->params_count = 0;
     func_data->capacity = 0;
     func_data->return_type = TYPE_EMPTY;
@@ -186,7 +185,11 @@ symtable_item *init_symtable_item(symtable_item item)
     {
         new_sti->data.func_data = init_func_data();
         *(new_sti->data.func_data) = *(item.data.func_data);
-        (new_sti->data.func_data->params) = (item.data.func_data->params);
+        if (item.data.func_data->params_count > 0)
+        {
+            new_sti->data.func_data->params = init_param_data(item.data.func_data->params_count);
+            *(new_sti->data.func_data->params) = *(item.data.func_data->params);
+        }
     }
     new_sti->next = NULL;
 
@@ -214,11 +217,10 @@ void symtable_print(symtable table)
                 }
                 else if (item->type == FUNCTION)
                 {
-                    printf("id: %s, return_type: %d ", item->id, item->data.func_data->return_type);
+                    printf("id: %s, return_type: %d, ", item->id, item->data.func_data->return_type);
                     for (int i = 0; i < item->data.func_data->params_count; i++)
                     {
-                        printf("\n");
-                        printf("%s: param %d: %s, %d \n", item->id, i, item->data.func_data->params[i].id, item->data.func_data->params[i].type);
+                        printf("param %d: %s, %s, %d, ", i, item->data.func_data->params[i].name, item->data.func_data->params[i].id, item->data.func_data->params[i].type);
                     }
                 }
                 item = item->next;
