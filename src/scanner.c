@@ -754,6 +754,7 @@ int generate_token(Token *token, char *code)
  */
 void check_length(int *code_len, int add, char *code)
 {
+    printf("strlen(code):%ld + add:%d >= (long unsigned int)*code_len: %ld\n", strlen(code), add, (long unsigned int)*code_len);
     if (strlen(code) + add >= (long unsigned int)*code_len)
     {
         code = realloc(code, sizeof(char) * (*code_len *= 2));
