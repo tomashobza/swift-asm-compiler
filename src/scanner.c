@@ -65,21 +65,16 @@ int generate_token(Token *token, char *code)
         {"var", TOKEN_VAR},
         {"let", TOKEN_LET},
         {"break", TOKEN_BREAK},
-        {"continue", TOKEN_CONTINUE},
-        {"readString", TOKEN_READSTRING},
-        {"readInt", TOKEN_READINT},
-        {"readDouble", TOKEN_READDOUBLE},
-        {"write", TOKEN_WRITE},
-        {"Int2Double", TOKEN_INT2DOUBLE},
-        {"Double2Int", TOKEN_DOUBLE2INT},
-        {"length", TOKEN_LENGTH},
-        {"substring", TOKEN_SUBSTRING},
-        {"ord", TOKEN_ORD},
-        {"chr", TOKEN_CHR},
+        {"continue", TOKEN_CONTINUE}
     };
     token->preceded_by_nl = false;
     int code_len = 1;
     code = malloc(sizeof(char) * code_len);
+    if (code == NULL)
+    {
+        ret = INTERNAL_ERR;
+        exit(INTERNAL_ERR);
+    }
     while (1)
     {
         check_length(&code_len, 0, code);
@@ -250,12 +245,14 @@ int generate_token(Token *token, char *code)
                 state = STRING_1;
                 break;
             case '0' ... '9':
-                code[strlen(code)] = c;
+                check_length(&code_len, 0, code);
+                strncat(code, &c, 1);
                 state = INTEGER;
                 break;
             case 'A' ... 'Z':
             case 'a' ... 'z':
-                code[strlen(code)] = c;
+                check_length(&code_len, 0, code);
+                strncat(code, &c, 1);
                 state = IDENTIFICATOR;
                 break;
             case '_':
@@ -294,8 +291,11 @@ int generate_token(Token *token, char *code)
             char c = (char)getchar();
             while (c != '\n' && c != EOF)
             {
+<<<<<<< HEAD
                 // check_length(&code_len, 0, code);
                 //   code[strlen(code)] = c;
+=======
+>>>>>>> 250efada2747b99cc8dc57a3cca6ca1cf1bbcdfe
                 c = (char)getchar();
             }
             state = NEW_TOKEN;
@@ -317,15 +317,21 @@ int generate_token(Token *token, char *code)
                         state = NEW_TOKEN;
                         break;
                     }
+<<<<<<< HEAD
                     // check_length(&code_len, 0, code);
                     // code[strlen(code)] = c;
+=======
+>>>>>>> 250efada2747b99cc8dc57a3cca6ca1cf1bbcdfe
                 }
                 if (c == EOF)
                 {
                     return LEXICAL_ERR;
                 }
+<<<<<<< HEAD
                 // check_length(&code_len, 0, code);
                 // code[strlen(code)] = c;
+=======
+>>>>>>> 250efada2747b99cc8dc57a3cca6ca1cf1bbcdfe
                 c = (char)getchar();
             }
             break;
