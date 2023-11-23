@@ -51,12 +51,12 @@ typedef struct
 DECLARE_STACK_FUNCTIONS(Error)
 
 // Macro for formatted error messages
-#define throw_error(code, fmt, ...)                                                 \
-    do                                                                              \
-    {                                                                               \
-        char formatted_message[256];                                                \
-        snprintf(formatted_message, sizeof(formatted_message), fmt, ##__VA_ARGS__); \
-        throw_error_base(code, formatted_message);                                  \
+#define throw_error(code, fmt, ...)                           \
+    do                                                        \
+    {                                                         \
+        char *formatted_message = malloc(sizeof(char) * 256); \
+        snprintf(formatted_message, 256, fmt, ##__VA_ARGS__); \
+        throw_error_base(code, formatted_message);            \
     } while (0);
 
 /**
