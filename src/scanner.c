@@ -274,7 +274,7 @@ int generate_token(Token *token, char *code)
             }
             else if (c == ' ')
             {
-                return set_token(NEW_TOKEN, "_", TOKEN_UNDERSCORE, token);
+                return set_token(NEW_TOKEN, "_", TOKEN_IDENTIFICATOR, token);
             }
             else
             {

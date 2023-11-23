@@ -5,6 +5,115 @@ symtable_item *funcItem; // Item to be added to symtable
 symtable mySymtable;     // Symtable
 ParamData new_param;     // ParamData to be added to FunctionData
 
+void add_builtin_functions()
+{
+    // readString() -> String?
+    reset_func();
+    funcItem->id = "readString";
+    funcItem->data.func_data->return_type = TYPE_STRING_NIL;
+    funcItem->data.func_data->found_return = true;
+    symtable_add(*funcItem, symtable_stack_top(sym_st));
+    // readInt() -> Int?
+    reset_func();
+    funcItem->id = "readInt";
+    funcItem->data.func_data->return_type = TYPE_INT_NIL;
+    funcItem->data.func_data->found_return = true;
+    symtable_add(*funcItem, symtable_stack_top(sym_st));
+    // readDouble() -> Double?
+    reset_func();
+    funcItem->id = "readDouble";
+    funcItem->data.func_data->return_type = TYPE_DOUBLE_NIL;
+    funcItem->data.func_data->found_return = true;
+    symtable_add(*funcItem, symtable_stack_top(sym_st));
+    // write ( term1 , term2 , …, term𝑛 )
+    reset_func();
+    funcItem->id = "write";
+    funcItem->data.func_data->return_type = TYPE_EMPTY;
+    funcItem->data.func_data->found_return = true;
+    funcItem->data.func_data->params_count = -1;
+    symtable_add(*funcItem, symtable_stack_top(sym_st));
+    // Int2Double(_ term ∶ Int) -> Double
+    reset_func();
+    funcItem->id = "Int2Double";
+    funcItem->data.func_data->return_type = TYPE_DOUBLE;
+    funcItem->data.func_data->found_return = true;
+    reset_param();
+    new_param.name = "_";
+    new_param.id = ""; // TODO check if okay
+    new_param.type = TYPE_INT;
+    add_param(funcItem->data.func_data, new_param);
+    symtable_add(*funcItem, symtable_stack_top(sym_st));
+    // Double2Int(_ term ∶ Double) -> Int
+    reset_func();
+    funcItem->id = "Double2Int";
+    funcItem->data.func_data->return_type = TYPE_INT;
+    funcItem->data.func_data->found_return = true;
+    reset_param();
+    new_param.name = "_";
+    new_param.id = ""; // TODO check if okay
+    new_param.type = TYPE_DOUBLE;
+    add_param(funcItem->data.func_data, new_param);
+    symtable_add(*funcItem, symtable_stack_top(sym_st));
+    // length(_ 𝑠 : String) -> Int
+    reset_func();
+    funcItem->id = "length";
+    funcItem->data.func_data->return_type = TYPE_INT;
+    funcItem->data.func_data->found_return = true;
+    reset_param();
+    new_param.name = "_";
+    new_param.id = ""; // TODO check if okay
+    new_param.type = TYPE_STRING;
+    add_param(funcItem->data.func_data, new_param);
+    symtable_add(*funcItem, symtable_stack_top(sym_st));
+    // substring(of 𝑠 : String, startingAt 𝑖 : Int, endingBefore 𝑗 : Int) -> String?
+    reset_func();
+    funcItem->id = "substring";
+    funcItem->data.func_data->return_type = TYPE_STRING_NIL;
+    funcItem->data.func_data->found_return = true;
+    reset_param();
+    new_param.name = "of";
+    new_param.id = ""; // TODO check if okay
+    new_param.type = TYPE_STRING;
+    add_param(funcItem->data.func_data, new_param);
+    reset_param();
+    new_param.name = "startingAt";
+    new_param.id = ""; // TODO check if okay
+    new_param.type = TYPE_INT;
+    add_param(funcItem->data.func_data, new_param);
+    reset_param();
+    new_param.name = "endingBefore";
+    new_param.id = ""; // TODO check if okay
+    new_param.type = TYPE_INT;
+    add_param(funcItem->data.func_data, new_param);
+    symtable_add(*funcItem, symtable_stack_top(sym_st));
+    // ord(_ 𝑐 : String) -> Int
+    reset_func();
+    funcItem->id = "ord";
+    funcItem->data.func_data->return_type = TYPE_INT;
+    funcItem->data.func_data->found_return = true;
+    reset_param();
+    new_param.name = "_";
+    new_param.id = ""; // TODO check if okay
+    new_param.type = TYPE_STRING;
+    add_param(funcItem->data.func_data, new_param);
+    symtable_add(*funcItem, symtable_stack_top(sym_st));
+    // chr(_ 𝑖 : Int) -> String
+    reset_func();
+    funcItem->id = "chr";
+    funcItem->data.func_data->return_type = TYPE_STRING;
+    funcItem->data.func_data->found_return = true;
+    reset_param();
+    new_param.name = "_";
+    new_param.id = ""; // TODO check if okay
+    new_param.type = TYPE_INT;
+    add_param(funcItem->data.func_data, new_param);
+    symtable_add(*funcItem, symtable_stack_top(sym_st));
+
+    printf(GREEN);
+    DEBUG_SEMANTIC_CODE(symtable_print(symtable_stack_top(sym_st)););
+    printf(RESET);
+}
+
 int semantic_init()
 {
     varItem = malloc(sizeof(symtable_item));
@@ -20,7 +129,7 @@ int semantic_init()
 
     reset_param();
 
-    // Inicializace symtable
+    // symtable init
     mySymtable = symtable_init();
     symtable_stack_push(sym_st, mySymtable);
 
@@ -78,6 +187,7 @@ void reset_var()
 
 void reset_func()
 {
+    reset_param();
     funcItem->id = NULL;
     funcItem->data.func_data->return_type = TYPE_EMPTY;
     free(funcItem->data.func_data->params);

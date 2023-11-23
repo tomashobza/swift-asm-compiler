@@ -512,6 +512,7 @@ int parser_main()
 
     scanner_init();
     semantic_init();
+    add_builtin_functions();
 
     get_token(token);
     bool all_ok = START(token);
