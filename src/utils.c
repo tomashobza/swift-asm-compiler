@@ -43,9 +43,9 @@ void print_token_type(Token_type type)
     case TOKEN_FUNC:
         printf_cyan("TOKEN_FUNC");
         break;
-    case TOKEN_TYPE_SUFFIX:
+    /*case TOKEN_TYPE_SUFFIX:
         printf_cyan("TOKEN_TYPE_SUFFIX");
-        break;
+        break;*/
     case TOKEN_IDENTIFICATOR:
         printf_cyan("TOKEN_IDENTIFICATOR");
         break;
