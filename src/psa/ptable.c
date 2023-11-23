@@ -45,6 +45,7 @@ unsigned int getSymbolValue(Token_type token)
     case TOKEN_INT:
     case TOKEN_DOUBLE:
     case TOKEN_EXP:
+    case TOKEN_BOOL:
     case TOKEN_STRING:
         return 5;
     case TOKEN_L_BRACKET:
