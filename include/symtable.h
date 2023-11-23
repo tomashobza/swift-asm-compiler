@@ -73,6 +73,8 @@ typedef symtable_item **symtable;
 
 DECLARE_STACK_FUNCTIONS(symtable);
 
+extern symtable_stack *sym_st;
+
 /**
  * @brief Struct to hold the stack of symtables.
  *

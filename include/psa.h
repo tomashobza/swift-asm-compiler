@@ -6,11 +6,15 @@
 #include <string.h>
 #include <stdint.h>
 #include <math.h>
+
 #include "debug.h"
 #include "colorful_printf.h"
 #include "scanner.h"
 #include "stack.h"
 #include "symtable.h"
+
+extern symtable_stack *sym_st;
+
 #include "error.h"
 
 // STRUCTS, ENUMS & GLOBALS
@@ -201,10 +205,9 @@ PSA_Token getHandleType(PSA_Token l_operand, Token_type operation, PSA_Token r_o
  * @brief Returns the expression type of an identifier from the symbol table.
  *
  * @param id token of the identifier
- * @param st_stack stack of symbol tables
  * @return Expression_type
  */
-Expression_type getIdType(PSA_Token id, symtable_stack *st_stack);
+Expression_type getIdType(PSA_Token id);
 
 // PSA MAIN FUNCTION
 
@@ -213,7 +216,7 @@ Expression_type getIdType(PSA_Token id, symtable_stack *st_stack);
  *
  * @return psa_return_type
  */
-psa_return_type parse_expression(symtable_stack *st_stack);
+psa_return_type parse_expression();
 
 /**
  * @brief Parses the expression using the precedent bottom-up parser. Reads tokens from the scanner.
@@ -221,14 +224,14 @@ psa_return_type parse_expression(symtable_stack *st_stack);
  * @param is_param Is the expression a function parameter? (, will be the end of the expression)
  * @return psa_return_type
  */
-psa_return_type parse_expression_base(bool is_param, symtable_stack *st_stack);
+psa_return_type parse_expression_base(bool is_param);
 
 /**
  * @brief Parses the expression that is a function parameter using the precedent bottom-up parser. Reads tokens from the scanner. Separating commas (,) are consumed, but closing bracket (]) is not.
  *
  * @return psa_return_type
  */
-psa_return_type parse_expression_param(symtable_stack *st_stack);
+psa_return_type parse_expression_param();
 
 // INPUT/OUTPUT FUNCTIONS
 
@@ -274,7 +277,7 @@ void printTokenArray(PSA_Token *handle, unsigned int len);
  * @param id PSA_Token contaning the id of the function
  * @return PSA_Token derivation of the function call
  */
-PSA_Token parseFunctionCall(PSA_Token_stack *main_s, PSA_Token id, symtable_stack *st_stack);
+PSA_Token parseFunctionCall(PSA_Token_stack *main_s, PSA_Token id);
 
 /**
  * @brief Checks the validity of the parameters of the function call.
@@ -283,11 +286,10 @@ PSA_Token parseFunctionCall(PSA_Token_stack *main_s, PSA_Token id, symtable_stac
  * @param param_index index of the parameter
  * @param found_func symbol of the function from the symbol table
  * @param parsed_param pointer to where the parsed parameter (return struct of the PSA) will be saved
- * @param st_stack stack of symbol tables
  * @return true - the parameter is both syntactically and semantically valid
  * @return false - the parameter is not syntactically or semantically valid
  */
-bool checkParameter(PSA_Token_stack *main_s, unsigned int param_index, symtable_item *found_func, psa_return_type *parsed_param, symtable_stack *st_stack);
+bool checkParameter(PSA_Token_stack *main_s, unsigned int param_index, symtable_item *found_func, psa_return_type *parsed_param);
 
 /**
  * @brief Checks if the parameter name matches the name of the parameter in the function definition (if there should be a name).

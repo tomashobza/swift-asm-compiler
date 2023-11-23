@@ -8,18 +8,23 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include "error.h"
+#include "symtable.h"
+
+symtable_stack *sym_st;
+
 #include "psa.h"
+#include "error.h"
 #include "parser.h"
 #include "utils.h"
-#include "symtable.h"
 
 int main(void)
 {
     scanner_init();
 
-    symtable_stack *st_stack = symtable_stack_init();
-    symtable_stack_push(st_stack, symtable_init());
+    sym_st = symtable_stack_init();
+
+    // symtable_stack *sym_st = symtable_stack_init();
+    symtable_stack_push(sym_st, symtable_init());
 
     ParamData params[2] = {
         (ParamData){
@@ -47,9 +52,9 @@ int main(void)
         },
     };
 
-    symtable_add(new_item, symtable_stack_top(st_stack));
+    symtable_add(new_item, symtable_stack_top(sym_st));
 
-    psa_return_type psa_ret = parse_expression(st_stack);
+    psa_return_type psa_ret = parse_expression();
 
     printf_magenta("\n\n==== PSA RETURN ====\n");
     printf("Is ok: ");
@@ -77,15 +82,19 @@ int main(void)
     {
         printf_red("false\n");
     }
-    printf_magenta("====================\n");
+    printf_magenta("====================\n\n");
+
+    Token next_token;
+    main_scanner(&next_token);
+    printf_yellow("Next token is: {'%s':%d}\n", next_token.token_value, next_token.type);
 
     // parser_main();
 
-    // throw_error(SYNTACTIC_ERR, 3, "This is a syntactic error");
-    // throw_error(LEXICAL_ERR, 9, "This is a lexical error");
-    // throw_error(SEMANTICS_ERR, 5, "This is a semantic error");
-    // throw_error(INTERNAL_ERR, 1, "This is an internal error");
-    // throw_error(TYPE_ERR, 7, "This is a type error");
+    // throw_error(SYNTACTIC_ERR, "This is a syntactic error");
+    // throw_error(LEXICAL_ERR, "This is a lexical error");
+    // throw_error(SEMANTICS_ERR, "This is a semantic error");
+    // throw_error(INTERNAL_ERR, "This is an internal error");
+    // throw_error(TYPE_ERR, "This is a type error");
 
     // print errors
     print_errors();
