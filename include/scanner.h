@@ -40,7 +40,6 @@
 #define HEX_START 50
 #define IDENTIFICATOR 51
 
-
 extern unsigned int line_num;
 
 typedef enum
@@ -57,10 +56,10 @@ typedef enum
     TOKEN_TYPE_INT,        // Keyword Int 9
     TOKEN_TYPE_DOUBLE,     // Keyword Double 10
     TOKEN_TYPE_BOOL,       // Keyword Bool 11
-    TOKEN_TYPE_STRING_NIL,     // Keyword String? 12
-    TOKEN_TYPE_INT_NIL,        // Keyword Int? 13
-    TOKEN_TYPE_DOUBLE_NIL,     // Keyword Double? 14
-    TOKEN_TYPE_BOOL_NIL,       // Keyword Bool? 15
+    TOKEN_TYPE_STRING_NIL, // Keyword String? 12
+    TOKEN_TYPE_INT_NIL,    // Keyword Int? 13
+    TOKEN_TYPE_DOUBLE_NIL, // Keyword Double? 14
+    TOKEN_TYPE_BOOL_NIL,   // Keyword Bool? 15
     TOKEN_FUNC,            // Keyword func 16
     TOKEN_IDENTIFICATOR,   // Identificator 17
     TOKEN_EOF,             // EOF 18
