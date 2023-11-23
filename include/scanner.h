@@ -22,6 +22,8 @@
 #define NEW_TOKEN 1
 #define COMMENTARY 20
 #define COMMENTARY_BL 21
+#define UNDERSCORE 22
+#define END_STATE 23
 #define INTEGER 30
 #define DEC_POINT 31
 #define EXP_START 33
@@ -37,8 +39,7 @@
 #define HEX_START_BLOCK 49
 #define HEX_START 50
 #define IDENTIFICATOR 51
-#define UNDERSCORE 52
-#define END_STATE 60
+
 
 extern unsigned int line_num;
 
@@ -92,16 +93,6 @@ typedef enum
     TOKEN_AND,             // && has been read 45
     TOKEN_OR,              // || has been read 46
     TOKEN_UNDERSCORE,      // _ has been read 47
-    TOKEN_READSTRING,      // Builtin function readString 48
-    TOKEN_READINT,         // Builtin function readInt 49
-    TOKEN_READDOUBLE,      // Builtin function readDouble 50
-    TOKEN_WRITE,           // Builtin function write 51
-    TOKEN_INT2DOUBLE,      // Builtin function Int2Double 52
-    TOKEN_DOUBLE2INT,      // Builtin function Double2Int 53
-    TOKEN_LENGTH,          // Builtin function length 54
-    TOKEN_SUBSTRING,       // Builtin function substring 55
-    TOKEN_ORD,             // Builtin function ord 56
-    TOKEN_CHR,             // Builtin function chr 57
     TOKEN_FUNC_ID,         // func_id 58
     TOKEN_EXPRSN,          // E 59
     TOKEN_SHIFT,           // < 60
