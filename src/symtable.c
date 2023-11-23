@@ -79,7 +79,7 @@ symtable_item *symtable_add(symtable_item item, symtable table)
     return new_sti;
 }
 
-symtable_item *symtable_find(char *name, symtable table)
+symtable_item *symtable_find(char *name, symtable table, bool is_func)
 {
     const uint32_t item_hash = hash(name);
     if (item_hash == (uint32_t)-1)
@@ -90,7 +90,7 @@ symtable_item *symtable_find(char *name, symtable table)
     symtable_item *item = table[item_hash];
     while (item != NULL)
     {
-        if (strcmp(item->id, name) == 0)
+        if (strcmp(item->id, name) == 0 && item->type == is_func)
         {
             return item;
         }
@@ -100,13 +100,13 @@ symtable_item *symtable_find(char *name, symtable table)
     return NULL;
 }
 
-symtable_item *symtable_find_in_stack(char *name, symtable_stack *stack)
+symtable_item *symtable_find_in_stack(char *name, symtable_stack *stack, bool is_func)
 {
     int cnt = 0;
     symtable_node *node = stack->top;
     while (node != NULL)
     {
-        symtable_item *item = symtable_find(name, node->data);
+        symtable_item *item = symtable_find(name, node->data, is_func);
         if (item != NULL)
         {
             DEBUG_SEMANTIC_CODE(printf("Found %s in %d. symtable\n", name, cnt););
