@@ -294,8 +294,8 @@ int generate_token(Token *token, char *code)
             char c = (char)getchar();
             while (c != '\n' && c != EOF)
             {
-                check_length(&code_len, 0, code);
-                code[strlen(code)] = c;
+                // check_length(&code_len, 0, code);
+                //   code[strlen(code)] = c;
                 c = (char)getchar();
             }
             state = NEW_TOKEN;
@@ -317,15 +317,15 @@ int generate_token(Token *token, char *code)
                         state = NEW_TOKEN;
                         break;
                     }
-                    check_length(&code_len, 0, code);
-                    code[strlen(code)] = c;
+                    // check_length(&code_len, 0, code);
+                    // code[strlen(code)] = c;
                 }
                 if (c == EOF)
                 {
                     return LEXICAL_ERR;
                 }
-                check_length(&code_len, 0, code);
-                code[strlen(code)] = c;
+                // check_length(&code_len, 0, code);
+                // code[strlen(code)] = c;
                 c = (char)getchar();
             }
             break;
@@ -754,15 +754,19 @@ int generate_token(Token *token, char *code)
  */
 void check_length(int *code_len, int add, char *code)
 {
-    printf("strlen(code):%ld + add:%d >= (long unsigned int)*code_len: %ld\n", strlen(code), add, (long unsigned int)*code_len);
     if (strlen(code) + add >= (long unsigned int)*code_len)
     {
-        code = realloc(code, sizeof(char) * (*code_len *= 2));
-        if (code == NULL)
+        *code_len = ((long unsigned int)*code_len) * 2;
+
+        char *new_code = malloc(sizeof(char) * ((long unsigned int)*code_len));
+        if (new_code == NULL)
         {
             ret = INTERNAL_ERR;
             exit(INTERNAL_ERR);
         }
+
+        strcpy(new_code, code);
+        code = new_code;
     }
 }
 /*

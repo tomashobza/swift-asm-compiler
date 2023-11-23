@@ -19,8 +19,6 @@ symtable_stack *sym_st;
 
 int main(void)
 {
-    scanner_init();
-
     sym_st = symtable_stack_init();
 
     parser_main();
