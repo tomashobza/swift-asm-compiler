@@ -1,8 +1,14 @@
 #include "psa.h"
 
-PSA_Token readNextToken(PSA_Token_stack *s, char *next_token_error)
+PSA_Token readNextToken(PSA_Token_stack *s, char *next_token_error, int *num_of_brackets)
 {
     Token *tkn = malloc(sizeof(Token));
+    *tkn = (Token){
+        .type = (Token_type)TOKEN_EOF,
+        .token_value = "$",
+        .preceded_by_nl = true,
+    };
+
     main_scanner(tkn);
 
     PSA_Token b = {
@@ -19,18 +25,35 @@ PSA_Token readNextToken(PSA_Token_stack *s, char *next_token_error)
     *next_token_error = 0;
 
     // detect expression end by a missing operator between operands
-    *next_token_error += isTokenOperand(a.type) && !isTokenBinaryOperator(b.type) ? 1 : 0;
+    *next_token_error += isTokenOperand(a.type) && !isTokenBinaryOperator(b.type) && !isTokenBracket(b.type) ? 1 : 0;
     *next_token_error = *next_token_error << 1;
 
     // detect expression end by an illegal token for expression being read
-    *next_token_error += (getSymbolValue(b.type) == 99) ? 1 : 0;
+    *next_token_error += (getSymbolValue(b.type) >= 99) ? 1 : 0;
     *next_token_error = *next_token_error << 1;
 
+    // TODO: remove
     // detect empty expression
-    *next_token_error += (a.type == (Token_type)TOKEN_EOF && !canTokenBeStartOfExpression(b.type)) ? 1 : 0;
-    *next_token_error = *next_token_error << 1;
+    // *next_token_error += (a.type == (Token_type)TOKEN_EOF && !canTokenBeStartOfExpression(b.type)) ? 1 : 0;
+    // *next_token_error = *next_token_error << 1;
 
     printf_cyan("'%s' next_token_error: %d\n", b.token_value, *next_token_error);
+
+    // update the bracket counter
+    if (num_of_brackets != NULL)
+    {
+        switch (b.type)
+        {
+        case TOKEN_L_BRACKET:
+            (*num_of_brackets)++;
+            break;
+        case TOKEN_R_BRACKET:
+            (*num_of_brackets)--;
+            break;
+        default:
+            break;
+        }
+    }
 
     return b;
 }
