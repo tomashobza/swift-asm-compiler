@@ -53,53 +53,56 @@ typedef enum
     TOKEN_TYPE_INT,        // Keyword Int 9
     TOKEN_TYPE_DOUBLE,     // Keyword Double 10
     TOKEN_TYPE_BOOL,       // Keyword Bool 11
-    TOKEN_FUNC,            // Keyword func 12
-    TOKEN_TYPE_SUFFIX,     // Prefix of type ? 13
-    TOKEN_IDENTIFICATOR,   // Identificator 14
-    TOKEN_EOF,             // EOF 15
-    TOKEN_INT,             // Integer 16
-    TOKEN_DOUBLE,          // Decimal number 17
-    TOKEN_BOOL,            // Bool value 18
-    TOKEN_EXP,             // Exponent 19
-    TOKEN_STRING,          // String 20
-    TOKEN_EQ,              // Equals == 21
-    TOKEN_NEQ,             // Not equal !== 22
-    TOKEN_LESS,            // Less than < 23
-    TOKEN_MORE,            // More than > 24
-    TOKEN_MORE_EQ,         // More than or equal >= 25
-    TOKEN_LESS_EQ,         // Less than or equal <= 26
-    TOKEN_PLUS,            // Plus + 27
-    TOKEN_MINUS,           // Minus - 28
-    TOKEN_MUL,             // Multiply * 29
-    TOKEN_DIV,             // Divide / 30
-    TOKEN_BINARY_OPERATOR, // Binary operator ?? 31
-    TOKEN_ASSIGN,          // Assign = 32
-    TOKEN_L_BRACKET,       // Left bracket ( 33
-    TOKEN_R_BRACKET,       // Right bracket ) 34
-    TOKEN_R_CURLY,         // Right bracket } 35
-    TOKEN_L_CURLY,         // Left bracket { 36
-    TOKEN_COMMA,           // Comma , 37
-    TOKEN_ARROW,           // Arrow -> 38
-    TOKEN_NIL,             // nil has been read 39
-    TOKEN_DOUBLE_DOT,      // : has been read 40
-    TOKEN_NOT,             // ! has been read 41
-    TOKEN_AND,             // && has been read 42
-    TOKEN_OR,              // || has been read 43
-    TOKEN_UNDERSCORE,      // _ has been read 44
-    TOKEN_READSTRING,      // Builtin function readString 45
-    TOKEN_READINT,         // Builtin function readInt 46
-    TOKEN_READDOUBLE,      // Builtin function readDouble 47
-    TOKEN_WRITE,           // Builtin function write 48
-    TOKEN_INT2DOUBLE,      // Builtin function Int2Double 49
-    TOKEN_DOUBLE2INT,      // Builtin function Double2Int 50
-    TOKEN_LENGTH,          // Builtin function length 51
-    TOKEN_SUBSTRING,       // Builtin function substring 52
-    TOKEN_ORD,             // Builtin function ord 53
-    TOKEN_CHR,             // Builtin function chr 54
-    TOKEN_FUNC_ID,         // func_id 55
-    TOKEN_EXPRSN,          // E 56
-    TOKEN_SHIFT,           // < 57
-    TOKEN_UNSHIFT,         // > 58
+    TOKEN_TYPE_STRING_NIL,     // Keyword String? 12
+    TOKEN_TYPE_INT_NIL,        // Keyword Int? 13
+    TOKEN_TYPE_DOUBLE_NIL,     // Keyword Double? 14
+    TOKEN_TYPE_BOOL_NIL,       // Keyword Bool? 15
+    TOKEN_FUNC,            // Keyword func 16
+    TOKEN_IDENTIFICATOR,   // Identificator 17
+    TOKEN_EOF,             // EOF 18
+    TOKEN_INT,             // Integer 19
+    TOKEN_DOUBLE,          // Decimal number 20
+    TOKEN_BOOL,            // Bool value 21
+    TOKEN_EXP,             // Exponent 22
+    TOKEN_STRING,          // String 23
+    TOKEN_EQ,              // Equals == 24
+    TOKEN_NEQ,             // Not equal !== 25
+    TOKEN_LESS,            // Less than < 26
+    TOKEN_MORE,            // More than > 27
+    TOKEN_MORE_EQ,         // More than or equal >= 28
+    TOKEN_LESS_EQ,         // Less than or equal <= 29
+    TOKEN_PLUS,            // Plus + 30
+    TOKEN_MINUS,           // Minus - 31
+    TOKEN_MUL,             // Multiply * 32
+    TOKEN_DIV,             // Divide / 33
+    TOKEN_BINARY_OPERATOR, // Binary operator ?? 34
+    TOKEN_ASSIGN,          // Assign = 35
+    TOKEN_L_BRACKET,       // Left bracket ( 36
+    TOKEN_R_BRACKET,       // Right bracket ) 37
+    TOKEN_R_CURLY,         // Right bracket } 38
+    TOKEN_L_CURLY,         // Left bracket { 39
+    TOKEN_COMMA,           // Comma , 40
+    TOKEN_ARROW,           // Arrow -> 41
+    TOKEN_NIL,             // nil has been read 42
+    TOKEN_DOUBLE_DOT,      // : has been read 43
+    TOKEN_NOT,             // ! has been read 44
+    TOKEN_AND,             // && has been read 45
+    TOKEN_OR,              // || has been read 46
+    TOKEN_UNDERSCORE,      // _ has been read 47
+    TOKEN_READSTRING,      // Builtin function readString 48
+    TOKEN_READINT,         // Builtin function readInt 49
+    TOKEN_READDOUBLE,      // Builtin function readDouble 50
+    TOKEN_WRITE,           // Builtin function write 51
+    TOKEN_INT2DOUBLE,      // Builtin function Int2Double 52
+    TOKEN_DOUBLE2INT,      // Builtin function Double2Int 53
+    TOKEN_LENGTH,          // Builtin function length 54
+    TOKEN_SUBSTRING,       // Builtin function substring 55
+    TOKEN_ORD,             // Builtin function ord 56
+    TOKEN_CHR,             // Builtin function chr 57
+    TOKEN_FUNC_ID,         // func_id 58
+    TOKEN_EXPRSN,          // E 59
+    TOKEN_SHIFT,           // < 60
+    TOKEN_UNSHIFT,         // > 61
 } Token_type;
 /*
  * Structure Token - used to store token type and token value read from stdin

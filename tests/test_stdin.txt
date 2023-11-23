@@ -1,11 +1,15 @@
+Bool?
+Int?
+Double?
+String?
 func bar(with param : String) -> String {
 true
 false
-let r : String = foo(param)
+let r : Bool? = foo(param)
 return r
 }
 write("ahoj")
-func foo(_ par : String) -> String {
+func foo(_ par : String?) -> Int? {
 let ret = bar(with: par)
 return ret
 }
