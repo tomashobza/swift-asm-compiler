@@ -1,19 +1,16 @@
 #include "psa.h"
 
-PSA_Token readNextToken(PSA_Token_stack *s, char *next_token_error)
+PSA_Token readNextToken(PSA_Token_stack *s, char *next_token_error, int *num_of_brackets)
 {
-    int ch = getchar();
-    ungetc(ch, stdin);
-    if (ch == EOF)
-    {
-        return (PSA_Token){
-            .type = (Token_type)TOKEN_EOF,
-            .token_value = "$",
-        };
-    }
-
     Token *tkn = malloc(sizeof(Token));
-    generate_token(tkn, "\0");
+    *tkn = (Token){
+        .type = (Token_type)TOKEN_EOF,
+        .token_value = "$",
+        .preceded_by_nl = true,
+    };
+
+    main_scanner(tkn);
+
     PSA_Token b = {
         .type = tkn->type,
         .token_value = tkn->token_value,
@@ -28,36 +25,35 @@ PSA_Token readNextToken(PSA_Token_stack *s, char *next_token_error)
     *next_token_error = 0;
 
     // detect expression end by a missing operator between operands
-    *next_token_error += isTokenOperand(a.type) && !isTokenBinaryOperator(b.type) ? 1 : 0;
+    *next_token_error += isTokenOperand(a.type) && !isTokenBinaryOperator(b.type) && !isTokenBracket(b.type) ? 1 : 0;
     *next_token_error = *next_token_error << 1;
 
     // detect expression end by an illegal token for expression being read
-    *next_token_error += (getSymbolValue(b.type) == 99) ? 1 : 0;
+    *next_token_error += (getSymbolValue(b.type) >= 99) ? 1 : 0;
     *next_token_error = *next_token_error << 1;
 
+    // TODO: remove
     // detect empty expression
-    *next_token_error += (a.type == (Token_type)TOKEN_EOF && !canTokenBeStartOfExpression(b.type)) ? 1 : 0;
-    *next_token_error = *next_token_error << 1;
+    // *next_token_error += (a.type == (Token_type)TOKEN_EOF && !canTokenBeStartOfExpression(b.type)) ? 1 : 0;
+    // *next_token_error = *next_token_error << 1;
 
-    if (b.preceded_by_nl && *next_token_error > 0)
+    printf_cyan("'%s' next_token_error: %d\n", b.token_value, *next_token_error);
+
+    // update the bracket counter
+    if (num_of_brackets != NULL)
     {
-        *next_token_error = 0;
-        b = (PSA_Token){
-            .type = (Token_type)TOKEN_EOF,
-            .token_value = "$",
-            .expr_type = TYPE_INVALID,
-            .canBeNil = false,
-            .preceded_by_nl = true,
-        };
+        switch (b.type)
+        {
+        case TOKEN_L_BRACKET:
+            (*num_of_brackets)++;
+            break;
+        case TOKEN_R_BRACKET:
+            (*num_of_brackets)--;
+            break;
+        default:
+            break;
+        }
     }
-
-    // NEXT_TOKEN_ERROR CODES:
-    // next_token_error = 0b000 -> no error
-    // next_token_error = 0b001 -> missing operator
-    // next_token_error = 0b010 -> illegal token
-    // next_token_error = 0b100 -> empty expression
-
-    printf_cyan("next_token_error: %d\n", *next_token_error);
 
     return b;
 }

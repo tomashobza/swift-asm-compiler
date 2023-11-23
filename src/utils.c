@@ -169,6 +169,9 @@ void print_token_type(Token_type type)
     case TOKEN_CHR:
         printf_cyan("TOKEN_CHR");
         break;
+    case TOKEN_FUNC_ID:
+        printf_cyan("TOKEN_FUNC_ID");
+        break;
     case TOKEN_EXPRSN:
         printf_yellow("TOKEN_EXPRSN");
         break;
@@ -207,9 +210,32 @@ void print_expression_type(Expression_type type)
     case TYPE_NIL:
         printf_cyan("TYPE_NIL");
         break;
+    case TYPE_EMPTY:
+        printf_cyan("TYPE_EMPTY");
+        break;
     default:
         printf_red("[invalid type]");
         break;
     }
     printf("\n");
+}
+
+Token convertPSATokenToToken(PSA_Token psa_tkn)
+{
+    return (Token){
+        .type = psa_tkn.type,
+        .token_value = psa_tkn.token_value,
+        .preceded_by_nl = psa_tkn.preceded_by_nl,
+    };
+}
+
+PSA_Token convertTokenToPSAToken(Token tkn)
+{
+    return (PSA_Token){
+        .type = tkn.type,
+        .token_value = tkn.token_value,
+        .preceded_by_nl = tkn.preceded_by_nl,
+        .expr_type = getTypeFromToken(tkn.type),
+        .canBeNil = false,
+    };
 }

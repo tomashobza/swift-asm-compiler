@@ -4,9 +4,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "scanner.h"
+#include "psa.h"
+#include "utils.h"
 #include "error.h"
 #include "stack.h"
 #include "symtable.h"
+
+extern symtable_stack *sym_st;
 
 #define RED "\x1B[31m"
 #define GREEN "\x1B[32m"
@@ -22,12 +26,21 @@ typedef enum
     VAR,
     VAR_ID,
     VAR_TYPE,
+    VAR_ASSIGN,
+    VAR_EXP,
     FUNC_ID,
     FUNC_HEADER_DONE,
     P_NAME,
     P_ID,
     P_TYPE,
     R_TYPE,
+    R_EXP,
+    COND_EXP,
+    LOAD_IDENTIF,
+    IDENTIF_EXP,
+    FUNC_CALL_PSA,
+    PUSH_SCOPE,
+    POP_SCOPE,
     SEM_NONE
 } Sem_rule;
 

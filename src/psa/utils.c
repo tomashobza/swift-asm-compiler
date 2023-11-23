@@ -77,6 +77,18 @@ bool isTokenBinaryOperator(Token_type token)
     }
 }
 
+bool isTokenBracket(Token_type token)
+{
+    switch (token)
+    {
+    case TOKEN_L_BRACKET:
+    case TOKEN_R_BRACKET:
+        return true;
+    default:
+        return false;
+    }
+}
+
 bool canTokenBeStartOfExpression(Token_type token)
 {
     switch (token)

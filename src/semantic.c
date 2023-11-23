@@ -1,6 +1,5 @@
 #include "semantic.h"
 
-// Stack *myStack;          // Stack for symtable
 symtable_item *varItem;  // Item to be added to symtable
 symtable_item *funcItem; // Item to be added to symtable
 symtable mySymtable;     // Symtable
@@ -8,7 +7,6 @@ ParamData new_param;     // ParamData to be added to FunctionData
 
 int semantic_init()
 {
-    // myStack = stack_init();
     varItem = malloc(sizeof(symtable_item));
     funcItem = malloc(sizeof(symtable_item));
     VariableData *varData = malloc(sizeof(VariableData));
@@ -24,7 +22,7 @@ int semantic_init()
 
     // Inicializace symtable
     mySymtable = symtable_init();
-    // stack_push(myStack, &mySymtable);
+    symtable_stack_push(sym_st, mySymtable);
 
     return 0; // tode errors
 }
@@ -67,13 +65,13 @@ void reset_param()
 {
     new_param.name = NULL;
     new_param.id = NULL;
-    new_param.type = NULL;
+    new_param.type = TYPE_EMPTY;
 }
 
 void reset_var()
 {
     varItem->id = NULL;
-    varItem->data.var_data->type = VARIABLE;
+    varItem->data.var_data->type = TYPE_EMPTY;
     varItem->data.var_data->is_const = false;
     varItem->data.var_data->is_initialized = false;
 }
@@ -81,8 +79,7 @@ void reset_var()
 void reset_func()
 {
     funcItem->id = NULL;
-    funcItem->data.func_data->return_type = "Void";
-    funcItem->data.func_data->is_defined = false;
+    funcItem->data.func_data->return_type = TYPE_EMPTY;
     free(funcItem->data.func_data->params);
     funcItem->data.func_data->params = NULL;
     funcItem->data.func_data->params_count = 0;
@@ -91,7 +88,7 @@ void reset_func()
 
 void semantic_destroy()
 {
-    // symtable_print(*stack_top(myStack));
+    symtable_print(symtable_stack_top(sym_st));
     free(funcItem->data.func_data->params);
     free(funcItem->data.func_data);
     free(varItem->data.var_data);
@@ -101,14 +98,39 @@ void semantic_destroy()
     // stack_free(myStack);
 }
 
+Expression_type get_expression_type(Token **token)
+{
+    switch ((*token)->type)
+    {
+    case TOKEN_INT:
+        return TYPE_INT;
+        break;
+    case TOKEN_DOUBLE:
+        return TYPE_DOUBLE;
+        break;
+    case TOKEN_STRING:
+        return TYPE_STRING;
+        break;
+    case TOKEN_BOOL:
+        return TYPE_BOOL;
+        break;
+    case TOKEN_NIL:
+        return TYPE_NIL;
+        break;
+    default:
+        return TYPE_INVALID;
+        break;
+    }
+}
+
 void print_items()
 {
-    printf(MAGENTA "FUNCTION: %s, return type: %s, is defined: %d" RESET "\n", funcItem->id, funcItem->data.func_data->return_type, funcItem->data.func_data->is_defined);
+    printf(MAGENTA "FUNCTION: %s, return type: %d" RESET "\n", funcItem->id, funcItem->data.func_data->return_type);
     for (int i = 0; i < funcItem->data.func_data->params_count; i++)
     {
-        printf(MAGENTA "PARAM: %s, id: %s, type: %s" RESET "\n", funcItem->data.func_data->params[i].name, funcItem->data.func_data->params[i].id, funcItem->data.func_data->params[i].type);
+        printf(MAGENTA "PARAM: %s, id: %s, type: %d" RESET "\n", funcItem->data.func_data->params[i].name, funcItem->data.func_data->params[i].id, funcItem->data.func_data->params[i].type);
     }
-    printf(BLUE "VARIABLE: %s, type: %s, is const: %d" RESET "\n", varItem->id, varItem->data.var_data->type, varItem->data.var_data->is_const);
+    printf(BLUE "VARIABLE: %s, type: %d, is const: %d" RESET "\n", varItem->id, varItem->data.var_data->type, varItem->data.var_data->is_const);
 }
 
 int check_semantic(Token **token, Sem_rule sem_rule)
@@ -117,21 +139,46 @@ int check_semantic(Token **token, Sem_rule sem_rule)
     switch (sem_rule)
     {
     case LET:
+        reset_var();
         varItem->data.var_data->is_const = true;
         break;
     case VAR:
+        reset_var();
         varItem->data.var_data->is_const = false;
         break;
     case VAR_ID:
         varItem->id = (*token)->token_value;
         break;
     case VAR_TYPE:
-        varItem->data.var_data->type = (*token)->token_value;
+        varItem->data.var_data->type = get_expression_type(token);
         // todo semantic checks
-        // symtable_add(*varItem, *stack_top(myStack));
-        reset_var();
+        symtable_add(*varItem, symtable_stack_top(sym_st));
+        break;
+    case VAR_ASSIGN:
+    { // check if variable is in symtable
+        symtable_item *item = symtable_find_in_stack(varItem->id, sym_st);
+        if (item == NULL)
+        {
+            varItem->data.var_data->is_initialized = true;
+            symtable_add(*varItem, symtable_stack_top(sym_st));
+        }
+        else
+        { // it is in symtable, change its value
+            item->data.var_data->is_initialized = true;
+        }
+        break;
+    }
+    case VAR_EXP:
+        printf("VAR_EXP\n");
+        printf("TOKEN FOR PSA: %s\n", (*token)->token_value);
+        psa_return_type return_type = parse_expression();
+        if (return_type.is_ok)
+        {
+        }
+        DEBUG_CODE(print_expression_type(return_type.type););
         break;
     case FUNC_ID:
+        reset_func();
         funcItem->id = (*token)->token_value;
         break;
     case P_NAME:
@@ -141,16 +188,62 @@ int check_semantic(Token **token, Sem_rule sem_rule)
         new_param.id = (*token)->token_value;
         break;
     case P_TYPE:
-        new_param.type = (*token)->token_value;
+        new_param.type = get_expression_type(token);
         add_param(funcItem->data.func_data, new_param);
         reset_param();
         break;
     case R_TYPE:
-        funcItem->data.func_data->return_type = (*token)->token_value;
+        funcItem->data.func_data->return_type = get_expression_type(token);
         break;
     case FUNC_HEADER_DONE:
-        funcItem->data.func_data->is_defined = true;
-        // symtable_add(*funcItem, *stack_top(myStack));
+        symtable_add(*funcItem, symtable_stack_top(sym_st));
+        goto PUSH_SCOPE;
+        break;
+    case PUSH_SCOPE:
+    PUSH_SCOPE:
+    {
+        symtable symtable = symtable_init();
+        symtable_stack_push(sym_st, symtable);
+    }
+    break;
+    case POP_SCOPE:
+        symtable_stack_pop(sym_st);
+        break;
+    case R_EXP:
+        printf("R_EXP\n");
+        psa_return_type return_type2 = parse_expression();
+        if (return_type2.is_ok)
+        {
+        }
+        DEBUG_CODE(print_expression_type(return_type2.type););
+        break;
+    case COND_EXP:
+        printf("COND_EXP\n");
+        psa_return_type return_type3 = parse_expression();
+        if (return_type3.is_ok)
+        {
+        }
+        DEBUG_CODE(print_expression_type(return_type3.type););
+        break;
+    case LOAD_IDENTIF:
+        reset_var();
+        varItem->id = (*token)->token_value;
+        break;
+    case IDENTIF_EXP:
+        printf("IDENTIF_EXP\n");
+        psa_return_type return_type4 = parse_expression();
+        if (return_type4.is_ok)
+        {
+        }
+        DEBUG_CODE(print_expression_type(return_type4.type););
+        break;
+    case FUNC_CALL_PSA:
+        printf("FUNC_CALL_PSA\n");
+        psa_return_type return_type5 = parse_expression();
+        if (return_type5.is_ok)
+        {
+        }
+        DEBUG_CODE(print_expression_type(return_type5.type););
         break;
     default:
         break;

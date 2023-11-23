@@ -3,6 +3,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdbool.h>
 
 // #include "psa.h" // Include psa.h if it provides necessary types for stack.h
 

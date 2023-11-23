@@ -39,6 +39,8 @@
 #define UNDERSCORE 52
 #define END_STATE 60
 
+extern unsigned int line_num;
+
 typedef enum
 {
     TOKEN_IF,              // Keyword if 0
@@ -174,6 +176,6 @@ void scanner_init();
  * @def function pushes token into scanner stack
  * @param token token which is to be pushed into the stack
  */
- void return_token(Token *token);
+void return_token(Token token);
 
 #endif // IFJ2023_SCANNER_H

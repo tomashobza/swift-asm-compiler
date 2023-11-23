@@ -20,20 +20,26 @@ DEFINE_STACK_FUNCTIONS(Token)
 Token_type state = NEW_TOKEN;                                                            // initial state of scanner
 char *char_without_space[] = {":", ".", "{", "}", "(", ")", ",", " ", "=", "!", "+", "-", "*", "/", "<", ">", "\n", "_"};
 
-
 int ret = 0;
-Token_stack *stack;
-
+unsigned int line_num = 0;
+Token_stack *scanner_stack;
 
 int main_scanner(Token *token)
 {
     ret = 0;
-    if(Token_stack_empty(stack)){
+    if (Token_stack_empty(scanner_stack))
+    {
         char *code = "\0";
-        ret = generate_token(token,code);
+        ret = generate_token(token, code);
         code = NULL;
-    }else{
-        *token = Token_stack_top(stack);
+    }
+    else
+    {
+        *token = Token_stack_pop(scanner_stack);
+    }
+    if (token->preceded_by_nl)
+    {
+        line_num++;
     }
     return ret;
 }
@@ -98,6 +104,7 @@ int generate_token(Token *token, char *code)
             case '\n':
                 token->preceded_by_nl = true;
                 state = NEW_TOKEN;
+                line_num++;
                 break;
             case EOF:
                 return set_token(END_STATE, "", TOKEN_EOF, token);
@@ -775,7 +782,7 @@ int set_token(int next_state, char *val, Token_type type, Token *token)
         state = next_state;
         token->type = type;
         token->token_value = val;
-        printf("type:%d, value:%s\n",token->type,token->token_value);
+        // printf("type:%d, value:%s\n", token->type, token->token_value);
         return 0;
     }
     else
@@ -784,10 +791,16 @@ int set_token(int next_state, char *val, Token_type type, Token *token)
     }
 }
 
-void scanner_init(){
-    stack = Token_stack_init();
+void scanner_init()
+{
+    scanner_stack = Token_stack_init();
 }
 
-void return_token(Token *token){
-    Token_stack_push(stack,*token);
+void return_token(Token token)
+{
+    if (token.preceded_by_nl)
+    {
+        line_num--;
+    }
+    Token_stack_push(scanner_stack, token);
 }
