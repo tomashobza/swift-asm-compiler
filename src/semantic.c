@@ -441,15 +441,15 @@ int check_semantic(Token *token, Sem_rule sem_rule)
         psa_return_type return_type2 = parse_expression();
         if (return_type2.is_ok == false)
         {
-            fprintf(stderr, RED "Unrecognizable type of variable: %s \n" RESET, varItem->id);
+            fprintf(stderr, RED "Unrecognizable type of return value in function: %s \n" RESET, funcItem->id);
             return -1;
         }
         if (return_type2.type != funcItem->data.func_data->return_type)
         {
-            fprintf(stderr, RED "Expression type: %d and type: %d of variable: %s do not match!\n" RESET, return_type2.type, funcItem->data.func_data->return_type, varItem->id);
+            fprintf(stderr, RED "Expression type: %d and return type: %d of function: %s do not match!\n" RESET, return_type2.type, funcItem->data.func_data->return_type, funcItem->id);
             return -1;
         }
-        symtable_find_in_stack(varItem->id, sym_st, true)->data.func_data->found_return = true;
+        symtable_find_in_stack(funcItem->id, sym_st, true)->data.func_data->found_return = true;
         DEBUG_SEMANTIC_CODE(print_expression_type(return_type2.type););
         break;
     }
