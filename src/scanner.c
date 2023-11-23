@@ -43,6 +43,7 @@ int generate_token(Token *token, char *code)
         {"Double", TOKEN_TYPE_DOUBLE},
         {"String", TOKEN_TYPE_STRING},
         {"Int", TOKEN_TYPE_INT},
+        {"Bool", TOKEN_TYPE_BOOL},
         {"Double?", TOKEN_TYPE_DOUBLE_NIL},
         {"String?", TOKEN_TYPE_STRING_NIL},
         {"Int?", TOKEN_TYPE_INT_NIL},
