@@ -141,11 +141,11 @@ psa_return_type parse_expression_base(bool is_param)
             };
         }
 
-        DEBUG_CODE(printf_blue("Bracket count: %d\n", num_of_brackets););
-        DEBUG_CODE(printf("na stacku: ");
-                   printStack(s->top);
-                   printf_yellow("na vstupu: {'%s', %d}\n", b.token_value, b.type);
-                   printf_magenta("P_TABLE[{%d, '%s'}][{%d, '%s'}] = %c\n", getSymbolValue(a.type), a.token_value, (b.type), b.token_value, P_TABLE[getSymbolValue(a.type)][getSymbolValue(b.type)]););
+        DEBUG_PSA_CODE(printf_blue("Bracket count: %d\n", num_of_brackets););
+        DEBUG_PSA_CODE(printf("na stacku: ");
+                       printStack(s->top);
+                       printf_yellow("na vstupu: {'%s', %d}\n", b.token_value, b.type);
+                       printf_magenta("P_TABLE[{%d, '%s'}][{%d, '%s'}] = %c\n", getSymbolValue(a.type), a.token_value, (b.type), b.token_value, P_TABLE[getSymbolValue(a.type)][getSymbolValue(b.type)]););
 
         const unsigned int a_val = getSymbolValue(a.type);
         const unsigned int b_val = getSymbolValue(b.type);
