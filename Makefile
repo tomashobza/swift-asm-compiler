@@ -26,7 +26,7 @@ TEST_TARGET = ifjcompiler_debug
 all: $(TARGET)
 
 $(TARGET): src/main.c $(SRCS)
-$(CC) $(CFLAGS) $^ -o bin/$@
+	$(CC) $(CFLAGS) $^ -o bin/$@
 	cp bin/$(TARGET) $(TARGET)
 
 build: $(SRCS) $(TESTS)
