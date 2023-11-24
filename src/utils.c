@@ -139,36 +139,6 @@ void print_token_type(Token_type type)
     case TOKEN_UNDERSCORE:
         printf_cyan("TOKEN_UNDERSCORE");
         break;
-    case TOKEN_READSTRING:
-        printf_cyan("TOKEN_READSTRING");
-        break;
-    case TOKEN_READINT:
-        printf_cyan("TOKEN_READINT");
-        break;
-    case TOKEN_READDOUBLE:
-        printf_cyan("TOKEN_READDOUBLE");
-        break;
-    case TOKEN_WRITE:
-        printf_cyan("TOKEN_WRITE");
-        break;
-    case TOKEN_INT2DOUBLE:
-        printf_cyan("TOKEN_INT2DOUBLE");
-        break;
-    case TOKEN_DOUBLE2INT:
-        printf_cyan("TOKEN_DOUBLE2INT");
-        break;
-    case TOKEN_LENGTH:
-        printf_cyan("TOKEN_LENGTH");
-        break;
-    case TOKEN_SUBSTRING:
-        printf_cyan("TOKEN_SUBSTRING");
-        break;
-    case TOKEN_ORD:
-        printf_cyan("TOKEN_ORD");
-        break;
-    case TOKEN_CHR:
-        printf_cyan("TOKEN_CHR");
-        break;
     case TOKEN_FUNC_ID:
         printf_cyan("TOKEN_FUNC_ID");
         break;
