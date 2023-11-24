@@ -312,5 +312,6 @@ bool checkParameter(PSA_Token_stack *main_s, unsigned int param_index, symtable_
 bool checkParamName(PSA_Token_stack *main_s, unsigned int param_index, symtable_item *found_func);
 
 #include "utils.h"
+#include "semantic.h"
 
 #endif // PSA_H

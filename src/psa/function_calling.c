@@ -16,17 +16,30 @@ PSA_Token parseFunctionCall(PSA_Token_stack *main_s, PSA_Token id)
     if (found_func == NULL)
     {
         is_ok = false;
-
         // TODO: if not -> error (for now), call the function checking the rest of the input source
 
-        throw_error(FUNCTIONS_ERR, "Function '%s' not found!", id.token_value);
+        Token func_def;
+        symtable_item func_def_item;
+        bool is_defined_somewhere = get_func_definition(&func_def, id.token_value, &func_def_item);
+
+        if (is_defined_somewhere)
+        {
+            found_func = malloc(sizeof(symtable_item));
+            *found_func = func_def_item;
+            is_ok = true;
+        }
+        else
+        {
+            throw_error(FUNCTIONS_ERR, "Function '%s' not found!", id.token_value);
+        }
     }
 
     DEBUG_PSA_CODE(printf("Function '%s' found\n", id.token_value););
 
     // read the next token (should be ( token)
     char next_token_error = 0;
-    if (readNextToken(main_s, &next_token_error, NULL).type != TOKEN_L_BRACKET)
+    PSA_Token l_bracket = readNextToken(main_s, &next_token_error, NULL);
+    if (l_bracket.type != TOKEN_L_BRACKET)
     {
         throw_error(SYNTACTIC_ERR, "Missing '(' after function name!");
 
@@ -43,6 +56,8 @@ PSA_Token parseFunctionCall(PSA_Token_stack *main_s, PSA_Token id)
 
     while (found_func == NULL || param_counter < (unsigned int)found_func->data.func_data->params_count)
     {
+        // TODO: handle builtin functions (number of parameters = -1)
+
         params_ok = params_ok && checkParameter(main_s, param_counter, found_func, &parsed_param);
 
         // TODO: save parameters for later checking if the function is not in the symtable
@@ -156,7 +171,7 @@ bool checkParamName(PSA_Token_stack *main_s, unsigned int param_index, symtable_
         else // 1. should have name, does have name -> ok
         {
             // check if the parameter name is correct according to the symtable
-            if (!strcmp(found_func->data.func_data->params[param_index].id, id.token_value))
+            if (!strcmp(found_func->data.func_data->params[param_index].name, id.token_value))
             {
                 // the name is correct
                 name_is_ok = true;
