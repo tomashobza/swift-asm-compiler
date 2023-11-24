@@ -474,6 +474,7 @@ int check_semantic(Token *token, Sem_rule sem_rule)
     {
         varItem->data.var_data->is_initialized = true;
 
+        symtable_print(symtable_stack_top(sym_st));
         psa_return_type return_type = parse_expression();
         DEBUG_SEMANTIC_CODE(print_expression_type(return_type.type););
         if (return_type.is_ok == false)
