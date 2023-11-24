@@ -170,4 +170,9 @@ void scanner_init();
  */
 void return_token(Token token);
 
+/**
+ * @def function frees all allocated memory for scanner_stack
+ */
+void free_scanner_stack();
+
 #endif // IFJ2023_SCANNER_H

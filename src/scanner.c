@@ -802,3 +802,8 @@ void return_token(Token token)
     }
     Token_stack_push(scanner_stack, token);
 }
+
+void free_scanner_stack()
+{
+    Token_stack_free(scanner_stack);
+}
