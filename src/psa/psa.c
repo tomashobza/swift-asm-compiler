@@ -68,7 +68,6 @@ psa_return_type parse_expression_base(bool is_param)
                     .type = TOKEN_EOF,
                     .token_value = "$",
                     .expr_type = TYPE_INVALID,
-                    .canBeNil = false,
                     .preceded_by_nl = true,
                 };
                 break;
@@ -88,7 +87,6 @@ psa_return_type parse_expression_base(bool is_param)
                     .type = (Token_type)TOKEN_EOF,
                     .token_value = "$",
                     .expr_type = TYPE_INVALID,
-                    .canBeNil = false,
                     .preceded_by_nl = true,
                 };
             }
@@ -101,7 +99,6 @@ psa_return_type parse_expression_base(bool is_param)
                     .type = (Token_type)TOKEN_EOF,
                     .token_value = "$",
                     .expr_type = TYPE_INVALID,
-                    .canBeNil = false,
                     .preceded_by_nl = true,
                 };
             }
@@ -134,7 +131,6 @@ psa_return_type parse_expression_base(bool is_param)
                         .type = (Token_type)TOKEN_EOF,
                         .token_value = "$",
                         .expr_type = TYPE_INVALID,
-                        .canBeNil = false,
                         .preceded_by_nl = true,
                     };
                 }
@@ -147,7 +143,6 @@ psa_return_type parse_expression_base(bool is_param)
                         .type = (Token_type)TOKEN_EOF,
                         .token_value = "$",
                         .expr_type = TYPE_INVALID,
-                        .canBeNil = false,
                         .preceded_by_nl = true,
                     };
                 }
@@ -166,7 +161,6 @@ psa_return_type parse_expression_base(bool is_param)
             return (psa_return_type){
                 .end_token = TOKEN_EXPRSN,
                 .is_ok = true,
-                .canBeNil = false,
                 .type = TYPE_EMPTY,
             };
         }
@@ -248,7 +242,6 @@ psa_return_type parse_expression_base(bool is_param)
                 return (psa_return_type){
                     .end_token = TOKEN_EXPRSN,
                     .is_ok = false,
-                    .canBeNil = false,
                     .type = TYPE_INVALID,
                 };
             }
@@ -262,7 +255,6 @@ psa_return_type parse_expression_base(bool is_param)
             return (psa_return_type){
                 .end_token = TOKEN_EOF,
                 .is_ok = false,
-                .canBeNil = false,
                 .type = TYPE_INVALID,
             };
         }
@@ -285,7 +277,6 @@ psa_return_type parse_expression_base(bool is_param)
             .type = (Token_type)TOKEN_EOF,
             .token_value = "$",
             .expr_type = TYPE_INVALID,
-            .canBeNil = false,
             .preceded_by_nl = true,
         };
     }
@@ -294,7 +285,6 @@ psa_return_type parse_expression_base(bool is_param)
         .is_ok = a.expr_type != TYPE_INVALID,
         .type = a.expr_type,
         .end_token = a.type,
-        .canBeNil = a.canBeNil,
     };
 }
 

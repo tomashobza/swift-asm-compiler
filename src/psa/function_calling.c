@@ -16,7 +16,6 @@ PSA_Token parseFunctionCall(PSA_Token_stack *main_s, PSA_Token id)
     PSA_Token ERROR_TOKEN = (PSA_Token){
         .type = TOKEN_EXPRSN,
         .token_value = id.token_value,
-        .canBeNil = false,
         .expr_type = TYPE_INVALID,
         .preceded_by_nl = false};
 
@@ -100,7 +99,6 @@ PSA_Token parseFunctionCall(PSA_Token_stack *main_s, PSA_Token id)
         return (PSA_Token){
             .type = TOKEN_EXPRSN,
             .token_value = found_func->id,
-            .canBeNil = false,
             .expr_type = found_func->data.func_data->return_type,
             .preceded_by_nl = id.preceded_by_nl};
     }

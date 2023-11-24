@@ -28,13 +28,19 @@
  */
 typedef enum
 {
-    TYPE_EMPTY = -2,   // empty expression
-    TYPE_INVALID = -1, // invalid expression
-    TYPE_INT = 0,      // int
-    TYPE_DOUBLE = 1,   // double
-    TYPE_STRING = 2,   // string
-    TYPE_BOOL = 3,     // bool
-    TYPE_NIL = 4,      // nil
+    TYPE_VOID = -3,      // void
+    TYPE_EMPTY = -2,     // empty expression
+    TYPE_INVALID = -1,   // invalid expression
+    TYPE_INT = 0,        // int
+    TYPE_DOUBLE = 1,     // double
+    TYPE_STRING = 2,     // string
+    TYPE_BOOL = 3,       // bool
+    TYPE_NIL = 4,        // nil
+    TYPE_INT_NIL = 5,    // int?
+    TYPE_DOUBLE_NIL = 6, // double?
+    TYPE_STRING_NIL = 7, // string?
+    TYPE_BOOL_NIL = 8,   // bool?
+    TYPE_VOID_NIL = 9,   // void?
 } Expression_type;
 
 typedef struct
