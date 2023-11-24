@@ -94,7 +94,7 @@ bool checkParameter(PSA_Token_stack *main_s, unsigned int param_index, symtable_
     print_expression_type((*parsed_param).type);
     printf("\n");
 
-    if (found_func == NULL)
+    if (found_func != NULL)
     {
         // TODO: save for later checking
         return true;
@@ -121,7 +121,7 @@ bool checkParamName(PSA_Token_stack *main_s, unsigned int param_index, symtable_
         return_token(convertPSATokenToToken(id));
     }
 
-    if (found_func == NULL)
+    if (found_func != NULL)
     {
         // TODO: save for later checking
         return true;
