@@ -449,6 +449,7 @@ int check_semantic(Token *token, Sem_rule sem_rule)
         varItem->data.var_data->is_const = false;
         break;
     case VAR_ID:
+    {
         symtable_item *var_id_item = symtable_find(token->token_value, symtable_stack_top(sym_st), false);
         if (var_id_item != NULL && var_id_item->data.var_data->is_param == false)
         {
@@ -461,6 +462,7 @@ int check_semantic(Token *token, Sem_rule sem_rule)
         }
         varItem->id = token->token_value;
         break;
+    }
     case VAR_TYPE:
         varItem->data.var_data->type = get_expression_type(token);
         // todo semantic checks

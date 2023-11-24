@@ -151,7 +151,6 @@ bool canTypeBeNil(Expression_type type)
     case TYPE_BOOL_NIL:
     case TYPE_STRING_NIL:
     case TYPE_NIL:
-    case TYPE_VOID_NIL:
         return true;
     default:
         return false;

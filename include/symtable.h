@@ -141,7 +141,7 @@ symtable_item *symtable_find_in_stack(char *name, symtable_stack *stack, bool is
 
 FunctionData *init_func_data();
 VariableData *init_var_data();
-ParamData *init_param_data();
+ParamData *init_param_data(int count);
 
 /**
  * @brief Creates a new symbol object.
@@ -171,10 +171,5 @@ void free_synonyms(symtable_item *item);
  * @param table table to free
  */
 void symtable_free(symtable table);
-
-/**
- * @brief Adds the built-in functions to the symtable.
- */
-void add_builtin_functions();
 
 #endif // SYMTABLE_H
