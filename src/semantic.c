@@ -250,10 +250,18 @@ int push_token_get_next(Token *token, Token_stack *token_stack)
 bool get_func_definition(Token *token, char *name, symtable_item *psa_item)
 {
     Token_stack *token_stack = Token_stack_init();
-    while (token->token_value != name || token->type != TOKEN_FUNC_ID)
+
+    do
     {
         push_token_get_next(token, token_stack);
+    } while (token != NULL && token->type != TOKEN_EOF && (strcmp(token->token_value, name) || token->type != TOKEN_FUNC_ID));
+
+    if (token == NULL || token->type == TOKEN_EOF)
+    {
+        return false;
     }
+
+    psa_item->data.func_data = malloc(sizeof(FunctionData));
 
     typedef enum
     {
@@ -311,13 +319,13 @@ bool get_func_definition(Token *token, char *name, symtable_item *psa_item)
             {
                 return false;
             }
-            push_token_get_next(token, token_stack);
+            // push_token_get_next(token, token_stack);
             break;
         case PARAM:
         {
             ParamData new_psa_param;
 
-            if (token->type == TOKEN_IDENTIFICATOR)
+            if (token->type == TOKEN_IDENTIFICATOR || token->type == TOKEN_UNDERSCORE)
             {
                 new_psa_param.name = token->token_value;
                 push_token_get_next(token, token_stack);
@@ -360,16 +368,17 @@ bool get_func_definition(Token *token, char *name, symtable_item *psa_item)
             if (token->type == TOKEN_COMMA)
             {
                 nstate = PARAM;
+                push_token_get_next(token, token_stack);
             }
             else if (token->type == TOKEN_R_BRACKET)
             {
                 nstate = R_BRACKET;
+                push_token_get_next(token, token_stack);
             }
             else
             {
                 return false;
             }
-            push_token_get_next(token, token_stack);
             break;
         case R_BRACKET:
             if (token->type == TOKEN_ARROW)
@@ -405,9 +414,9 @@ bool get_func_definition(Token *token, char *name, symtable_item *psa_item)
 
     // return tokens to scanner
     return_token(*token);
-    while (Token_stack_empty(token_stack) != false)
+    while (token_stack->size > 1)
     {
-        Token_stack_pop(token_stack);
+        *token = Token_stack_pop(token_stack);
         return_token(*token);
     }
 
