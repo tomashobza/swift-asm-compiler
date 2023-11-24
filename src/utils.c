@@ -1,3 +1,14 @@
+/**
+ * @file utils.c
+ * @author Tomáš Hobza (xhobza03@vutbr.cz)
+ * @brief Utility functions for the whole project.
+ * @version 0.1
+ * @date 2023-11-24
+ *
+ * @copyright Copyright (c) 2023
+ *
+ */
+
 #include "utils.h"
 
 void print_token_type(Token_type type)
@@ -39,6 +50,18 @@ void print_token_type(Token_type type)
         break;
     case TOKEN_TYPE_BOOL:
         printf_cyan("TOKEN_TYPE_BOOL");
+        break;
+    case TOKEN_TYPE_STRING_NIL:
+        printf_cyan("TOKEN_TYPE_STRING_NIL");
+        break;
+    case TOKEN_TYPE_INT_NIL:
+        printf_cyan("TOKEN_TYPE_INT_NIL");
+        break;
+    case TOKEN_TYPE_DOUBLE_NIL:
+        printf_cyan("TOKEN_TYPE_DOUBLE_NIL");
+        break;
+    case TOKEN_TYPE_BOOL_NIL:
+        printf_cyan("TOKEN_TYPE_BOOL_NIL");
         break;
     case TOKEN_FUNC:
         printf_cyan("TOKEN_FUNC");
@@ -206,6 +229,5 @@ PSA_Token convertTokenToPSAToken(Token tkn)
         .token_value = tkn.token_value,
         .preceded_by_nl = tkn.preceded_by_nl,
         .expr_type = getTypeFromToken(tkn.type),
-        .canBeNil = false,
     };
 }

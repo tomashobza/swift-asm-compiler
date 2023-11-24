@@ -1,7 +1,12 @@
 /**
- * @file symtable.h
- * @author Tomáš Hobza (xhobza03@vutbr.cz)
- * @brief
+ * @file symtable.c
+ * @author Anastasia Butok (xbutok00@vutbr.cz)
+ * @brief Implementation of the table of symbols functions.
+ * @version 0.1
+ * @date 2023-11-24
+ *
+ * @copyright Copyright (c) 2023
+ *
  */
 
 #ifndef SYMTABLE_H
@@ -23,6 +28,7 @@
  */
 typedef enum
 {
+    TYPE_VOID = -3,      // void
     TYPE_EMPTY = -2,     // empty expression
     TYPE_INVALID = -1,   // invalid expression
     TYPE_INT = 0,        // int
@@ -30,10 +36,10 @@ typedef enum
     TYPE_STRING = 2,     // string
     TYPE_BOOL = 3,       // bool
     TYPE_NIL = 4,        // nil
-    TYPE_INT_NIL = 5,    // int nil
-    TYPE_DOUBLE_NIL = 6, // double nil
-    TYPE_STRING_NIL = 7, // string nil
-    TYPE_BOOL_NIL = 8,   // bool nil
+    TYPE_INT_NIL = 5,    // int?
+    TYPE_DOUBLE_NIL = 6, // double?
+    TYPE_STRING_NIL = 7, // string?
+    TYPE_BOOL_NIL = 8,   // bool?
 } Expression_type;
 
 typedef struct
@@ -165,5 +171,10 @@ void free_synonyms(symtable_item *item);
  * @param table table to free
  */
 void symtable_free(symtable table);
+
+/**
+ * @brief Adds the built-in functions to the symtable.
+ */
+void add_builtin_functions();
 
 #endif // SYMTABLE_H

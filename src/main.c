@@ -1,7 +1,7 @@
 /**
  * @file main.c
  * @brief main function of the program
- * @author Tomáš Hobza
+ * @author Tomáš Hobza <xhobza03@vutbr.cz>
  *
  * Project: IFJ compiler
  */
@@ -19,12 +19,13 @@ symtable_stack *sym_st;
 
 int main(void)
 {
+    scanner_init();
+
     sym_st = symtable_stack_init();
+
+    add_builtin_functions();
 
     parser_main();
 
-    // print errors
-    print_errors();
-
-    return EXIT_SUCCESS;
+    return print_errors();
 }

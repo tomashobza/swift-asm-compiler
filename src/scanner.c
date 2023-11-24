@@ -2,7 +2,7 @@
 /**
  * @file scanner.c
  * @brief lexical analysis of the project
- * @author Simona Valkovská
+ * @author Simona Valkovská <xvalko12@vutbr.cz>
  *
  * Project: IFJ compiler
  */

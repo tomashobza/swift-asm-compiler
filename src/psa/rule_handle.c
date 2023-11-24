@@ -1,3 +1,14 @@
+/**
+ * @file rule_handle.c
+ * @author Anastasia Butok (xbutok00@vutbr.cz)
+ * @brief Functions for derivation of handles according to set rules in PSA.
+ * @version 0.1
+ * @date 2023-11-24
+ *
+ * @copyright Copyright (c) 2023
+ *
+ */
+
 #include "psa.h"
 
 // TODO: handle implicit type conversion only for literals
@@ -32,7 +43,6 @@ PSA_Token getRule(PSA_Token *handle, unsigned int len)
             .type = (Token_type)TOKEN_EXPRSN,
             .token_value = "E",
             .expr_type = handle[0].expr_type,
-            .canBeNil = false, // TODO: get this from the symtable
         };
     case RULE_1a:
     case RULE_1b:
@@ -58,7 +68,6 @@ PSA_Token getRule(PSA_Token *handle, unsigned int len)
             .type = (Token_type)TOKEN_EXPRSN,
             .token_value = "E",
             .expr_type = type,
-            .canBeNil = false, // TODO: get this from the symtable
         };
     case RULE_2:
         DEBUG_PSA_CODE(printf_cyan("rule: E -> (E)\n"););
@@ -66,7 +75,6 @@ PSA_Token getRule(PSA_Token *handle, unsigned int len)
             .type = (Token_type)TOKEN_EXPRSN,
             .token_value = "E",
             .expr_type = handle[1].expr_type,
-            .canBeNil = false, // TODO: get this from the symtable
         };
     case RULE_3:
         DEBUG_PSA_CODE(printf_cyan("rule: E -> !E\n"););
@@ -74,7 +82,6 @@ PSA_Token getRule(PSA_Token *handle, unsigned int len)
             .type = (Token_type)TOKEN_EXPRSN,
             .token_value = "E",
             .expr_type = handle[1].expr_type,
-            .canBeNil = false, // TODO: get this from the symtable
         };
     case RULE_4:
         DEBUG_PSA_CODE(printf_cyan("rule: E -> +E\n"););
@@ -82,7 +89,6 @@ PSA_Token getRule(PSA_Token *handle, unsigned int len)
             .type = (Token_type)TOKEN_EXPRSN,
             .token_value = "E",
             .expr_type = handle[1].expr_type,
-            .canBeNil = false, // TODO: get this from the symtable
         };
     case RULE_5:
         DEBUG_PSA_CODE(printf_cyan("rule: E -> -E\n"););
@@ -90,7 +96,6 @@ PSA_Token getRule(PSA_Token *handle, unsigned int len)
             .type = (Token_type)TOKEN_EXPRSN,
             .token_value = "E",
             .expr_type = handle[1].expr_type,
-            .canBeNil = false, // TODO: get this from the symtable
         };
     case RULE_6:
         DEBUG_PSA_CODE(printf_cyan("rule: E -> E*E\n"););
@@ -137,7 +142,6 @@ PSA_Token getRule(PSA_Token *handle, unsigned int len)
             .type = (Token_type)TOKEN_EOF,
             .token_value = "$",
             .expr_type = TYPE_INVALID,
-            .canBeNil = false,
         };
     }
 

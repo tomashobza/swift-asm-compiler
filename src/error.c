@@ -1,3 +1,14 @@
+/**
+ * @file error.c
+ * @author Tomáš Hobza (xhobza03@vutbr.cz), Anastasia Butok (xbutok00@vutbr.cz)
+ * @brief Functions for error handling (adding errors to the stack, printing them, etc.).
+ * @version 0.1
+ * @date 2023-11-24
+ *
+ * @copyright Copyright (c) 2023
+ *
+ */
+
 #include "error.h"
 
 DEFINE_STACK_FUNCTIONS(Error)
@@ -21,12 +32,12 @@ void throw_error_base(Error_code code, char *message)
                                    .message = message});
 }
 
-void print_errors()
+Error_code print_errors()
 {
     if (error_st == NULL || Error_stack_empty(error_st))
     {
         printf_green("✅ The compiler found no errors.\n");
-        return;
+        return NO_ERR;
     }
 
     // sort the errors by line number
@@ -34,7 +45,7 @@ void print_errors()
     Error_stack *sorting_helper = Error_stack_init();
     if (sorted == NULL || sorting_helper == NULL)
     {
-        return;
+        return INTERNAL_ERR;
     }
 
     // sort the errors by line number
@@ -78,14 +89,23 @@ void print_errors()
     printf("COMPILER FOUND ");
     printf_red("%d ERRORS:\n\n", sorted->size);
 
+    int first_error_code = NO_ERR;
+
     // print the sorted errors
     while (!Error_stack_empty(sorted))
     {
+        if (sorted->size == 1)
+        {
+            first_error_code = Error_stack_top(sorted).code;
+        }
+
         printError(Error_stack_pop(sorted));
     }
 
     Error_stack_free(sorted);
     Error_stack_free(sorting_helper);
+
+    return first_error_code;
 }
 
 void printError(Error error)
