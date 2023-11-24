@@ -26,14 +26,14 @@ TEST_TARGET = ifjcompiler_debug
 all: $(TARGET)
 
 $(TARGET): src/main.c $(SRCS)
-	$(CC) $(CFLAGS) $^ -o bin/$@
+	@$(CC) $(CFLAGS) $^ -o bin/$@
 
 build: $(SRCS) $(TESTS)
-	$(CC) $(CFLAGS) $(TESTFLAGS) $^ -o bin/$(TEST_TARGET)
+	@$(CC) $(CFLAGS) $(TESTFLAGS) $^ -o bin/$(TEST_TARGET)
 
 # Test target
 test: $(SRCS) $(TESTS)
-	$(CC) $(CFLAGS) $(TESTFLAGS) $^ -o bin/$(TEST_TARGET)
+	@$(CC) $(CFLAGS) $(TESTFLAGS) $^ -o bin/$(TEST_TARGET)
 	./bin/$(TEST_TARGET) <tests/test.in
 
 # clean, compile and run
