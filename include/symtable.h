@@ -166,4 +166,9 @@ void free_synonyms(symtable_item *item);
  */
 void symtable_free(symtable table);
 
+/**
+ * @brief Adds the built-in functions to the symtable.
+ */
+void add_builtin_functions();
+
 #endif // SYMTABLE_H
