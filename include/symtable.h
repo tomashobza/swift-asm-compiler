@@ -41,6 +41,7 @@ typedef struct
     Expression_type type;
     bool is_const;
     bool is_initialized;
+    bool is_param;
 } VariableData;
 
 typedef struct

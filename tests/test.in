@@ -4,3 +4,5 @@ return x + " " + y
 }
 let a = "ahoj "
 var ct : String
+ct = concat(a, with: "svete")
+write(ct, a)
