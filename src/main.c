@@ -8,10 +8,22 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include "symtable.h"
+
+symtable_stack *sym_st;
+
+#include "psa.h"
+#include "error.h"
+#include "parser.h"
+#include "utils.h"
 
 int main(void)
 {
-    printf("Tady zatim nic neni :)\n");
+    scanner_init();
 
-    return EXIT_SUCCESS;
+    sym_st = symtable_stack_init();
+
+    parser_main();
+
+    return print_errors();
 }
