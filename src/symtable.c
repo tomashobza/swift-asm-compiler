@@ -188,7 +188,10 @@ symtable_item *init_symtable_item(symtable_item item)
         if (item.data.func_data->params_count > 0)
         {
             new_sti->data.func_data->params = init_param_data(item.data.func_data->params_count);
-            *(new_sti->data.func_data->params) = *(item.data.func_data->params);
+            for (int i = 0; i < item.data.func_data->params_count; i++)
+            {
+                new_sti->data.func_data->params[i] = item.data.func_data->params[i];
+            }
         }
     }
     new_sti->next = NULL;
@@ -213,7 +216,7 @@ void symtable_print(symtable table)
             {
                 if (item->type == VARIABLE)
                 {
-                    printf("id: %s, type: %d, is_const: %d, is_init: %d", item->id, item->data.var_data->type, item->data.var_data->is_const, item->data.var_data->is_initialized);
+                    printf("id: %s, type: %d, is_const: %d, is_init: %d, is_param: %d", item->id, item->data.var_data->type, item->data.var_data->is_const, item->data.var_data->is_initialized, item->data.var_data->is_param);
                 }
                 else if (item->type == FUNCTION)
                 {

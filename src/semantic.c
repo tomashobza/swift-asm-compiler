@@ -130,6 +130,7 @@ int semantic_init()
     reset_param();
 
     // symtable init
+    printf(RED "PUSH_SCOPE\n" RESET);
     mySymtable = symtable_init();
     symtable_stack_push(sym_st, mySymtable);
 
@@ -548,15 +549,11 @@ int check_semantic(Token *token, Sem_rule sem_rule)
     case P_TYPE:
         new_param.type = get_expression_type(token);
         add_param(funcItem->data.func_data, new_param);
-        DEBUG_PSA_CODE(printf(CYAN "ADDING PARAM: %s, id: %s, type: %d\n", new_param.name, new_param.id, new_param.type););
-        if (strcmp(varItem->id, "_") != 0)
+        for (int i = 0; i < funcItem->data.func_data->params_count; i++)
         {
-            varItem->data.var_data->type = get_expression_type(token);
-            varItem->data.var_data->is_const = true;
-            varItem->data.var_data->is_initialized = true;
-            symtable_add(*varItem, symtable_stack_top(sym_st));
-            DEBUG_SEMANTIC_CODE(printf(YELLOW "ADDING VAR: %s, type: %d, const: %d\n", varItem->id, varItem->data.var_data->type, varItem->data.var_data->is_const););
+            DEBUG_SEMANTIC_CODE(printf(CYAN "ADDED PARAM: %s, id: %s, type: %d\n", funcItem->data.func_data->params[i].name, funcItem->data.func_data->params[i].id, funcItem->data.func_data->params[i].type););
         }
+        // DEBUG_PSA_CODE(printf(YELLOW "ADDING PARAM: %s, id: %s, type: %d\n", new_param.name, new_param.id, new_param.type););
         reset_param();
         break;
     case R_TYPE:
@@ -569,6 +566,7 @@ int check_semantic(Token *token, Sem_rule sem_rule)
         DEBUG_SEMANTIC_CODE(symtable_print(symtable_stack_top(sym_st)););
 
         // push scope
+        printf(RED "PUSH_SCOPE\n" RESET);
         symtable symtable = symtable_init();
         symtable_stack_push(sym_st, symtable);
 
@@ -584,8 +582,9 @@ int check_semantic(Token *token, Sem_rule sem_rule)
                 reset_var();
                 varItem->id = funcItem->data.func_data->params[i].id;
                 varItem->data.var_data->type = funcItem->data.func_data->params[i].type;
-                varItem->data.var_data->is_const = false;
+                varItem->data.var_data->is_const = true;
                 varItem->data.var_data->is_initialized = true;
+                varItem->data.var_data->is_param = true;
                 symtable_add(*varItem, symtable_stack_top(sym_st));
                 DEBUG_SEMANTIC_CODE(printf(YELLOW "ADDING VAR TO FUNCTIONS: %s, type: %d, const: %d\n", varItem->id, varItem->data.var_data->type, varItem->data.var_data->is_const););
             }
@@ -595,12 +594,15 @@ int check_semantic(Token *token, Sem_rule sem_rule)
     }
     case PUSH_SCOPE:
     {
+        printf(RED "PUSH_SCOPE\n" RESET);
         symtable symtable = symtable_init();
         symtable_stack_push(sym_st, symtable);
     }
     break;
     case POP_SCOPE:
     POP_SCOPE:
+        printf(RED "POP_SCOPE\n");
+        symtable_print(symtable_stack_top(sym_st));
         symtable_stack_pop(sym_st);
         break;
     case R_EXP:
