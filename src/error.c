@@ -110,12 +110,12 @@ Error_code print_errors()
 
 void printError(Error error)
 {
-    printf("code:");
-    printf_red("%d", error.line_num);
-    printf(": ");
-    printf_red("error: ");
+    fprintf(stderr, "code:");
+    fprintf(stderr, "%d", error.line_num);
+    fprintf(stderr, ": ");
+    fprintf(stderr, "error: ");
     printErrorCode(error.code);
-    printf("%s\n\n", error.message);
+    fprintf(stderr, "%s\n\n", error.message);
 }
 
 void printErrorCode(Error_code code)
@@ -123,38 +123,38 @@ void printErrorCode(Error_code code)
     switch (code)
     {
     case LEXICAL_ERR:
-        printf_red("LEXICAL_ERR");
+        fprintf(stderr, "LEXICAL_ERR");
         break;
     case SYNTACTIC_ERR:
-        printf_red("SYNTACTIC_ERR");
+        fprintf(stderr, "SYNTACTIC_ERR");
         break;
     case FUNCTIONS_ERR:
-        printf_red("FUNCTIONS_ERR");
+        fprintf(stderr, "FUNCTIONS_ERR");
         break;
     case PARAM_TYPE_ERR:
-        printf_red("PARAM_TYPE_ERR");
+        fprintf(stderr, "PARAM_TYPE_ERR");
         break;
     case VARIABLES_ERR:
-        printf_red("VARIABLES_ERR");
+        fprintf(stderr, "VARIABLES_ERR");
         break;
     case RETURN_ERR:
-        printf_red("RETURN_ERR");
+        fprintf(stderr, "RETURN_ERR");
         break;
     case COMPATIBILITY_ERR:
-        printf_red("COMPATIBILITY_ERR");
+        fprintf(stderr, "COMPATIBILITY_ERR");
         break;
     case TYPE_ERR:
-        printf_red("TYPE_ERR");
+        fprintf(stderr, "TYPE_ERR");
         break;
     case SEMANTICS_ERR:
-        printf_red("SEMANTICS_ERR");
+        fprintf(stderr, "SEMANTICS_ERR");
         break;
     case INTERNAL_ERR:
-        printf_red("INTERNAL_ERR");
+        fprintf(stderr, "INTERNAL_ERR");
         break;
     default:
-        printf_yellow("UNKNOWN_ERR");
+        fprintf(stderr, "UNKNOWN_ERR");
         break;
     }
-    printf("\n");
+    fprintf(stderr, "\n");
 }

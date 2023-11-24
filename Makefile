@@ -27,6 +27,7 @@ all: $(TARGET)
 
 $(TARGET): src/main.c $(SRCS)
 	$(CC) $(CFLAGS) $^ -o bin/$@
+	cp bin/$(TARGET) $(TARGET)
 
 build: $(SRCS) $(TESTS)
 	@$(CC) $(CFLAGS) $(TESTFLAGS) $^ -o bin/$(TEST_TARGET)

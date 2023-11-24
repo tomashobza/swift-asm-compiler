@@ -1,6 +1,6 @@
 /**
  * @file main.c
- * @brief main function of the program
+ * @brief testing main function of the program for testing purposes
  * @author Tomáš Hobza
  *
  * Project: IFJ compiler
@@ -19,7 +19,7 @@ symtable_stack *sym_st;
 
 int main(void)
 {
-    // scanner_init();
+    scanner_init();
 
     sym_st = symtable_stack_init();
 
