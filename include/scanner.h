@@ -1,11 +1,11 @@
-// TODO check comments
 /**
  * @file scanner.c
  * @brief Scanner of project
- * @author Simona Valkovská
+ * @author Simona Valkovská <xvalko12@vutbr.cz>
  *
  * Project: IFJ compiler
  */
+// TODO check comments
 
 #ifndef IFJ2023_SCANNER_H
 #define IFJ2023_SCANNER_H
@@ -169,5 +169,10 @@ void scanner_init();
  * @param token token which is to be pushed into the stack
  */
 void return_token(Token token);
+
+/**
+ * @def function frees all allocated memory for scanner_stack
+ */
+void free_scanner_stack();
 
 #endif // IFJ2023_SCANNER_H

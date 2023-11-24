@@ -26,7 +26,5 @@ int main(void)
     parser_main();
 
     // print errors
-    print_errors();
-
-    return EXIT_SUCCESS;
+    return print_errors();
 }

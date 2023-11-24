@@ -1,3 +1,14 @@
+/**
+ * @file utils.c
+ * @author Tomáš Hobza (xhobza03@vutbr.cz)
+ * @brief Utility functions for the whole project.
+ * @version 0.1
+ * @date 2023-11-24
+ *
+ * @copyright Copyright (c) 2023
+ *
+ */
+
 #ifndef UTILS_H
 #define UTILS_H
 

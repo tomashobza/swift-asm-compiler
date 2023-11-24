@@ -1,3 +1,14 @@
+/**
+ * @file psa.h
+ * @author Tomáš Hobza (xhobza03@vutbr.cz), Anastasia Butok (xbutok00@vutbr.cz)
+ * @brief Header file for the precedent bottom-up parser module.
+ * @version 0.1
+ * @date 2023-11-24
+ *
+ * @copyright Copyright (c) 2023
+ *
+ */
+
 #ifndef PSA_H
 #define PSA_H
 
@@ -27,7 +38,6 @@ typedef struct
     Token_type end_token; // last token left
     bool is_ok;           // is the expression valid?
     Expression_type type; // type of the expression
-    bool canBeNil;        // can the expression be nil?
 } psa_return_type;
 
 /**
@@ -37,7 +47,6 @@ typedef struct
 {
     Token_type type;
     char *token_value;
-    bool canBeNil; // TODO: get rid of this
     Expression_type expr_type;
     bool preceded_by_nl;
 } PSA_Token;
@@ -218,6 +227,15 @@ PSA_Token getHandleType(PSA_Token l_operand, Token_type operation, PSA_Token r_o
  * @return Expression_type
  */
 Expression_type getIdType(PSA_Token id);
+
+/**
+ * @brief Checks if the type can be nil.
+ *
+ * @param type type to be checked
+ * @return true
+ * @return false
+ */
+bool canTypeBeNil(Expression_type type);
 
 // PSA MAIN FUNCTION
 

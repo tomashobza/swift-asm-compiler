@@ -2,7 +2,7 @@
 /**
  * @file scanner.c
  * @brief lexical analysis of the project
- * @author Simona Valkovská
+ * @author Simona Valkovská <xvalko12@vutbr.cz>
  *
  * Project: IFJ compiler
  */
@@ -801,4 +801,9 @@ void return_token(Token token)
         line_num--;
     }
     Token_stack_push(scanner_stack, token);
+}
+
+void free_scanner_stack()
+{
+    Token_stack_free(scanner_stack);
 }

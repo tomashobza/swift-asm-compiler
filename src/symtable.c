@@ -1,3 +1,14 @@
+/**
+ * @file symtable.c
+ * @author Anastasia Butok (xbutok00@vutbr.cz)
+ * @brief Implementation of the table of symbols functions.
+ * @version 0.1
+ * @date 2023-11-24
+ *
+ * @copyright Copyright (c) 2023
+ *
+ */
+
 #include "symtable.h"
 
 const uint32_t FNV_PRIME = 16777619;

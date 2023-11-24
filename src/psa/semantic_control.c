@@ -1,3 +1,14 @@
+/**
+ * @file semantic_control.c
+ * @author Tomáš Hobza (xhobza03@vutbr.cz)
+ * @brief Functions for semantic control of expressions for the PSA.
+ * @version 0.1
+ * @date 2023-11-24
+ *
+ * @copyright Copyright (c) 2023
+ *
+ */
+
 #include "psa.h"
 
 Expression_type getTypeCombination(PSA_Token l_operand, PSA_Token r_operand)
@@ -41,7 +52,6 @@ PSA_Token getHandleType(PSA_Token l_operand, Token_type operation, PSA_Token r_o
             .type = (Token_type)TOKEN_EXPRSN,
             .token_value = "E",
             .expr_type = TYPE_INVALID,
-            .canBeNil = false,
         };
     }
 
@@ -50,13 +60,12 @@ PSA_Token getHandleType(PSA_Token l_operand, Token_type operation, PSA_Token r_o
     // for: +, -, *, /
     case TOKEN_PLUS:
         // can be (string, string), ...
-        if (l_operand.expr_type == TYPE_STRING && r_operand.expr_type == TYPE_STRING && !(l_operand.canBeNil || r_operand.canBeNil))
+        if (l_operand.expr_type == TYPE_STRING && r_operand.expr_type == TYPE_STRING && !(canTypeBeNil(l_operand.expr_type) || canTypeBeNil(r_operand.expr_type)))
         {
             return (PSA_Token){
                 .type = (Token_type)TOKEN_EXPRSN,
                 .token_value = "E",
                 .expr_type = TYPE_STRING,
-                .canBeNil = false,
             };
         }
         __attribute__((fallthrough));
@@ -64,13 +73,12 @@ PSA_Token getHandleType(PSA_Token l_operand, Token_type operation, PSA_Token r_o
     case TOKEN_MUL:
     case TOKEN_DIV:
 
-        if (l_operand.canBeNil || r_operand.canBeNil)
+        if (canTypeBeNil(l_operand.expr_type) || canTypeBeNil(r_operand.expr_type))
         {
             return (PSA_Token){
                 .type = (Token_type)TOKEN_EXPRSN,
                 .token_value = "E",
                 .expr_type = TYPE_INVALID,
-                .canBeNil = false,
             };
         }
 
@@ -83,7 +91,6 @@ PSA_Token getHandleType(PSA_Token l_operand, Token_type operation, PSA_Token r_o
                 .type = (Token_type)TOKEN_EXPRSN,
                 .token_value = "E",
                 .expr_type = type,
-                .canBeNil = false,
             };
         }
 
@@ -100,7 +107,6 @@ PSA_Token getHandleType(PSA_Token l_operand, Token_type operation, PSA_Token r_o
                 .type = (Token_type)TOKEN_EXPRSN,
                 .token_value = "E",
                 .expr_type = TYPE_BOOL,
-                .canBeNil = false,
             };
         }
         break;
@@ -116,7 +122,6 @@ PSA_Token getHandleType(PSA_Token l_operand, Token_type operation, PSA_Token r_o
                 .type = (Token_type)TOKEN_EXPRSN,
                 .token_value = "E",
                 .expr_type = TYPE_BOOL,
-                .canBeNil = false,
             };
         }
         break;
@@ -129,19 +134,17 @@ PSA_Token getHandleType(PSA_Token l_operand, Token_type operation, PSA_Token r_o
                 .type = (Token_type)TOKEN_EXPRSN,
                 .token_value = "E",
                 .expr_type = TYPE_BOOL,
-                .canBeNil = false,
             };
         }
         break;
     // for: !
     case TOKEN_BINARY_OPERATOR:
-        if (l_operand.canBeNil && !r_operand.canBeNil)
+        if (canTypeBeNil(l_operand.expr_type) || canTypeBeNil(r_operand.expr_type))
         {
             return (PSA_Token){
                 .type = (Token_type)TOKEN_EXPRSN,
                 .token_value = "E",
                 .expr_type = getTypeCombination(l_operand, r_operand),
-                .canBeNil = false,
             };
         }
         break;
@@ -153,7 +156,6 @@ PSA_Token getHandleType(PSA_Token l_operand, Token_type operation, PSA_Token r_o
         .type = (Token_type)TOKEN_EXPRSN,
         .token_value = "E",
         .expr_type = TYPE_INVALID,
-        .canBeNil = false,
     };
 }
 

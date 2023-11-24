@@ -1,3 +1,14 @@
+/**
+ * @file psa.c
+ * @author Tomáš Hobza (xhobza03@vutbr.cz), Anastasia Butok (xbutok00@vutbr.cz)
+ * @brief Main function of the PSA module.
+ * @version 0.1
+ * @date 2023-11-24
+ *
+ * @copyright Copyright (c) 2023
+ *
+ */
+
 #include "psa.h"
 DEFINE_STACK_FUNCTIONS(PSA_Token)
 
@@ -57,7 +68,6 @@ psa_return_type parse_expression_base(bool is_param)
                     .type = TOKEN_EOF,
                     .token_value = "$",
                     .expr_type = TYPE_INVALID,
-                    .canBeNil = false,
                     .preceded_by_nl = true,
                 };
                 break;
@@ -77,7 +87,6 @@ psa_return_type parse_expression_base(bool is_param)
                     .type = (Token_type)TOKEN_EOF,
                     .token_value = "$",
                     .expr_type = TYPE_INVALID,
-                    .canBeNil = false,
                     .preceded_by_nl = true,
                 };
             }
@@ -90,7 +99,6 @@ psa_return_type parse_expression_base(bool is_param)
                     .type = (Token_type)TOKEN_EOF,
                     .token_value = "$",
                     .expr_type = TYPE_INVALID,
-                    .canBeNil = false,
                     .preceded_by_nl = true,
                 };
             }
@@ -123,7 +131,6 @@ psa_return_type parse_expression_base(bool is_param)
                         .type = (Token_type)TOKEN_EOF,
                         .token_value = "$",
                         .expr_type = TYPE_INVALID,
-                        .canBeNil = false,
                         .preceded_by_nl = true,
                     };
                 }
@@ -136,7 +143,6 @@ psa_return_type parse_expression_base(bool is_param)
                         .type = (Token_type)TOKEN_EOF,
                         .token_value = "$",
                         .expr_type = TYPE_INVALID,
-                        .canBeNil = false,
                         .preceded_by_nl = true,
                     };
                 }
@@ -155,7 +161,6 @@ psa_return_type parse_expression_base(bool is_param)
             return (psa_return_type){
                 .end_token = TOKEN_EXPRSN,
                 .is_ok = true,
-                .canBeNil = false,
                 .type = TYPE_EMPTY,
             };
         }
@@ -237,7 +242,6 @@ psa_return_type parse_expression_base(bool is_param)
                 return (psa_return_type){
                     .end_token = TOKEN_EXPRSN,
                     .is_ok = false,
-                    .canBeNil = false,
                     .type = TYPE_INVALID,
                 };
             }
@@ -251,7 +255,6 @@ psa_return_type parse_expression_base(bool is_param)
             return (psa_return_type){
                 .end_token = TOKEN_EOF,
                 .is_ok = false,
-                .canBeNil = false,
                 .type = TYPE_INVALID,
             };
         }
@@ -274,7 +277,6 @@ psa_return_type parse_expression_base(bool is_param)
             .type = (Token_type)TOKEN_EOF,
             .token_value = "$",
             .expr_type = TYPE_INVALID,
-            .canBeNil = false,
             .preceded_by_nl = true,
         };
     }
@@ -283,7 +285,6 @@ psa_return_type parse_expression_base(bool is_param)
         .is_ok = a.expr_type != TYPE_INVALID,
         .type = a.expr_type,
         .end_token = a.type,
-        .canBeNil = a.canBeNil,
     };
 }
 
