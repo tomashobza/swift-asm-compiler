@@ -1,3 +1,14 @@
+/**
+ * @file function_calling.c
+ * @author Anastasia Butok (xbutok00@vutbr.cz)
+ * @brief Functions for parsing function calls in PSA both syntactically and semantically.
+ * @version 0.1
+ * @date 2023-11-24
+ *
+ * @copyright Copyright (c) 2023
+ *
+ */
+
 #include "psa.h"
 
 PSA_Token parseFunctionCall(PSA_Token_stack *main_s, PSA_Token id)

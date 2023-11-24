@@ -1,3 +1,14 @@
+/**
+ * @file psa.c
+ * @author Tomáš Hobza (xhobza03@vutbr.cz), Anastasia Butok (xbutok00@vutbr.cz)
+ * @brief Main function of the PSA module.
+ * @version 0.1
+ * @date 2023-11-24
+ *
+ * @copyright Copyright (c) 2023
+ *
+ */
+
 #include "psa.h"
 DEFINE_STACK_FUNCTIONS(PSA_Token)
 

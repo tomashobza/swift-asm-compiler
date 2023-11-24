@@ -1,3 +1,14 @@
+/**
+ * @file rule_handle.c
+ * @author Anastasia Butok (xbutok00@vutbr.cz)
+ * @brief Functions for derivation of handles according to set rules in PSA.
+ * @version 0.1
+ * @date 2023-11-24
+ *
+ * @copyright Copyright (c) 2023
+ *
+ */
+
 #include "psa.h"
 
 // TODO: handle implicit type conversion only for literals

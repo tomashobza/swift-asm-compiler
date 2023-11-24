@@ -1,3 +1,14 @@
+/**
+ * @file psa.h
+ * @author Tomáš Hobza (xhobza03@vutbr.cz), Anastasia Butok (xbutok00@vutbr.cz)
+ * @brief Header file for the precedent bottom-up parser module.
+ * @version 0.1
+ * @date 2023-11-24
+ *
+ * @copyright Copyright (c) 2023
+ *
+ */
+
 #ifndef PSA_H
 #define PSA_H
 

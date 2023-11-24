@@ -1,3 +1,14 @@
+/**
+ * @file error.c
+ * @author Tomáš Hobza (xhobza03@vutbr.cz), Anastasia Butok (xbutok00@vutbr.cz)
+ * @brief Functions for error handling (adding errors to the stack, printing them, etc.).
+ * @version 0.1
+ * @date 2023-11-24
+ *
+ * @copyright Copyright (c) 2023
+ *
+ */
+
 #include "error.h"
 
 DEFINE_STACK_FUNCTIONS(Error)

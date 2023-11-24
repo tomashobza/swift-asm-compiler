@@ -2,7 +2,7 @@
 /**
  * @file scanner.c
  * @brief lexical analysis of the project
- * @author Simona Valkovská
+ * @author Simona Valkovská <xvalko12@vutbr.cz>
  *
  * Project: IFJ compiler
  */
@@ -65,8 +65,7 @@ int generate_token(Token *token, char *code)
         {"var", TOKEN_VAR},
         {"let", TOKEN_LET},
         {"break", TOKEN_BREAK},
-        {"continue", TOKEN_CONTINUE}
-    };
+        {"continue", TOKEN_CONTINUE}};
     token->preceded_by_nl = false;
     int code_len = 1;
     code = malloc(sizeof(char) * code_len);

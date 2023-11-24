@@ -1,3 +1,14 @@
+/**
+ * @file semantic.c
+ * @author Jakub Všetečka <xvsete00@vutbr.cz>
+ * @brief Semantic analysis.
+ * @version 0.1
+ * @date 2023-11-24
+ *
+ * @copyright Copyright (c) 2023
+ *
+ */
+
 #include "semantic.h"
 
 symtable_item *varItem;  // Item to be added to symtable

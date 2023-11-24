@@ -1,3 +1,14 @@
+/**
+ * @file stack.h
+ * @author Tomáš Hobza (xhobza03@vutbr.cz)
+ * @brief Generic stack implementation using linked list and macros.
+ * @version 0.1
+ * @date 2023-11-24
+ *
+ * @copyright Copyright (c) 2023
+ *
+ */
+
 #ifndef STACK_H
 #define STACK_H
 

@@ -1,3 +1,14 @@
+/**
+ * @file semantic_control.c
+ * @author Tomáš Hobza (xhobza03@vutbr.cz)
+ * @brief Functions for semantic control of expressions for the PSA.
+ * @version 0.1
+ * @date 2023-11-24
+ *
+ * @copyright Copyright (c) 2023
+ *
+ */
+
 #include "psa.h"
 
 Expression_type getTypeCombination(PSA_Token l_operand, PSA_Token r_operand)

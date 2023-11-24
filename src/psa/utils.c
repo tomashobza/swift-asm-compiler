@@ -1,3 +1,14 @@
+/**
+ * @file utils.c
+ * @author Anastasia Butok (xbutok00@vutbr.cz)
+ * @brief Utility functions for PSA.
+ * @version 0.1
+ * @date 2023-11-24
+ *
+ * @copyright Copyright (c) 2023
+ *
+ */
+
 #include "psa.h"
 
 uint32_t handleToUInt32(PSA_Token *handle, unsigned int len)

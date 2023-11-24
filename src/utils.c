@@ -1,3 +1,14 @@
+/**
+ * @file utils.c
+ * @author Tomáš Hobza (xhobza03@vutbr.cz)
+ * @brief Utility functions for the whole project.
+ * @version 0.1
+ * @date 2023-11-24
+ *
+ * @copyright Copyright (c) 2023
+ *
+ */
+
 #include "utils.h"
 
 void print_token_type(Token_type type)

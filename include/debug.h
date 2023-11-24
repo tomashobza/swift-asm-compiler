@@ -1,3 +1,14 @@
+/**
+ * @file debug.h
+ * @author Jakub Všetečka <xvsete00@vutbr.cz>
+ * @brief Debugging macros.
+ * @version 0.1
+ * @date 2023-11-24
+ *
+ * @copyright Copyright (c) 2023
+ *
+ */
+
 #ifndef DEBUG_H
 #define DEBUG_H
 

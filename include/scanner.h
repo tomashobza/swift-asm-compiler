@@ -1,11 +1,11 @@
-// TODO check comments
 /**
  * @file scanner.c
  * @brief Scanner of project
- * @author Simona Valkovská
+ * @author Simona Valkovská <xvalko12@vutbr.cz>
  *
  * Project: IFJ compiler
  */
+// TODO check comments
 
 #ifndef IFJ2023_SCANNER_H
 #define IFJ2023_SCANNER_H

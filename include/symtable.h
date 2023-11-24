@@ -1,7 +1,12 @@
 /**
- * @file symtable.h
- * @author Tomáš Hobza (xhobza03@vutbr.cz)
- * @brief
+ * @file symtable.c
+ * @author Anastasia Butok (xbutok00@vutbr.cz)
+ * @brief Implementation of the table of symbols functions.
+ * @version 0.1
+ * @date 2023-11-24
+ *
+ * @copyright Copyright (c) 2023
+ *
  */
 
 #ifndef SYMTABLE_H

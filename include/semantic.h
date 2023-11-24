@@ -1,3 +1,14 @@
+/**
+ * @file semantic.h
+ * @author Jakub Všetečka <xvsete00@vutbr.cz>
+ * @brief Header file for semantic analysis.
+ * @version 0.1
+ * @date 2023-11-24
+ *
+ * @copyright Copyright (c) 2023
+ *
+ */
+
 #ifndef SEMANTIC_H
 #define SEMANTIC_H
 

@@ -1,3 +1,14 @@
+/**
+ * @file io.c
+ * @author Tomáš Hobza (xhobza03@vutbr.cz)
+ * @brief Functions for input (reading the next token of the expression) and output (printing, mainly) needs for the PSA.
+ * @version 0.1
+ * @date 2023-11-24
+ *
+ * @copyright Copyright (c) 2023
+ *
+ */
+
 #include "psa.h"
 
 PSA_Token readNextToken(PSA_Token_stack *s, char *next_token_error, int *num_of_brackets)
