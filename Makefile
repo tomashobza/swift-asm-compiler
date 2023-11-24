@@ -42,6 +42,6 @@ run: clean all
 
 # Clean up
 clean:
-	rm -f $(TARGET) $(TEST_TARGET)
+	@rm -f $(TARGET) $(TEST_TARGET)
 
 .PHONY: all clean run test
