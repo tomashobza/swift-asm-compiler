@@ -29,6 +29,7 @@ typedef enum
     VAR_ASSIGN1,
     VAR_ASSIGN2,
     VAR_EXP,
+    VAR_ADD,
     FUNC_ID,
     FUNC_HEADER_DONE,
     P_NAME,

@@ -173,6 +173,7 @@ bool R_FLEX(Token *token)
     case TOKEN_RETURN:
     case TOKEN_WHILE:
     case TOKEN_IF:
+        check_semantic(token, VAR_ADD);
         return true;
     default:
         return false;
@@ -512,7 +513,7 @@ int parser_main()
 
     scanner_init();
     semantic_init();
-    add_builtin_functions();
+    // add_builtin_functions();
 
     get_token(token);
     bool all_ok = START(token);

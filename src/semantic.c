@@ -449,25 +449,27 @@ int check_semantic(Token *token, Sem_rule sem_rule)
     case VAR_TYPE:
         varItem->data.var_data->type = get_expression_type(token);
         // todo semantic checks
-        DEBUG_SEMANTIC_CODE(printf(YELLOW "ADDING VAR: %s, type: %d, const: %d\n", varItem->id, varItem->data.var_data->type, varItem->data.var_data->is_const););
-        symtable_add(*varItem, symtable_stack_top(sym_st));
-        DEBUG_SEMANTIC_CODE(symtable_print(symtable_stack_top(sym_st)););
+        // DEBUG_SEMANTIC_CODE(printf(YELLOW "ADDING VAR: %s, type: %d, const: %d\n", varItem->id, varItem->data.var_data->type, varItem->data.var_data->is_const););
+        // symtable_add(*varItem, symtable_stack_top(sym_st));
+        // DEBUG_SEMANTIC_CODE(symtable_print(symtable_stack_top(sym_st)););
         break;
     case VAR_ASSIGN1:
         printf("VAR_ASSIGN1\n");
-        DEBUG_SEMANTIC_CODE(printf(YELLOW "ADDING VAR: %s, type: %d, const: %d\n", varItem->id, varItem->data.var_data->type, varItem->data.var_data->is_const););
-        symtable_add(*varItem, symtable_stack_top(sym_st));
-        DEBUG_SEMANTIC_CODE(symtable_print(symtable_stack_top(sym_st)););
+        // DEBUG_SEMANTIC_CODE(printf(YELLOW "ADDING VAR: %s, type: %d, const: %d\n", varItem->id, varItem->data.var_data->type, varItem->data.var_data->is_const););
+        // symtable_add(*varItem, symtable_stack_top(sym_st));
+        // DEBUG_SEMANTIC_CODE(symtable_print(symtable_stack_top(sym_st)););
         break;
     case VAR_ASSIGN2:
         printf("VAR_ASSIGN2\n");
-        DEBUG_SEMANTIC_CODE(printf(YELLOW "ADDING VAR: %s, type: %d, const: %d\n", varItem->id, varItem->data.var_data->type, varItem->data.var_data->is_const););
-        symtable_item *var_ass_item = symtable_find_in_stack(varItem->id, sym_st, false);
-        var_ass_item->data.var_data->is_initialized = true;
-        DEBUG_SEMANTIC_CODE(symtable_print(symtable_stack_top(sym_st)););
+        // DEBUG_SEMANTIC_CODE(printf(YELLOW "ADDING VAR: %s, type: %d, const: %d\n", varItem->id, varItem->data.var_data->type, varItem->data.var_data->is_const););
+        // symtable_item *var_ass_item = symtable_find_in_stack(varItem->id, sym_st, false);
+        // var_ass_item->data.var_data->is_initialized = true;
+        // DEBUG_SEMANTIC_CODE(symtable_print(symtable_stack_top(sym_st)););
         break;
     case VAR_EXP:
     {
+        varItem->data.var_data->is_initialized = true;
+
         psa_return_type return_type = parse_expression();
         DEBUG_SEMANTIC_CODE(print_expression_type(return_type.type););
         if (return_type.is_ok == false)
@@ -490,7 +492,7 @@ int check_semantic(Token *token, Sem_rule sem_rule)
         }
         else if (varItem->data.var_data->type == TYPE_EMPTY)
         {
-            (symtable_find(varItem->id, symtable_stack_top(sym_st), false))->data.var_data->type = return_type.type;
+            varItem->data.var_data->type = return_type.type;
         }
         else if (varItem->data.var_data->type != return_type.type)
         {
@@ -498,9 +500,16 @@ int check_semantic(Token *token, Sem_rule sem_rule)
             return -1;
         }
         DEBUG_SEMANTIC_CODE(symtable_print(symtable_stack_top(sym_st)););
-        // data_type check
+        goto VAR_ADD;
         break;
     }
+    case VAR_ADD:
+    VAR_ADD:
+        printf("VAR_ADD\n");
+        DEBUG_SEMANTIC_CODE(printf(YELLOW "ADDING VAR: %s, type: %d, const: %d\n", varItem->id, varItem->data.var_data->type, varItem->data.var_data->is_const););
+        symtable_add(*varItem, symtable_stack_top(sym_st));
+        DEBUG_SEMANTIC_CODE(symtable_print(symtable_stack_top(sym_st)););
+        break;
     case FUNC_ID:
         reset_func();
         symtable_item *func_id_item = symtable_find_in_stack(token->token_value, sym_st, true);
