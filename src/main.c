@@ -1,7 +1,7 @@
 /**
  * @file main.c
  * @brief main function of the program
- * @author Tomáš Hobza
+ * @author Tomáš Hobza <xhobza03@vutbr.cz>
  *
  * Project: IFJ compiler
  */

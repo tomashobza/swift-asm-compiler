@@ -1,3 +1,14 @@
+/**
+ * @file parser.h
+ * @author Jakub Všetečka <xvsete00@vutbr.cz>
+ * @brief Parser header file.
+ * @version 0.1
+ * @date 2023-11-24
+ *
+ * @copyright Copyright (c) 2023
+ *
+ */
+
 #ifndef PARSER_H
 #define PARSER_H
 

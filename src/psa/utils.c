@@ -1,3 +1,14 @@
+/**
+ * @file utils.c
+ * @author Anastasia Butok (xbutok00@vutbr.cz)
+ * @brief Utility functions for PSA.
+ * @version 0.1
+ * @date 2023-11-24
+ *
+ * @copyright Copyright (c) 2023
+ *
+ */
+
 #include "psa.h"
 
 uint32_t handleToUInt32(PSA_Token *handle, unsigned int len)
@@ -35,6 +46,10 @@ Expression_type getTypeFromToken(Token_type token)
 
     case TOKEN_STRING:
         return (Expression_type)TYPE_STRING;
+
+    case TOKEN_NIL:
+        return (Expression_type)TYPE_NIL;
+
     default:
         return (Expression_type)TYPE_INVALID;
     }
@@ -121,6 +136,22 @@ bool canTokenBeEndOfExpression(Token_type token)
     case TOKEN_STRING:
     case TOKEN_R_BRACKET:
     case TOKEN_IDENTIFICATOR:
+        return true;
+    default:
+        return false;
+    }
+}
+
+bool canTypeBeNil(Expression_type type)
+{
+    switch (type)
+    {
+    case TYPE_INT_NIL:
+    case TYPE_DOUBLE_NIL:
+    case TYPE_BOOL_NIL:
+    case TYPE_STRING_NIL:
+    case TYPE_NIL:
+    case TYPE_VOID_NIL:
         return true;
     default:
         return false;

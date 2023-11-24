@@ -34,7 +34,7 @@ build: $(SRCS) $(TESTS)
 # Test target
 test: $(SRCS) $(TESTS)
 	@$(CC) $(CFLAGS) $(TESTFLAGS) $^ -o bin/$(TEST_TARGET)
-	./bin/$(TEST_TARGET) <tests/test.in
+	./bin/$(TEST_TARGET) <tests/test.swift
 
 # clean, compile and run
 run: clean all

@@ -1,3 +1,14 @@
+/**
+ * @file colorful_printf.h
+ * @author Tomáš Hobza <xhobza03@vutbr.cz>
+ * @brief Macros for colored printf.
+ * @version 0.1
+ * @date 2023-11-24
+ *
+ * @copyright Copyright (c) 2023
+ *
+ */
+
 // ANSI escape codes for setting text color
 #define ANSI_COLOR_RED "\x1b[31m"
 #define ANSI_COLOR_GREEN "\x1b[32m"

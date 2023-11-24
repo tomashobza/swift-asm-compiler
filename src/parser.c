@@ -2,7 +2,7 @@
  * @file parser.c
  * @brief Parser of project
  * @details This module is used for parsing tokens from scanner and generating code in IFJcode23
- * @author Jakub Všetečka
+ * @author Jakub Všetečka <xvsete00@vutbr.cz>
  *
  * Project: IFJ compiler
  */
