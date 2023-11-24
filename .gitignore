@@ -9,3 +9,4 @@ build
 input.txt
 token_types.txt
 bin
+tests/blazovy_testy

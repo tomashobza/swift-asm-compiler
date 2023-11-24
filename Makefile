@@ -38,7 +38,7 @@ test: $(SRCS) $(TESTS)
 
 # clean, compile and run
 run: clean all
-	./bin/$(TARGET)
+	./bin/$(TARGET) <tests/test.swift
 
 # Clean up
 clean:
