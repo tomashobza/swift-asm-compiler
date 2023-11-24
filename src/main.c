@@ -23,6 +23,8 @@ int main(void)
 
     sym_st = symtable_stack_init();
 
+    add_builtin_functions();
+
     parser_main();
 
     return print_errors();
