@@ -41,10 +41,23 @@ PSA_Token getRule(PSA_Token *handle, unsigned int len)
     case RULE_1e:
     case RULE_1f:
         DEBUG_PSA_CODE(printf_cyan("rule: E -> i\n"););
+        Expression_type type = getTypeFromToken(handle[0].type);
+        if (handle[0].type == TOKEN_IDENTIFICATOR)
+        {
+            symtable_item *found = symtable_find_in_stack(handle[0].token_value, sym_st, true);
+            if (found != NULL && found->type == VARIABLE && found->data.var_data != NULL && found->data.var_data->type != TYPE_INVALID)
+            {
+                type = found->data.var_data->type;
+            }
+            else
+            {
+                throw_error(VARIABLES_ERR, "Variable '%s' not found!", handle[0].token_value);
+            }
+        }
         return (PSA_Token){
             .type = (Token_type)TOKEN_EXPRSN,
             .token_value = "E",
-            .expr_type = getTypeFromToken(handle[0].type),
+            .expr_type = type,
             .canBeNil = false, // TODO: get this from the symtable
         };
     case RULE_2:

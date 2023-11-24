@@ -28,7 +28,6 @@ Expression_type getTypeFromToken(Token_type token)
         return (Expression_type)TYPE_INT;
     case TOKEN_DOUBLE:
     case TOKEN_EXP:
-    case TOKEN_IDENTIFICATOR: // TODO: delete and for id use symbol table
         return (Expression_type)TYPE_DOUBLE;
 
     case TOKEN_BOOL:
