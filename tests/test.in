@@ -1,4 +1,4 @@
-let x = foo(2)
-func foo(_ a: Int) -> Bool {
-    return 2 == 4
+let x: Int = foo(b: 2, 3.5)
+func foo(b x: Int, _ y: Double) -> Int {
+    return 1;
 }
