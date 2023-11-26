@@ -38,7 +38,7 @@ test: $(SRCS) $(TESTS)
 	./bin/$(TEST_TARGET) <tests/test.swift
 
 test-all: $(SRCS) tests/test.c
-	sh tests/test.sh $(TESTFILE)
+	bash tests/test.sh $(TESTFILE)
 
 test-psa: $(SRCS) tests/psa/test_psa.c
 	@$(CC) $(CFLAGS) -D DEBUG_PSA=1 $(TESTFLAGS) $^ -o bin/$(TEST_TARGET)
