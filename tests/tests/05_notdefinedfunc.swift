@@ -1,0 +1,2 @@
+// FUNCTIONS_ERR
+nonExistentFunction()
