@@ -28,7 +28,7 @@ print_error() {
         printf "\033[41m\033[1;37m FAIL \033[0m"
         echo " \033[0;31m[expected: $should_be_error_code, got: $error_code]\033[0m"
     else
-        echo "\033[42m\033[1;37m PASS \033[0m"
+        printf "\033[42m\033[1;37m PASS \033[0m\n"
     fi
 
     echo
@@ -61,29 +61,103 @@ TYPE_DOUBLE_NIL=6
 TYPE_STRING_NIL=7
 TYPE_BOOL_NIL=8
 
-# if testfile is not -1, run the testfile and return
-if [ "$TESTFILE" != "-1" ]; then
-    $(dirname $0)/../../bin/ifjcompiler_debug <tests/psa/tests/"$TESTFILE"
+# Function to convert IS_OK/IS_NOT_OK to integer
+convert_is_ok() {
+    case "$1" in
+    "IS_OK") echo $IS_OK ;;
+    "IS_NOT_OK") echo $IS_NOT_OK ;;
+    *)
+        echo "Invalid IS_OK/IS_NOT_OK value: $1" >&2
+        exit 1
+        ;;
+    esac
+}
+
+# Function to convert return code to integer
+convert_return_code() {
+    case "$1" in
+    "NO_ERR") echo $NO_ERR ;;
+    "LEXICAL_ERR") echo $LEXICAL_ERR ;;
+    "SYNTACTIC_ERR") echo $SYNTACTIC_ERR ;;
+    "FUNCTIONS_ERR") echo $FUNCTIONS_ERR ;;
+    "PARAM_TYPE_ERR") echo $PARAM_TYPE_ERR ;;
+    "VARIABLES_ERR") echo $VARIABLES_ERR ;;
+    "RETURN_ERR") echo $RETURN_ERR ;;
+    "COMPATIBILITY_ERR") echo $COMPATIBILITY_ERR ;;
+    "TYPE_ERR") echo $TYPE_ERR ;;
+    "SEMANTICS_ERR") echo $SEMANTICS_ERR ;;
+    "INTERNAL_ERR") echo $INTERNAL_ERR ;;
+    *)
+        echo "Invalid return code value: $1" >&2
+        exit 1
+        ;;
+    esac
+}
+
+# Function to convert type to integer
+convert_type() {
+    case "$1" in
+    "TYPE_VOID") echo $TYPE_VOID ;;
+    "TYPE_EMPTY") echo $TYPE_EMPTY ;;
+    "TYPE_INVALID") echo $TYPE_INVALID ;;
+    "TYPE_INT") echo $TYPE_INT ;;
+    "TYPE_DOUBLE") echo $TYPE_DOUBLE ;;
+    "TYPE_STRING") echo $TYPE_STRING ;;
+    "TYPE_BOOL") echo $TYPE_BOOL ;;
+    "TYPE_NIL") echo $TYPE_NIL ;;
+    "TYPE_INT_NIL") echo $TYPE_INT_NIL ;;
+    "TYPE_DOUBLE_NIL") echo $TYPE_DOUBLE_NIL ;;
+    "TYPE_STRING_NIL") echo $TYPE_STRING_NIL ;;
+    "TYPE_BOOL_NIL") echo $TYPE_BOOL_NIL ;;
+    *)
+        echo "Invalid type value: $1" >&2
+        exit 1
+        ;;
+    esac
+}
+
+extract_expected_values() {
+    local testfile=$1
+    read -r first_line <"$testfile"
+
+    # Use bash regex to extract the values
+    if [[ $first_line =~ \/\/\ *([^\ ]+)\ *([^\ ]+)\ *([^\ ]+) ]]; then
+        EXPECTED_IS_OK=$(convert_is_ok ${BASH_REMATCH[1]})
+        EXPECTED_TYPE=$(convert_type ${BASH_REMATCH[2]})
+        EXPECTED_RETURN_CODE=$(convert_return_code ${BASH_REMATCH[3]})
+    else
+        echo "Error: First line of test file is not in expected format."
+        exit 1
+    fi
+}
+
+test_file() {
+    local testinput="$(dirname "$0")/tests/$1"
+
+    echo testinput=$testinput
+
+    extract_expected_values "$testinput"
+
+    "$(dirname "$0")"/../../bin/ifjcompiler_debug "$EXPECTED_IS_OK" "$EXPECTED_TYPE" <"$testinput" >/dev/null
     RETURN_CODE=$?
-    print_test_name "$TESTFILE"
-    print_error $RETURN_CODE
-    exit 0
-fi
+    print_test_name "01.swift"
+    print_error $RETURN_CODE "$EXPECTED_RETURN_CODE"
+}
 
 ###############
 #### TESTS ####
 ###############
 
+# specific test
+if [ "$TESTFILE" != "-1" ]; then
+    test_file "$TESTFILE"
+    exit 0
+fi
+
 # test 01
-$(dirname $0)/../../bin/ifjcompiler_debug $IS_NOT_OK $TYPE_INVALID <tests/psa/tests/01.swift >/dev/null
-RETURN_CODE=$?
-print_test_name "01.swift"
-print_error $RETURN_CODE $SEMANTICS_ERR
+test_file "01.swift"
 
 print_sep # separator
 
 # test 02
-$(dirname $0)/../../bin/ifjcompiler_debug $IS_OK $TYPE_INT <tests/psa/tests/02.swift >/dev/null
-RETURN_CODE=$?
-print_test_name "02.swift"
-print_error $RETURN_CODE $NO_ERR
+test_file "02.swift"
