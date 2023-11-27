@@ -150,7 +150,7 @@ if [ "$TESTFILE" != "-1" ]; then
 fi
 
 # test 01
-test_file "01.swift"
+test_file "01.psa"
 
 # test 02
-test_file "02.swift"
+test_file "02.psa"
