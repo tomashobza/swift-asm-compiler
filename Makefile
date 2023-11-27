@@ -20,7 +20,7 @@ TARGET = ifjcompiler
 # Test executable name
 TEST_TARGET = ifjcompiler_debug
 
-# TEST_INPUT?=tests/test.in
+TESTFILE?=-1
 
 # Default target
 all: $(TARGET)
@@ -36,6 +36,10 @@ build: $(SRCS) $(TESTS)
 test: $(SRCS) $(TESTS)
 	@$(CC) $(CFLAGS) $(TESTFLAGS) $^ -o bin/$(TEST_TARGET)
 	./bin/$(TEST_TARGET) <tests/test.swift
+
+test-psa: $(SRCS) tests/psa/test_psa.c
+	@$(CC) $(CFLAGS) $(TESTFLAGS) $^ -o bin/$(TEST_TARGET)
+	sh tests/psa/test_psa.sh $(TESTFILE)
 
 # clean, compile and run
 run: clean all

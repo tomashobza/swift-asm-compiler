@@ -36,7 +36,7 @@ Error_code print_errors()
 {
     if (error_st == NULL || Error_stack_empty(error_st))
     {
-        printf_green("✅ The compiler found no errors.\n");
+        printf_green("\n✅ The compiler found no errors.\n");
         return NO_ERR;
     }
 
@@ -86,8 +86,8 @@ Error_code print_errors()
 
     // TODO: add stderr
 
-    printf("COMPILER FOUND ");
-    printf_red("%d ERRORS:\n\n", sorted->size);
+    fprintf(stderr, "\nCOMPILER FOUND ");
+    fprintf_red(stderr, "%d ERRORS:\n\n", sorted->size);
 
     int first_error_code = NO_ERR;
 
@@ -111,11 +111,11 @@ Error_code print_errors()
 void printError(Error error)
 {
     fprintf(stderr, "code:");
-    fprintf(stderr, "%d", error.line_num);
+    fprintf_red(stderr, "%d", error.line_num);
     fprintf(stderr, ": ");
-    fprintf(stderr, "error: ");
+    fprintf_red(stderr, "error: ");
     printErrorCode(error.code);
-    fprintf(stderr, "%s\n\n", error.message);
+    fprintf_red(stderr, "%s\n\n", error.message);
 }
 
 void printErrorCode(Error_code code)
@@ -123,38 +123,38 @@ void printErrorCode(Error_code code)
     switch (code)
     {
     case LEXICAL_ERR:
-        fprintf(stderr, "LEXICAL_ERR");
+        fprintf_red(stderr, "LEXICAL_ERR");
         break;
     case SYNTACTIC_ERR:
-        fprintf(stderr, "SYNTACTIC_ERR");
+        fprintf_red(stderr, "SYNTACTIC_ERR");
         break;
     case FUNCTIONS_ERR:
-        fprintf(stderr, "FUNCTIONS_ERR");
+        fprintf_red(stderr, "FUNCTIONS_ERR");
         break;
     case PARAM_TYPE_ERR:
-        fprintf(stderr, "PARAM_TYPE_ERR");
+        fprintf_red(stderr, "PARAM_TYPE_ERR");
         break;
     case VARIABLES_ERR:
-        fprintf(stderr, "VARIABLES_ERR");
+        fprintf_red(stderr, "VARIABLES_ERR");
         break;
     case RETURN_ERR:
-        fprintf(stderr, "RETURN_ERR");
+        fprintf_red(stderr, "RETURN_ERR");
         break;
     case COMPATIBILITY_ERR:
-        fprintf(stderr, "COMPATIBILITY_ERR");
+        fprintf_red(stderr, "COMPATIBILITY_ERR");
         break;
     case TYPE_ERR:
-        fprintf(stderr, "TYPE_ERR");
+        fprintf_red(stderr, "TYPE_ERR");
         break;
     case SEMANTICS_ERR:
-        fprintf(stderr, "SEMANTICS_ERR");
+        fprintf_red(stderr, "SEMANTICS_ERR");
         break;
     case INTERNAL_ERR:
-        fprintf(stderr, "INTERNAL_ERR");
+        fprintf_red(stderr, "INTERNAL_ERR");
         break;
     default:
-        fprintf(stderr, "UNKNOWN_ERR");
+        fprintf_red(stderr, "UNKNOWN_ERR");
         break;
     }
-    fprintf(stderr, "\n");
+    fprintf_red(stderr, "\n");
 }

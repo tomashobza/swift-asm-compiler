@@ -40,6 +40,8 @@ Expression_type getTypeCombination(PSA_Token l_operand, PSA_Token r_operand)
     case ((char)TYPE_DOUBLE << 8) | TYPE_DOUBLE:
         return TYPE_DOUBLE;
     default:
+        throw_error(SYNTACTIC_ERR, "Invalid operand types."); // TODO: add this
+
         return TYPE_INVALID;
     }
 }
@@ -151,6 +153,8 @@ PSA_Token getHandleType(PSA_Token l_operand, Token_type operation, PSA_Token r_o
     default:
         break;
     }
+
+    throw_error(SEMANTICS_ERR, "Invalid operand types for operation '%c'.", getOperationChar(operation));
 
     return (PSA_Token){
         .type = (Token_type)TOKEN_EXPRSN,

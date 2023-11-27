@@ -181,6 +181,14 @@ bool canTokenBeStartOfExpression(Token_type token);
  */
 bool canTokenBeEndOfExpression(Token_type token);
 
+/**
+ * @brief Get the ASCII character of the operation.
+ *
+ * @param token operation token
+ * @return char
+ */
+char getOperationChar(Token_type token);
+
 // PSA FUNCTIONS
 
 /**

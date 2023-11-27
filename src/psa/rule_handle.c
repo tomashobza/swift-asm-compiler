@@ -138,12 +138,15 @@ PSA_Token getRule(PSA_Token *handle, unsigned int len)
         return getHandleType(handle[0], handle[1].type, handle[2]);
     default:
         DEBUG_PSA_CODE(printf_red("rule: EOF\n"););
+        throw_error(SYNTACTIC_ERR, "Expression '%s' is not valid.", "TODO: add this"); // TODO: add this
         return (PSA_Token){
             .type = (Token_type)TOKEN_EOF,
             .token_value = "$",
             .expr_type = TYPE_INVALID,
         };
     }
+
+    throw_error(SYNTACTIC_ERR, "Expression '%s' is not valid.", "TODO: add this"); // TODO: add this
 
     return (PSA_Token){
         .type = (Token_type)TOKEN_EOF,

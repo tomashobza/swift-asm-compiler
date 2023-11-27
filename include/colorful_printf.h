@@ -25,3 +25,11 @@
 #define printf_blue(format, ...) printf(ANSI_COLOR_BLUE format ANSI_COLOR_RESET, ##__VA_ARGS__)
 #define printf_magenta(format, ...) printf(ANSI_COLOR_MAGENTA format ANSI_COLOR_RESET, ##__VA_ARGS__)
 #define printf_cyan(format, ...) printf(ANSI_COLOR_CYAN format ANSI_COLOR_RESET, ##__VA_ARGS__)
+
+// Macro for colored fprintf
+#define fprintf_red(stream, format, ...) fprintf(stream, ANSI_COLOR_RED format ANSI_COLOR_RESET, ##__VA_ARGS__)
+#define fprintf_green(stream, format, ...) fprintf(stream, ANSI_COLOR_GREEN format ANSI_COLOR_RESET, ##__VA_ARGS__)
+#define fprintf_yellow(stream, format, ...) fprintf(stream, ANSI_COLOR_YELLOW format ANSI_COLOR_RESET, ##__VA_ARGS__)
+#define fprintf_blue(stream, format, ...) fprintf(stream, ANSI_COLOR_BLUE format ANSI_COLOR_RESET, ##__VA_ARGS__)
+#define fprintf_magenta(stream, format, ...) fprintf(stream, ANSI_COLOR_MAGENTA format ANSI_COLOR_RESET, ##__VA_ARGS__)
+#define fprintf_cyan(stream, format, ...) fprintf(stream, ANSI_COLOR_CYAN format ANSI_COLOR_RESET, ##__VA_ARGS__)

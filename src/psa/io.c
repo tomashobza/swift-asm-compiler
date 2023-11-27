@@ -20,7 +20,18 @@ PSA_Token readNextToken(PSA_Token_stack *s, char *next_token_error, int *num_of_
         .preceded_by_nl = true,
     };
 
-    main_scanner(tkn);
+    // TODO: hodit (si lano/chybu)
+    Error_code scanner_returned = (Error_code)main_scanner(tkn);
+    if (scanner_returned != NO_ERR)
+    {
+        throw_error(scanner_returned, "Scanner error.");
+        printf_red("\nSCANNER VRATIL: ");
+        printError((Error){
+            .code = scanner_returned,
+            .line_num = line_num,
+            .message = "Scanner error."});
+        printf("\n\n");
+    }
 
     PSA_Token b = {
         .type = tkn->type,
