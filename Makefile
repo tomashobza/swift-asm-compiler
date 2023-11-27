@@ -29,20 +29,21 @@ $(TARGET): src/main.c $(SRCS)
 	$(CC) $(CFLAGS) $^ -o bin/$@
 	cp bin/$(TARGET) $(TARGET)
 
-build: $(SRCS) $(TESTS)
-	@$(CC) $(CFLAGS) $^ -o bin/$(TEST_TARGET)
+# build: $(SRCS) $(TESTS)
+# 	@$(CC) $(CFLAGS) $^ -o bin/$(TEST_TARGET)
 
 # Test target
 test: $(SRCS) $(TESTS)
 	@$(CC) $(CFLAGS) -D DEBUG_PSA=$(DEBUG_PSA) $(TESTFLAGS) $^ -o bin/$(TEST_TARGET)
 	./bin/$(TEST_TARGET) <tests/test.swift
 
-test-all: $(SRCS) tests/test.c
+test-all: $(SRCS) $(TESTS)
+	@$(CC) $(CFLAGS) -D DEBUG_PSA=$(DEBUG_PSA) $(TESTFLAGS) $^ -o bin/$(TEST_TARGET)
 	bash tests/test.sh $(TESTFILE)
 
 test-psa: $(SRCS) tests/psa/test_psa.c
 	@$(CC) $(CFLAGS) -D DEBUG_PSA=1 $(TESTFLAGS) $^ -o bin/$(TEST_TARGET)
-	sh tests/psa/test_psa.sh $(TESTFILE)
+	bash tests/psa/test_psa.sh $(TESTFILE)
 
 # clean, compile and run
 run: clean all

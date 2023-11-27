@@ -49,6 +49,7 @@ Error_code print_errors()
 
     while (!Error_stack_empty(error_st))
     {
+        first_error_code = Error_stack_top(error_st).code;
         printError(Error_stack_pop(error_st));
     }
 
