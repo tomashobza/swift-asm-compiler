@@ -16,7 +16,11 @@
 void get_token(Token *token)
 {
     DEBUG_SYNTAX_CODE(printf(YELLOW "popped: %s" RESET "\n", token->token_value););
-    main_scanner(token);
+    Error_code err = main_scanner(token);
+    if (err != NO_ERR)
+    {
+        throw_error(err, "Scanner error.");
+    }
 }
 
 bool cmp_type(Token *token, Token_type type, Sem_rule sem_rule)
