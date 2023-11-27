@@ -40,70 +40,19 @@ Error_code print_errors()
         return NO_ERR;
     }
 
-    // sort the errors by line number
-    Error_stack *sorted = Error_stack_init();
-    Error_stack *sorting_helper = Error_stack_init();
-    if (sorted == NULL || sorting_helper == NULL)
-    {
-        return INTERNAL_ERR;
-    }
-
-    // sort the errors by line number
-    while (!Error_stack_empty(error_st))
-    {
-        Error insertee = Error_stack_pop(error_st);
-
-        if (Error_stack_empty(sorted))
-        {
-            Error_stack_push(sorted, insertee);
-        }
-        else
-        {
-            // pop items from the sorted stack into the sorting_helper stack that have a line number smaller than Pavel's line number
-            Error tmp = Error_stack_top(sorted);
-            while (tmp.line_num < insertee.line_num)
-            {
-                Error_stack_push(sorting_helper, Error_stack_pop(sorted));
-                if (Error_stack_empty(sorted))
-                {
-                    break;
-                }
-                else
-                {
-                    tmp = Error_stack_top(sorted);
-                }
-            }
-
-            // push Pavel into the sorted stack
-            Error_stack_push(sorted, insertee);
-
-            while (!Error_stack_empty(sorting_helper))
-            {
-                Error_stack_push(sorted, Error_stack_pop(sorting_helper));
-            }
-        }
-    }
+    int first_error_code = NO_ERR;
 
     // TODO: add stderr
 
     fprintf(stderr, "\nCOMPILER FOUND ");
-    fprintf_red(stderr, "%d ERRORS:\n\n", sorted->size);
+    fprintf_red(stderr, "%d ERRORS:\n\n", error_st->size);
 
-    int first_error_code = NO_ERR;
-
-    // print the sorted errors
-    while (!Error_stack_empty(sorted))
+    while (!Error_stack_empty(error_st))
     {
-        if (sorted->size == 1)
-        {
-            first_error_code = Error_stack_top(sorted).code;
-        }
-
-        printError(Error_stack_pop(sorted));
+        printError(Error_stack_pop(error_st));
     }
 
-    Error_stack_free(sorted);
-    Error_stack_free(sorting_helper);
+    Error_stack_free(error_st);
 
     return first_error_code;
 }
