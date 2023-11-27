@@ -1,1 +1,0 @@
-(floatVar + 12) * 7.0 - (100 / intVar)

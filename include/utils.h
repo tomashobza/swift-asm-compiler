@@ -17,6 +17,14 @@
 #include "colorful_printf.h"
 
 /**
+ * @brief Utility function for printing the token type to a file.
+ *
+ * @param type
+ * @param out output file
+ */
+void fprint_token_type(Token_type type, FILE *out);
+
+/**
  * @brief Utility function for printing the token type.
  *
  * @param type
@@ -24,7 +32,15 @@
 void print_token_type(Token_type type);
 
 /**
- * @brief Utility function for printing the expression type.
+ * @brief Utility function for printing the expression type to a file.
+ *
+ * @param type
+ * @param out output file
+ */
+void fprint_expression_type(Expression_type type, FILE *out);
+
+/**
+ * @brief Utility function for printing the expression type to stdout.
  *
  * @param type
  */

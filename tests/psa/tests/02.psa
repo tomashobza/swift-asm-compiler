@@ -1,0 +1,2 @@
+// IS_OK TYPE_INT NO_ERR
+1*2

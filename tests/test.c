@@ -25,6 +25,12 @@ int main(void)
 
     parser_main();
 
+    // throw_error(SYNTACTIC_ERR, "This is a syntactic error");
+    // throw_error(LEXICAL_ERR, "This is a lexical error");
+    // throw_error(SEMANTICS_ERR, "This is a semantic error");
+    // throw_error(INTERNAL_ERR, "This is an internal error");
+    // throw_error(TYPE_ERR, "This is a type error");
+
     // print errors
     return print_errors();
 }
