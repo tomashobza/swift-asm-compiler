@@ -149,8 +149,6 @@ if [ "$TESTFILE" != "-1" ]; then
     exit 0
 fi
 
-# test 01
-test_file "01.psa"
-
-# test 02
-test_file "02.psa"
+for testfile in "$(dirname "$0")"/tests/*.psa; do
+    test_file "$(basename "$testfile")"
+done
