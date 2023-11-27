@@ -97,11 +97,12 @@ test_file() {
 
     if [ -z "$2" ]; then
         "$(dirname "$0")"/../bin/ifjcompiler_debug >/dev/null 2>/dev/null <"$testinput"
+        RETURN_CODE=$?
     else
         "$(dirname "$0")"/../bin/ifjcompiler_debug <"$testinput"
+        RETURN_CODE=$?
     fi
 
-    RETURN_CODE=$?
     print_test_name "$1"
     print_error $RETURN_CODE "$EXPECTED_RETURN_CODE"
 }
@@ -117,4 +118,8 @@ if [ "$TESTFILE" != "-1" ]; then
 fi
 
 # test 01
-test_file "00.swift"
+
+# call test_file with test file name for each .swift file in tests/
+for testfile in "$(dirname "$0")"/tests/*.swift; do
+    test_file "$(basename "$testfile")"
+done

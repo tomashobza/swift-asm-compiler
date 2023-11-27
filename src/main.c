@@ -21,6 +21,8 @@ int main(void)
 {
     scanner_init();
 
+    printf("Hlavni program. :)\n");
+
     sym_st = symtable_stack_init();
 
     parser_main();
