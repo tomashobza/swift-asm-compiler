@@ -30,21 +30,11 @@ print_error() {
     else
         printf "\033[42m\033[1;37m PASS \033[0m\n"
     fi
-
-    echo
 }
 
 print_test_name() {
     local test_name=$1
-    printf "\n\033[46m\033[1;30m $test_name: \033[0m "
-}
-
-print_sep() {
-    # Get the width of the terminal window
-    local width=$(tput cols)
-
-    # Print '=' characters to fill the width
-    printf '%*s\n' "$width" '' | tr ' ' '='
+    printf "\033[46m\033[1;30m $test_name: \033[0m "
 }
 
 # expression types
@@ -134,13 +124,18 @@ extract_expected_values() {
 test_file() {
     local testinput="$(dirname "$0")/tests/$1"
 
-    echo testinput=$testinput
-
     extract_expected_values "$testinput"
 
-    "$(dirname "$0")"/../../bin/ifjcompiler_debug "$EXPECTED_IS_OK" "$EXPECTED_TYPE" <"$testinput" >/dev/null
+    # if should_output is empty, set it to 0
+
+    if [ -z "$2" ]; then
+        "$(dirname "$0")"/../../bin/ifjcompiler_debug "$EXPECTED_IS_OK" "$EXPECTED_TYPE" >/dev/null 2>/dev/null <"$testinput"
+    else
+        "$(dirname "$0")"/../../bin/ifjcompiler_debug "$EXPECTED_IS_OK" "$EXPECTED_TYPE" <"$testinput"
+    fi
+
     RETURN_CODE=$?
-    print_test_name "01.swift"
+    print_test_name "$1"
     print_error $RETURN_CODE "$EXPECTED_RETURN_CODE"
 }
 
@@ -150,14 +145,12 @@ test_file() {
 
 # specific test
 if [ "$TESTFILE" != "-1" ]; then
-    test_file "$TESTFILE"
+    test_file "$TESTFILE" "1"
     exit 0
 fi
 
 # test 01
 test_file "01.swift"
-
-print_sep # separator
 
 # test 02
 test_file "02.swift"
