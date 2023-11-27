@@ -1,2 +1,2 @@
-// COMPATIBILITY_ERR
+// SEMANTICS_ERR
 let x : Int = "text"

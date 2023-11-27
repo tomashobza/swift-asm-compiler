@@ -1,2 +1,2 @@
-// TYPE_ERR
+// SYNTACTIC_ERR
 let x: NonexistentType = 5
