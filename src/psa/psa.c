@@ -15,8 +15,8 @@ DEFINE_STACK_FUNCTIONS(PSA_Token)
 psa_return_type parse_expression_base(bool is_param)
 {
 
-    // TODO: add nil
-    // TODO: add boolean literals
+    // TODO: add checking if variable is initialized before use
+    // TODO: add functions for expressions in parameters
     int num_of_brackets = 0; // number of brackets in the expression
 
     PSA_Token_stack *s = PSA_Token_stack_init();
