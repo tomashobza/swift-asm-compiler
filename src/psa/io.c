@@ -37,7 +37,7 @@ PSA_Token readNextToken(PSA_Token_stack *s, char *next_token_error, int *num_of_
         .type = tkn->type,
         .token_value = tkn->token_value,
         .expr_type = getTypeFromToken(tkn->type),
-        .preceded_by_nl = tkn->preceded_by_nl,
+        .preceded_by_nl = tkn->type == TOKEN_EOF ? true : tkn->preceded_by_nl,
     };
     free(tkn);
 
