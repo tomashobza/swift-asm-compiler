@@ -50,6 +50,7 @@ typedef enum
     R_EXP,
     FUNC_BODY_DONE,
     COND_EXP,
+    LET_IN_IF,
     LOAD_IDENTIF,
     IDENTIF_EXP,
     FUNC_CALL_PSA,

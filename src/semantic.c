@@ -663,11 +663,62 @@ int check_semantic(Token *token, Sem_rule sem_rule)
         {
             throw_error(COMPATIBILITY_ERR, "Unrecognizable type of variable: %s \n", varItem->id);
         }
-        if (return_type3.type != TYPE_BOOL)
+        else if (return_type3.type != TYPE_BOOL)
         {
             throw_error(COMPATIBILITY_ERR, "Expression type: %d and type: %d of variable: %s do not match!\n", return_type3.type, TYPE_BOOL, varItem->id);
         }
+
+        // push new scope
+        DEBUG_SEMANTIC_CODE(printf(RED "PUSH_SCOPE\n" RESET););
+        symtable symtable = symtable_init();
+        symtable_stack_push(sym_st, symtable);
+
         DEBUG_SEMANTIC_CODE(print_expression_type(return_type3.type););
+        break;
+    }
+    case LET_IN_IF:
+    {
+        reset_var();
+        symtable_item *let_in_if_item = symtable_find_in_stack(token->token_value, sym_st, false);
+        if (let_in_if_item == NULL || let_in_if_item->data.var_data->is_const == false)
+        {
+            throw_error(SEMANTICS_ERR, "Variable %s is not a defined const!\n", token->token_value);
+        }
+        else
+        {
+            // prepare varItem
+            *(varItem->data.var_data) = *(let_in_if_item->data.var_data);
+            varItem->id = token->token_value;
+            switch (varItem->data.var_data->type)
+            {
+            case TYPE_BOOL_NIL:
+                varItem->data.var_data->type = TYPE_BOOL;
+                break;
+            case TYPE_DOUBLE_NIL:
+                varItem->data.var_data->type = TYPE_DOUBLE;
+                break;
+            case TYPE_INT_NIL:
+                varItem->data.var_data->type = TYPE_INT;
+                break;
+            case TYPE_STRING_NIL:
+                varItem->data.var_data->type = TYPE_STRING;
+                break;
+            default:
+                break;
+            }
+        }
+
+        // push new scope
+        DEBUG_SEMANTIC_CODE(printf(RED "PUSH_SCOPE\n" RESET););
+        symtable symtable = symtable_init();
+        symtable_stack_push(sym_st, symtable);
+
+        print_items();
+
+        // add temporary var to scope
+        symtable_add(*varItem, symtable_stack_top(sym_st));
+
+        DEBUG_SEMANTIC_CODE(symtable_print(symtable_stack_top(sym_st)););
         break;
     }
     case FUNC_BODY_DONE:

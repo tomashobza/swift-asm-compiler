@@ -365,7 +365,7 @@ bool FUNC_WHILE(Token *token)
     {
     // FUNC_WHILE -> while EXP { FUNC_STMT_LIST }
     case TOKEN_WHILE:
-        return cmp_type(token, TOKEN_WHILE, SEM_NONE) && EXP(token, COND_EXP) && cmp_type(token, TOKEN_L_CURLY, PUSH_SCOPE) &&
+        return cmp_type(token, TOKEN_WHILE, SEM_NONE) && EXP(token, COND_EXP) && cmp_type(token, TOKEN_L_CURLY, SEM_NONE) &&
                FUNC_STMT_LIST(token) && cmp_type(token, TOKEN_R_CURLY, POP_SCOPE);
     default:
         return false;
@@ -377,9 +377,9 @@ bool FUNC_IF(Token *token)
     DEBUG_SYNTAX_CODE(printf("FUNC_IF token: %d value: %s\n", token->type, token->token_value););
     switch (token->type)
     {
-    // 	FUNC_IF -> if EXP { FUNC_STMT_LIST } FUNC_ELSE_CLAUSE
+    // 	FUNC_IF -> if IF_COND { FUNC_STMT_LIST } FUNC_ELSE_CLAUSE
     case TOKEN_IF:
-        return cmp_type(token, TOKEN_IF, SEM_NONE) && EXP(token, COND_EXP) && cmp_type(token, TOKEN_L_CURLY, PUSH_SCOPE) &&
+        return cmp_type(token, TOKEN_IF, SEM_NONE) && IF_COND(token) && cmp_type(token, TOKEN_L_CURLY, PUSH_SCOPE) &&
                FUNC_STMT_LIST(token) && cmp_type(token, TOKEN_R_CURLY, POP_SCOPE) && FUNC_ELSE_CLAUSE(token);
     default:
         return false;
@@ -438,8 +438,32 @@ bool IF_STMT(Token *token)
     {
     // IF_STMT -> if EXP { STMT_LIST } ELSE_CLAUSE
     case TOKEN_IF:
-        return cmp_type(token, TOKEN_IF, SEM_NONE) && EXP(token, COND_EXP) && cmp_type(token, TOKEN_L_CURLY, PUSH_SCOPE) &&
+        return cmp_type(token, TOKEN_IF, SEM_NONE) && IF_COND(token) && cmp_type(token, TOKEN_L_CURLY, SEM_NONE) &&
                STMT_LIST(token) && cmp_type(token, TOKEN_R_CURLY, POP_SCOPE) && ELSE_CLAUSE(token);
+    default:
+        return false;
+    }
+}
+
+bool IF_COND(Token *token)
+{
+    DEBUG_SYNTAX_CODE(printf("IF_COND token: %d value: %s\n", token->type, token->token_value););
+    switch (token->type)
+    {
+    // IF_COND -> EXP
+    case TOKEN_IDENTIFICATOR:
+    case TOKEN_L_BRACKET:
+    case TOKEN_DOUBLE:
+    case TOKEN_INT:
+    case TOKEN_STRING:
+    case TOKEN_BOOL:
+    case TOKEN_NIL:
+    case TOKEN_EXP:
+    case TOKEN_NOT:
+        return EXP(token, COND_EXP);
+    // IF_COND -> let id
+    case TOKEN_LET:
+        return cmp_type(token, TOKEN_LET, SEM_NONE) && cmp_type(token, TOKEN_IDENTIFICATOR, LET_IN_IF);
     default:
         return false;
     }
@@ -492,7 +516,7 @@ bool WHILE_STMT(Token *token)
     {
     // WHILE_STMT -> while EXP { STMT_LIST }
     case TOKEN_WHILE:
-        return cmp_type(token, TOKEN_WHILE, SEM_NONE) && EXP(token, COND_EXP) && cmp_type(token, TOKEN_L_CURLY, PUSH_SCOPE) &&
+        return cmp_type(token, TOKEN_WHILE, SEM_NONE) && EXP(token, COND_EXP) && cmp_type(token, TOKEN_L_CURLY, SEM_NONE) &&
                STMT_LIST(token) && cmp_type(token, TOKEN_R_CURLY, POP_SCOPE);
     default:
         return false;

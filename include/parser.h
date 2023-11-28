@@ -53,6 +53,7 @@ bool FUNC_IF(Token *token);
 bool FUNC_ELSE_CLAUSE(Token *token);
 bool FUNC_AFTER_ELSE(Token *token);
 bool IF_STMT(Token *token);
+bool IF_COND(Token *token);
 bool ELSE_CLAUSE(Token *token);
 bool AFTER_ELSE(Token *token);
 bool WHILE_STMT(Token *token);
