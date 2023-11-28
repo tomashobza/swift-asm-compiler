@@ -33,6 +33,11 @@ PSA_Token readNextToken(PSA_Token_stack *s, char *next_token_error, int *num_of_
         printf("\n\n");
     }
 
+    if (tkn->type == TOKEN_EOF)
+    {
+        return_token(*tkn);
+    }
+
     PSA_Token b = {
         .type = tkn->type,
         .token_value = tkn->token_value,
