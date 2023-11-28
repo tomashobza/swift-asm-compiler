@@ -178,6 +178,7 @@ bool R_FLEX(Token *token)
     // R_FLEX -> eps
     case TOKEN_EOF:
     case TOKEN_IDENTIFICATOR:
+    case TOKEN_FUNC_ID:
     case TOKEN_VAR:
     case TOKEN_LET:
     case TOKEN_FUNC:

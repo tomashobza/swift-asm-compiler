@@ -1,2 +1,2 @@
-// SYNTACTIC_ERR
+// FUNCTIONS_ERR
 x : Int = 10

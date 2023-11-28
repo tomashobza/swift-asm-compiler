@@ -28,7 +28,6 @@
  */
 typedef enum
 {
-    TYPE_VOID = -3,      // void
     TYPE_EMPTY = -2,     // empty expression
     TYPE_INVALID = -1,   // invalid expression
     TYPE_INT = 0,        // int

@@ -238,6 +238,18 @@ Expression_type get_expression_type(Token *token)
     case TOKEN_TYPE_BOOL:
         return TYPE_BOOL;
         break;
+    case TOKEN_TYPE_INT_NIL:
+        return TYPE_INT_NIL;
+        break;
+    case TOKEN_TYPE_DOUBLE_NIL:
+        return TYPE_DOUBLE_NIL;
+        break;
+    case TOKEN_TYPE_STRING_NIL:
+        return TYPE_STRING_NIL;
+        break;
+    case TOKEN_TYPE_BOOL_NIL:
+        return TYPE_BOOL_NIL;
+        break;
     default:
         return TYPE_INVALID;
         break;
@@ -451,6 +463,33 @@ return_tokens:
     return is_ok;
 }
 
+bool check_ret_values(Expression_type t_exp, Expression_type t_id)
+{
+    switch (t_exp)
+    {
+    case TYPE_INT:
+        return (t_id == TYPE_INT || t_id == TYPE_INT_NIL);
+    case TYPE_DOUBLE:
+        return (t_id == TYPE_DOUBLE || t_id == TYPE_DOUBLE_NIL);
+    case TYPE_STRING:
+        return (t_id == TYPE_STRING || t_id == TYPE_STRING_NIL);
+    case TYPE_BOOL:
+        return (t_id == TYPE_BOOL || t_id == TYPE_BOOL_NIL);
+    case TYPE_INT_NIL:
+        return (t_id == TYPE_INT || t_id == TYPE_INT_NIL);
+    case TYPE_DOUBLE_NIL:
+        return (t_id == TYPE_DOUBLE || t_id == TYPE_DOUBLE_NIL);
+    case TYPE_STRING_NIL:
+        return (t_id == TYPE_STRING || t_id == TYPE_STRING_NIL);
+    case TYPE_BOOL_NIL:
+        return (t_id == TYPE_BOOL || t_id == TYPE_BOOL_NIL);
+    case TYPE_NIL:
+        return (t_id == TYPE_DOUBLE_NIL || t_id == TYPE_STRING_NIL || t_id == TYPE_BOOL_NIL || t_id == TYPE_INT_NIL);
+    default:
+        return false;
+    }
+}
+
 int check_semantic(Token *token, Sem_rule sem_rule)
 {
 
@@ -532,7 +571,7 @@ int check_semantic(Token *token, Sem_rule sem_rule)
         {
             varItem->data.var_data->type = return_type.type;
         }
-        else if (varItem->data.var_data->type != return_type.type)
+        else if (!(check_ret_values(return_type.type, varItem->data.var_data->type)))
         {
             throw_error(COMPATIBILITY_ERR, "Expression type: %d and type: %d of variable: %s do not match!\n", return_type.type, varItem->data.var_data->type, varItem->id);
         }
@@ -580,11 +619,22 @@ int check_semantic(Token *token, Sem_rule sem_rule)
         break;
     case P_TYPE:
         new_param.type = get_expression_type(token);
-        add_param(funcItem->data.func_data, new_param);
+
+        // check param
+        if (new_param.name == new_param.id)
+        {
+            throw_error(FUNCTIONS_ERR, "Parameter name matches parameter id");
+        }
         for (int i = 0; i < funcItem->data.func_data->params_count; i++)
         {
             DEBUG_SEMANTIC_CODE(printf(CYAN "ADDED PARAM: %s, id: %s, type: %d\n", funcItem->data.func_data->params[i].name, funcItem->data.func_data->params[i].id, funcItem->data.func_data->params[i].type););
+            if (strcmp(new_param.id, funcItem->data.func_data->params[i].id) == 0)
+            {
+                throw_error(FUNCTIONS_ERR, "Parameter: %s in function: %s is already defined", new_param.id, funcItem->id);
+            }
         }
+
+        add_param(funcItem->data.func_data, new_param);
         // DEBUG_PSA_CODE(printf(YELLOW "ADDING PARAM: %s, id: %s, type: %d\n", new_param.name, new_param.id, new_param.type););
         reset_param();
         break;
@@ -648,7 +698,7 @@ int check_semantic(Token *token, Sem_rule sem_rule)
         {
             throw_error(PARAM_TYPE_ERR, "Unrecognizable type of return value in function: %s \n", funcItem->id);
         }
-        else if (return_type2.type != funcItem->data.func_data->return_type)
+        else if (!(check_ret_values(return_type2.type, funcItem->data.func_data->return_type)))
         {
             throw_error(PARAM_TYPE_ERR, "Expression type: %d and return type: %d of function: %s do not match!\n", return_type2.type, funcItem->data.func_data->return_type, funcItem->id);
         }
@@ -746,7 +796,7 @@ int check_semantic(Token *token, Sem_rule sem_rule)
             fprintf(stderr, RED "Variable %s is const!\n", token->token_value);
             throw_error(COMPATIBILITY_ERR, "Variable %s is const!\n", token->token_value);
         }
-        DEBUG_SEMANTIC_CODE(printf("FOUND: %s, type: %d, const: %d\n", item->id, item->data.var_data->type, item->data.var_data->is_const););
+        // DEBUG_SEMANTIC_CODE(printf("FOUND: %s, type: %d, const: %d\n", item->id, item->data.var_data->type, item->data.var_data->is_const););
         varItem->id = token->token_value;
         print_items();
         break;
@@ -759,7 +809,7 @@ int check_semantic(Token *token, Sem_rule sem_rule)
             throw_error(COMPATIBILITY_ERR, "Unrecognizable type of variable: %s \n", varItem->id);
         }
         symtable_item *identif_exp_item = symtable_find_in_stack(varItem->id, sym_st, false);
-        if (return_type4.type != identif_exp_item->data.var_data->type)
+        if (!(check_ret_values(return_type4.type, identif_exp_item->data.var_data->type)))
         {
             throw_error(COMPATIBILITY_ERR, "Expression type: %d and type: %d of variable: %s do not match!\n", return_type4.type, identif_exp_item->data.var_data->type, varItem->id);
         }
