@@ -1,0 +1,62 @@
+bash tests/test.sh -1
+ 00.swift:   PASS
+ 01_undef_func.swift:   PASS
+ 02_empty.swift:   PASS
+ 03_write.swift:   PASS
+ 04_variable.swift:   PASS
+ 05_notdefinedfunc.swift:   PASS
+ 06_compitability.swift:   PASS
+ 07_undefvar.swift:   PASS
+ 08_nonexistreturn.swift:   PASS
+ 09_struct.swift:   PASS
+ 10_wringID.swift:   PASS
+ 11_noerr.swift:   PASS
+ 12_wrongnumofarg.swift:   PASS
+ 13_wrongtypeofarg.swift:   PASS
+ 14_wrongreturntype.swift:   PASS
+ 15_undefvar2.swift:   PASS
+ 16_compitability2.swift:   PASS
+ 17_faktorialiter.swift:   FAIL  \033[0;31m[expected: NO_ERR, got: COMPATIBILITY_ERR]\033[0m
+ 18_faktorialrek.swift:   FAIL  \033[0;31m[expected: NO_ERR, got: COMPATIBILITY_ERR]\033[0m
+ 19_builtinfunc.swift:   FAIL  \033[0;31m[expected: NO_ERR, got: SYNTACTIC_ERR]\033[0m
+ 20_operator.swift:   PASS
+ 21_wrongtype.swift:   PASS
+ 22_compitability3.swift:   PASS
+ 23_undefvar3.swift:   PASS
+ 24_string.swift:   PASS
+ 25_logic.swift:   PASS
+ 26_brackets.swift:   PASS
+ 27_assigment.swift:   PASS
+ 28_allgood.swift:   FAIL  \033[0;31m[expected: NO_ERR, got: SYNTACTIC_ERR]\033[0m
+ 29_allgood2.swift:   FAIL  \033[0;31m[expected: NO_ERR, got: SYNTACTIC_ERR]\033[0m
+ 30_strings.swift:   FAIL  \033[0;31m[expected: NO_ERR, got: SYNTACTIC_ERR]\033[0m
+ 31_allgood3.swift:   FAIL  \033[0;31m[expected: NO_ERR, got: SYNTACTIC_ERR]\033[0m
+ 32_semantics.swift:   FAIL  \033[0;31m[expected: SEMANTICS_ERR, got: COMPATIBILITY_ERR]\033[0m
+ 33_allgood3.swift:   FAIL  \033[0;31m[expected: NO_ERR, got: SYNTACTIC_ERR]\033[0m
+ 34_wrongparamnum.swift:   FAIL  \033[0;31m[expected: PARAM_TYPE_ERR, got: SYNTACTIC_ERR]\033[0m
+ 35_wrongreturn.swift:   FAIL  \033[0;31m[expected: RETURN_ERR, got: PARAM_TYPE_ERR]\033[0m
+ 36_brackets2.swift:   PASS
+ 37_redefinevar.swift:   PASS
+ 38_undefinedvar3.swift:   PASS
+ 39_wrongname.swift:   PASS
+ 40_compitability4.swift:   PASS
+ 41_initvar.swift:   FAIL  \033[0;31m[expected: PARAM_TYPE_ERR, got: SYNTACTIC_ERR]\033[0m
+ 42_dupfuncparam.swift:   FAIL  \033[0;31m[expected: FUNCTIONS_ERR, got: SYNTACTIC_ERR]\033[0m
+ 43_undefinedtyep.swift:   PASS
+ 44_wrongarg.swift:   FAIL  \033[0;31m[expected: SYNTACTIC_ERR, got: PARAM_TYPE_ERR]\033[0m
+ 45_missinconditional.swift:   PASS
+ 46_redefinetype2.swift:   FAIL  \033[0;31m[expected: SEMANTICS_ERR, got: COMPATIBILITY_ERR]\033[0m
+ 47_wronguseofkeyword.swift:   PASS
+ 48_wronglet.swift:   PASS
+ 49_brackets.swift:   PASS
+ 50_unexistoperator.swift:   PASS
+ 51_fincint.swift:   FAIL  \033[0;31m[expected: SEMANTICS_ERR, got: SYNTACTIC_ERR]\033[0m
+ 52_types.swift:   PASS
+ 53_recfunc.swift:   PASS
+ 54_array.swift:   FAIL  \033[0;31m[expected: SYNTACTIC_ERR, got: LEXICAL_ERR]\033[0m
+ 55_missingletvar.swift:   FAIL  \033[0;31m[expected: SYNTACTIC_ERR, got: FUNCTIONS_ERR]\033[0m
+ 56_var.swift:   PASS
+ 57_array2.swift:   FAIL  \033[0;31m[expected: SYNTACTIC_ERR, got: LEXICAL_ERR]\033[0m
+ 58_conditional.swift:   PASS
+ 59_undefinedvar.swift:   FAIL  \033[0;31m[expected: FUNCTIONS_ERR, got: SYNTACTIC_ERR]\033[0m
+ 60_operators.swift:   PASS

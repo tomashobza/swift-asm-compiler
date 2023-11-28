@@ -1,4 +1,4 @@
 // FUNCTIONS_ERR
-func add(a: Int, b: Int, b: Int) -> Int {
+func add(_ a: Int,_  b: Int,_ b: Int) -> Int {
     return a + b + c
 }

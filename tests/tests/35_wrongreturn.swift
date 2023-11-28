@@ -1,4 +1,4 @@
-// RETURN_ERR
+// PARAM_TYPE_ERR
 func returnInt() -> Int {
     return "nejsem cislo"
 }

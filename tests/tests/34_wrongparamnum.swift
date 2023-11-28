@@ -1,5 +1,5 @@
 // PARAM_TYPE_ERR
-func add(a: Int, b: Int) -> Int {
+func add(_ a: Int,_ b: Int) -> Int {
     return a + b
 }
 let result = add(5)

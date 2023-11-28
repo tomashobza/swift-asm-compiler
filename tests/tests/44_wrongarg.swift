@@ -1,3 +1,3 @@
-// SYNTACTIC_ERR
+// FUNCTIONS_ERR
 // TODO: zjistit si co tady se ma dit
 let length = length(5)

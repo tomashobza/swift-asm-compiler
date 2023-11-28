@@ -1,5 +1,5 @@
 // NO_ERR
-func fibonacci(n: Int) -> Int {
+func fibonacci(_ n: Int) -> Int {
     if n <= 1 {
         return n
     } else {

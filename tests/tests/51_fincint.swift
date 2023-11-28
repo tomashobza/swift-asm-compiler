@@ -1,5 +1,5 @@
-// SEMANTICS_ERR
-func multiply(a: Int, b: Int) -> Int {
+// COMPATIBILITY_ERR
+func multiply(_ a: Int,_ b: Int) -> Int {
     return a * b
 }
 multiply(5, 3)
