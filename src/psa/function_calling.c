@@ -123,9 +123,9 @@ bool checkParameter(PSA_Token_stack *main_s, unsigned int param_index, symtable_
         return true;
     }
 
-    if ((*parsed_param).type == found_func->data.func_data->params[param_index].type)
+    if ((*parsed_param).type != found_func->data.func_data->params[param_index].type)
     {
-        throw_error(PARAM_TYPE_ERR, "Parameter %d of function '%s' should be of type %s!", param_index + 1, found_func->id, get_type_name(found_func->data.func_data->params[param_index].type));
+        throw_error(PARAM_TYPE_ERR, "Parameter %d of function '%s' should be of type %d!", param_index + 1, found_func->id, found_func->data.func_data->params[param_index].type);
     }
 
     return (*parsed_param).is_ok && (*parsed_param).type == found_func->data.func_data->params[param_index].type && name_ok;
