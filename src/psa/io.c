@@ -52,7 +52,7 @@ PSA_Token readNextToken(PSA_Token_stack *s, char *next_token_error, int *num_of_
         .expr_type = TYPE_INVALID,
         .preceded_by_nl = true,
     };
-    if (s != NULL && !PSA_Token_stack_empty(s))
+    if (s != NULL && !PSA_Token_stack_empty(s) && s->top != NULL)
     {
         a = PSA_Token_stack_top(s);
     }
