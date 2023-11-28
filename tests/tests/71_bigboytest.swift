@@ -12,7 +12,7 @@ func divide(_ a: Int, _ b: Int) -> Int {
 }
 
 func isEven(_ n: Int) -> Bool {
-    return n % 2 == 0
+    return n / 2 == 0
 }
 
 func factorial(_ n: Int) -> Int {
