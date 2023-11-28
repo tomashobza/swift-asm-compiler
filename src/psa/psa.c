@@ -161,6 +161,7 @@ psa_return_type parse_expression_base(bool is_param)
         // check for an empty expression
         if (a.type == TOKEN_EOF && b.type == TOKEN_EOF)
         {
+            PSA_Token_stack_free(s);
             // printf("Empty expression!\n");
             return (psa_return_type){
                 .end_token = TOKEN_EXPRSN,
@@ -243,12 +244,15 @@ psa_return_type parse_expression_base(bool is_param)
 
                 throw_error(SYNTACTIC_ERR, "Unexpected token '%s' in expression.", b.token_value);
 
+                PSA_Token_stack_free(s);
+                free(handle);
                 return (psa_return_type){
                     .end_token = TOKEN_EXPRSN,
                     .is_ok = false,
                     .type = TYPE_INVALID,
                 };
             }
+            free(handle);
 
             break;
         }
@@ -256,6 +260,7 @@ psa_return_type parse_expression_base(bool is_param)
         default:
             throw_error(SYNTACTIC_ERR, "Invalid combination of operands '%s' and '%s'.", a.token_value, b.token_value);
 
+            PSA_Token_stack_free(s);
             return (psa_return_type){
                 .end_token = TOKEN_EOF,
                 .is_ok = false,
@@ -289,6 +294,7 @@ psa_return_type parse_expression_base(bool is_param)
         printf("Expression type: ");
         print_expression_type(a.expr_type););
 
+    PSA_Token_stack_free(s);
     return (psa_return_type){
         .is_ok = a.expr_type != TYPE_INVALID,
         .type = a.expr_type,
