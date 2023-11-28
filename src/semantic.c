@@ -264,6 +264,8 @@ bool get_func_definition(Token *token, char *name, symtable_item *psa_item)
 {
     Token_stack *token_stack = Token_stack_init();
 
+    bool is_ok = true;
+
     do
     {
         push_token_get_next(token, token_stack);
@@ -271,7 +273,8 @@ bool get_func_definition(Token *token, char *name, symtable_item *psa_item)
 
     if (token == NULL || token->type == TOKEN_EOF)
     {
-        return false;
+        is_ok = false;
+        goto return_tokens;
     }
 
     psa_item->data.func_data = malloc(sizeof(FunctionData));
@@ -304,7 +307,8 @@ bool get_func_definition(Token *token, char *name, symtable_item *psa_item)
             }
             else
             {
-                return false;
+                is_ok = false;
+                goto return_tokens;
             }
             push_token_get_next(token, token_stack);
             break;
@@ -315,7 +319,8 @@ bool get_func_definition(Token *token, char *name, symtable_item *psa_item)
             }
             else
             {
-                return false;
+                is_ok = false;
+                goto return_tokens;
             }
             push_token_get_next(token, token_stack);
             break;
@@ -330,7 +335,8 @@ bool get_func_definition(Token *token, char *name, symtable_item *psa_item)
             }
             else
             {
-                return false;
+                is_ok = false;
+                goto return_tokens;
             }
             // push_token_get_next(token, token_stack);
             break;
@@ -357,22 +363,26 @@ bool get_func_definition(Token *token, char *name, symtable_item *psa_item)
                         }
                         else
                         {
-                            return false;
+                            is_ok = false;
+                            goto return_tokens;
                         }
                     }
                     else
                     {
-                        return false;
+                        is_ok = false;
+                        goto return_tokens;
                     }
                 }
                 else
                 {
-                    return false;
+                    is_ok = false;
+                    goto return_tokens;
                 }
             }
             else
             {
-                return false;
+                is_ok = false;
+                goto return_tokens;
             }
             push_token_get_next(token, token_stack);
             break;
@@ -390,7 +400,8 @@ bool get_func_definition(Token *token, char *name, symtable_item *psa_item)
             }
             else
             {
-                return false;
+                is_ok = false;
+                goto return_tokens;
             }
             break;
         case R_BRACKET:
@@ -404,7 +415,8 @@ bool get_func_definition(Token *token, char *name, symtable_item *psa_item)
             }
             else
             {
-                return false;
+                is_ok = false;
+                goto return_tokens;
             }
             push_token_get_next(token, token_stack);
             break;
@@ -416,15 +428,18 @@ bool get_func_definition(Token *token, char *name, symtable_item *psa_item)
             }
             else
             {
-                return false;
+                is_ok = false;
+                goto return_tokens;
             }
             push_token_get_next(token, token_stack);
             break;
         default:
-            return false;
+            is_ok = false;
+            goto return_tokens;
         }
     }
 
+return_tokens:
     // return tokens to scanner
     return_token(*token);
     while (token_stack->size > 1)
@@ -433,7 +448,7 @@ bool get_func_definition(Token *token, char *name, symtable_item *psa_item)
         return_token(*token);
     }
 
-    return true;
+    return is_ok;
 }
 
 int check_semantic(Token *token, Sem_rule sem_rule)

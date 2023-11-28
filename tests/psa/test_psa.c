@@ -54,6 +54,21 @@ int main(int argc, char const *argv[])
 
     symtable_add(new_item, symtable_stack_top(sym_st));
 
+    symtable_item new_item2 = (symtable_item){
+        .id = "prom",
+        .type = VARIABLE,
+        .data = {
+            .var_data = &(VariableData){
+                .type = TYPE_INT_NIL,
+                .is_const = false,
+                .is_initialized = false,
+                .is_param = false,
+            },
+        },
+    };
+
+    symtable_add(new_item2, symtable_stack_top(sym_st));
+
     psa_return_type psa_ret = parse_expression();
 
     DEBUG_PSA_CODE(
