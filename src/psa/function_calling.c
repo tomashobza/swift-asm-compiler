@@ -90,6 +90,12 @@ PSA_Token parseFunctionCall(PSA_Token_stack *main_s, PSA_Token id)
         is_ok = false;
     }
 
+    if (!unknown_params && param_counter != (unsigned int)found_func->data.func_data->params_count)
+    {
+        throw_error(SYNTACTIC_ERR, "Wrong number of parameters for function '%s'!", id.token_value);
+        is_ok = false;
+    }
+
     // TODO:check if the correct number of parameters was provided
 
     is_ok = is_ok && params_ok;
@@ -115,6 +121,11 @@ bool checkParameter(PSA_Token_stack *main_s, unsigned int param_index, symtable_
     if (unknown_params)
     {
         return true;
+    }
+
+    if ((*parsed_param).type != found_func->data.func_data->params[param_index].type)
+    {
+        throw_error(PARAM_TYPE_ERR, "Parameter %d of function '%s' should be of type %d!", param_index + 1, found_func->id, found_func->data.func_data->params[param_index].type);
     }
 
     return (*parsed_param).is_ok && (*parsed_param).type == found_func->data.func_data->params[param_index].type && name_ok;
