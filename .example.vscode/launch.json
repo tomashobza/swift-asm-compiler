@@ -6,7 +6,7 @@
       "request": "launch",
       "name": "Launch",
       "program": "${workspaceFolder}/bin/ifjcompiler_debug",
-      "stdio": "${workspaceFolder}/tests/test.in",
+      "stdio": "${workspaceFolder}/tests/test.swift",
       "cwd": "${workspaceFolder}",
       // "preLaunchTask": "Build and Clear",
       "console": "integratedTerminal"
