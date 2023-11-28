@@ -80,7 +80,7 @@ psa_return_type parse_expression_base(bool is_param)
         if (next_token_error > 0 && b.type != TOKEN_EOF)
         {
             return_token(convertPSATokenToToken(b));
-            if (b.preceded_by_nl)
+            if (b.preceded_by_nl || b.type == TOKEN_L_CURLY)
             {
                 next_token_error = 0;
                 b = (PSA_Token){
@@ -237,7 +237,7 @@ psa_return_type parse_expression_base(bool is_param)
             {
                 DEBUG_PSA_CODE(printTokenArray(handle, i););
 
-                printf_red("❌ | Error: invalid expression! Unexpected token '%s' in expression. \n", b.token_value);
+                throw_error(SYNTACTIC_ERR, "Unexpected token '%s' in expression.", b.token_value);
 
                 return (psa_return_type){
                     .end_token = TOKEN_EXPRSN,
@@ -250,7 +250,7 @@ psa_return_type parse_expression_base(bool is_param)
         }
         case '-':
         default:
-            printf_red("❌ | Error: invalid combination of operands! '%s' and '%s' cannot be together, because it wasn't meant to be. \n", a.token_value, b.token_value);
+            throw_error(SYNTACTIC_ERR, "Invalid combination of operands '%s' and '%s'.", a.token_value, b.token_value);
 
             return (psa_return_type){
                 .end_token = TOKEN_EOF,
