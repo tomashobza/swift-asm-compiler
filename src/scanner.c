@@ -293,6 +293,7 @@ int generate_token(Token *token, char *code)
             {
                 c = (char)getchar();
             }
+            ungetc(c, stdin);
             state = NEW_TOKEN;
             break;
         }
