@@ -107,6 +107,10 @@ symtable_item *symtable_find(char *name, symtable table, bool is_func)
         {
             return item;
         }
+        else if (strcmp(item->id, name) == 0 && item->type == VARIABLE)
+        {
+            return item;
+        }
         item = item->next;
     }
 

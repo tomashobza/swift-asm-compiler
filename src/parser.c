@@ -16,7 +16,19 @@
 void get_token(Token *token)
 {
     DEBUG_SYNTAX_CODE(printf(YELLOW "popped: %s" RESET "\n", token->token_value););
-    main_scanner(token);
+    int ret = main_scanner(token);
+    DEBUG_LEXER_CODE(printf(RED "lexer: %d\n" RESET, ret););
+    switch ((Error_code)ret)
+    {
+    case LEXICAL_ERR:
+        throw_error(LEXICAL_ERR, " ");
+        break;
+    case INTERNAL_ERR:
+        throw_error(INTERNAL_ERR, " ");
+        break; // TODO: free pameti, ukoncen programu
+    default:
+        break;
+    }
 }
 
 bool cmp_type(Token *token, Token_type type, Sem_rule sem_rule)
@@ -511,7 +523,6 @@ int parser_main()
 {
     Token *token = malloc(sizeof(Token));
 
-    scanner_init();
     semantic_init();
     add_builtin_functions();
 
@@ -523,7 +534,7 @@ int parser_main()
     }
     else
     {
-        printf(RED "Something went wrong" RESET "\n");
+        throw_error(SYNTACTIC_ERR, RED "Something went wrong!" RESET "\n");
     }
     free(token);
 

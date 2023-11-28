@@ -290,6 +290,10 @@ psa_return_type parse_expression_base(bool is_param)
 
 psa_return_type parse_expression()
 {
+    printf("\n"
+           "PSA: Parsing expression...\n" CYAN);
+    symtable_print(symtable_stack_top(sym_st));
+    printf("\n" RESET);
     return parse_expression_base(false);
 }
 

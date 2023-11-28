@@ -41,6 +41,7 @@ int main_scanner(Token *token)
     {
         line_num++;
     }
+    DEBUG_LEXER_CODE(printf("ret: %d\n", ret););
     return ret;
 }
 int generate_token(Token *token, char *code)
