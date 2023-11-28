@@ -48,6 +48,7 @@
             exit(EXIT_FAILURE);                                             \
         }                                                                   \
         stack->top = NULL;                                                  \
+        stack->size = 0;                                                    \
         return stack;                                                       \
     }                                                                       \
                                                                             \
@@ -82,7 +83,7 @@
                                                                             \
     type type##_stack_top(type##_stack *stack)                              \
     {                                                                       \
-        if (stack->top == NULL)                                             \
+        if (type##_stack_empty(stack))                                      \
         {                                                                   \
             fprintf(stderr, "Top operation failed: stack is empty\n");      \
             exit(EXIT_FAILURE);                                             \
