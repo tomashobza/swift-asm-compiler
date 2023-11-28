@@ -3,7 +3,7 @@
 /* Hlavni telo programu */
 write("Zadejte cislo pro vypocet faktorialu\n")
 let a : Int? = readInt()
-if let a {
+if true {
     if (a < 0) {
         write("Faktorial nelze spocitat\n")
     } else {

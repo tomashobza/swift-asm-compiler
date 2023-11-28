@@ -1,5 +1,5 @@
 // PARAM_TYPE_ERR
-func multiply(a: Int, b: Int) -> Int {
+func multiply(_ a: Int, _ b: Int) -> Int {
     return a * b
 }
 let result = multiply("text", 5)

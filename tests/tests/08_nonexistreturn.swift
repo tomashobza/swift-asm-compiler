@@ -1,2 +1,2 @@
-// RETURN_ERR
+// PARAM_TYPE_ERR
 func missingReturn() -> Int {}

@@ -6,7 +6,7 @@ write("Zadejte cislo pro vypocet faktorialu: ")
 let inp = readInt()
 
 // pomocna funkce pro dekrementaci celeho cisla o zadane cislo
-func decrement(of n: Int by m: Int) -> Int {
+func decrement(of n: Int, by m: Int) -> Int {
     return n - m
 }
 
@@ -16,7 +16,7 @@ func factorial(_ n : Int) -> Int {
     if (n < 2) {
         result = 1
     } else {
-        let decremented_n = decrement(of: n by: 1)
+        let decremented_n = decrement(of: n, by: 1)
         let temp_result = factorial(decremented_n)
         result = n * temp_result
     }

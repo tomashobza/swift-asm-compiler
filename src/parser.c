@@ -205,6 +205,14 @@ bool D_TYPE(Token *token, Sem_rule sem_rule)
         return cmp_type(token, TOKEN_TYPE_DOUBLE, sem_rule);
     case TOKEN_TYPE_BOOL:
         return cmp_type(token, TOKEN_TYPE_BOOL, sem_rule);
+    case TOKEN_TYPE_STRING_NIL:
+        return cmp_type(token, TOKEN_TYPE_STRING_NIL, sem_rule);
+    case TOKEN_TYPE_INT_NIL:
+        return cmp_type(token, TOKEN_TYPE_INT_NIL, sem_rule);
+    case TOKEN_TYPE_DOUBLE_NIL:
+        return cmp_type(token, TOKEN_TYPE_DOUBLE_NIL, sem_rule);
+    case TOKEN_TYPE_BOOL_NIL:
+        return cmp_type(token, TOKEN_TYPE_BOOL_NIL, sem_rule);
     default:
         return false;
     }
