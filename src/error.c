@@ -36,74 +36,24 @@ Error_code print_errors()
 {
     if (error_st == NULL || Error_stack_empty(error_st))
     {
-        printf_green("✅ The compiler found no errors.\n");
+        printf_green("\n✅ The compiler found no errors.\n");
         return NO_ERR;
     }
 
-    // sort the errors by line number
-    Error_stack *sorted = Error_stack_init();
-    Error_stack *sorting_helper = Error_stack_init();
-    if (sorted == NULL || sorting_helper == NULL)
-    {
-        return INTERNAL_ERR;
-    }
-
-    // sort the errors by line number
-    while (!Error_stack_empty(error_st))
-    {
-        Error insertee = Error_stack_pop(error_st);
-
-        if (Error_stack_empty(sorted))
-        {
-            Error_stack_push(sorted, insertee);
-        }
-        else
-        {
-            // pop items from the sorted stack into the sorting_helper stack that have a line number smaller than Pavel's line number
-            Error tmp = Error_stack_top(sorted);
-            while (tmp.line_num < insertee.line_num)
-            {
-                Error_stack_push(sorting_helper, Error_stack_pop(sorted));
-                if (Error_stack_empty(sorted))
-                {
-                    break;
-                }
-                else
-                {
-                    tmp = Error_stack_top(sorted);
-                }
-            }
-
-            // push Pavel into the sorted stack
-            Error_stack_push(sorted, insertee);
-
-            while (!Error_stack_empty(sorting_helper))
-            {
-                Error_stack_push(sorted, Error_stack_pop(sorting_helper));
-            }
-        }
-    }
+    int first_error_code = NO_ERR;
 
     // TODO: add stderr
 
-    printf("COMPILER FOUND ");
-    printf_red("%d ERRORS:\n\n", sorted->size);
+    fprintf(stderr, "\nCOMPILER FOUND ");
+    fprintf_red(stderr, "%d ERRORS:\n\n", error_st->size);
 
-    int first_error_code = NO_ERR;
-
-    // print the sorted errors
-    while (!Error_stack_empty(sorted))
+    while (!Error_stack_empty(error_st))
     {
-        if (sorted->size == 1)
-        {
-            first_error_code = Error_stack_top(sorted).code;
-        }
-
-        printError(Error_stack_pop(sorted));
+        first_error_code = Error_stack_top(error_st).code;
+        printError(Error_stack_pop(error_st));
     }
 
-    Error_stack_free(sorted);
-    Error_stack_free(sorting_helper);
+    Error_stack_free(error_st);
 
     return first_error_code;
 }
@@ -111,11 +61,11 @@ Error_code print_errors()
 void printError(Error error)
 {
     fprintf(stderr, "code:");
-    fprintf(stderr, "%d", error.line_num);
+    fprintf_red(stderr, "%d", error.line_num);
     fprintf(stderr, ": ");
-    fprintf(stderr, "error: ");
+    fprintf_red(stderr, "error: ");
     printErrorCode(error.code);
-    fprintf(stderr, "%s\n\n", error.message);
+    fprintf_red(stderr, "%s\n\n", error.message);
 }
 
 void printErrorCode(Error_code code)
@@ -123,38 +73,38 @@ void printErrorCode(Error_code code)
     switch (code)
     {
     case LEXICAL_ERR:
-        fprintf(stderr, "LEXICAL_ERR");
+        fprintf_red(stderr, "LEXICAL_ERR");
         break;
     case SYNTACTIC_ERR:
-        fprintf(stderr, "SYNTACTIC_ERR");
+        fprintf_red(stderr, "SYNTACTIC_ERR");
         break;
     case FUNCTIONS_ERR:
-        fprintf(stderr, "FUNCTIONS_ERR");
+        fprintf_red(stderr, "FUNCTIONS_ERR");
         break;
     case PARAM_TYPE_ERR:
-        fprintf(stderr, "PARAM_TYPE_ERR");
+        fprintf_red(stderr, "PARAM_TYPE_ERR");
         break;
     case VARIABLES_ERR:
-        fprintf(stderr, "VARIABLES_ERR");
+        fprintf_red(stderr, "VARIABLES_ERR");
         break;
     case RETURN_ERR:
-        fprintf(stderr, "RETURN_ERR");
+        fprintf_red(stderr, "RETURN_ERR");
         break;
     case COMPATIBILITY_ERR:
-        fprintf(stderr, "COMPATIBILITY_ERR");
+        fprintf_red(stderr, "COMPATIBILITY_ERR");
         break;
     case TYPE_ERR:
-        fprintf(stderr, "TYPE_ERR");
+        fprintf_red(stderr, "TYPE_ERR");
         break;
     case SEMANTICS_ERR:
-        fprintf(stderr, "SEMANTICS_ERR");
+        fprintf_red(stderr, "SEMANTICS_ERR");
         break;
     case INTERNAL_ERR:
-        fprintf(stderr, "INTERNAL_ERR");
+        fprintf_red(stderr, "INTERNAL_ERR");
         break;
     default:
-        fprintf(stderr, "UNKNOWN_ERR");
+        fprintf_red(stderr, "UNKNOWN_ERR");
         break;
     }
-    fprintf(stderr, "\n");
+    fprintf_red(stderr, "\n");
 }

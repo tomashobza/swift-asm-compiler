@@ -124,6 +124,7 @@ PSA_Token getHandleType(PSA_Token l_operand, Token_type operation, PSA_Token r_o
                 .expr_type = TYPE_BOOL,
             };
         }
+
         break;
     // for: ??, &&, ||
     case TOKEN_AND:
@@ -151,6 +152,8 @@ PSA_Token getHandleType(PSA_Token l_operand, Token_type operation, PSA_Token r_o
     default:
         break;
     }
+
+    throw_error(COMPATIBILITY_ERR, "Invalid operand types for operation '%c'.", getOperationChar(operation));
 
     return (PSA_Token){
         .type = (Token_type)TOKEN_EXPRSN,

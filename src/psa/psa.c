@@ -281,6 +281,10 @@ psa_return_type parse_expression_base(bool is_param)
         };
     }
 
+    DEBUG_PSA_CODE(
+        printf("Expression type: ");
+        print_expression_type(a.expr_type););
+
     return (psa_return_type){
         .is_ok = a.expr_type != TYPE_INVALID,
         .type = a.expr_type,

@@ -156,3 +156,36 @@ bool canTypeBeNil(Expression_type type)
         return false;
     }
 }
+
+char getOperationChar(Token_type token)
+{
+    switch (token)
+    {
+    case TOKEN_MUL:
+        return '*';
+    case TOKEN_DIV:
+        return '/';
+    case TOKEN_PLUS:
+        return '+';
+    case TOKEN_MINUS:
+        return '-';
+    case TOKEN_EQ:
+        return '=';
+    case TOKEN_NEQ:
+        return '!';
+    case TOKEN_LESS:
+        return '<';
+    case TOKEN_MORE:
+        return '>';
+    case TOKEN_LESS_EQ:
+        return 'L';
+    case TOKEN_MORE_EQ:
+        return 'M';
+    case TOKEN_AND:
+        return '&';
+    case TOKEN_OR:
+        return '|';
+    default:
+        return ' ';
+    }
+}

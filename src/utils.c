@@ -11,206 +11,216 @@
 
 #include "utils.h"
 
-void print_token_type(Token_type type)
+void fprint_token_type(Token_type type, FILE *out)
 {
     switch (type)
     {
     case TOKEN_IF:
-        printf_cyan("TOKEN_IF");
+        fprintf_cyan(out, "TOKEN_IF");
         break;
     case TOKEN_ELSE:
-        printf_cyan("TOKEN_ELSE");
+        fprintf_cyan(out, "TOKEN_ELSE");
         break;
     case TOKEN_WHILE:
-        printf_cyan("TOKEN_WHILE");
+        fprintf_cyan(out, "TOKEN_WHILE");
         break;
     case TOKEN_RETURN:
-        printf_cyan("TOKEN_RETURN");
+        fprintf_cyan(out, "TOKEN_RETURN");
         break;
     case TOKEN_VAR:
-        printf_cyan("TOKEN_VAR");
+        fprintf_cyan(out, "TOKEN_VAR");
         break;
     case TOKEN_LET:
-        printf_cyan("TOKEN_LET");
+        fprintf_cyan(out, "TOKEN_LET");
         break;
     case TOKEN_BREAK:
-        printf_cyan("TOKEN_BREAK");
+        fprintf_cyan(out, "TOKEN_BREAK");
         break;
     case TOKEN_CONTINUE:
-        printf_cyan("TOKEN_CONTINUE");
+        fprintf_cyan(out, "TOKEN_CONTINUE");
         break;
     case TOKEN_TYPE_STRING:
-        printf_cyan("TOKEN_TYPE_STRING");
+        fprintf_cyan(out, "TOKEN_TYPE_STRING");
         break;
     case TOKEN_TYPE_INT:
-        printf_cyan("TOKEN_TYPE_INT");
+        fprintf_cyan(out, "TOKEN_TYPE_INT");
         break;
     case TOKEN_TYPE_DOUBLE:
-        printf_cyan("TOKEN_TYPE_DOUBLE");
+        fprintf_cyan(out, "TOKEN_TYPE_DOUBLE");
         break;
     case TOKEN_TYPE_BOOL:
-        printf_cyan("TOKEN_TYPE_BOOL");
+        fprintf_cyan(out, "TOKEN_TYPE_BOOL");
         break;
     case TOKEN_TYPE_STRING_NIL:
-        printf_cyan("TOKEN_TYPE_STRING_NIL");
+        fprintf_cyan(out, "TOKEN_TYPE_STRING_NIL");
         break;
     case TOKEN_TYPE_INT_NIL:
-        printf_cyan("TOKEN_TYPE_INT_NIL");
+        fprintf_cyan(out, "TOKEN_TYPE_INT_NIL");
         break;
     case TOKEN_TYPE_DOUBLE_NIL:
-        printf_cyan("TOKEN_TYPE_DOUBLE_NIL");
+        fprintf_cyan(out, "TOKEN_TYPE_DOUBLE_NIL");
         break;
     case TOKEN_TYPE_BOOL_NIL:
-        printf_cyan("TOKEN_TYPE_BOOL_NIL");
+        fprintf_cyan(out, "TOKEN_TYPE_BOOL_NIL");
         break;
     case TOKEN_FUNC:
-        printf_cyan("TOKEN_FUNC");
+        fprintf_cyan(out, "TOKEN_FUNC");
         break;
     /*case TOKEN_TYPE_SUFFIX:
-        printf_cyan("TOKEN_TYPE_SUFFIX");
+        fprintf_cyan(out, "TOKEN_TYPE_SUFFIX");
         break;*/
     case TOKEN_IDENTIFICATOR:
-        printf_cyan("TOKEN_IDENTIFICATOR");
+        fprintf_cyan(out, "TOKEN_IDENTIFICATOR");
         break;
     case TOKEN_EOF:
-        printf_cyan("TOKEN_EOF");
+        fprintf_cyan(out, "TOKEN_EOF");
         break;
     case TOKEN_INT:
-        printf_cyan("TOKEN_INT");
+        fprintf_cyan(out, "TOKEN_INT");
         break;
     case TOKEN_DOUBLE:
-        printf_cyan("TOKEN_DOUBLE");
+        fprintf_cyan(out, "TOKEN_DOUBLE");
         break;
     case TOKEN_BOOL:
-        printf_cyan("TOKEN_BOOL");
+        fprintf_cyan(out, "TOKEN_BOOL");
         break;
     case TOKEN_EXP:
-        printf_cyan("TOKEN_EXP");
+        fprintf_cyan(out, "TOKEN_EXP");
         break;
     case TOKEN_STRING:
-        printf_cyan("TOKEN_STRING");
+        fprintf_cyan(out, "TOKEN_STRING");
         break;
     case TOKEN_EQ:
-        printf_cyan("TOKEN_EQ");
+        fprintf_cyan(out, "TOKEN_EQ");
         break;
     case TOKEN_NEQ:
-        printf_cyan("TOKEN_NEQ");
+        fprintf_cyan(out, "TOKEN_NEQ");
         break;
     case TOKEN_LESS:
-        printf_cyan("TOKEN_LESS");
+        fprintf_cyan(out, "TOKEN_LESS");
         break;
     case TOKEN_MORE:
-        printf_cyan("TOKEN_MORE");
+        fprintf_cyan(out, "TOKEN_MORE");
         break;
     case TOKEN_MORE_EQ:
-        printf_cyan("TOKEN_MORE_EQ");
+        fprintf_cyan(out, "TOKEN_MORE_EQ");
         break;
     case TOKEN_LESS_EQ:
-        printf_cyan("TOKEN_LESS_EQ");
+        fprintf_cyan(out, "TOKEN_LESS_EQ");
         break;
     case TOKEN_PLUS:
-        printf_cyan("TOKEN_PLUS");
+        fprintf_cyan(out, "TOKEN_PLUS");
         break;
     case TOKEN_MINUS:
-        printf_cyan("TOKEN_MINUS");
+        fprintf_cyan(out, "TOKEN_MINUS");
         break;
     case TOKEN_MUL:
-        printf_cyan("TOKEN_MUL");
+        fprintf_cyan(out, "TOKEN_MUL");
         break;
     case TOKEN_DIV:
-        printf_cyan("TOKEN_DIV");
+        fprintf_cyan(out, "TOKEN_DIV");
         break;
     case TOKEN_BINARY_OPERATOR:
-        printf_cyan("TOKEN_BINARY_OPERATOR");
+        fprintf_cyan(out, "TOKEN_BINARY_OPERATOR");
         break;
     case TOKEN_ASSIGN:
-        printf_cyan("TOKEN_ASSIGN");
+        fprintf_cyan(out, "TOKEN_ASSIGN");
         break;
     case TOKEN_L_BRACKET:
-        printf_cyan("TOKEN_L_BRACKET");
+        fprintf_cyan(out, "TOKEN_L_BRACKET");
         break;
     case TOKEN_R_BRACKET:
-        printf_cyan("TOKEN_R_BRACKET");
+        fprintf_cyan(out, "TOKEN_R_BRACKET");
         break;
     case TOKEN_R_CURLY:
-        printf_cyan("TOKEN_R_CURLY");
+        fprintf_cyan(out, "TOKEN_R_CURLY");
         break;
     case TOKEN_L_CURLY:
-        printf_cyan("TOKEN_L_CURLY");
+        fprintf_cyan(out, "TOKEN_L_CURLY");
         break;
     case TOKEN_COMMA:
-        printf_cyan("TOKEN_COMMA");
+        fprintf_cyan(out, "TOKEN_COMMA");
         break;
     case TOKEN_ARROW:
-        printf_cyan("TOKEN_ARROW");
+        fprintf_cyan(out, "TOKEN_ARROW");
         break;
     case TOKEN_NIL:
-        printf_cyan("TOKEN_NIL");
+        fprintf_cyan(out, "TOKEN_NIL");
         break;
     case TOKEN_DOUBLE_DOT:
-        printf_cyan("TOKEN_DOUBLE_DOT");
+        fprintf_cyan(out, "TOKEN_DOUBLE_DOT");
         break;
     case TOKEN_NOT:
-        printf_cyan("TOKEN_NOT");
+        fprintf_cyan(out, "TOKEN_NOT");
         break;
     case TOKEN_AND:
-        printf_cyan("TOKEN_AND");
+        fprintf_cyan(out, "TOKEN_AND");
         break;
     case TOKEN_OR:
-        printf_cyan("TOKEN_OR");
+        fprintf_cyan(out, "TOKEN_OR");
         break;
     case TOKEN_UNDERSCORE:
-        printf_cyan("TOKEN_UNDERSCORE");
+        fprintf_cyan(out, "TOKEN_UNDERSCORE");
         break;
     case TOKEN_FUNC_ID:
-        printf_cyan("TOKEN_FUNC_ID");
+        fprintf_cyan(out, "TOKEN_FUNC_ID");
         break;
     case TOKEN_EXPRSN:
-        printf_yellow("TOKEN_EXPRSN");
+        fprintf_yellow(out, "TOKEN_EXPRSN");
         break;
     case TOKEN_SHIFT:
-        printf_yellow("TOKEN_SHIFT");
+        fprintf_yellow(out, "TOKEN_SHIFT");
         break;
     case TOKEN_UNSHIFT:
-        printf_yellow("TOKEN_UNSHIFT");
+        fprintf_yellow(out, "TOKEN_UNSHIFT");
         break;
     default:
-        printf_red("[invalid token]");
+        fprintf_red(out, "[invalid token]");
         break;
     }
-    printf_cyan("\n");
+    fprintf_cyan(out, "\n");
 }
 
-void print_expression_type(Expression_type type)
+void print_token_type(Token_type type)
+{
+    fprint_token_type(type, stdout);
+}
+
+void fprint_expression_type(Expression_type type, FILE *out)
 {
     switch (type)
     {
     case TYPE_INVALID:
-        printf_cyan("TYPE_INVALID");
+        fprintf_cyan(out, "TYPE_INVALID");
         break;
     case TYPE_INT:
-        printf_cyan("TYPE_INT");
+        fprintf_cyan(out, "TYPE_INT");
         break;
     case TYPE_DOUBLE:
-        printf_cyan("TYPE_DOUBLE");
+        fprintf_cyan(out, "TYPE_DOUBLE");
         break;
     case TYPE_STRING:
-        printf_cyan("TYPE_STRING");
+        fprintf_cyan(out, "TYPE_STRING");
         break;
     case TYPE_BOOL:
-        printf_cyan("TYPE_BOOL");
+        fprintf_cyan(out, "TYPE_BOOL");
         break;
     case TYPE_NIL:
-        printf_cyan("TYPE_NIL");
+        fprintf_cyan(out, "TYPE_NIL");
         break;
     case TYPE_EMPTY:
-        printf_cyan("TYPE_EMPTY");
+        fprintf_cyan(out, "TYPE_EMPTY");
         break;
     default:
-        printf_red("[invalid type]");
+        fprintf_red(out, "[invalid type]");
         break;
     }
-    printf("\n");
+    fprintf(out, "\n");
+}
+
+void print_expression_type(Expression_type type)
+{
+    fprint_expression_type(type, stdout);
 }
 
 Token convertPSATokenToToken(PSA_Token psa_tkn)

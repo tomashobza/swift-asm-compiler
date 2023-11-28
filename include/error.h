@@ -16,7 +16,7 @@
 typedef enum
 {
     NO_ERR = EXIT_SUCCESS, // žádná chyba
-    LEXICAL_ERR = 1,       // chyba v programu v rámci lexikální analýzy(chybná struktura aktuálního lexému)
+    LEXICAL_ERR = 1,       // chyba v programu v rámci lexikální analýzy (chybná struktura aktuálního lexému)
     SYNTACTIC_ERR = 2,     // chyba v programu v rámci syntaktické analýzy (chybná syntaxe programu, chybějící hlavička, atp.)
     FUNCTIONS_ERR = 3,     // sémantická chyba v programu – nedefinovaná funkce, redefinice proměnné
     PARAM_TYPE_ERR = 4,    // sémantická chyba v programu – špatný počet/typ parametrů u volání funkce či špatný typ návratové hodnoty z funkce

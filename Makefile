@@ -6,7 +6,7 @@ DEBUG_LEXER?=0
 # Compiler and flags
 CC = gcc
 CFLAGS = -Iinclude -Werror -Wall -Wextra -std=c99 -fdiagnostics-color=always
-TESTFLAGS = -g -DDEBUG_PSA=$(DEBUG_PSA) -DDEBUG_SEMANTIC=$(DEBUG_SEMANTIC) -DDEBUG_SYNTAX=$(DEBUG_SYNTAX) -DDEBUG_LEXER=$(DEBUG_LEXER)
+TESTFLAGS = -g -D DEBUG_SEMANTIC=$(DEBUG_SEMANTIC) -D DEBUG_SYNTAX=$(DEBUG_SYNTAX) -D DEBUG_LEXER=$(DEBUG_LEXER)
 
 # Source files (excluding main.c for test build)
 SRCS = $(filter-out src/main.c, $(wildcard src/*.c)) $(filter-out src/main.c, $(wildcard src/**/*.c))
@@ -20,7 +20,7 @@ TARGET = ifjcompiler
 # Test executable name
 TEST_TARGET = ifjcompiler_debug
 
-# TEST_INPUT?=tests/test.in
+TESTFILE?=-1
 
 # Default target
 all: $(TARGET)
@@ -29,13 +29,21 @@ $(TARGET): src/main.c $(SRCS)
 	$(CC) $(CFLAGS) $^ -o bin/$@
 	cp bin/$(TARGET) $(TARGET)
 
-build: $(SRCS) $(TESTS)
-	@$(CC) $(CFLAGS) $(TESTFLAGS) $^ -o bin/$(TEST_TARGET)
+# build: $(SRCS) $(TESTS)
+# 	@$(CC) $(CFLAGS) $^ -o bin/$(TEST_TARGET)
 
 # Test target
 test: $(SRCS) $(TESTS)
-	@$(CC) $(CFLAGS) $(TESTFLAGS) $^ -o bin/$(TEST_TARGET)
+	@$(CC) $(CFLAGS) -D DEBUG_PSA=$(DEBUG_PSA) $(TESTFLAGS) $^ -o bin/$(TEST_TARGET)
 	./bin/$(TEST_TARGET) <tests/test.swift
+
+test-all: $(SRCS) $(TESTS)
+	@$(CC) $(CFLAGS) -D DEBUG_PSA=$(DEBUG_PSA) $(TESTFLAGS) $^ -o bin/$(TEST_TARGET)
+	bash tests/test.sh $(TESTFILE)
+
+test-psa: $(SRCS) tests/psa/test_psa.c
+	@$(CC) $(CFLAGS) -D DEBUG_PSA=1 $(TESTFLAGS) $^ -o bin/$(TEST_TARGET)
+	bash tests/psa/test_psa.sh $(TESTFILE)
 
 # clean, compile and run
 run: clean all
