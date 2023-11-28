@@ -90,6 +90,12 @@ PSA_Token parseFunctionCall(PSA_Token_stack *main_s, PSA_Token id)
         is_ok = false;
     }
 
+    if (!unknown_params && param_counter != (unsigned int)found_func->data.func_data->params_count)
+    {
+        throw_error(SYNTACTIC_ERR, "Wrong number of parameters for function '%s'!", id.token_value);
+        is_ok = false;
+    }
+
     // TODO:check if the correct number of parameters was provided
 
     is_ok = is_ok && params_ok;
