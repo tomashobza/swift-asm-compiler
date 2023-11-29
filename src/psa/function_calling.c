@@ -22,7 +22,9 @@ PSA_Token parseFunctionCall(PSA_Token_stack *main_s, PSA_Token id)
     bool is_ok = true;
 
     // check if the id of the function is in the symtable
-    symtable_item *found_func = symtable_find_in_stack(id.token_value, sym_st, true);
+    symtable_item *found_func = malloc(sizeof(symtable_item));
+    *found_func = *symtable_find_in_stack(id.token_value, sym_st, true);
+
     if (found_func == NULL)
     {
         is_ok = false;
@@ -56,7 +58,7 @@ PSA_Token parseFunctionCall(PSA_Token_stack *main_s, PSA_Token id)
         throw_error(SYNTACTIC_ERR, "Missing '(' after function name!");
 
         is_ok = false;
-
+        free(found_func);
         return ERROR_TOKEN;
     }
 
@@ -102,13 +104,16 @@ PSA_Token parseFunctionCall(PSA_Token_stack *main_s, PSA_Token id)
 
     if (is_ok)
     {
+        symtable_item func_item = *found_func;
+        free(found_func);
         return (PSA_Token){
             .type = TOKEN_EXPRSN,
-            .token_value = found_func->id,
-            .expr_type = found_func->data.func_data->return_type,
+            .token_value = func_item.id,
+            .expr_type = func_item.data.func_data->return_type,
             .preceded_by_nl = id.preceded_by_nl};
     }
 
+    free(found_func);
     return ERROR_TOKEN;
 }
 
