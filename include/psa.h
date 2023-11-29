@@ -51,6 +51,12 @@ typedef struct
     bool preceded_by_nl;
 } PSA_Token;
 
+/**
+ * @brief PSA_Token that represents the end of the file. It is used as a bottom of the stack and for error states.
+ */
+#define PSA_TOKEN_EOF \
+    (PSA_Token) { .type = TOKEN_EOF, .token_value = "$", .expr_type = TYPE_INVALID, .preceded_by_nl = true, .is_literal = false }
+
 // STACK FUNCTIONS
 DECLARE_STACK_FUNCTIONS(PSA_Token);
 

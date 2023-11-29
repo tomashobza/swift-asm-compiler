@@ -17,12 +17,7 @@ PSA_Token readNextToken(PSA_Token_stack *s, char *next_token_error, int *num_of_
     if (tkn == NULL)
     {
         throw_error(INTERNAL_ERR, "Memory allocation failed.");
-        return (PSA_Token){
-            .type = TOKEN_EOF,
-            .token_value = "$",
-            .expr_type = TYPE_INVALID,
-            .preceded_by_nl = true,
-        };
+        return PSA_TOKEN_EOF;
     }
     *tkn = (Token){
         .type = (Token_type)TOKEN_EOF,
@@ -56,12 +51,7 @@ PSA_Token readNextToken(PSA_Token_stack *s, char *next_token_error, int *num_of_
 
     free(tkn);
 
-    PSA_Token a = (PSA_Token){
-        .type = TOKEN_EOF,
-        .token_value = "$",
-        .expr_type = TYPE_INVALID,
-        .preceded_by_nl = true,
-    };
+    PSA_Token a = PSA_TOKEN_EOF;
 
     if (s != NULL && !PSA_Token_stack_empty(s) && s->top != NULL)
     {

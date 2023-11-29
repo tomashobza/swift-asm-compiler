@@ -13,11 +13,7 @@
 
 PSA_Token parseFunctionCall(PSA_Token_stack *main_s, PSA_Token id)
 {
-    PSA_Token ERROR_TOKEN = (PSA_Token){
-        .type = TOKEN_EXPRSN,
-        .token_value = id.token_value,
-        .expr_type = TYPE_INVALID,
-        .preceded_by_nl = false};
+    PSA_Token ERROR_TOKEN = PSA_TOKEN_EOF;
 
     bool is_ok = true;
 
