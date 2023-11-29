@@ -52,6 +52,8 @@ PSA_Token getHandleType(PSA_Token l_operand, Token_type operation, PSA_Token r_o
             .type = (Token_type)TOKEN_EXPRSN,
             .token_value = "E",
             .expr_type = TYPE_INVALID,
+            .preceded_by_nl = false,
+            .is_literal = false,
         };
     }
 
@@ -66,6 +68,8 @@ PSA_Token getHandleType(PSA_Token l_operand, Token_type operation, PSA_Token r_o
                 .type = (Token_type)TOKEN_EXPRSN,
                 .token_value = "E",
                 .expr_type = TYPE_STRING,
+                .preceded_by_nl = false,
+                .is_literal = false,
             };
         }
         __attribute__((fallthrough));
@@ -79,6 +83,8 @@ PSA_Token getHandleType(PSA_Token l_operand, Token_type operation, PSA_Token r_o
                 .type = (Token_type)TOKEN_EXPRSN,
                 .token_value = "E",
                 .expr_type = TYPE_INVALID,
+                .preceded_by_nl = false,
+                .is_literal = false,
             };
         }
 
@@ -91,6 +97,8 @@ PSA_Token getHandleType(PSA_Token l_operand, Token_type operation, PSA_Token r_o
                 .type = (Token_type)TOKEN_EXPRSN,
                 .token_value = "E",
                 .expr_type = type,
+                .preceded_by_nl = false,
+                .is_literal = false,
             };
         }
 
@@ -107,6 +115,8 @@ PSA_Token getHandleType(PSA_Token l_operand, Token_type operation, PSA_Token r_o
                 .type = (Token_type)TOKEN_EXPRSN,
                 .token_value = "E",
                 .expr_type = TYPE_BOOL,
+                .preceded_by_nl = false,
+                .is_literal = false,
             };
         }
         break;
@@ -122,6 +132,8 @@ PSA_Token getHandleType(PSA_Token l_operand, Token_type operation, PSA_Token r_o
                 .type = (Token_type)TOKEN_EXPRSN,
                 .token_value = "E",
                 .expr_type = TYPE_BOOL,
+                .preceded_by_nl = false,
+                .is_literal = false,
             };
         }
 
@@ -135,6 +147,8 @@ PSA_Token getHandleType(PSA_Token l_operand, Token_type operation, PSA_Token r_o
                 .type = (Token_type)TOKEN_EXPRSN,
                 .token_value = "E",
                 .expr_type = TYPE_BOOL,
+                .preceded_by_nl = false,
+                .is_literal = false,
             };
         }
         break;
@@ -146,6 +160,8 @@ PSA_Token getHandleType(PSA_Token l_operand, Token_type operation, PSA_Token r_o
                 .type = (Token_type)TOKEN_EXPRSN,
                 .token_value = "E",
                 .expr_type = getTypeCombination(l_operand, r_operand),
+                .preceded_by_nl = false,
+                .is_literal = false,
             };
         }
         break;
@@ -159,6 +175,8 @@ PSA_Token getHandleType(PSA_Token l_operand, Token_type operation, PSA_Token r_o
         .type = (Token_type)TOKEN_EXPRSN,
         .token_value = "E",
         .expr_type = TYPE_INVALID,
+        .preceded_by_nl = false,
+        .is_literal = false,
     };
 }
 

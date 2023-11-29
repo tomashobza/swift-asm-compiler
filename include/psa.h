@@ -49,6 +49,7 @@ typedef struct
     char *token_value;
     Expression_type expr_type;
     bool preceded_by_nl;
+    bool is_literal;
 } PSA_Token;
 
 /**
@@ -97,8 +98,6 @@ typedef enum
     RULE_1f = TOKEN_BOOL,                                                                      // E -> i
     RULE_2 = (char)TOKEN_L_BRACKET << 16 | (char)TOKEN_EXPRSN << 8 | (char)TOKEN_R_BRACKET,    // E -> (E)
     RULE_3 = (char)TOKEN_NOT << 8 | (char)TOKEN_EXPRSN,                                        // E -> !E
-    RULE_4 = (char)TOKEN_PLUS << 8 | (char)TOKEN_EXPRSN,                                       // E -> +E
-    RULE_5 = (char)TOKEN_MINUS << 8 | (char)TOKEN_EXPRSN,                                      // E -> -E
     RULE_6 = (char)TOKEN_EXPRSN << 16 | (char)TOKEN_MUL << 8 | (char)TOKEN_EXPRSN,             // E -> E*E
     RULE_7 = (char)TOKEN_EXPRSN << 16 | (char)TOKEN_DIV << 8 | (char)TOKEN_EXPRSN,             // E -> E/E
     RULE_8 = (char)TOKEN_EXPRSN << 16 | (char)TOKEN_PLUS << 8 | (char)TOKEN_EXPRSN,            // E -> E+E
@@ -141,6 +140,15 @@ uint32_t reverseHandleTypesToUInt32(Expression_type *types, unsigned int len);
  * @return Expression_type - expression type of the token
  */
 Expression_type getTypeFromToken(Token_type token);
+
+/**
+ * @brief Check if the token is a literal.
+ *
+ * @param token token to check
+ * @return true
+ * @return false
+ */
+bool isTokenLiteral(Token_type token);
 
 /**
  * @brief Checks if the token is an operand.
@@ -205,6 +213,14 @@ char getOperationChar(Token_type token);
  * @return PSA_Token - token derived from the handle
  */
 PSA_Token getRule(PSA_Token *handle, unsigned int len);
+
+/**
+ * @brief Get all the tokens forming the handle from the stack.
+ *
+ * @param s stack of tokens
+ * @return PSA_Token* - array of tokens (handle)
+ */
+PSA_Token *getHandleFromStack(PSA_Token_stack *s, int *i);
 
 /**
  * @brief LUT that returns the value of the token for the precedence table.

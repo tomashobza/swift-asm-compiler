@@ -55,6 +55,22 @@ Expression_type getTypeFromToken(Token_type token)
     }
 }
 
+bool isTokenLiteral(Token_type token)
+{
+    switch (token)
+    {
+    case TOKEN_INT:
+    case TOKEN_DOUBLE:
+    case TOKEN_EXP:
+    case TOKEN_BOOL:
+    case TOKEN_STRING:
+    case TOKEN_NIL:
+        return true;
+    default:
+        return false;
+    }
+}
+
 bool isTokenOperand(Token_type token)
 {
     switch (token)

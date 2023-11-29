@@ -43,6 +43,7 @@ PSA_Token getRule(PSA_Token *handle, unsigned int len)
             .type = (Token_type)TOKEN_EXPRSN,
             .token_value = "E",
             .expr_type = handle[0].expr_type,
+            .is_literal = isTokenLiteral(handle[0].type),
         };
     case RULE_1a:
     case RULE_1b:
@@ -68,6 +69,7 @@ PSA_Token getRule(PSA_Token *handle, unsigned int len)
             .type = (Token_type)TOKEN_EXPRSN,
             .token_value = "E",
             .expr_type = type,
+            .is_literal = isTokenLiteral(handle[0].type),
         };
     case RULE_2:
         DEBUG_PSA_CODE(printf_cyan("rule: E -> (E)\n"););
@@ -75,6 +77,7 @@ PSA_Token getRule(PSA_Token *handle, unsigned int len)
             .type = (Token_type)TOKEN_EXPRSN,
             .token_value = "E",
             .expr_type = handle[1].expr_type,
+            .is_literal = handle[1].is_literal,
         };
     case RULE_3:
         DEBUG_PSA_CODE(printf_cyan("rule: E -> !E\n"););
@@ -82,20 +85,7 @@ PSA_Token getRule(PSA_Token *handle, unsigned int len)
             .type = (Token_type)TOKEN_EXPRSN,
             .token_value = "E",
             .expr_type = handle[1].expr_type,
-        };
-    case RULE_4:
-        DEBUG_PSA_CODE(printf_cyan("rule: E -> +E\n"););
-        return (PSA_Token){
-            .type = (Token_type)TOKEN_EXPRSN,
-            .token_value = "E",
-            .expr_type = handle[1].expr_type,
-        };
-    case RULE_5:
-        DEBUG_PSA_CODE(printf_cyan("rule: E -> -E\n"););
-        return (PSA_Token){
-            .type = (Token_type)TOKEN_EXPRSN,
-            .token_value = "E",
-            .expr_type = handle[1].expr_type,
+            .is_literal = handle[1].is_literal,
         };
     case RULE_6:
         DEBUG_PSA_CODE(printf_cyan("rule: E -> E*E\n"););
@@ -152,4 +142,27 @@ PSA_Token getRule(PSA_Token *handle, unsigned int len)
         .type = (Token_type)TOKEN_EOF,
         .token_value = "$",
     };
+}
+
+PSA_Token *getHandleFromStack(PSA_Token_stack *s, int *i)
+{
+    PSA_Token *handle = malloc(sizeof(PSA_Token) * s->size);
+
+    *i = 0;
+    while (PSA_Token_stack_top(s).type != TOKEN_SHIFT)
+    {
+        handle[*i] = ((PSA_Token)PSA_Token_stack_pop(s));
+        *i = *i + 1;
+    }
+    (void)PSA_Token_stack_pop(s); // pop the <
+
+    // reverse the array
+    for (int j = 0; j < *i / 2; j++)
+    {
+        PSA_Token tmp = handle[j];
+        handle[j] = handle[*i - j - 1];
+        handle[*i - j - 1] = tmp;
+    }
+
+    return handle;
 }
