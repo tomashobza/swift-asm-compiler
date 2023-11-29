@@ -68,7 +68,7 @@
                                                                             \
     type type##_stack_pop(type##_stack *stack)                              \
     {                                                                       \
-        if (stack->top == NULL)                                             \
+        if (stack->top == NULL || type##_stack_empty(stack))                \
         {                                                                   \
             fprintf(stderr, "Pop operation failed: stack is empty\n");      \
             exit(EXIT_FAILURE);                                             \
@@ -104,7 +104,7 @@
                                                                             \
     bool type##_stack_empty(type##_stack *stack)                            \
     {                                                                       \
-        if (stack->top != NULL)                                             \
+        if (stack != NULL && stack->top != NULL && stack->size > 0)         \
         {                                                                   \
             return false;                                                   \
         }                                                                   \
