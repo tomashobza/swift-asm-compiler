@@ -69,7 +69,7 @@ int generate_token(Token *token, char *code)
         {"continue", TOKEN_CONTINUE}};
     token->preceded_by_nl = false;
     int code_len = 1;
-    code = malloc(sizeof(char) * (code_len + 1));
+    code = calloc(code_len + 1, sizeof(char));
     if (code == NULL)
     {
         ret = INTERNAL_ERR;
@@ -750,7 +750,7 @@ void check_length(int *code_len, int add, char *code)
     {
         *code_len = ((long unsigned int)*code_len) * 2;
 
-        char *new_code = malloc(sizeof(char) * ((long unsigned int)*code_len + 1));
+        char *new_code = calloc((long unsigned int)*code_len + 1, sizeof(char));
         if (new_code == NULL)
         {
             ret = INTERNAL_ERR;
