@@ -22,8 +22,13 @@ PSA_Token parseFunctionCall(PSA_Token_stack *main_s, PSA_Token id)
     bool is_ok = true;
 
     // check if the id of the function is in the symtable
-    symtable_item *found_func = malloc(sizeof(symtable_item));
-    *found_func = *symtable_find_in_stack(id.token_value, sym_st, true);
+    symtable_item *found_func = NULL;
+    symtable_item *potentially_found_func = symtable_find_in_stack(id.token_value, sym_st, true);
+    if (potentially_found_func != NULL && potentially_found_func->type == FUNCTION)
+    {
+        found_func = malloc(sizeof(symtable_item));
+        *found_func = *potentially_found_func;
+    }
 
     if (found_func == NULL)
     {
