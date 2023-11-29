@@ -140,7 +140,7 @@ int generate_token(Token *token, char *code);
  * @param add count of charactes that need to be added to string code
  * @param code pointer to char * that is being reallocated
  */
-void check_length(int *code_len, int add, char *code);
+void check_length(int *code_len, int add, char **code);
 
 /**
  * @def function main_scanner is called from parser.c after 1 token has already been parsed
