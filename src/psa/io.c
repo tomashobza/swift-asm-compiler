@@ -14,13 +14,22 @@
 PSA_Token readNextToken(PSA_Token_stack *s, char *next_token_error, int *num_of_brackets)
 {
     Token *tkn = malloc(sizeof(Token));
+    if (tkn == NULL)
+    {
+        throw_error(INTERNAL_ERR, "Memory allocation failed.");
+        return (PSA_Token){
+            .type = TOKEN_EOF,
+            .token_value = "$",
+            .expr_type = TYPE_INVALID,
+            .preceded_by_nl = true,
+        };
+    }
     *tkn = (Token){
         .type = (Token_type)TOKEN_EOF,
         .token_value = "$",
         .preceded_by_nl = true,
     };
 
-    // TODO: hodit (si lano/chybu)
     Error_code scanner_returned = (Error_code)main_scanner(tkn);
     if (scanner_returned != NO_ERR)
     {
@@ -44,6 +53,7 @@ PSA_Token readNextToken(PSA_Token_stack *s, char *next_token_error, int *num_of_
         .expr_type = getTypeFromToken(tkn->type),
         .preceded_by_nl = tkn->type == TOKEN_EOF ? true : tkn->preceded_by_nl,
     };
+
     free(tkn);
 
     PSA_Token a = (PSA_Token){
@@ -52,9 +62,10 @@ PSA_Token readNextToken(PSA_Token_stack *s, char *next_token_error, int *num_of_
         .expr_type = TYPE_INVALID,
         .preceded_by_nl = true,
     };
+
     if (s != NULL && !PSA_Token_stack_empty(s) && s->top != NULL)
     {
-        a = PSA_Token_stack_top(s);
+        a = PSA_Token_stack_top(s); // HERE IS THE SEGFAULT
     }
 
     *next_token_error = 0;
