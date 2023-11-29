@@ -211,6 +211,18 @@ void fprint_expression_type(Expression_type type, FILE *out)
     case TYPE_EMPTY:
         fprintf_cyan(out, "TYPE_EMPTY");
         break;
+    case TYPE_INT_NIL:
+        fprintf_cyan(out, "TYPE_INT_NIL");
+        break;
+    case TYPE_DOUBLE_NIL:
+        fprintf_cyan(out, "TYPE_DOUBLE_NIL");
+        break;
+    case TYPE_STRING_NIL:
+        fprintf_cyan(out, "TYPE_STRING_NIL");
+        break;
+    case TYPE_BOOL_NIL:
+        fprintf_cyan(out, "TYPE_BOOL_NIL");
+        break;
     default:
         fprintf_red(out, "[invalid type]");
         break;
