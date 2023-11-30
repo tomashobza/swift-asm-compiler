@@ -61,7 +61,7 @@ PSA_Token readNextToken(PSA_Token_stack *s, char *next_token_error, int *num_of_
     *next_token_error = 0;
 
     // detect expression end by a missing operator between operands
-    *next_token_error += isTokenOperand(a.type) && !isTokenBinaryOperator(b.type) && !isTokenBracket(b.type) ? 1 : 0;
+    *next_token_error += (isTokenOperand(a.type) && !isTokenBinaryOperator(b.type) && !isTokenBracket(b.type) && b.type != TOKEN_NOT) ? 1 : 0;
     *next_token_error = *next_token_error << 1;
 
     // detect expression end by an illegal token for expression being read
