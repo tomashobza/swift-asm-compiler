@@ -13,6 +13,11 @@
 
 Expression_type getTypeCombination(PSA_Token l_operand, PSA_Token r_operand)
 {
+    if (l_operand.expr_type == TYPE_INVALID || r_operand.expr_type == TYPE_INVALID)
+    {
+        return TYPE_INVALID;
+    }
+
     switch (((char)l_operand.expr_type << 8) | r_operand.expr_type)
     {
     case ((char)TYPE_INT << 8) | TYPE_INT:
@@ -41,6 +46,14 @@ Expression_type getTypeCombination(PSA_Token l_operand, PSA_Token r_operand)
         }
     case ((char)TYPE_DOUBLE << 8) | TYPE_DOUBLE:
         return TYPE_DOUBLE;
+    case ((char)TYPE_STRING << 8) | TYPE_STRING:
+        return TYPE_STRING;
+    case ((char)TYPE_INT_NIL << 8) | TYPE_INT_NIL:
+        return TYPE_INT_NIL;
+    case ((char)TYPE_DOUBLE_NIL << 8) | TYPE_DOUBLE_NIL:
+        return TYPE_DOUBLE_NIL;
+    case ((char)TYPE_STRING_NIL << 8) | TYPE_STRING_NIL:
+        return TYPE_STRING_NIL;
     default:
         return TYPE_INVALID;
     }
@@ -122,6 +135,7 @@ PSA_Token getHandleType(PSA_Token l_operand, Token_type operation, PSA_Token r_o
     case TOKEN_MORE:
     case TOKEN_LESS_EQ:
     case TOKEN_MORE_EQ:
+    {
         // can be (int, int), (int, double), (double, int), (double, double), (string, string)
         if (getTypeCombination(l_operand, r_operand) != TYPE_INVALID || (l_operand.expr_type == TYPE_STRING && r_operand.expr_type == TYPE_STRING))
         {
@@ -135,6 +149,7 @@ PSA_Token getHandleType(PSA_Token l_operand, Token_type operation, PSA_Token r_o
         }
 
         break;
+    }
     // for: ??, &&, ||
     case TOKEN_AND:
     case TOKEN_OR:

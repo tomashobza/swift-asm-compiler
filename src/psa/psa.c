@@ -189,6 +189,9 @@ psa_return_type parse_expression_base(bool is_param)
 
             PSA_Token rule = getRule(handle, handle_len);
             rule.line_num = handle_line_num;
+            DEBUG_PSA_CODE(printf_cyan("rule type: ");
+                           print_expression_type(rule.expr_type);
+                           printf("\n"););
 
             if (rule.type != TOKEN_EOF)
             {

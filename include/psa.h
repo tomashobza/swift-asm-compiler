@@ -98,6 +98,7 @@ typedef enum
     RULE_1d = TOKEN_EXP,                                                                        // E -> i
     RULE_1e = TOKEN_STRING,                                                                     // E -> i
     RULE_1f = TOKEN_BOOL,                                                                       // E -> i
+    RULE_1g = TOKEN_NIL,                                                                        // E -> i
     RULE_2 = (char)TOKEN_L_BRACKET << 16 | (char)TOKEN_EXPRSN << 8 | (char)TOKEN_R_BRACKET,     // E -> (E)
     RULE_3 = (char)TOKEN_NOT << 8 | (char)TOKEN_EXPRSN,                                         // E -> !E
     RULE_6 = (char)TOKEN_EXPRSN << 16 | (char)TOKEN_MUL << 8 | (char)TOKEN_EXPRSN,              // E -> E*E

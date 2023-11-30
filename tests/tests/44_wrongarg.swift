@@ -1,3 +1,2 @@
-// FUNCTIONS_ERR
-// TODO: zjistit si co tady se ma dit
+// PARAM_TYPE_ERR
 let length = length(5)

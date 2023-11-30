@@ -51,13 +51,20 @@ PSA_Token getRule(PSA_Token *handle, unsigned int len)
     case RULE_1d:
     case RULE_1e:
     case RULE_1f:
+    case RULE_1g:
         DEBUG_PSA_CODE(printf_cyan("rule: E -> i\n"););
         Expression_type type = getTypeFromToken(handle[0].type);
         if (handle[0].type == TOKEN_IDENTIFICATOR)
         {
             symtable_item *found = symtable_find_in_stack(handle[0].token_value, sym_st, true);
-            if (found != NULL && found->type == VARIABLE && found->data.var_data != NULL && found->data.var_data->type != TYPE_INVALID)
+            bool found_valid_var = found != NULL && found->type == VARIABLE && found->data.var_data != NULL && found->data.var_data->type != TYPE_INVALID;
+            if (found_valid_var)
             {
+                if (!found->data.var_data->is_initialized)
+                {
+                    throw_error(VARIABLES_ERR, handle[0].line_num, "Variable '%s' used before inicialization!", handle[0].token_value);
+                }
+
                 type = found->data.var_data->type;
             }
             else
