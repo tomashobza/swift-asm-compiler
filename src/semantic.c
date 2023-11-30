@@ -571,7 +571,7 @@ int check_semantic(Token *token, Sem_rule sem_rule)
         {
             varItem->data.var_data->type = return_type.type;
         }
-        else if (!(check_ret_values(return_type.type, varItem->data.var_data->type)))
+        else if (!(check_ret_values(return_type.type, varItem->data.var_data->type) || isTypeConvertable(varItem->data.var_data->type, return_type.type, return_type.is_literal)))
         {
             throw_error(COMPATIBILITY_ERR, "Expression type: %d and type: %d of variable: %s do not match!\n", return_type.type, varItem->data.var_data->type, varItem->id);
         }
@@ -809,7 +809,7 @@ int check_semantic(Token *token, Sem_rule sem_rule)
             throw_error(COMPATIBILITY_ERR, "Unrecognizable type of variable: %s \n", varItem->id);
         }
         symtable_item *identif_exp_item = symtable_find_in_stack(varItem->id, sym_st, false);
-        if (!(check_ret_values(return_type4.type, identif_exp_item->data.var_data->type)))
+        if (!(check_ret_values(return_type4.type, identif_exp_item->data.var_data->type) || isTypeConvertable(identif_exp_item->data.var_data->type, return_type4.type, return_type4.is_literal)))
         {
             throw_error(COMPATIBILITY_ERR, "Expression type: %d and type: %d of variable: %s do not match!\n", return_type4.type, identif_exp_item->data.var_data->type, varItem->id);
         }
@@ -833,6 +833,7 @@ int check_semantic(Token *token, Sem_rule sem_rule)
 
     return 0;
 }
+
 bool isTypeConvertable(Expression_type variable_type, Expression_type expression_type, bool is_expression_literal)
 {
     bool var_is_double = variable_type == TYPE_DOUBLE || variable_type == TYPE_DOUBLE_NIL;
