@@ -8,7 +8,7 @@ let base = readInt()
 let exponent = readInt()
 
 if let base {
-    write("Vysledek: ", base * exponent)
+    write("Vysledek: ", base * (exponent ?? 0))
 } else {
     write("Chyba pri nacitani vstupu")
 }

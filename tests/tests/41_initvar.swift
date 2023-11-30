@@ -1,3 +1,3 @@
-// PARAM_TYPE_ERR
+// VARIABLES_ERR
 var x: Int
 write(x)
