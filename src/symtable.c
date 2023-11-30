@@ -224,6 +224,7 @@ symtable_item *init_symtable_item(symtable_item item)
         }
     }
     new_sti->next = NULL;
+    new_sti->line_num = item.line_num;
 
     return new_sti;
 }
