@@ -181,14 +181,8 @@ psa_return_type parse_expression_base(bool is_param)
                 b = readNextToken(s, &next_token_error, &num_of_brackets);
             }
             break;
-        case '>': // closing of a handle
+        case '>':
         {
-            // from the top of the stack, pop all tokens until the first < is found
-            // put all the popped tokens->type into an array
-            // getTheRule of the array
-            // if the rule is not EOF, push the rule into the stack
-            // else, return error
-
             int handle_len = 0;
             PSA_Token *handle = getHandleFromStack(s, &handle_len);
 
