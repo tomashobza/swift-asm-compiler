@@ -25,7 +25,7 @@ Expression_type getTypeCombination(PSA_Token l_operand, PSA_Token r_operand)
         }
         else
         {
-            throw_error(COMPATIBILITY_ERR, "Cannot convert operand '%s' from type Int to Double.", l_operand.token_value);
+            throw_error(COMPATIBILITY_ERR, l_operand.line_num, "Cannot convert operand '%s' from type Int to Double.", l_operand.token_value);
             return TYPE_INVALID;
         }
     case ((char)TYPE_DOUBLE << 8) | TYPE_INT:
@@ -36,7 +36,7 @@ Expression_type getTypeCombination(PSA_Token l_operand, PSA_Token r_operand)
         }
         else
         {
-            throw_error(COMPATIBILITY_ERR, "Cannot convert operand '%s' from type Int to Double.", r_operand.token_value);
+            throw_error(COMPATIBILITY_ERR, r_operand.line_num, "Cannot convert operand '%s' from type Int to Double.", r_operand.token_value);
             return TYPE_INVALID;
         }
     case ((char)TYPE_DOUBLE << 8) | TYPE_DOUBLE:
@@ -81,7 +81,7 @@ PSA_Token getHandleType(PSA_Token l_operand, Token_type operation, PSA_Token r_o
 
         if (canTypeBeNil(l_operand.expr_type) || canTypeBeNil(r_operand.expr_type))
         {
-            throw_error(COMPATIBILITY_ERR, "Invalid operand types for operation '%c'.", getOperationChar(operation));
+            throw_error(COMPATIBILITY_ERR, l_operand.line_num, "Invalid operand types for operation '%c'.", getOperationChar(operation));
             return (PSA_Token){
                 .type = (Token_type)TOKEN_EXPRSN,
                 .token_value = "E",
@@ -172,7 +172,7 @@ PSA_Token getHandleType(PSA_Token l_operand, Token_type operation, PSA_Token r_o
         break;
     }
 
-    throw_error(COMPATIBILITY_ERR, "Invalid operand types for operation '%c'.", getOperationChar(operation));
+    throw_error(COMPATIBILITY_ERR, l_operand.line_num, "Invalid operand types for operation '%c'.", getOperationChar(operation));
 
     return (PSA_Token){
         .type = (Token_type)TOKEN_EXPRSN,

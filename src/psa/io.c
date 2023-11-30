@@ -16,7 +16,7 @@ PSA_Token readNextToken(PSA_Token_stack *s, char *next_token_error, int *num_of_
     Token *tkn = malloc(sizeof(Token));
     if (tkn == NULL)
     {
-        throw_error(INTERNAL_ERR, "Memory allocation failed.");
+        throw_error(INTERNAL_ERR, -1, "Memory allocation for next PSA token failed.");
         return PSA_TOKEN_EOF;
     }
     *tkn = (Token){
@@ -28,7 +28,7 @@ PSA_Token readNextToken(PSA_Token_stack *s, char *next_token_error, int *num_of_
     Error_code scanner_returned = (Error_code)main_scanner(tkn);
     if (scanner_returned != NO_ERR)
     {
-        throw_error(scanner_returned, "Scanner error.");
+        throw_error(scanner_returned, tkn->line_num, "Scanner error.");
         printf_red("\nSCANNER VRATIL: ");
         printError((Error){
             .code = scanner_returned,
@@ -47,6 +47,8 @@ PSA_Token readNextToken(PSA_Token_stack *s, char *next_token_error, int *num_of_
         .token_value = tkn->token_value,
         .expr_type = getTypeFromToken(tkn->type),
         .preceded_by_nl = tkn->type == TOKEN_EOF ? true : tkn->preceded_by_nl,
+        .is_literal = isTokenLiteral(tkn->type),
+        .line_num = tkn->line_num,
     };
 
     free(tkn);

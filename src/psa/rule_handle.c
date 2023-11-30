@@ -62,7 +62,7 @@ PSA_Token getRule(PSA_Token *handle, unsigned int len)
             }
             else
             {
-                throw_error(VARIABLES_ERR, "Variable '%s' not found!", handle[0].token_value);
+                throw_error(VARIABLES_ERR, handle[0].line_num, "Variable '%s' not found!", handle[0].token_value);
             }
         }
         return (PSA_Token){
@@ -91,7 +91,7 @@ PSA_Token getRule(PSA_Token *handle, unsigned int len)
             };
         }
 
-        throw_error(COMPATIBILITY_ERR, "Invalid operand type for operation prefix '!' (not).");
+        throw_error(COMPATIBILITY_ERR, handle[1].line_num, "Invalid operand type for operation prefix '!' (not).");
         return (PSA_Token){
             .type = (Token_type)TOKEN_EXPRSN,
             .token_value = "E",
@@ -143,7 +143,7 @@ PSA_Token getRule(PSA_Token *handle, unsigned int len)
         Expression_type type = removeTypeNil(handle[0].expr_type);
         if (type == TYPE_INVALID)
         {
-            throw_error(COMPATIBILITY_ERR, "Invalid operand type for operation postfix '!' (forced unwrapping).");
+            throw_error(COMPATIBILITY_ERR, handle[1].line_num, "Invalid operand type for operation postfix '!' (forced unwrapping).");
         }
         return (PSA_Token){
             .type = (Token_type)TOKEN_EXPRSN,
@@ -154,7 +154,7 @@ PSA_Token getRule(PSA_Token *handle, unsigned int len)
     }
     default:
         DEBUG_PSA_CODE(printf_red("rule: EOF\n"););
-        throw_error(SYNTACTIC_ERR, "Expression '%s' is not valid.", "TODO: add this"); // TODO: add printing the expression
+        throw_error(SYNTACTIC_ERR, handle[1].line_num, "Expression '%s' is not valid.", "TODO: add this"); // TODO: add printing the expression
         return (PSA_Token){
             .type = (Token_type)TOKEN_EOF,
             .token_value = "$",
@@ -162,7 +162,7 @@ PSA_Token getRule(PSA_Token *handle, unsigned int len)
         };
     }
 
-    throw_error(SYNTACTIC_ERR, "Expression '%s' is not valid.", "TODO: add this"); // TODO: add this
+    throw_error(SYNTACTIC_ERR, handle[1].line_num, "Expression '%s' is not valid.", "TODO: add this"); // TODO: add this
 
     return (PSA_Token){
         .type = (Token_type)TOKEN_EOF,
