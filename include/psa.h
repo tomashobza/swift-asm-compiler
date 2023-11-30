@@ -90,28 +90,29 @@ extern char P_TABLE[10][10];
 */
 typedef enum
 {
-    RULE_0 = TOKEN_FUNC_ID,                                                                    // E -> f
-    RULE_1a = TOKEN_IDENTIFICATOR,                                                             // E -> i
-    RULE_1b = TOKEN_INT,                                                                       // E -> i
-    RULE_1c = TOKEN_DOUBLE,                                                                    // E -> i
-    RULE_1d = TOKEN_EXP,                                                                       // E -> i
-    RULE_1e = TOKEN_STRING,                                                                    // E -> i
-    RULE_1f = TOKEN_BOOL,                                                                      // E -> i
-    RULE_2 = (char)TOKEN_L_BRACKET << 16 | (char)TOKEN_EXPRSN << 8 | (char)TOKEN_R_BRACKET,    // E -> (E)
-    RULE_3 = (char)TOKEN_NOT << 8 | (char)TOKEN_EXPRSN,                                        // E -> !E
-    RULE_6 = (char)TOKEN_EXPRSN << 16 | (char)TOKEN_MUL << 8 | (char)TOKEN_EXPRSN,             // E -> E*E
-    RULE_7 = (char)TOKEN_EXPRSN << 16 | (char)TOKEN_DIV << 8 | (char)TOKEN_EXPRSN,             // E -> E/E
-    RULE_8 = (char)TOKEN_EXPRSN << 16 | (char)TOKEN_PLUS << 8 | (char)TOKEN_EXPRSN,            // E -> E+E
-    RULE_9 = (char)TOKEN_EXPRSN << 16 | (char)TOKEN_MINUS << 8 | (char)TOKEN_EXPRSN,           // E -> E-E
-    RULE_10 = (char)TOKEN_EXPRSN << 16 | (char)TOKEN_EQ << 8 | (char)TOKEN_EXPRSN,             // E -> E==E
-    RULE_11 = (char)TOKEN_EXPRSN << 16 | (char)TOKEN_NEQ << 8 | (char)TOKEN_EXPRSN,            // E -> E!=E
-    RULE_12 = (char)TOKEN_EXPRSN << 16 | (char)TOKEN_LESS << 8 | (char)TOKEN_EXPRSN,           // E -> E<E
-    RULE_13 = (char)TOKEN_EXPRSN << 16 | (char)TOKEN_MORE << 8 | (char)TOKEN_EXPRSN,           // E -> E>E
-    RULE_14 = (char)TOKEN_EXPRSN << 16 | (char)TOKEN_LESS_EQ << 8 | (char)TOKEN_EXPRSN,        // E -> E<=E
-    RULE_15 = (char)TOKEN_EXPRSN << 16 | (char)TOKEN_MORE_EQ << 8 | (char)TOKEN_EXPRSN,        // E -> E>=E
-    RULE_16 = (char)TOKEN_EXPRSN << 16 | (char)TOKEN_AND << 8 | (char)TOKEN_EXPRSN,            // E -> E&&E
-    RULE_17 = (char)TOKEN_EXPRSN << 16 | (char)TOKEN_OR << 8 | (char)TOKEN_EXPRSN,             // E -> E||E
-    RULE_18 = (char)TOKEN_EXPRSN << 16 | (char)TOKEN_BINARY_OPERATOR << 8 | (char)TOKEN_EXPRSN // E -> E??E
+    RULE_0 = TOKEN_FUNC_ID,                                                                     // E -> f
+    RULE_1a = TOKEN_IDENTIFICATOR,                                                              // E -> i
+    RULE_1b = TOKEN_INT,                                                                        // E -> i
+    RULE_1c = TOKEN_DOUBLE,                                                                     // E -> i
+    RULE_1d = TOKEN_EXP,                                                                        // E -> i
+    RULE_1e = TOKEN_STRING,                                                                     // E -> i
+    RULE_1f = TOKEN_BOOL,                                                                       // E -> i
+    RULE_2 = (char)TOKEN_L_BRACKET << 16 | (char)TOKEN_EXPRSN << 8 | (char)TOKEN_R_BRACKET,     // E -> (E)
+    RULE_3 = (char)TOKEN_NOT << 8 | (char)TOKEN_EXPRSN,                                         // E -> !E
+    RULE_6 = (char)TOKEN_EXPRSN << 16 | (char)TOKEN_MUL << 8 | (char)TOKEN_EXPRSN,              // E -> E*E
+    RULE_7 = (char)TOKEN_EXPRSN << 16 | (char)TOKEN_DIV << 8 | (char)TOKEN_EXPRSN,              // E -> E/E
+    RULE_8 = (char)TOKEN_EXPRSN << 16 | (char)TOKEN_PLUS << 8 | (char)TOKEN_EXPRSN,             // E -> E+E
+    RULE_9 = (char)TOKEN_EXPRSN << 16 | (char)TOKEN_MINUS << 8 | (char)TOKEN_EXPRSN,            // E -> E-E
+    RULE_10 = (char)TOKEN_EXPRSN << 16 | (char)TOKEN_EQ << 8 | (char)TOKEN_EXPRSN,              // E -> E==E
+    RULE_11 = (char)TOKEN_EXPRSN << 16 | (char)TOKEN_NEQ << 8 | (char)TOKEN_EXPRSN,             // E -> E!=E
+    RULE_12 = (char)TOKEN_EXPRSN << 16 | (char)TOKEN_LESS << 8 | (char)TOKEN_EXPRSN,            // E -> E<E
+    RULE_13 = (char)TOKEN_EXPRSN << 16 | (char)TOKEN_MORE << 8 | (char)TOKEN_EXPRSN,            // E -> E>E
+    RULE_14 = (char)TOKEN_EXPRSN << 16 | (char)TOKEN_LESS_EQ << 8 | (char)TOKEN_EXPRSN,         // E -> E<=E
+    RULE_15 = (char)TOKEN_EXPRSN << 16 | (char)TOKEN_MORE_EQ << 8 | (char)TOKEN_EXPRSN,         // E -> E>=E
+    RULE_16 = (char)TOKEN_EXPRSN << 16 | (char)TOKEN_AND << 8 | (char)TOKEN_EXPRSN,             // E -> E&&E
+    RULE_17 = (char)TOKEN_EXPRSN << 16 | (char)TOKEN_OR << 8 | (char)TOKEN_EXPRSN,              // E -> E||E
+    RULE_18 = (char)TOKEN_EXPRSN << 16 | (char)TOKEN_BINARY_OPERATOR << 8 | (char)TOKEN_EXPRSN, // E -> E??E
+    RULE_19 = (char)TOKEN_EXPRSN << 8 | (char)TOKEN_NOT,                                        // E -> E!
 } PSA_Rules;
 
 // UTILITY FUNCTIONS
