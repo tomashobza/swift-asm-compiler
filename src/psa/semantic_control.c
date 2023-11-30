@@ -13,6 +13,11 @@
 
 Expression_type getTypeCombination(PSA_Token l_operand, PSA_Token r_operand)
 {
+    if (l_operand.expr_type == TYPE_INVALID || r_operand.expr_type == TYPE_INVALID)
+    {
+        return TYPE_INVALID;
+    }
+
     switch (((char)l_operand.expr_type << 8) | r_operand.expr_type)
     {
     case ((char)TYPE_INT << 8) | TYPE_INT:
