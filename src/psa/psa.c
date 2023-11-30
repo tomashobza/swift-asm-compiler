@@ -22,7 +22,7 @@ psa_return_type parse_expression_base(bool is_param)
     PSA_Token_stack *s = PSA_Token_stack_init();
     if (s == NULL)
     {
-        throw_error(INTERNAL_ERR, "PSA stack initialization failed.");
+        throw_error(INTERNAL_ERR, -1, "PSA stack initialization failed.");
     }
     PSA_Token_stack_push(s, PSA_TOKEN_EOF);
 
@@ -84,7 +84,7 @@ psa_return_type parse_expression_base(bool is_param)
             }
             else
             {
-                throw_error(SYNTACTIC_ERR, "Missing separator (EOL) after expression, before '%s'.", b.token_value);
+                throw_error(SYNTACTIC_ERR, b.line_num, "Missing separator (EOL) after expression, before '%s'.", b.token_value);
 
                 next_token_error = 0;
                 b = PSA_TOKEN_EOF;
@@ -118,7 +118,7 @@ psa_return_type parse_expression_base(bool is_param)
                 }
                 else
                 {
-                    throw_error(SYNTACTIC_ERR, "Missing separator (EOL) after expression, before '%s'.", b.token_value);
+                    throw_error(SYNTACTIC_ERR, b.line_num, "Missing separator (EOL) after expression, before '%s'.", b.token_value);
 
                     next_token_error = 0;
                     b = PSA_TOKEN_EOF;
@@ -185,8 +185,10 @@ psa_return_type parse_expression_base(bool is_param)
         {
             int handle_len = 0;
             PSA_Token *handle = getHandleFromStack(s, &handle_len);
+            int handle_line_num = handle_len > 0 ? handle[0].line_num : b.line_num;
 
             PSA_Token rule = getRule(handle, handle_len);
+            rule.line_num = handle_line_num;
 
             if (rule.type != TOKEN_EOF)
             {
@@ -196,7 +198,7 @@ psa_return_type parse_expression_base(bool is_param)
             {
                 DEBUG_PSA_CODE(printTokenArray(handle, handle_len););
 
-                throw_error(SYNTACTIC_ERR, "Unexpected token '%s' in expression.", b.token_value);
+                throw_error(SYNTACTIC_ERR, b.line_num, "Unexpected token '%s' in expression.", b.token_value);
 
                 PSA_Token_stack_free(s);
                 free(handle);
@@ -213,7 +215,7 @@ psa_return_type parse_expression_base(bool is_param)
         }
         case '-':
         default:
-            throw_error(SYNTACTIC_ERR, "Invalid combination of operands '%s' and '%s'.", a.token_value, b.token_value);
+            throw_error(SYNTACTIC_ERR, b.line_num, "Invalid combination of operands '%s' and '%s'.", a.token_value, b.token_value);
 
             PSA_Token_stack_free(s);
             return (psa_return_type){
@@ -235,7 +237,7 @@ psa_return_type parse_expression_base(bool is_param)
     // TODO: checking bracket count might be redundant because of handles
     if (num_of_brackets != 0 && !(is_param && num_of_brackets == -1))
     {
-        throw_error(SYNTACTIC_ERR, num_of_brackets > 0 ? "Missing closing bracket" : "Missing opening bracket");
+        throw_error(SYNTACTIC_ERR, a.line_num, num_of_brackets > 0 ? "Missing closing bracket" : "Missing opening bracket");
 
         next_token_error = 0;
         b = PSA_TOKEN_EOF;
