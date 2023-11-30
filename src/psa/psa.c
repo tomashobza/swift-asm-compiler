@@ -20,6 +20,10 @@ psa_return_type parse_expression_base(bool is_param)
     int num_of_brackets = 0; // number of brackets in the expression
 
     PSA_Token_stack *s = PSA_Token_stack_init();
+    if (s == NULL)
+    {
+        throw_error(INTERNAL_ERR, "PSA stack initialization failed.");
+    }
     PSA_Token_stack_push(s, (PSA_Token){
                                 .type = (Token_type)TOKEN_EOF,
                                 .token_value = "$"});
