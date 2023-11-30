@@ -205,3 +205,20 @@ char getOperationChar(Token_type token)
         return ' ';
     }
 }
+
+Expression_type removeTypeNil(Expression_type expr_type)
+{
+    switch (expr_type)
+    {
+    case TYPE_INT_NIL:
+        return TYPE_INT;
+    case TYPE_DOUBLE_NIL:
+        return TYPE_DOUBLE;
+    case TYPE_BOOL_NIL:
+        return TYPE_BOOL;
+    case TYPE_STRING_NIL:
+        return TYPE_STRING;
+    default:
+        return TYPE_INVALID;
+    }
+}

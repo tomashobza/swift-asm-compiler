@@ -204,6 +204,14 @@ bool canTokenBeEndOfExpression(Token_type token);
  */
 char getOperationChar(Token_type token);
 
+/**
+ * @brief Removes the nil type from the expression type. For example: TYPE_INT_NIL -> TYPE_INT. For non-nil types, returns an invalid token.
+ *
+ * @param expr_type expression type
+ * @return Expression_type
+ */
+Expression_type removeTypeNil(Expression_type expr_type);
+
 // PSA FUNCTIONS
 
 /**
