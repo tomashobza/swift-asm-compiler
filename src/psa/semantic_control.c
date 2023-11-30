@@ -41,6 +41,14 @@ Expression_type getTypeCombination(PSA_Token l_operand, PSA_Token r_operand)
         }
     case ((char)TYPE_DOUBLE << 8) | TYPE_DOUBLE:
         return TYPE_DOUBLE;
+    case ((char)TYPE_STRING << 8) | TYPE_STRING:
+        return TYPE_STRING;
+    case ((char)TYPE_INT_NIL << 8) | TYPE_INT_NIL:
+        return TYPE_INT_NIL;
+    case ((char)TYPE_DOUBLE_NIL << 8) | TYPE_DOUBLE_NIL:
+        return TYPE_DOUBLE_NIL;
+    case ((char)TYPE_STRING_NIL << 8) | TYPE_STRING_NIL:
+        return TYPE_STRING_NIL;
     default:
         return TYPE_INVALID;
     }
