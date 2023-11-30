@@ -57,8 +57,14 @@ PSA_Token getRule(PSA_Token *handle, unsigned int len)
         if (handle[0].type == TOKEN_IDENTIFICATOR)
         {
             symtable_item *found = symtable_find_in_stack(handle[0].token_value, sym_st, true);
-            if (found != NULL && found->type == VARIABLE && found->data.var_data != NULL && found->data.var_data->type != TYPE_INVALID)
+            bool found_valid_var = found != NULL && found->type == VARIABLE && found->data.var_data != NULL && found->data.var_data->type != TYPE_INVALID;
+            if (found_valid_var)
             {
+                if (!found->data.var_data->is_initialized)
+                {
+                    throw_error(VARIABLES_ERR, handle[0].line_num, "Variable '%s' used before inicialization!", handle[0].token_value);
+                }
+
                 type = found->data.var_data->type;
             }
             else
