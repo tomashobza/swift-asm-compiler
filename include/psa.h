@@ -38,6 +38,7 @@ typedef struct
     Token_type end_token; // last token left
     bool is_ok;           // is the expression valid?
     Expression_type type; // type of the expression
+    bool is_literal;      // is the expression a literal?
 } psa_return_type;
 
 /**
@@ -49,7 +50,15 @@ typedef struct
     char *token_value;
     Expression_type expr_type;
     bool preceded_by_nl;
+    bool is_literal;
+    int line_num;
 } PSA_Token;
+
+/**
+ * @brief PSA_Token that represents the end of the file. It is used as a bottom of the stack and for error states.
+ */
+#define PSA_TOKEN_EOF \
+    (PSA_Token) { .type = TOKEN_EOF, .token_value = "$", .expr_type = TYPE_INVALID, .preceded_by_nl = true, .is_literal = false }
 
 // STACK FUNCTIONS
 DECLARE_STACK_FUNCTIONS(PSA_Token);
@@ -82,30 +91,29 @@ extern char P_TABLE[10][10];
 */
 typedef enum
 {
-    RULE_0 = TOKEN_FUNC_ID,                                                                    // E -> f
-    RULE_1a = TOKEN_IDENTIFICATOR,                                                             // E -> i
-    RULE_1b = TOKEN_INT,                                                                       // E -> i
-    RULE_1c = TOKEN_DOUBLE,                                                                    // E -> i
-    RULE_1d = TOKEN_EXP,                                                                       // E -> i
-    RULE_1e = TOKEN_STRING,                                                                    // E -> i
-    RULE_1f = TOKEN_BOOL,                                                                      // E -> i
-    RULE_2 = (char)TOKEN_L_BRACKET << 16 | (char)TOKEN_EXPRSN << 8 | (char)TOKEN_R_BRACKET,    // E -> (E)
-    RULE_3 = (char)TOKEN_NOT << 8 | (char)TOKEN_EXPRSN,                                        // E -> !E
-    RULE_4 = (char)TOKEN_PLUS << 8 | (char)TOKEN_EXPRSN,                                       // E -> +E
-    RULE_5 = (char)TOKEN_MINUS << 8 | (char)TOKEN_EXPRSN,                                      // E -> -E
-    RULE_6 = (char)TOKEN_EXPRSN << 16 | (char)TOKEN_MUL << 8 | (char)TOKEN_EXPRSN,             // E -> E*E
-    RULE_7 = (char)TOKEN_EXPRSN << 16 | (char)TOKEN_DIV << 8 | (char)TOKEN_EXPRSN,             // E -> E/E
-    RULE_8 = (char)TOKEN_EXPRSN << 16 | (char)TOKEN_PLUS << 8 | (char)TOKEN_EXPRSN,            // E -> E+E
-    RULE_9 = (char)TOKEN_EXPRSN << 16 | (char)TOKEN_MINUS << 8 | (char)TOKEN_EXPRSN,           // E -> E-E
-    RULE_10 = (char)TOKEN_EXPRSN << 16 | (char)TOKEN_EQ << 8 | (char)TOKEN_EXPRSN,             // E -> E==E
-    RULE_11 = (char)TOKEN_EXPRSN << 16 | (char)TOKEN_NEQ << 8 | (char)TOKEN_EXPRSN,            // E -> E!=E
-    RULE_12 = (char)TOKEN_EXPRSN << 16 | (char)TOKEN_LESS << 8 | (char)TOKEN_EXPRSN,           // E -> E<E
-    RULE_13 = (char)TOKEN_EXPRSN << 16 | (char)TOKEN_MORE << 8 | (char)TOKEN_EXPRSN,           // E -> E>E
-    RULE_14 = (char)TOKEN_EXPRSN << 16 | (char)TOKEN_LESS_EQ << 8 | (char)TOKEN_EXPRSN,        // E -> E<=E
-    RULE_15 = (char)TOKEN_EXPRSN << 16 | (char)TOKEN_MORE_EQ << 8 | (char)TOKEN_EXPRSN,        // E -> E>=E
-    RULE_16 = (char)TOKEN_EXPRSN << 16 | (char)TOKEN_AND << 8 | (char)TOKEN_EXPRSN,            // E -> E&&E
-    RULE_17 = (char)TOKEN_EXPRSN << 16 | (char)TOKEN_OR << 8 | (char)TOKEN_EXPRSN,             // E -> E||E
-    RULE_18 = (char)TOKEN_EXPRSN << 16 | (char)TOKEN_BINARY_OPERATOR << 8 | (char)TOKEN_EXPRSN // E -> E??E
+    RULE_0 = TOKEN_FUNC_ID,                                                                     // E -> f
+    RULE_1a = TOKEN_IDENTIFICATOR,                                                              // E -> i
+    RULE_1b = TOKEN_INT,                                                                        // E -> i
+    RULE_1c = TOKEN_DOUBLE,                                                                     // E -> i
+    RULE_1d = TOKEN_EXP,                                                                        // E -> i
+    RULE_1e = TOKEN_STRING,                                                                     // E -> i
+    RULE_1f = TOKEN_BOOL,                                                                       // E -> i
+    RULE_2 = (char)TOKEN_L_BRACKET << 16 | (char)TOKEN_EXPRSN << 8 | (char)TOKEN_R_BRACKET,     // E -> (E)
+    RULE_3 = (char)TOKEN_NOT << 8 | (char)TOKEN_EXPRSN,                                         // E -> !E
+    RULE_6 = (char)TOKEN_EXPRSN << 16 | (char)TOKEN_MUL << 8 | (char)TOKEN_EXPRSN,              // E -> E*E
+    RULE_7 = (char)TOKEN_EXPRSN << 16 | (char)TOKEN_DIV << 8 | (char)TOKEN_EXPRSN,              // E -> E/E
+    RULE_8 = (char)TOKEN_EXPRSN << 16 | (char)TOKEN_PLUS << 8 | (char)TOKEN_EXPRSN,             // E -> E+E
+    RULE_9 = (char)TOKEN_EXPRSN << 16 | (char)TOKEN_MINUS << 8 | (char)TOKEN_EXPRSN,            // E -> E-E
+    RULE_10 = (char)TOKEN_EXPRSN << 16 | (char)TOKEN_EQ << 8 | (char)TOKEN_EXPRSN,              // E -> E==E
+    RULE_11 = (char)TOKEN_EXPRSN << 16 | (char)TOKEN_NEQ << 8 | (char)TOKEN_EXPRSN,             // E -> E!=E
+    RULE_12 = (char)TOKEN_EXPRSN << 16 | (char)TOKEN_LESS << 8 | (char)TOKEN_EXPRSN,            // E -> E<E
+    RULE_13 = (char)TOKEN_EXPRSN << 16 | (char)TOKEN_MORE << 8 | (char)TOKEN_EXPRSN,            // E -> E>E
+    RULE_14 = (char)TOKEN_EXPRSN << 16 | (char)TOKEN_LESS_EQ << 8 | (char)TOKEN_EXPRSN,         // E -> E<=E
+    RULE_15 = (char)TOKEN_EXPRSN << 16 | (char)TOKEN_MORE_EQ << 8 | (char)TOKEN_EXPRSN,         // E -> E>=E
+    RULE_16 = (char)TOKEN_EXPRSN << 16 | (char)TOKEN_AND << 8 | (char)TOKEN_EXPRSN,             // E -> E&&E
+    RULE_17 = (char)TOKEN_EXPRSN << 16 | (char)TOKEN_OR << 8 | (char)TOKEN_EXPRSN,              // E -> E||E
+    RULE_18 = (char)TOKEN_EXPRSN << 16 | (char)TOKEN_BINARY_OPERATOR << 8 | (char)TOKEN_EXPRSN, // E -> E??E
+    RULE_19 = (char)TOKEN_EXPRSN << 8 | (char)TOKEN_NOT,                                        // E -> E!
 } PSA_Rules;
 
 // UTILITY FUNCTIONS
@@ -135,6 +143,15 @@ uint32_t reverseHandleTypesToUInt32(Expression_type *types, unsigned int len);
  * @return Expression_type - expression type of the token
  */
 Expression_type getTypeFromToken(Token_type token);
+
+/**
+ * @brief Check if the token is a literal.
+ *
+ * @param token token to check
+ * @return true
+ * @return false
+ */
+bool isTokenLiteral(Token_type token);
 
 /**
  * @brief Checks if the token is an operand.
@@ -189,6 +206,14 @@ bool canTokenBeEndOfExpression(Token_type token);
  */
 char getOperationChar(Token_type token);
 
+/**
+ * @brief Removes the nil type from the expression type. For example: TYPE_INT_NIL -> TYPE_INT. For non-nil types, returns an invalid token.
+ *
+ * @param expr_type expression type
+ * @return Expression_type
+ */
+Expression_type removeTypeNil(Expression_type expr_type);
+
 // PSA FUNCTIONS
 
 /**
@@ -199,6 +224,14 @@ char getOperationChar(Token_type token);
  * @return PSA_Token - token derived from the handle
  */
 PSA_Token getRule(PSA_Token *handle, unsigned int len);
+
+/**
+ * @brief Get all the tokens forming the handle from the stack.
+ *
+ * @param s stack of tokens
+ * @return PSA_Token* - array of tokens (handle)
+ */
+PSA_Token *getHandleFromStack(PSA_Token_stack *s, int *i);
 
 /**
  * @brief LUT that returns the value of the token for the precedence table.
@@ -324,20 +357,24 @@ PSA_Token parseFunctionCall(PSA_Token_stack *main_s, PSA_Token id);
  * @param found_func symbol of the function from the symbol table
  * @param parsed_param pointer to where the parsed parameter (return struct of the PSA) will be saved
  * @param unknown_params are the parameters unknown?
+ * @param id PSA_Token contaning the id of the function
  * @return true - the parameter is both syntactically and semantically valid
  * @return false - the parameter is not syntactically or semantically valid
  */
-bool checkParameter(PSA_Token_stack *main_s, unsigned int param_index, symtable_item *found_func, psa_return_type *parsed_param, bool unknown_params);
+bool checkParameter(PSA_Token_stack *main_s, unsigned int param_index, symtable_item *found_func, psa_return_type *parsed_param, bool unknown_params, PSA_Token id);
 
 /**
  * @brief Checks if the parameter name matches the name of the parameter in the function definition (if there should be a name).
  *
  * @param main_s main expression token stack
  * @param param_index index of the parameter
+ * @param found_func symbol of the function from the symbol table
+ * @param unknown_params are the parameters unknown?
+ * @param func_id PSA_Token contaning the id of the function
  * @return true
  * @return false
  */
-bool checkParamName(PSA_Token_stack *main_s, unsigned int param_index, symtable_item *found_func, bool unknown_params);
+bool checkParamName(PSA_Token_stack *main_s, unsigned int param_index, symtable_item *found_func, bool unknown_params, PSA_Token func_id);
 
 #include "utils.h"
 #include "semantic.h"

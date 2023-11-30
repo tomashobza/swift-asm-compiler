@@ -40,7 +40,7 @@
 #define HEX_START 50
 #define IDENTIFICATOR 51
 
-extern unsigned int line_num;
+unsigned int line_num;
 
 typedef enum
 {
@@ -106,6 +106,7 @@ typedef struct
     Token_type type;
     char *token_value;
     bool preceded_by_nl;
+    int line_num;
 } Token;
 
 /*
@@ -140,7 +141,7 @@ int generate_token(Token *token, char *code);
  * @param add count of charactes that need to be added to string code
  * @param code pointer to char * that is being reallocated
  */
-void check_length(int *code_len, int add, char *code);
+void check_length(int *code_len, int add, char **code);
 
 /**
  * @def function main_scanner is called from parser.c after 1 token has already been parsed

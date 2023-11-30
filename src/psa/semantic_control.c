@@ -18,23 +18,25 @@ Expression_type getTypeCombination(PSA_Token l_operand, PSA_Token r_operand)
     case ((char)TYPE_INT << 8) | TYPE_INT:
         return TYPE_INT;
     case ((char)TYPE_INT << 8) | TYPE_DOUBLE:
-        if (l_operand.type != TOKEN_IDENTIFICATOR)
+        if (l_operand.is_literal)
         {
             DEBUG_PSA_CODE(printf("implicite Int2Double for left operand '%s'\n", l_operand.token_value););
             return TYPE_DOUBLE;
         }
         else
         {
+            throw_error(COMPATIBILITY_ERR, l_operand.line_num, "Cannot convert operand '%s' from type Int to Double.", l_operand.token_value);
             return TYPE_INVALID;
         }
     case ((char)TYPE_DOUBLE << 8) | TYPE_INT:
-        if (r_operand.type != TOKEN_IDENTIFICATOR)
+        if (r_operand.is_literal)
         {
             DEBUG_PSA_CODE(printf("impicite Int2Double for right operand '%s'\n", r_operand.token_value););
             return TYPE_DOUBLE;
         }
         else
         {
+            throw_error(COMPATIBILITY_ERR, r_operand.line_num, "Cannot convert operand '%s' from type Int to Double.", r_operand.token_value);
             return TYPE_INVALID;
         }
     case ((char)TYPE_DOUBLE << 8) | TYPE_DOUBLE:
@@ -52,6 +54,8 @@ PSA_Token getHandleType(PSA_Token l_operand, Token_type operation, PSA_Token r_o
             .type = (Token_type)TOKEN_EXPRSN,
             .token_value = "E",
             .expr_type = TYPE_INVALID,
+            .preceded_by_nl = false,
+            .is_literal = false,
         };
     }
 
@@ -66,6 +70,8 @@ PSA_Token getHandleType(PSA_Token l_operand, Token_type operation, PSA_Token r_o
                 .type = (Token_type)TOKEN_EXPRSN,
                 .token_value = "E",
                 .expr_type = TYPE_STRING,
+                .preceded_by_nl = false,
+                .is_literal = false,
             };
         }
         __attribute__((fallthrough));
@@ -75,10 +81,13 @@ PSA_Token getHandleType(PSA_Token l_operand, Token_type operation, PSA_Token r_o
 
         if (canTypeBeNil(l_operand.expr_type) || canTypeBeNil(r_operand.expr_type))
         {
+            throw_error(COMPATIBILITY_ERR, l_operand.line_num, "Invalid operand types for operation '%c'.", getOperationChar(operation));
             return (PSA_Token){
                 .type = (Token_type)TOKEN_EXPRSN,
                 .token_value = "E",
                 .expr_type = TYPE_INVALID,
+                .preceded_by_nl = false,
+                .is_literal = false,
             };
         }
 
@@ -91,6 +100,8 @@ PSA_Token getHandleType(PSA_Token l_operand, Token_type operation, PSA_Token r_o
                 .type = (Token_type)TOKEN_EXPRSN,
                 .token_value = "E",
                 .expr_type = type,
+                .preceded_by_nl = false,
+                .is_literal = false,
             };
         }
 
@@ -107,6 +118,8 @@ PSA_Token getHandleType(PSA_Token l_operand, Token_type operation, PSA_Token r_o
                 .type = (Token_type)TOKEN_EXPRSN,
                 .token_value = "E",
                 .expr_type = TYPE_BOOL,
+                .preceded_by_nl = false,
+                .is_literal = false,
             };
         }
         break;
@@ -122,6 +135,8 @@ PSA_Token getHandleType(PSA_Token l_operand, Token_type operation, PSA_Token r_o
                 .type = (Token_type)TOKEN_EXPRSN,
                 .token_value = "E",
                 .expr_type = TYPE_BOOL,
+                .preceded_by_nl = false,
+                .is_literal = false,
             };
         }
 
@@ -135,6 +150,8 @@ PSA_Token getHandleType(PSA_Token l_operand, Token_type operation, PSA_Token r_o
                 .type = (Token_type)TOKEN_EXPRSN,
                 .token_value = "E",
                 .expr_type = TYPE_BOOL,
+                .preceded_by_nl = false,
+                .is_literal = false,
             };
         }
         break;
@@ -146,6 +163,8 @@ PSA_Token getHandleType(PSA_Token l_operand, Token_type operation, PSA_Token r_o
                 .type = (Token_type)TOKEN_EXPRSN,
                 .token_value = "E",
                 .expr_type = getTypeCombination(l_operand, r_operand),
+                .preceded_by_nl = false,
+                .is_literal = false,
             };
         }
         break;
@@ -153,12 +172,14 @@ PSA_Token getHandleType(PSA_Token l_operand, Token_type operation, PSA_Token r_o
         break;
     }
 
-    throw_error(COMPATIBILITY_ERR, "Invalid operand types for operation '%c'.", getOperationChar(operation));
+    throw_error(COMPATIBILITY_ERR, l_operand.line_num, "Invalid operand types for operation '%c'.", getOperationChar(operation));
 
     return (PSA_Token){
         .type = (Token_type)TOKEN_EXPRSN,
         .token_value = "E",
         .expr_type = TYPE_INVALID,
+        .preceded_by_nl = false,
+        .is_literal = false,
     };
 }
 

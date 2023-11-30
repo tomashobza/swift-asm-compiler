@@ -21,10 +21,10 @@ void get_token(Token *token)
     switch ((Error_code)ret)
     {
     case LEXICAL_ERR:
-        throw_error(LEXICAL_ERR, " ");
+        throw_error(LEXICAL_ERR, token->line_num, " ");
         break;
     case INTERNAL_ERR:
-        throw_error(INTERNAL_ERR, " ");
+        throw_error(INTERNAL_ERR, token->line_num, " ");
         break; // TODO: free pameti, ukoncen programu
     default:
         break;
@@ -567,7 +567,7 @@ int parser_main()
     }
     else
     {
-        throw_error(SYNTACTIC_ERR, RED "Something went wrong!" RESET "\n");
+        throw_error(SYNTACTIC_ERR, token->line_num, RED "Something went wrong!" RESET "\n");
     }
     free(token);
 

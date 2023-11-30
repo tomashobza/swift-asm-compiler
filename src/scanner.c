@@ -31,6 +31,7 @@ int main_scanner(Token *token)
     {
         char *code = "\0";
         ret = generate_token(token, code);
+        token->line_num = line_num;
         code = NULL;
     }
     else
@@ -69,7 +70,7 @@ int generate_token(Token *token, char *code)
         {"continue", TOKEN_CONTINUE}};
     token->preceded_by_nl = false;
     int code_len = 1;
-    code = malloc(sizeof(char) * code_len);
+    code = calloc(code_len + 1, sizeof(char));
     if (code == NULL)
     {
         ret = INTERNAL_ERR;
@@ -77,7 +78,7 @@ int generate_token(Token *token, char *code)
     }
     while (1)
     {
-        check_length(&code_len, 0, code);
+        check_length(&code_len, 0, &code);
         switch (state)
         {
         /*
@@ -245,13 +246,13 @@ int generate_token(Token *token, char *code)
                 state = STRING_1;
                 break;
             case '0' ... '9':
-                check_length(&code_len, 0, code);
+                check_length(&code_len, 0, &code);
                 strncat(code, &c, 1);
                 state = INTEGER;
                 break;
             case 'A' ... 'Z':
             case 'a' ... 'z':
-                check_length(&code_len, 0, code);
+                check_length(&code_len, 0, &code);
                 strncat(code, &c, 1);
                 state = IDENTIFICATOR;
                 break;
@@ -268,7 +269,7 @@ int generate_token(Token *token, char *code)
             char c = (char)getchar();
             if ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || (c <= '9' && c >= '0'))
             {
-                check_length(&code_len, 0, code);
+                check_length(&code_len, 0, &code);
                 code[strlen(code)] = '_';
                 ungetc(c, stdin);
                 state = IDENTIFICATOR;
@@ -293,6 +294,7 @@ int generate_token(Token *token, char *code)
             {
                 c = (char)getchar();
             }
+            ungetc(c, stdin);
             state = NEW_TOKEN;
             break;
         }
@@ -330,13 +332,13 @@ int generate_token(Token *token, char *code)
             char c = (char)getchar();
             while ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || (c >= '0' && c <= '9') || c == '_')
             {
-                check_length(&code_len, 0, code);
+                check_length(&code_len, 0, &code);
                 strncat(code, &c, 1);
                 c = (char)getchar();
             }
             if (c == '?' && (strcmp(code, "Double") == 0 || strcmp(code, "Int") == 0 || strcmp(code, "String") == 0 || strcmp(code, "Bool") == 0))
             {
-                check_length(&code_len, 0, code);
+                check_length(&code_len, 0, &code);
                 strncat(code, &c, 1);
             }
             else
@@ -382,7 +384,7 @@ int generate_token(Token *token, char *code)
             {
                 if (c != '0' || *code != '\0')
                 {
-                    check_length(&code_len, 0, code);
+                    check_length(&code_len, 0, &code);
                     strncat(code, &c, 1);
                 }
                 c = (char)getchar();
@@ -404,7 +406,7 @@ int generate_token(Token *token, char *code)
             }
             else if (c == '.' && state == INTEGER)
             {
-                check_length(&code_len, 0, code);
+                check_length(&code_len, 0, &code);
                 strncat(code, &c, 1);
                 state = DEC_POINT;
                 break;
@@ -430,7 +432,7 @@ int generate_token(Token *token, char *code)
             char c = (char)getchar();
             if (c == '+' || c == '-')
             {
-                check_length(&code_len, 0, code);
+                check_length(&code_len, 0, &code);
                 strncat(code, &c, 1);
                 c = (char)getchar();
             }
@@ -441,7 +443,7 @@ int generate_token(Token *token, char *code)
                     if (c != '0' ||
                         (code[strlen(code) - 1] != '-' && code[strlen(code) - 1] != '+' && code[0] != '\0'))
                     {
-                        check_length(&code_len, 0, code);
+                        check_length(&code_len, 0, &code);
                         strncat(code, &c, 1);
                     }
                     c = (char)getchar();
@@ -486,7 +488,7 @@ int generate_token(Token *token, char *code)
                 }
                 else
                 {
-                    check_length(&code_len, 0, code);
+                    check_length(&code_len, 0, &code);
                     strncat(code, &c, 1);
                     c = '\0';
                     c = (char)getchar();
@@ -523,7 +525,7 @@ int generate_token(Token *token, char *code)
                 }
                 break;
             case '\\':
-                check_length(&code_len, 0, code);
+                check_length(&code_len, 0, &code);
                 strcat(code, "\\");
                 if (state == STRING_ESCAPE)
                 {
@@ -535,7 +537,7 @@ int generate_token(Token *token, char *code)
                 }
                 break;
             case 'n':
-                check_length(&code_len, 0, code);
+                check_length(&code_len, 0, &code);
                 strcat(code, "\n");
                 if (state == STRING_ESCAPE)
                 {
@@ -547,7 +549,7 @@ int generate_token(Token *token, char *code)
                 }
                 break;
             case 't':
-                check_length(&code_len, 0, code);
+                check_length(&code_len, 0, &code);
                 strcat(code, "\t");
                 if (state == STRING_ESCAPE)
                 {
@@ -559,7 +561,7 @@ int generate_token(Token *token, char *code)
                 }
                 break;
             case 'r':
-                check_length(&code_len, 0, code);
+                check_length(&code_len, 0, &code);
                 strcat(code, "\r");
                 if (state == STRING_ESCAPE)
                 {
@@ -571,7 +573,7 @@ int generate_token(Token *token, char *code)
                 }
                 break;
             case '"':
-                check_length(&code_len, 0, code);
+                check_length(&code_len, 0, &code);
                 strcat(code, "\"");
                 if (state == STRING_ESCAPE)
                 {
@@ -583,9 +585,9 @@ int generate_token(Token *token, char *code)
                 }
                 break;
             default:
-                check_length(&code_len, 0, code);
+                check_length(&code_len, 0, &code);
                 strcat(code, "\\");
-                check_length(&code_len, 0, code);
+                check_length(&code_len, 0, &code);
                 strncat(code, &c, 1);
                 if (state == STRING_ESCAPE)
                 {
@@ -619,7 +621,7 @@ int generate_token(Token *token, char *code)
                     {
                         char str[3] = "{";
                         strcat("{", hex);
-                        check_length(&code_len, strlen(str), code);
+                        check_length(&code_len, strlen(str), &code);
                         strcat(code, str);
                         ungetc(c, stdin);
                     }
@@ -649,14 +651,14 @@ int generate_token(Token *token, char *code)
                 char dec_val[20];
                 memset(dec_val, '\0', sizeof(dec_val));
                 sprintf(dec_val, "%ld", dec_num);
-                check_length(&code_len, strlen(dec_val), code);
+                check_length(&code_len, strlen(dec_val), &code);
                 strcat(code, dec_val);
             }
             else
             {
                 char str[3] = "{";
                 strcat("{", hex);
-                check_length(&code_len, strlen(str), code);
+                check_length(&code_len, strlen(str), &code);
                 strcat(code, str);
             }
             if (state == HEX_START)
@@ -743,21 +745,19 @@ int generate_token(Token *token, char *code)
 /*
  * Before each character is added to *code it reallocates memory if needed
  */
-void check_length(int *code_len, int add, char *code)
+void check_length(int *code_len, int add, char **code)
 {
-    if (strlen(code) + add >= (long unsigned int)*code_len)
+    if (strlen(*code) + add >= (long unsigned int)*code_len)
     {
         *code_len = ((long unsigned int)*code_len) * 2;
-
-        char *new_code = malloc(sizeof(char) * ((long unsigned int)*code_len));
+        char *new_code = calloc((long unsigned int)*code_len + 1, sizeof(char));
         if (new_code == NULL)
         {
-            ret = INTERNAL_ERR;
             exit(INTERNAL_ERR);
         }
-
-        strcpy(new_code, code);
-        code = new_code;
+        strcpy(new_code, *code);
+        free(*code);
+        *code = new_code;
     }
 }
 /*
@@ -797,10 +797,6 @@ void scanner_init()
 
 void return_token(Token token)
 {
-    if (token.preceded_by_nl)
-    {
-        line_num--;
-    }
     Token_stack_push(scanner_stack, token);
 }
 

@@ -43,6 +43,7 @@ PSA_Token getRule(PSA_Token *handle, unsigned int len)
             .type = (Token_type)TOKEN_EXPRSN,
             .token_value = "E",
             .expr_type = handle[0].expr_type,
+            .is_literal = isTokenLiteral(handle[0].type),
         };
     case RULE_1a:
     case RULE_1b:
@@ -61,13 +62,14 @@ PSA_Token getRule(PSA_Token *handle, unsigned int len)
             }
             else
             {
-                throw_error(VARIABLES_ERR, "Variable '%s' not found!", handle[0].token_value);
+                throw_error(VARIABLES_ERR, handle[0].line_num, "Variable '%s' not found!", handle[0].token_value);
             }
         }
         return (PSA_Token){
             .type = (Token_type)TOKEN_EXPRSN,
             .token_value = "E",
             .expr_type = type,
+            .is_literal = isTokenLiteral(handle[0].type),
         };
     case RULE_2:
         DEBUG_PSA_CODE(printf_cyan("rule: E -> (E)\n"););
@@ -75,27 +77,26 @@ PSA_Token getRule(PSA_Token *handle, unsigned int len)
             .type = (Token_type)TOKEN_EXPRSN,
             .token_value = "E",
             .expr_type = handle[1].expr_type,
+            .is_literal = handle[1].is_literal,
         };
     case RULE_3:
         DEBUG_PSA_CODE(printf_cyan("rule: E -> !E\n"););
+        if (handle[1].expr_type == TYPE_BOOL)
+        {
+            return (PSA_Token){
+                .type = (Token_type)TOKEN_EXPRSN,
+                .token_value = "E",
+                .expr_type = TYPE_BOOL,
+                .is_literal = false,
+            };
+        }
+
+        throw_error(COMPATIBILITY_ERR, handle[1].line_num, "Invalid operand type for operation prefix '!' (not).");
         return (PSA_Token){
             .type = (Token_type)TOKEN_EXPRSN,
             .token_value = "E",
-            .expr_type = handle[1].expr_type,
-        };
-    case RULE_4:
-        DEBUG_PSA_CODE(printf_cyan("rule: E -> +E\n"););
-        return (PSA_Token){
-            .type = (Token_type)TOKEN_EXPRSN,
-            .token_value = "E",
-            .expr_type = handle[1].expr_type,
-        };
-    case RULE_5:
-        DEBUG_PSA_CODE(printf_cyan("rule: E -> -E\n"););
-        return (PSA_Token){
-            .type = (Token_type)TOKEN_EXPRSN,
-            .token_value = "E",
-            .expr_type = handle[1].expr_type,
+            .expr_type = TYPE_INVALID,
+            .is_literal = false,
         };
     case RULE_6:
         DEBUG_PSA_CODE(printf_cyan("rule: E -> E*E\n"););
@@ -136,9 +137,24 @@ PSA_Token getRule(PSA_Token *handle, unsigned int len)
     case RULE_18:
         DEBUG_PSA_CODE(printf_cyan("rule: E -> E??E\n"););
         return getHandleType(handle[0], handle[1].type, handle[2]);
+    case RULE_19:
+    {
+        DEBUG_PSA_CODE(printf_cyan("rule: E -> E!\n"););
+        Expression_type type = removeTypeNil(handle[0].expr_type);
+        if (type == TYPE_INVALID)
+        {
+            throw_error(COMPATIBILITY_ERR, handle[1].line_num, "Invalid operand type for operation postfix '!' (forced unwrapping).");
+        }
+        return (PSA_Token){
+            .type = (Token_type)TOKEN_EXPRSN,
+            .token_value = "E",
+            .expr_type = type,
+            .is_literal = false,
+        };
+    }
     default:
         DEBUG_PSA_CODE(printf_red("rule: EOF\n"););
-        throw_error(SYNTACTIC_ERR, "Expression '%s' is not valid.", "TODO: add this"); // TODO: add this
+        throw_error(SYNTACTIC_ERR, handle[1].line_num, "Expression '%s' is not valid.", "TODO: add this"); // TODO: add printing the expression
         return (PSA_Token){
             .type = (Token_type)TOKEN_EOF,
             .token_value = "$",
@@ -146,10 +162,33 @@ PSA_Token getRule(PSA_Token *handle, unsigned int len)
         };
     }
 
-    throw_error(SYNTACTIC_ERR, "Expression '%s' is not valid.", "TODO: add this"); // TODO: add this
+    throw_error(SYNTACTIC_ERR, handle[1].line_num, "Expression '%s' is not valid.", "TODO: add this"); // TODO: add this
 
     return (PSA_Token){
         .type = (Token_type)TOKEN_EOF,
         .token_value = "$",
     };
+}
+
+PSA_Token *getHandleFromStack(PSA_Token_stack *s, int *i)
+{
+    PSA_Token *handle = malloc(sizeof(PSA_Token) * s->size);
+
+    *i = 0;
+    while (PSA_Token_stack_top(s).type != TOKEN_SHIFT)
+    {
+        handle[*i] = ((PSA_Token)PSA_Token_stack_pop(s));
+        *i = *i + 1;
+    }
+    (void)PSA_Token_stack_pop(s); // pop the <
+
+    // reverse the array
+    for (int j = 0; j < *i / 2; j++)
+    {
+        PSA_Token tmp = handle[j];
+        handle[j] = handle[*i - j - 1];
+        handle[*i - j - 1] = tmp;
+    }
+
+    return handle;
 }

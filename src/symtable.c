@@ -18,18 +18,27 @@ const uint32_t FNV_OFFSET_BASIS = 2166136261;
 
 uint32_t hash(char *input)
 {
-    int len = 0;
-    if (input == NULL || (len = strlen(input)) <= 0)
+    // Check for NULL input
+    if (input == NULL)
     {
-        return -1; // in case of empty/invalid string, return an error value
+        return -1; // Return an error value for null input
+    }
+
+    // Calculate the length of the input
+    int len = strlen(input);
+
+    // Check for empty string
+    if (len <= 0)
+    {
+        return -1; // Return an error value for empty string
     }
 
     uint32_t hash = FNV_OFFSET_BASIS;
 
     for (int i = 0; i < len; i++)
     {
-        hash = hash ^ (uint32_t)input[i];
-        hash = hash * FNV_PRIME;
+        hash ^= (uint32_t)input[i];
+        hash *= FNV_PRIME;
     }
 
     return hash % SYMTABLE_MAX_ITEMS;
@@ -41,10 +50,10 @@ void symtable_stack_free_all(symtable_stack *stack)
 {
     while (stack->size > 0)
     {
-        symtable_free(symtable_stack_pop(stack));
+        // symtable_free(symtable_stack_pop(stack));
     }
 
-    free(stack);
+    // free(stack);
 }
 
 symtable symtable_init()
@@ -103,6 +112,11 @@ symtable_item *symtable_find(char *name, symtable table, bool is_func)
     symtable_item *item = table[item_hash];
     while (item != NULL)
     {
+        if (item->id == 0)
+        {
+            item = item->next;
+            continue;
+        }
         if (strcmp(item->id, name) == 0 && item->type == is_func)
         {
             return item;
@@ -210,6 +224,7 @@ symtable_item *init_symtable_item(symtable_item item)
         }
     }
     new_sti->next = NULL;
+    new_sti->line_num = item.line_num;
 
     return new_sti;
 }

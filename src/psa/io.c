@@ -14,17 +14,21 @@
 PSA_Token readNextToken(PSA_Token_stack *s, char *next_token_error, int *num_of_brackets)
 {
     Token *tkn = malloc(sizeof(Token));
+    if (tkn == NULL)
+    {
+        throw_error(INTERNAL_ERR, -1, "Memory allocation for next PSA token failed.");
+        return PSA_TOKEN_EOF;
+    }
     *tkn = (Token){
         .type = (Token_type)TOKEN_EOF,
         .token_value = "$",
         .preceded_by_nl = true,
     };
 
-    // TODO: hodit (si lano/chybu)
     Error_code scanner_returned = (Error_code)main_scanner(tkn);
     if (scanner_returned != NO_ERR)
     {
-        throw_error(scanner_returned, "Scanner error.");
+        throw_error(scanner_returned, tkn->line_num, "Scanner error.");
         printf_red("\nSCANNER VRATIL: ");
         printError((Error){
             .code = scanner_returned,
@@ -43,24 +47,23 @@ PSA_Token readNextToken(PSA_Token_stack *s, char *next_token_error, int *num_of_
         .token_value = tkn->token_value,
         .expr_type = getTypeFromToken(tkn->type),
         .preceded_by_nl = tkn->type == TOKEN_EOF ? true : tkn->preceded_by_nl,
+        .is_literal = isTokenLiteral(tkn->type),
+        .line_num = tkn->line_num,
     };
+
     free(tkn);
 
-    PSA_Token a = (PSA_Token){
-        .type = TOKEN_EOF,
-        .token_value = "$",
-        .expr_type = TYPE_INVALID,
-        .preceded_by_nl = true,
-    };
-    if (s != NULL && !PSA_Token_stack_empty(s))
+    PSA_Token a = PSA_TOKEN_EOF;
+
+    if (s != NULL && !PSA_Token_stack_empty(s) && s->top != NULL)
     {
-        a = PSA_Token_stack_top(s);
+        a = PSA_Token_stack_top(s); // HERE IS THE SEGFAULT
     }
 
     *next_token_error = 0;
 
     // detect expression end by a missing operator between operands
-    *next_token_error += isTokenOperand(a.type) && !isTokenBinaryOperator(b.type) && !isTokenBracket(b.type) ? 1 : 0;
+    *next_token_error += (isTokenOperand(a.type) && !isTokenBinaryOperator(b.type) && !isTokenBracket(b.type) && b.type != TOKEN_NOT) ? 1 : 0;
     *next_token_error = *next_token_error << 1;
 
     // detect expression end by an illegal token for expression being read

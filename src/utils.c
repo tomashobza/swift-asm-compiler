@@ -66,9 +66,6 @@ void fprint_token_type(Token_type type, FILE *out)
     case TOKEN_FUNC:
         fprintf_cyan(out, "TOKEN_FUNC");
         break;
-    /*case TOKEN_TYPE_SUFFIX:
-        fprintf_cyan(out, "TOKEN_TYPE_SUFFIX");
-        break;*/
     case TOKEN_IDENTIFICATOR:
         fprintf_cyan(out, "TOKEN_IDENTIFICATOR");
         break;
@@ -191,7 +188,7 @@ void fprint_expression_type(Expression_type type, FILE *out)
     switch (type)
     {
     case TYPE_INVALID:
-        fprintf_cyan(out, "TYPE_INVALID");
+        fprintf_red(out, "TYPE_INVALID");
         break;
     case TYPE_INT:
         fprintf_cyan(out, "TYPE_INT");
@@ -211,6 +208,18 @@ void fprint_expression_type(Expression_type type, FILE *out)
     case TYPE_EMPTY:
         fprintf_cyan(out, "TYPE_EMPTY");
         break;
+    case TYPE_INT_NIL:
+        fprintf_cyan(out, "TYPE_INT_NIL");
+        break;
+    case TYPE_DOUBLE_NIL:
+        fprintf_cyan(out, "TYPE_DOUBLE_NIL");
+        break;
+    case TYPE_STRING_NIL:
+        fprintf_cyan(out, "TYPE_STRING_NIL");
+        break;
+    case TYPE_BOOL_NIL:
+        fprintf_cyan(out, "TYPE_BOOL_NIL");
+        break;
     default:
         fprintf_red(out, "[invalid type]");
         break;
@@ -229,6 +238,7 @@ Token convertPSATokenToToken(PSA_Token psa_tkn)
         .type = psa_tkn.type,
         .token_value = psa_tkn.token_value,
         .preceded_by_nl = psa_tkn.preceded_by_nl,
+        .line_num = psa_tkn.line_num,
     };
 }
 
@@ -239,5 +249,7 @@ PSA_Token convertTokenToPSAToken(Token tkn)
         .token_value = tkn.token_value,
         .preceded_by_nl = tkn.preceded_by_nl,
         .expr_type = getTypeFromToken(tkn.type),
+        .is_literal = isTokenLiteral(tkn.type),
+        .line_num = tkn.line_num,
     };
 }

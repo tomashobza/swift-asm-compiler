@@ -55,6 +55,22 @@ Expression_type getTypeFromToken(Token_type token)
     }
 }
 
+bool isTokenLiteral(Token_type token)
+{
+    switch (token)
+    {
+    case TOKEN_INT:
+    case TOKEN_DOUBLE:
+    case TOKEN_EXP:
+    case TOKEN_BOOL:
+    case TOKEN_STRING:
+    case TOKEN_NIL:
+        return true;
+    default:
+        return false;
+    }
+}
+
 bool isTokenOperand(Token_type token)
 {
     switch (token)
@@ -187,5 +203,22 @@ char getOperationChar(Token_type token)
         return '|';
     default:
         return ' ';
+    }
+}
+
+Expression_type removeTypeNil(Expression_type expr_type)
+{
+    switch (expr_type)
+    {
+    case TYPE_INT_NIL:
+        return TYPE_INT;
+    case TYPE_DOUBLE_NIL:
+        return TYPE_DOUBLE;
+    case TYPE_BOOL_NIL:
+        return TYPE_BOOL;
+    case TYPE_STRING_NIL:
+        return TYPE_STRING;
+    default:
+        return TYPE_INVALID;
     }
 }

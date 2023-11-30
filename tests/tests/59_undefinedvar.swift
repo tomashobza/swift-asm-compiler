@@ -1,4 +1,4 @@
-// FUNCTIONS_ERR
+// VARIABLES_ERR
 func add(_ a: Int,_ b: Int) -> Int {
     return a + c  // Nedefinovaná proměnná 'c'
 }
