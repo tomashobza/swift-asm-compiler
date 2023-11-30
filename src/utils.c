@@ -66,9 +66,6 @@ void fprint_token_type(Token_type type, FILE *out)
     case TOKEN_FUNC:
         fprintf_cyan(out, "TOKEN_FUNC");
         break;
-    /*case TOKEN_TYPE_SUFFIX:
-        fprintf_cyan(out, "TOKEN_TYPE_SUFFIX");
-        break;*/
     case TOKEN_IDENTIFICATOR:
         fprintf_cyan(out, "TOKEN_IDENTIFICATOR");
         break;
