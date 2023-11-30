@@ -29,7 +29,6 @@ PSA_Token parseFunctionCall(PSA_Token_stack *main_s, PSA_Token id)
     if (found_func == NULL)
     {
         is_ok = false;
-        // TODO: if not -> error (for now), call the function checking the rest of the input source
 
         Token func_def;
         symtable_item func_def_item;
