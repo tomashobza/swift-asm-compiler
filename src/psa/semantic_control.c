@@ -136,8 +136,6 @@ PSA_Token getHandleType(PSA_Token l_operand, Token_type operation, PSA_Token r_o
     case TOKEN_LESS_EQ:
     case TOKEN_MORE_EQ:
     {
-        l_operand.expr_type = canTypeBeNil(l_operand.expr_type) ? removeTypeNil(l_operand.expr_type) : l_operand.expr_type;
-        r_operand.expr_type = canTypeBeNil(r_operand.expr_type) ? removeTypeNil(r_operand.expr_type) : r_operand.expr_type;
         // can be (int, int), (int, double), (double, int), (double, double), (string, string)
         if (getTypeCombination(l_operand, r_operand) != TYPE_INVALID || (l_operand.expr_type == TYPE_STRING && r_operand.expr_type == TYPE_STRING))
         {
