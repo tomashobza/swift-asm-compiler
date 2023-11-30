@@ -31,6 +31,7 @@ int main_scanner(Token *token)
     {
         char *code = "\0";
         ret = generate_token(token, code);
+        token->line_num = line_num;
         code = NULL;
     }
     else
@@ -796,10 +797,6 @@ void scanner_init()
 
 void return_token(Token token)
 {
-    if (token.preceded_by_nl)
-    {
-        line_num--;
-    }
     Token_stack_push(scanner_stack, token);
 }
 

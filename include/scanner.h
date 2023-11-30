@@ -40,7 +40,7 @@
 #define HEX_START 50
 #define IDENTIFICATOR 51
 
-extern unsigned int line_num;
+unsigned int line_num;
 
 typedef enum
 {
@@ -106,6 +106,7 @@ typedef struct
     Token_type type;
     char *token_value;
     bool preceded_by_nl;
+    int line_num;
 } Token;
 
 /*
