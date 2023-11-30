@@ -13,19 +13,21 @@
 
 char P_TABLE[10][10] = {
     // INPUT >
-    //!	   */   +-  LOG   ??   i    (    )	  $
-    {'-', '>', '>', '>', '>', '<', '<', '>', '>'}, // !
-    {'<', '>', '>', '>', '>', '<', '<', '>', '>'}, // */
-    {'<', '<', '>', '>', '>', '<', '<', '>', '>'}, // +-
-    {'<', '<', '<', '>', '>', '<', '<', '>', '>'}, // LOG
-    {'<', '<', '<', '<', '>', '<', '<', '>', '>'}, // ??
-    {'>', '>', '>', '>', '>', '-', '-', '>', '>'}, // i
-    {'<', '<', '<', '<', '<', '<', '<', '=', '-'}, // (
-    {'>', '>', '>', '>', '>', '-', '-', '>', '>'}, // )
-    {'<', '<', '<', '<', '<', '<', '<', '-', '-'}, // $
-                                                   // ^ TOP OF STACK
+    //!	   */   +-  REL  LOG  ??   i    (    )	  $
+    {'-', '>', '>', '>', '>', '>', '<', '<', '>', '>'}, // !
+    {'<', '>', '>', '>', '>', '>', '<', '<', '>', '>'}, // */
+    {'<', '<', '>', '>', '>', '>', '<', '<', '>', '>'}, // +-
+    {'<', '<', '<', '>', '>', '>', '<', '<', '>', '>'}, // REL
+    {'<', '<', '<', '<', '>', '>', '<', '<', '>', '>'}, // LOG
+    {'<', '<', '<', '<', '<', '>', '<', '<', '>', '>'}, // ??
+    {'>', '>', '>', '>', '>', '>', '-', '-', '>', '>'}, // i
+    {'<', '<', '<', '<', '<', '<', '<', '<', '=', '-'}, // (
+    {'>', '>', '>', '>', '>', '>', '-', '-', '>', '>'}, // )
+    {'<', '<', '<', '<', '<', '<', '<', '<', '-', '-'}, // $
+                                                        // ^ TOP OF STACK
 
-    // LOG = LOGICAL OPERATOR (==, !=, <, >, <=, >=)
+    // REL = RELATIONAL OPERATOR (==, !=, <, >, <=, >=)
+    // LOG = LOGICAL OPERATOR (&&, ||)
 };
 
 unsigned int getSymbolValue(Token_type token)
@@ -48,11 +50,12 @@ unsigned int getSymbolValue(Token_type token)
     case TOKEN_MORE:
     case TOKEN_LESS_EQ:
     case TOKEN_MORE_EQ:
+        return 3;
     case TOKEN_AND:
     case TOKEN_OR:
-        return 3;
-    case TOKEN_BINARY_OPERATOR:
         return 4;
+    case TOKEN_BINARY_OPERATOR:
+        return 5;
     case TOKEN_IDENTIFICATOR:
     case TOKEN_FUNC_ID:
     case TOKEN_INT:
@@ -60,13 +63,13 @@ unsigned int getSymbolValue(Token_type token)
     case TOKEN_EXP:
     case TOKEN_BOOL:
     case TOKEN_STRING:
-        return 5;
-    case TOKEN_L_BRACKET:
         return 6;
-    case TOKEN_R_BRACKET:
+    case TOKEN_L_BRACKET:
         return 7;
-    case TOKEN_EOF:
+    case TOKEN_R_BRACKET:
         return 8;
+    case TOKEN_EOF:
+        return 9;
     default: // error
         return 99;
     }
