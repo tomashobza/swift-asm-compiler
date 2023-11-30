@@ -15,7 +15,7 @@ DEFINE_STACK_FUNCTIONS(Error)
 
 static Error_stack *error_st = NULL;
 
-void throw_error_base(Error_code code, char *message)
+void throw_error_base(Error_code code, char *message, int line_num)
 {
     if (error_st == NULL)
     {

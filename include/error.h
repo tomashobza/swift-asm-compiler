@@ -47,22 +47,23 @@ DECLARE_STACK_FUNCTIONS(Error)
  * @brief Macro for throwing an error (pushing it into the error stack).
  *
  */
-#define throw_error(code, fmt, ...)                           \
+#define throw_error(code, line_num, fmt, ...)                 \
     do                                                        \
     {                                                         \
         char *formatted_message = malloc(sizeof(char) * 256); \
         snprintf(formatted_message, 256, fmt, ##__VA_ARGS__); \
-        throw_error_base(code, formatted_message);            \
+        throw_error_base(code, formatted_message, line_num);  \
     } while (0);
 
 /**
  * @brief Adds an error structure to the global error stack.
  *
  * @param code error code
+ * @param message message to go along with the error
  * @param line_num the line number where the error situates
  * @param message message to go along with the error
  */
-void throw_error_base(Error_code code, char *message);
+void throw_error_base(Error_code code, char *message, int line_num);
 
 /**
  * @brief Sorts and prints all the errors in the stack ordered by the line number.
