@@ -21,7 +21,7 @@ Token_type state = NEW_TOKEN;                                                   
 char *char_without_space[] = {":", ".", "{", "}", "(", ")", ",", " ", "=", "!", "+", "-", "*", "/", "<", ">", "\n", "_"};
 
 int ret = 0;
-unsigned int line_num = 0;
+unsigned int line_num = 1;
 Token_stack *scanner_stack;
 
 int main_scanner(Token *token)
@@ -40,7 +40,7 @@ int main_scanner(Token *token)
     }
     if (token->preceded_by_nl)
     {
-        line_num++;
+        // line_num++;
     }
     DEBUG_LEXER_CODE(printf("ret: %d\n", ret););
     return ret;
