@@ -1,3 +1,2 @@
-// NO_ERR
-/* Program 3: Prace s retezci a vestavenymi funkcemi */
-let x = readString() ?? "nic"
+// PARAM_TYPE_ERR
+let length = length(5)
