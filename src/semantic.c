@@ -833,3 +833,10 @@ int check_semantic(Token *token, Sem_rule sem_rule)
 
     return 0;
 }
+bool isTypeConvertable(Expression_type variable_type, Expression_type expression_type, bool is_expression_literal)
+{
+    bool var_is_double = variable_type == TYPE_DOUBLE || variable_type == TYPE_DOUBLE_NIL;
+    bool exprsn_is_int = expression_type == TYPE_INT || expression_type == TYPE_INT_NIL;
+
+    return (var_is_double && exprsn_is_int && is_expression_literal);
+}

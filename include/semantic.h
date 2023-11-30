@@ -59,6 +59,8 @@ typedef enum
     SEM_NONE
 } Sem_rule;
 
+// TODO: pridat komentare
+
 int semantic_init();
 void add_param(FunctionData *func, ParamData new_param);
 void reset_param();
@@ -69,5 +71,16 @@ void semantic_destroy();
 int push_token_get_next(Token *token, Token_stack *token_stack);
 bool get_func_definition(Token *token, char *name, symtable_item *psa_item);
 int check_semantic(Token *token, Sem_rule sem_rule);
+
+/**
+ * @brief Checks if the expression is convertable to the variable type. This behavior is defined in the documentation only for implicit type conversion of literals Int -> Double.
+ *
+ * @param variable_type type of the variable being assigned to
+ * @param expression_type type of the expression being assigned
+ * @param is_expression_literal true if the expression is a literal
+ * @return true
+ * @return false
+ */
+bool isTypeConvertable(Expression_type variable_type, Expression_type expression_type, bool is_expression_literal);
 
 #endif // SEMANTIC_H
