@@ -38,6 +38,7 @@ typedef struct
     Token_type end_token; // last token left
     bool is_ok;           // is the expression valid?
     Expression_type type; // type of the expression
+    bool is_literal;      // is the expression a literal?
 } psa_return_type;
 
 /**
