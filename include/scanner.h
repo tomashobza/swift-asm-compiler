@@ -40,7 +40,7 @@
 #define HEX_START 50
 #define IDENTIFICATOR 51
 
-unsigned int line_num;
+extern unsigned int line_num;
 
 typedef enum
 {
