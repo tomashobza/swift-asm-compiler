@@ -51,6 +51,7 @@ PSA_Token getRule(PSA_Token *handle, unsigned int len)
     case RULE_1d:
     case RULE_1e:
     case RULE_1f:
+    case RULE_1g:
         DEBUG_PSA_CODE(printf_cyan("rule: E -> i\n"););
         Expression_type type = getTypeFromToken(handle[0].type);
         if (handle[0].type == TOKEN_IDENTIFICATOR)
