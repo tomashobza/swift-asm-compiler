@@ -81,11 +81,22 @@ PSA_Token getRule(PSA_Token *handle, unsigned int len)
         };
     case RULE_3:
         DEBUG_PSA_CODE(printf_cyan("rule: E -> !E\n"););
+        if (handle[1].expr_type == TYPE_BOOL)
+        {
+            return (PSA_Token){
+                .type = (Token_type)TOKEN_EXPRSN,
+                .token_value = "E",
+                .expr_type = TYPE_BOOL,
+                .is_literal = false,
+            };
+        }
+
+        throw_error(COMPATIBILITY_ERR, "Invalid operand type for operation prefix '!' (not).");
         return (PSA_Token){
             .type = (Token_type)TOKEN_EXPRSN,
             .token_value = "E",
-            .expr_type = handle[1].expr_type,
-            .is_literal = handle[1].is_literal,
+            .expr_type = TYPE_INVALID,
+            .is_literal = false,
         };
     case RULE_6:
         DEBUG_PSA_CODE(printf_cyan("rule: E -> E*E\n"););
@@ -126,9 +137,24 @@ PSA_Token getRule(PSA_Token *handle, unsigned int len)
     case RULE_18:
         DEBUG_PSA_CODE(printf_cyan("rule: E -> E??E\n"););
         return getHandleType(handle[0], handle[1].type, handle[2]);
+    case RULE_19:
+    {
+        DEBUG_PSA_CODE(printf_cyan("rule: E -> E!\n"););
+        Expression_type type = removeTypeNil(handle[0].expr_type);
+        if (type == TYPE_INVALID)
+        {
+            throw_error(COMPATIBILITY_ERR, "Invalid operand type for operation postfix '!' (forced unwrapping).");
+        }
+        return (PSA_Token){
+            .type = (Token_type)TOKEN_EXPRSN,
+            .token_value = "E",
+            .expr_type = type,
+            .is_literal = false,
+        };
+    }
     default:
         DEBUG_PSA_CODE(printf_red("rule: EOF\n"););
-        throw_error(SYNTACTIC_ERR, "Expression '%s' is not valid.", "TODO: add this"); // TODO: add this
+        throw_error(SYNTACTIC_ERR, "Expression '%s' is not valid.", "TODO: add this"); // TODO: add printing the expression
         return (PSA_Token){
             .type = (Token_type)TOKEN_EOF,
             .token_value = "$",
