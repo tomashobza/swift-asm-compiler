@@ -12,5 +12,5 @@ bin
 tests/blazulin
 ifjcompiler
 ifjcompiler_debug
-ifjcompiler_debug.dSYM/Contents/Resources/DWARF/ifjcompiler_debug
+ifjcompiler_debug.dSYM/**/*
 ifjcompiler_debug
