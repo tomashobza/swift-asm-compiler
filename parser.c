@@ -31,7 +31,7 @@ void get_token(Token *token)
     }
 }
 
-bool cmp_type(Token *token, Token_type type, Sem_rule sem_rule)
+bool cmp_type(Token *token, Token_type type, Control_state sem_rule)
 {
     switch (token->type)
     {
@@ -193,7 +193,7 @@ bool R_FLEX(Token *token)
     }
 }
 
-bool D_TYPE(Token *token, Sem_rule sem_rule)
+bool D_TYPE(Token *token, Control_state sem_rule)
 {
     DEBUG_SYNTAX_CODE(printf("D_TYPE token: %d value: %s\n", token->type, token->token_value););
     switch (token->type)
@@ -541,7 +541,7 @@ bool LOAD_ID(Token *token)
     }
 }
 
-bool EXP(Token *token, Sem_rule sem_rule)
+bool EXP(Token *token, Control_state sem_rule)
 {
     DEBUG_SYNTAX_CODE(printf("EXP token: %d value: %s\n", token->type, token->token_value););
     return_token(*token);

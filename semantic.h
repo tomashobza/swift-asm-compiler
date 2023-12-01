@@ -57,7 +57,7 @@ typedef enum
     PUSH_SCOPE,
     POP_SCOPE,
     SEM_NONE
-} Sem_rule;
+} Control_state;
 
 // TODO: pridat komentare
 
@@ -70,7 +70,9 @@ void add_builtin_functions();
 void semantic_destroy();
 int push_token_get_next(Token *token, Token_stack *token_stack);
 bool get_func_definition(Token *token, char *name, symtable_item *psa_item);
-int check_semantic(Token *token, Sem_rule sem_rule);
+int check_semantic(Token *token, Control_state sem_rule);
+
+void state_var_add(Token *token, symtable_item *varItem, symtable_item *funItem);
 
 /**
  * @brief Checks if the expression is convertable to the variable type. This behavior is defined in the documentation only for implicit type conversion of literals Int -> Double.
