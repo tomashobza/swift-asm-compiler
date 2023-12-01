@@ -8,3 +8,10 @@
  * @copyright Copyright (c) 2023
  *
  */
+
+#include <stdio.h>
+#include <stdlib.h>
+
+extern FILE *out_code_file;
+
+void print_out_code();
