@@ -11,8 +11,6 @@ TESTFLAGS = -g -D DEBUG_SEMANTIC=$(DEBUG_SEMANTIC) -D DEBUG_SYNTAX=$(DEBUG_SYNTA
 # Source files (excluding main.c for test build)
 SRCS = $(filter-out main.c, $(wildcard *.c))
 
-# Test files in the test directory (explicitly list your test files here)
-TESTS = tests/test.c
 
 # Target executable name
 TARGET = ifjcompiler
@@ -27,23 +25,17 @@ all: $(TARGET)
 
 $(TARGET): main.c $(SRCS)
 	$(CC) $(CFLAGS) $^ -o $@
-	cp $(TARGET) $(TARGET)
 
-# build: $(SRCS) $(TESTS)
-# 	@$(CC) $(CFLAGS) $^ -o $(TEST_TARGET)
-
-# Test target
-test: $(SRCS) $(TESTS)
+# build the program and run with the tests/test.swift file
+test: main.c $(SRCS)
 	@$(CC) $(CFLAGS) -D DEBUG_PSA=$(DEBUG_PSA) $(TESTFLAGS) $^ -o $(TEST_TARGET)
 	./$(TEST_TARGET) <tests/test.swift
 
-test-all: $(SRCS) $(TESTS)
+# build the program and run with the tests/test.sh test script
+test-all: main.c $(SRCS)
 	@$(CC) $(CFLAGS) -D DEBUG_PSA=$(DEBUG_PSA) $(TESTFLAGS) $^ -o $(TEST_TARGET)
 	bash tests/test.sh $(TESTFILE)
 
-test-psa: $(SRCS) tests/psa/test_psa.c
-	@$(CC) $(CFLAGS) -D DEBUG_PSA=1 $(TESTFLAGS) $^ -o $(TEST_TARGET)
-	bash tests/psa/test_psa.sh $(TESTFILE)
 
 # clean, compile and run
 run: clean all
