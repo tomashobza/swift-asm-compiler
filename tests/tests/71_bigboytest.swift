@@ -7,7 +7,7 @@ func divide(_ a: Int, _ b: Int) -> Int {
     if b != 0 {
         return a / b
     } else {
-        return -1  // Safeguard for division by zero
+        return 0-1  // Safeguard for division by zero
     }
 }
 
