@@ -18,7 +18,7 @@
 DEFINE_STACK_FUNCTIONS(Token)
 #define CHAR_WTH_SPACE_LENGTH (sizeof(char_without_space) / sizeof(*char_without_space)) // length of array *char_without_space
 Token_type state = NEW_TOKEN;                                                            // initial state of scanner
-char *char_without_space[] = {":", ".", "{", "}", "(", ")", ",", " ", "=", "!", "+", "-", "*", "/", "<", ">", "\n", "_"};
+char *char_without_space[] = {":",  "{", "}", "(", ")", ",", " ", "=", "!", "+", "-", "*", "/", "<", ">", "\n", "_","?"};
 
 int ret = 0;
 unsigned int line_num = 0;
@@ -30,7 +30,10 @@ int main_scanner(Token *token)
     if (Token_stack_empty(scanner_stack))
     {
         char *code = "\0";
-        ret = generate_token(token, code);
+        int ret = generate_token(token, code);
+        if(ret != 0){
+            exit(1);
+        }
         token->line_num = line_num;
         code = NULL;
     }
@@ -361,6 +364,7 @@ int generate_token(Token *token, char *code)
             while (c == ' ')
             {
                 c = (char)getchar();
+
             }
             if (c == '(')
             {
@@ -404,6 +408,7 @@ int generate_token(Token *token, char *code)
             }
             if (c == 'e' || c == 'E')
             {
+                ungetc(' ',stdin);
                 if (state == INTEGER)
                 {
                     return set_token(EXP_START, code, TOKEN_INT, token);
@@ -787,7 +792,12 @@ int set_token(int next_state, char *val, Token_type type, Token *token)
             correct = 1;
         }
     }
-    ungetc(c, stdin);
+    if(next_state == EXP_START && c ==' ')
+    {
+        correct = 1;
+    }else{
+        ungetc(c, stdin);
+    }
     if (correct == 1)
     {
         state = next_state;
