@@ -21,7 +21,7 @@ Token_type state = NEW_TOKEN;                                                   
 char *char_without_space[] = {":", ".", "{", "}", "(", ")", ",", " ", "=", "!", "+", "-", "*", "/", "<", ">", "\n", "_"};
 
 int ret = 0;
-unsigned int line_num = 1;
+unsigned int line_num = 0;
 Token_stack *scanner_stack;
 
 int main_scanner(Token *token)
@@ -40,7 +40,7 @@ int main_scanner(Token *token)
     }
     if (token->preceded_by_nl)
     {
-        // line_num++;
+        line_num++;
     }
     DEBUG_LEXER_CODE(printf("ret: %d\n", ret););
     return ret;
@@ -166,6 +166,7 @@ int generate_token(Token *token, char *code)
                 }
                 else
                 {
+                    ungetc(c, stdin);
                     ret = LEXICAL_ERR;
                     return LEXICAL_ERR;
                 }
@@ -228,6 +229,7 @@ int generate_token(Token *token, char *code)
                 }
                 else
                 {
+                    ungetc(c, stdin);
                     ret = LEXICAL_ERR;
                     return LEXICAL_ERR;
                 }
@@ -239,6 +241,7 @@ int generate_token(Token *token, char *code)
                 }
                 else
                 {
+                    ungetc(c, stdin);
                     ret = LEXICAL_ERR;
                     return LEXICAL_ERR;
                 }
@@ -280,6 +283,7 @@ int generate_token(Token *token, char *code)
             }
             else
             {
+                ungetc(c, stdin);
                 return LEXICAL_ERR;
             }
             break;
@@ -317,6 +321,7 @@ int generate_token(Token *token, char *code)
                 }
                 if (c == EOF)
                 {
+                    ungetc(c, stdin);
                     return LEXICAL_ERR;
                 }
                 c = (char)getchar();
@@ -353,6 +358,10 @@ int generate_token(Token *token, char *code)
                 }
             }
             c = (char)getchar();
+            while (c == ' ')
+            {
+                c = (char)getchar();
+            }
             if (c == '(')
             {
                 ungetc(c, stdin);
@@ -451,6 +460,7 @@ int generate_token(Token *token, char *code)
             }
             else
             {
+                ungetc(c, stdin);
                 return LEXICAL_ERR;
             }
             if (*code == '\0')
@@ -484,6 +494,7 @@ int generate_token(Token *token, char *code)
                 }
                 else if (c == EOF)
                 {
+                    ungetc(c, stdin);
                     return LEXICAL_ERR;
                 }
                 else
@@ -733,6 +744,7 @@ int generate_token(Token *token, char *code)
             }
             else
             {
+                ungetc(c, stdin);
                 return LEXICAL_ERR;
             }
             break;
