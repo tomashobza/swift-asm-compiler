@@ -23,21 +23,18 @@ void add_builtin_functions()
     funcItem->id = "readString";
     funcItem->data.func_data->return_type = TYPE_STRING_NIL;
     funcItem->data.func_data->found_return = true;
-    funcItem->line_num = -1;
     symtable_add(*funcItem, symtable_stack_top(sym_st));
     // readInt() -> Int?
     reset_func();
     funcItem->id = "readInt";
     funcItem->data.func_data->return_type = TYPE_INT_NIL;
     funcItem->data.func_data->found_return = true;
-    funcItem->line_num = -1;
     symtable_add(*funcItem, symtable_stack_top(sym_st));
     // readDouble() -> Double?
     reset_func();
     funcItem->id = "readDouble";
     funcItem->data.func_data->return_type = TYPE_DOUBLE_NIL;
     funcItem->data.func_data->found_return = true;
-    funcItem->line_num = -1;
     symtable_add(*funcItem, symtable_stack_top(sym_st));
     // write ( term1 , term2 , …, term𝑛 )
     reset_func();
@@ -45,7 +42,6 @@ void add_builtin_functions()
     funcItem->data.func_data->return_type = TYPE_EMPTY;
     funcItem->data.func_data->found_return = true;
     funcItem->data.func_data->params_count = -1;
-    funcItem->line_num = -1;
     symtable_add(*funcItem, symtable_stack_top(sym_st));
     // Int2Double(_ term ∶ Int) -> Double
     reset_func();
@@ -57,7 +53,6 @@ void add_builtin_functions()
     new_param.id = ""; // TODO check if okay
     new_param.type = TYPE_INT;
     add_param(funcItem->data.func_data, new_param);
-    funcItem->line_num = -1;
     symtable_add(*funcItem, symtable_stack_top(sym_st));
     // Double2Int(_ term ∶ Double) -> Int
     reset_func();
@@ -69,7 +64,6 @@ void add_builtin_functions()
     new_param.id = ""; // TODO check if okay
     new_param.type = TYPE_DOUBLE;
     add_param(funcItem->data.func_data, new_param);
-    funcItem->line_num = -1;
     symtable_add(*funcItem, symtable_stack_top(sym_st));
     // length(_ 𝑠 : String) -> Int
     reset_func();
@@ -81,7 +75,6 @@ void add_builtin_functions()
     new_param.id = ""; // TODO check if okay
     new_param.type = TYPE_STRING;
     add_param(funcItem->data.func_data, new_param);
-    funcItem->line_num = -1;
     symtable_add(*funcItem, symtable_stack_top(sym_st));
     // substring(of 𝑠 : String, startingAt 𝑖 : Int, endingBefore 𝑗 : Int) -> String?
     reset_func();
@@ -103,7 +96,6 @@ void add_builtin_functions()
     new_param.id = ""; // TODO check if okay
     new_param.type = TYPE_INT;
     add_param(funcItem->data.func_data, new_param);
-    funcItem->line_num = -1;
     symtable_add(*funcItem, symtable_stack_top(sym_st));
     // ord(_ 𝑐 : String) -> Int
     reset_func();
@@ -115,7 +107,6 @@ void add_builtin_functions()
     new_param.id = ""; // TODO check if okay
     new_param.type = TYPE_STRING;
     add_param(funcItem->data.func_data, new_param);
-    funcItem->line_num = -1;
     symtable_add(*funcItem, symtable_stack_top(sym_st));
     // chr(_ 𝑖 : Int) -> String
     reset_func();
@@ -127,7 +118,6 @@ void add_builtin_functions()
     new_param.id = ""; // TODO check if okay
     new_param.type = TYPE_INT;
     add_param(funcItem->data.func_data, new_param);
-    funcItem->line_num = -1;
     symtable_add(*funcItem, symtable_stack_top(sym_st));
 
     printf(GREEN);
@@ -595,7 +585,6 @@ int check_semantic(Token *token, Sem_rule sem_rule)
         if (varItem->data.var_data->is_param == false) // new symmbol
         {
             DEBUG_SEMANTIC_CODE(printf(YELLOW "ADDING VAR: %s, type: %d, const: %d\n", varItem->id, varItem->data.var_data->type, varItem->data.var_data->is_const););
-            varItem->line_num = token->line_num;
             symtable_add(*varItem, symtable_stack_top(sym_st));
             DEBUG_SEMANTIC_CODE(symtable_print(symtable_stack_top(sym_st)););
         }
@@ -615,7 +604,7 @@ int check_semantic(Token *token, Sem_rule sem_rule)
         {
             if (func_id_item->type == FUNCTION)
             { // is function
-                throw_error(FUNCTIONS_ERR, func_id_item->line_num, "Function %s is already defined!\n", token->token_value);
+                throw_error(FUNCTIONS_ERR, token->line_num, "Function %s is already defined!\n", token->token_value);
             }
         }
         funcItem->id = token->token_value;
@@ -655,7 +644,6 @@ int check_semantic(Token *token, Sem_rule sem_rule)
     case FUNC_HEADER_DONE:
     {
         DEBUG_SEMANTIC_CODE(printf(YELLOW "ADDING FUNC: %s, return type: %d\n", funcItem->id, funcItem->data.func_data->return_type););
-        funcItem->line_num = token->line_num;
         symtable_add(*funcItem, symtable_stack_top(sym_st));
         DEBUG_SEMANTIC_CODE(symtable_print(symtable_stack_top(sym_st)););
 
@@ -679,7 +667,6 @@ int check_semantic(Token *token, Sem_rule sem_rule)
                 varItem->data.var_data->is_const = true;
                 varItem->data.var_data->is_initialized = true;
                 varItem->data.var_data->is_param = true;
-                varItem->line_num = token->line_num;
                 symtable_add(*varItem, symtable_stack_top(sym_st));
                 DEBUG_SEMANTIC_CODE(printf(YELLOW "ADDING VAR TO FUNCTIONS: %s, type: %d, const: %d\n", varItem->id, varItem->data.var_data->type, varItem->data.var_data->is_const););
             }
@@ -721,10 +708,13 @@ int check_semantic(Token *token, Sem_rule sem_rule)
     }
     case COND_EXP:
     {
+        DEBUG_SEMANTIC_CODE(printf(CYAN "COND EXP: %s\n", token->token_value);
+                            symtable_print(symtable_stack_top(sym_st)););
         psa_return_type return_type3 = parse_expression();
+        DEBUG_SEMANTIC_CODE(printf(CYAN "COND EXP: %d\n", return_type3.type););
         if (return_type3.is_ok == false)
         {
-            throw_error(COMPATIBILITY_ERR, token->line_num, "Unrecognizable type of variable: %s \n", varItem->id);
+            throw_error(COMPATIBILITY_ERR, token->line_num, "Invalid expression!\n");
         }
         else if (return_type3.type != TYPE_BOOL)
         {
@@ -745,7 +735,7 @@ int check_semantic(Token *token, Sem_rule sem_rule)
         symtable_item *let_in_if_item = symtable_find_in_stack(token->token_value, sym_st, false);
         if (let_in_if_item == NULL || let_in_if_item->data.var_data->is_const == false)
         {
-            throw_error(SEMANTICS_ERR, let_in_if_item->line_num, "Variable %s is not a defined const!\n", token->token_value);
+            throw_error(SEMANTICS_ERR, token->line_num, "Variable %s is not a defined const!\n", token->token_value);
         }
         else
         {
@@ -789,7 +779,7 @@ int check_semantic(Token *token, Sem_rule sem_rule)
         symtable_item *func_body_item = symtable_find_in_stack(funcItem->id, sym_st, true);
         if (func_body_item->data.func_data->found_return == false && func_body_item->data.func_data->return_type != TYPE_EMPTY)
         {
-            throw_error(PARAM_TYPE_ERR, func_body_item->line_num, "Function %s of type: %d does not have a return statement!\n", funcItem->id, func_body_item->data.func_data->return_type);
+            throw_error(PARAM_TYPE_ERR, token->line_num, "Function %s of type: %d does not have a return statement!\n", funcItem->id, func_body_item->data.func_data->return_type);
             goto POP_SCOPE;
         }
         goto POP_SCOPE;
@@ -802,7 +792,7 @@ int check_semantic(Token *token, Sem_rule sem_rule)
         symtable_item *item = symtable_find_in_stack(token->token_value, sym_st, false);
         if (item == NULL)
         {
-            throw_error(FUNCTIONS_ERR, item->line_num, "Variable %s is not defined!\n", token->token_value);
+            throw_error(FUNCTIONS_ERR, token->line_num, "Variable %s is not defined!\n", token->token_value);
         }
         else if (item->data.var_data->is_const == true)
         {
@@ -824,7 +814,7 @@ int check_semantic(Token *token, Sem_rule sem_rule)
         symtable_item *identif_exp_item = symtable_find_in_stack(varItem->id, sym_st, false);
         if (!(check_ret_values(return_type4.type, identif_exp_item->data.var_data->type) || isTypeConvertable(identif_exp_item->data.var_data->type, return_type4.type, return_type4.is_literal)))
         {
-            throw_error(COMPATIBILITY_ERR, identif_exp_item->line_num, "Expression type: %d and type: %d of variable: %s do not match!\n", return_type4.type, identif_exp_item->data.var_data->type, varItem->id);
+            throw_error(COMPATIBILITY_ERR, token->line_num, "Expression type: %d and type: %d of variable: %s do not match!\n", return_type4.type, identif_exp_item->data.var_data->type, varItem->id);
         }
         identif_exp_item->data.var_data->is_initialized = true;
         break;

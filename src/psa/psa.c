@@ -107,6 +107,27 @@ psa_return_type parse_expression_base(bool is_param)
 
             DEBUG_PSA_CODE(printf_magenta("------------------------------\n"););
 
+            if (is_param)
+            {
+                switch (b.type)
+                {
+                case TOKEN_R_BRACKET:
+                    if (num_of_brackets >= 0)
+                    {
+                        break;
+                    }
+
+                    return_token(convertPSATokenToToken(b));
+
+                    __attribute__((fallthrough));
+                case TOKEN_COMMA:
+                    next_token_error = 0;
+                    b = PSA_TOKEN_EOF;
+                    break;
+                default:
+                    break;
+                }
+            }
             // CHECK NEXT TOKEN FOR ERRORS
             if (next_token_error > 0 && b.type != TOKEN_EOF)
             {
