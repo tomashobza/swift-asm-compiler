@@ -62,17 +62,12 @@ typedef enum
 // TODO: pridat komentare
 
 int semantic_init();
-void add_param(FunctionData *func, ParamData new_param);
-void reset_param();
-void reset_func();
-void reset_var();
-void add_builtin_functions();
-void semantic_destroy();
+void add_builtin_functions(sym_items *items);
 int push_token_get_next(Token *token, Token_stack *token_stack);
 bool get_func_definition(Token *token, char *name, symtable_item *psa_item);
-int check_semantic(Token *token, Control_state sem_rule);
+int check_semantic(Token *token, sym_items *items, Control_state sem_rule);
 
-void state_var_add(Token *token, symtable_item *varItem, symtable_item *funItem);
+void state_var_add(Token *token, sym_items *items);
 
 /**
  * @brief Checks if the expression is convertable to the variable type. This behavior is defined in the documentation only for implicit type conversion of literals Int -> Double.

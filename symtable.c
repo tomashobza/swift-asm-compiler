@@ -73,19 +73,17 @@ symtable symtable_init()
     return st;
 }
 
-symtable_item *symtable_add(symtable_item item, symtable table)
+symtable_item *symtable_add(symtable_item *item, symtable table)
 {
-    const uint32_t item_hash = hash(item.id);
+    const uint32_t item_hash = hash(item->id);
     if (item_hash == (uint32_t)-1)
     {
         return NULL;
     }
 
-    symtable_item *new_sti = init_symtable_item(item);
-
     if (table[item_hash] == NULL)
     {
-        table[item_hash] = new_sti;
+        table[item_hash] = item;
     }
     else
     {
@@ -95,10 +93,10 @@ symtable_item *symtable_add(symtable_item item, symtable table)
         {
             last_item = last_item->next;
         }
-        last_item->next = new_sti;
+        last_item->next = item;
     }
 
-    return new_sti;
+    return item;
 }
 
 symtable_item *symtable_find(char *name, symtable table, bool is_func)
@@ -150,6 +148,37 @@ symtable_item *symtable_find_in_stack(char *name, symtable_stack *stack, bool is
     return NULL;
 }
 
+void add_param(FunctionData *func)
+{
+    if (func->params == NULL)
+    {
+        // First param
+        func->params = malloc(sizeof(ParamData));
+        if (func->params == NULL)
+        {
+            // Handle memory allocation error
+            return;
+        }
+        func->capacity = 1;
+        func->params_count = 0;
+    }
+    else if (func->params_count == func->capacity)
+    {
+        // Need to resize
+        int new_capacity = func->capacity * 2; // Or choose another resizing strategy
+        ParamData *new_params = realloc(func->params, new_capacity * sizeof(ParamData));
+        if (new_params == NULL)
+        {
+            // Handle memory allocation error
+            return;
+        }
+        func->params = new_params;
+        func->capacity = new_capacity;
+    }
+
+    func->params_count++;
+}
+
 VariableData *init_var_data()
 {
     VariableData *var_data = malloc(sizeof(VariableData));
@@ -194,7 +223,7 @@ FunctionData *init_func_data()
     return func_data;
 }
 
-symtable_item *init_symtable_item(symtable_item item)
+symtable_item *init_symtable_item(bool is_func)
 {
 
     symtable_item *new_sti = malloc(sizeof(symtable_item));
@@ -203,25 +232,15 @@ symtable_item *init_symtable_item(symtable_item item)
         return NULL;
     }
 
-    *new_sti = item;
-
-    if (item.type == VARIABLE)
+    if (is_func == false) // is variable
     {
+        new_sti->type = VARIABLE;
         new_sti->data.var_data = init_var_data();
-        *(new_sti->data.var_data) = *(item.data.var_data);
     }
-    else if (item.type == FUNCTION)
+    else if (is_func == true) // is function
     {
+        new_sti->type = FUNCTION;
         new_sti->data.func_data = init_func_data();
-        *(new_sti->data.func_data) = *(item.data.func_data);
-        if (item.data.func_data->params_count > 0)
-        {
-            new_sti->data.func_data->params = init_param_data(item.data.func_data->params_count);
-            for (int i = 0; i < item.data.func_data->params_count; i++)
-            {
-                new_sti->data.func_data->params[i] = item.data.func_data->params[i];
-            }
-        }
     }
     new_sti->next = NULL;
 
