@@ -453,6 +453,7 @@ bool IF_COND(Token *token)
     {
     // IF_COND -> EXP
     case TOKEN_IDENTIFICATOR:
+    case TOKEN_FUNC_ID:
     case TOKEN_L_BRACKET:
     case TOKEN_DOUBLE:
     case TOKEN_INT:
