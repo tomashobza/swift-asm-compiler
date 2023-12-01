@@ -1,0 +1,12 @@
+Tento adresář obsahuje několik příkladů programů napsaných v IFJcode23.
+
+Na Merlinovi lze vyzkoušet příkazem:
+
+/pub/courses/ifj/ic23int/linux/ic23int example.ifjcode
+
+Základní použití interpretu ic23int zjistíte příkazem:
+
+/pub/courses/ifj/ic23int/linux/ic23int --help
+
+Pokud chcete vidět detailnější stavy paměti, tak na zajímavá místa programu v IFJcode23 vložte ladící instrukci BREAK.
+
