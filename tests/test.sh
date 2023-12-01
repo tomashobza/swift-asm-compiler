@@ -96,10 +96,10 @@ test_file() {
     # if should_output is empty, set it to 0
 
     if [ -z "$2" ]; then
-        "$(dirname "$0")"/../bin/ifjcompiler_debug >/dev/null 2>/dev/null <"$testinput"
+        "$(dirname "$0")"/../ifjcompiler_debug >/dev/null 2>/dev/null <"$testinput"
         RETURN_CODE=$?
     else
-        "$(dirname "$0")"/../bin/ifjcompiler_debug <"$testinput"
+        "$(dirname "$0")"/../ifjcompiler_debug <"$testinput"
         RETURN_CODE=$?
     fi
 

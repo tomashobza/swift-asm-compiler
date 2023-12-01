@@ -8,14 +8,14 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include "symtable.h"
+#include "../symtable.h"
 
 symtable_stack *sym_st;
 
-#include "psa.h"
-#include "error.h"
-#include "parser.h"
-#include "utils.h"
+#include "../psa.h"
+#include "../error.h"
+#include "../parser.h"
+#include "../utils.h"
 
 int main(void)
 {
