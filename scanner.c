@@ -361,8 +361,10 @@ int generate_token(Token *token, char *code)
                 }
             }
             c = (char)getchar();
+            bool had_space = false;
             while (c == ' ')
             {
+                had_space = true;
                 c = (char)getchar();
 
             }
@@ -374,6 +376,9 @@ int generate_token(Token *token, char *code)
             else
             {
                 ungetc(c, stdin);
+                if(had_space){
+                    ungetc(' ',stdin);
+                }
                 return set_token(NEW_TOKEN, code, TOKEN_IDENTIFICATOR, token);
             }
             // return set_token(NEW_TOKEN, code, TOKEN_IDENTIFICATOR, token, code);
