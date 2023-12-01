@@ -21,7 +21,6 @@
 #include "stack.h"
 #include "semantic.h"
 #include "generator.h"
-#include "parser_control.h"
 
 #define RED "\x1B[31m"
 #define GREEN "\x1B[32m"
@@ -32,7 +31,7 @@
 #define RESET "\x1B[0m"
 
 void get_token(Token *token);
-bool cmp_type(Token *token, Token_type type, Control_state sem_rule);
+bool cmp_type(Token *token, Token_type type, Sem_rule sem_rule);
 
 bool START(Token *token);
 bool STMT_LIST(Token *token);
@@ -40,7 +39,7 @@ bool STMT(Token *token);
 bool VAR_LET(Token *token);
 bool VAR_SCOPE(Token *token);
 bool TYPE_AND_ASIGN(Token *token);
-bool D_TYPE(Token *token, Control_state sem_rule);
+bool D_TYPE(Token *token, Sem_rule sem_rule);
 bool R_FLEX(Token *token);
 bool DEF_FUNC(Token *token);
 bool P_LIST(Token *token);
@@ -60,7 +59,9 @@ bool ELSE_CLAUSE(Token *token);
 bool AFTER_ELSE(Token *token);
 bool WHILE_STMT(Token *token);
 bool LOAD_ID(Token *token);
-bool EXP(Token *token, Control_state sem_rule);
+bool ALL_AFTER_ID(Token *token);
+bool FUNC_CALL(Token *token);
+bool EXP(Token *token, Sem_rule sem_rule);
 
 int parser_main();
 

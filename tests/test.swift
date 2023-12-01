@@ -1,6 +1,5 @@
 // NO_ERR
-let a = readInt()   // DEFVAR LF/GF@a
-                    // POPS LF/GF@a
+let a = readInt()
 let b = readInt()
 
 if let a {
