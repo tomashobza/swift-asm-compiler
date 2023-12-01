@@ -16,32 +16,32 @@ symtable mySymtable; // Symtable
 void add_builtin_functions(sym_items *items)
 {
     // readString() -> String?
-    init_symtable_item(true);
+    items->funcItem = init_symtable_item(true);
     items->funcItem->id = "readString";
     items->funcItem->data.func_data->return_type = TYPE_STRING_NIL;
     items->funcItem->data.func_data->found_return = true;
     symtable_add(items->funcItem, symtable_stack_top(sym_st));
     // readInt() -> Int?
-    init_symtable_item(true);
+    items->funcItem = init_symtable_item(true);
     items->funcItem->id = "readInt";
     items->funcItem->data.func_data->return_type = TYPE_INT_NIL;
     items->funcItem->data.func_data->found_return = true;
     symtable_add(items->funcItem, symtable_stack_top(sym_st));
     // readDouble() -> Double?
-    init_symtable_item(true);
+    items->funcItem = init_symtable_item(true);
     items->funcItem->id = "readDouble";
     items->funcItem->data.func_data->return_type = TYPE_DOUBLE_NIL;
     items->funcItem->data.func_data->found_return = true;
     symtable_add(items->funcItem, symtable_stack_top(sym_st));
     // write ( term1 , term2 , …, term𝑛 )
-    init_symtable_item(true);
+    items->funcItem = init_symtable_item(true);
     items->funcItem->id = "write";
     items->funcItem->data.func_data->return_type = TYPE_EMPTY;
     items->funcItem->data.func_data->found_return = true;
     items->funcItem->data.func_data->params_count = -1;
     symtable_add(items->funcItem, symtable_stack_top(sym_st));
     // Int2Double(_ term ∶ Int) -> Double
-    init_symtable_item(true);
+    items->funcItem = init_symtable_item(true);
     items->funcItem->id = "Int2Double";
     items->funcItem->data.func_data->return_type = TYPE_DOUBLE;
     items->funcItem->data.func_data->found_return = true;
@@ -50,10 +50,9 @@ void add_builtin_functions(sym_items *items)
     items->funcItem->data.func_data->params[items->funcItem->data.func_data->params_count].name = "_";
     items->funcItem->data.func_data->params[items->funcItem->data.func_data->params_count].id = ""; // TODO check if okay
     items->funcItem->data.func_data->params[items->funcItem->data.func_data->params_count].type = TYPE_INT;
-    add_param(items->funcItem->data.func_data);
     symtable_add(items->funcItem, symtable_stack_top(sym_st));
     // Double2Int(_ term ∶ Double) -> Int
-    init_symtable_item(true);
+    items->funcItem = init_symtable_item(true);
     items->funcItem->id = "Double2Int";
     items->funcItem->data.func_data->return_type = TYPE_INT;
     items->funcItem->data.func_data->found_return = true;
@@ -62,10 +61,9 @@ void add_builtin_functions(sym_items *items)
     items->funcItem->data.func_data->params[items->funcItem->data.func_data->params_count].name = "_";
     items->funcItem->data.func_data->params[items->funcItem->data.func_data->params_count].id = ""; // TODO check if okay
     items->funcItem->data.func_data->params[items->funcItem->data.func_data->params_count].type = TYPE_DOUBLE;
-    add_param(items->funcItem->data.func_data);
     symtable_add(items->funcItem, symtable_stack_top(sym_st));
     // length(_ 𝑠 : String) -> Int
-    init_symtable_item(true);
+    items->funcItem = init_symtable_item(true);
     items->funcItem->id = "length";
     items->funcItem->data.func_data->return_type = TYPE_INT;
     items->funcItem->data.func_data->found_return = true;
@@ -74,10 +72,9 @@ void add_builtin_functions(sym_items *items)
     items->funcItem->data.func_data->params[items->funcItem->data.func_data->params_count].name = "_";
     items->funcItem->data.func_data->params[items->funcItem->data.func_data->params_count].id = ""; // TODO check if okay
     items->funcItem->data.func_data->params[items->funcItem->data.func_data->params_count].type = TYPE_STRING;
-    add_param(items->funcItem->data.func_data);
     symtable_add(items->funcItem, symtable_stack_top(sym_st));
     // substring(of 𝑠 : String, startingAt 𝑖 : Int, endingBefore 𝑗 : Int) -> String?
-    init_symtable_item(true);
+    items->funcItem = init_symtable_item(true);
     items->funcItem->id = "substring";
     items->funcItem->data.func_data->return_type = TYPE_STRING_NIL;
     items->funcItem->data.func_data->found_return = true;
@@ -86,22 +83,19 @@ void add_builtin_functions(sym_items *items)
     items->funcItem->data.func_data->params[items->funcItem->data.func_data->params_count].name = "of";
     items->funcItem->data.func_data->params[items->funcItem->data.func_data->params_count].id = ""; // TODO check if okay
     items->funcItem->data.func_data->params[items->funcItem->data.func_data->params_count].type = TYPE_STRING;
-    add_param(items->funcItem->data.func_data);
     // reset param
     add_param(items->funcItem->data.func_data);
     items->funcItem->data.func_data->params[items->funcItem->data.func_data->params_count].name = "startingAt";
     items->funcItem->data.func_data->params[items->funcItem->data.func_data->params_count].id = ""; // TODO check if okay
     items->funcItem->data.func_data->params[items->funcItem->data.func_data->params_count].type = TYPE_INT;
-    add_param(items->funcItem->data.func_data);
     // reset param
     add_param(items->funcItem->data.func_data);
     items->funcItem->data.func_data->params[items->funcItem->data.func_data->params_count].name = "endingBefore";
     items->funcItem->data.func_data->params[items->funcItem->data.func_data->params_count].id = ""; // TODO check if okay
     items->funcItem->data.func_data->params[items->funcItem->data.func_data->params_count].type = TYPE_INT;
-    add_param(items->funcItem->data.func_data);
     symtable_add(items->funcItem, symtable_stack_top(sym_st));
     // ord(_ 𝑐 : String) -> Int
-    init_symtable_item(true);
+    items->funcItem = init_symtable_item(true);
     items->funcItem->id = "ord";
     items->funcItem->data.func_data->return_type = TYPE_INT;
     items->funcItem->data.func_data->found_return = true;
@@ -110,10 +104,9 @@ void add_builtin_functions(sym_items *items)
     items->funcItem->data.func_data->params[items->funcItem->data.func_data->params_count].name = "_";
     items->funcItem->data.func_data->params[items->funcItem->data.func_data->params_count].id = ""; // TODO check if okay
     items->funcItem->data.func_data->params[items->funcItem->data.func_data->params_count].type = TYPE_STRING;
-    add_param(items->funcItem->data.func_data);
     symtable_add(items->funcItem, symtable_stack_top(sym_st));
     // chr(_ 𝑖 : Int) -> String
-    init_symtable_item(true);
+    items->funcItem = init_symtable_item(true);
     items->funcItem->id = "chr";
     items->funcItem->data.func_data->return_type = TYPE_STRING;
     items->funcItem->data.func_data->found_return = true;
@@ -122,7 +115,6 @@ void add_builtin_functions(sym_items *items)
     items->funcItem->data.func_data->params[items->funcItem->data.func_data->params_count].name = "_";
     items->funcItem->data.func_data->params[items->funcItem->data.func_data->params_count].id = ""; // TODO check if okay
     items->funcItem->data.func_data->params[items->funcItem->data.func_data->params_count].type = TYPE_INT;
-    add_param(items->funcItem->data.func_data);
     symtable_add(items->funcItem, symtable_stack_top(sym_st));
 
     printf(GREEN);
@@ -174,8 +166,9 @@ Expression_type get_expression_type(Token *token)
     }
 }
 
-void print_items()
+void print_items(sym_items *items)
 {
+    printf("FUNC: %p, VAR: %p\n", items->funcItem, items->varItem);
     DEBUG_SEMANTIC_CODE(
         printf(MAGENTA "FUNCTION: %s, return type: %d, param_count: %d" RESET "\n", items->funcItem->id, items->funcItem->data.func_data->return_type, items->funcItem->data.func_data->params_count);
         for (int i = 0; i < items->funcItem->data.func_data->params_count; i++) {
@@ -411,14 +404,14 @@ bool check_ret_values(Expression_type t_exp, Expression_type t_id)
 void state_let(Token *token, sym_items *items)
 {
     printf("%p, %p\n", token, items);
-    init_symtable_item(false);
+    items->varItem = init_symtable_item(false);
     items->varItem->data.var_data->is_const = true;
 }
 
 void state_var(Token *token, sym_items *items)
 {
     printf("%p, %p\n", token, items);
-    init_symtable_item(false);
+    items->varItem = init_symtable_item(false);
     items->varItem->data.var_data->is_const = false;
 }
 
@@ -531,7 +524,7 @@ void state_p_id(Token *token, sym_items *items)
 {
     printf("%p, %p\n", token, items);
     items->funcItem->data.func_data->params[items->funcItem->data.func_data->params_count].id = token->token_value;
-    init_symtable_item(false);
+    items->varItem = init_symtable_item(false);
     items->varItem->id = token->token_value;
 }
 
@@ -589,7 +582,7 @@ void state_func_header_done(Token *token, sym_items *items)
     {
         if (strcmp(items->funcItem->data.func_data->params[i].id, "_") != 0)
         {
-            init_symtable_item(false);
+            items->varItem = init_symtable_item(false);
             items->varItem->id = items->funcItem->data.func_data->params[i].id;
             items->varItem->data.var_data->type = items->funcItem->data.func_data->params[i].type;
             items->varItem->data.var_data->is_const = true;
@@ -668,7 +661,7 @@ void state_let_in_if(Token *token, sym_items *items)
 {
     printf("%p, %p\n", token, items);
 
-    init_symtable_item(false);
+    items->varItem = init_symtable_item(false);
     symtable_item *let_in_if_item = symtable_find_in_stack(token->token_value, sym_st, false);
     if (let_in_if_item == NULL || let_in_if_item->data.var_data->is_const == false)
     {
@@ -703,7 +696,7 @@ void state_let_in_if(Token *token, sym_items *items)
     symtable symtable = symtable_init();
     symtable_stack_push(sym_st, symtable);
 
-    print_items();
+    print_items(items);
 
     // add temporary var to scope
     symtable_add(items->varItem, symtable_stack_top(sym_st));
@@ -727,7 +720,7 @@ void state_load_identif(Token *token, sym_items *items)
 {
     printf("%p, %p\n", token, items);
 
-    // init_symtable_item(false);
+    // items->varItem = init_symtable_item(false);
     DEBUG_SEMANTIC_CODE(printf(CYAN);
                         symtable_print(symtable_stack_top(sym_st)););
     symtable_item *item = symtable_find_in_stack(token->token_value, sym_st, false);
@@ -742,7 +735,7 @@ void state_load_identif(Token *token, sym_items *items)
     }
     // DEBUG_SEMANTIC_CODE(printf("FOUND: %s, type: %d, const: %d\n", item->id, item->data.var_data->type, item->data.var_data->is_const););
     items->varItem->id = token->token_value;
-    print_items();
+    print_items(items);
 }
 
 void state_identif_exp(Token *token, sym_items *items)
