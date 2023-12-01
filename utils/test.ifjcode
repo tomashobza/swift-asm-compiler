@@ -1,0 +1,4 @@
+.IFJcode23
+MOVE LF@y int@5
+WRITE LF@y
+
