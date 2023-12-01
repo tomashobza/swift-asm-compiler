@@ -16,6 +16,7 @@ symtable_stack *sym_st;
 #include "error.h"
 #include "parser.h"
 #include "utils.h"
+#include "generator.h"
 
 int main(void)
 {

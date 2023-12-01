@@ -20,6 +20,7 @@
 #include "error.h"
 #include "stack.h"
 #include "semantic.h"
+#include "generator.h"
 
 #define RED "\x1B[31m"
 #define GREEN "\x1B[32m"
