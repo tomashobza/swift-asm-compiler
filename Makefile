@@ -9,10 +9,8 @@ CFLAGS = -Iinclude -Werror -Wall -Wextra -std=c99 -fdiagnostics-color=always
 TESTFLAGS = -g -D DEBUG_SEMANTIC=$(DEBUG_SEMANTIC) -D DEBUG_SYNTAX=$(DEBUG_SYNTAX) -D DEBUG_LEXER=$(DEBUG_LEXER)
 
 # Source files (excluding main.c for test build)
-SRCS = $(filter-out src/main.c, $(wildcard src/*.c)) $(filter-out src/main.c, $(wildcard src/**/*.c))
+SRCS = $(filter-out main.c, $(wildcard *.c))
 
-# Test files in the test directory (explicitly list your test files here)
-TESTS = tests/test.c
 
 # Target executable name
 TARGET = ifjcompiler
@@ -25,29 +23,23 @@ TESTFILE?=-1
 # Default target
 all: $(TARGET)
 
-$(TARGET): src/main.c $(SRCS)
-	$(CC) $(CFLAGS) $^ -o bin/$@
-	cp bin/$(TARGET) $(TARGET)
+$(TARGET): main.c $(SRCS)
+	$(CC) $(CFLAGS) $^ -o $@
 
-# build: $(SRCS) $(TESTS)
-# 	@$(CC) $(CFLAGS) $^ -o bin/$(TEST_TARGET)
+# build the program and run with the tests/test.swift file
+test: main.c $(SRCS)
+	@$(CC) $(CFLAGS) -D DEBUG_PSA=$(DEBUG_PSA) $(TESTFLAGS) $^ -o $(TEST_TARGET)
+	./$(TEST_TARGET) <tests/test.swift
 
-# Test target
-test: $(SRCS) $(TESTS)
-	@$(CC) $(CFLAGS) -D DEBUG_PSA=$(DEBUG_PSA) $(TESTFLAGS) $^ -o bin/$(TEST_TARGET)
-	./bin/$(TEST_TARGET) <tests/test.swift
-
-test-all: $(SRCS) $(TESTS)
-	@$(CC) $(CFLAGS) -D DEBUG_PSA=$(DEBUG_PSA) $(TESTFLAGS) $^ -o bin/$(TEST_TARGET)
+# build the program and run with the tests/test.sh test script
+test-all: main.c $(SRCS)
+	@$(CC) $(CFLAGS) -D DEBUG_PSA=$(DEBUG_PSA) $(TESTFLAGS) $^ -o $(TEST_TARGET)
 	bash tests/test.sh $(TESTFILE)
 
-test-psa: $(SRCS) tests/psa/test_psa.c
-	@$(CC) $(CFLAGS) -D DEBUG_PSA=1 $(TESTFLAGS) $^ -o bin/$(TEST_TARGET)
-	bash tests/psa/test_psa.sh $(TESTFILE)
 
 # clean, compile and run
 run: clean all
-	./bin/$(TARGET) <tests/test.swift
+	.$(TARGET) <tests/test.swift
 
 # Clean up
 clean:

@@ -166,7 +166,6 @@ int generate_token(Token *token, char *code)
                 }
                 else
                 {
-                    ungetc(c, stdin);
                     ret = LEXICAL_ERR;
                     return LEXICAL_ERR;
                 }
@@ -229,7 +228,6 @@ int generate_token(Token *token, char *code)
                 }
                 else
                 {
-                    ungetc(c, stdin);
                     ret = LEXICAL_ERR;
                     return LEXICAL_ERR;
                 }
@@ -241,7 +239,6 @@ int generate_token(Token *token, char *code)
                 }
                 else
                 {
-                    ungetc(c, stdin);
                     ret = LEXICAL_ERR;
                     return LEXICAL_ERR;
                 }
@@ -283,7 +280,6 @@ int generate_token(Token *token, char *code)
             }
             else
             {
-                ungetc(c, stdin);
                 return LEXICAL_ERR;
             }
             break;
@@ -321,7 +317,6 @@ int generate_token(Token *token, char *code)
                 }
                 if (c == EOF)
                 {
-                    ungetc(c, stdin);
                     return LEXICAL_ERR;
                 }
                 c = (char)getchar();
@@ -358,9 +353,6 @@ int generate_token(Token *token, char *code)
                 }
             }
             c = (char)getchar();
-            while(c == ' '){
-                c = (char)getchar();
-            }
             if (c == '(')
             {
                 ungetc(c, stdin);
@@ -459,7 +451,6 @@ int generate_token(Token *token, char *code)
             }
             else
             {
-                ungetc(c, stdin);
                 return LEXICAL_ERR;
             }
             if (*code == '\0')
@@ -493,7 +484,6 @@ int generate_token(Token *token, char *code)
                 }
                 else if (c == EOF)
                 {
-                    ungetc(c, stdin);
                     return LEXICAL_ERR;
                 }
                 else
@@ -743,7 +733,6 @@ int generate_token(Token *token, char *code)
             }
             else
             {
-                ungetc(c, stdin);
                 return LEXICAL_ERR;
             }
             break;

@@ -10,3 +10,7 @@ input.txt
 token_types.txt
 bin
 tests/blazulin
+ifjcompiler
+ifjcompiler_debug
+ifjcompiler_debug.dSYM/**/*
+ifjcompiler_debug
