@@ -408,15 +408,9 @@ int generate_token(Token *token, char *code)
             }
             if (c == 'e' || c == 'E')
             {
-                ungetc(' ',stdin);
-                if (state == INTEGER)
-                {
-                    return set_token(EXP_START, code, TOKEN_INT, token);
-                }
-                else
-                {
-                    return set_token(EXP_START, code, TOKEN_DOUBLE, token);
-                }
+                check_length(&code_len, 0, &code);
+                strncat(code, &c, 1);
+                state = EXP_START;
             }
             else if (c == '.' && state == INTEGER)
             {
@@ -438,6 +432,7 @@ int generate_token(Token *token, char *code)
                 }
             }
         }
+        break;
             /*
              * E/e was read and after possible sign there has to be integer otherwise its LEXICAL_ERR
              */
@@ -792,12 +787,9 @@ int set_token(int next_state, char *val, Token_type type, Token *token)
             correct = 1;
         }
     }
-    if(next_state == EXP_START && c ==' ')
-    {
-        correct = 1;
-    }else{
-        ungetc(c, stdin);
-    }
+
+    ungetc(c, stdin);
+
     if (correct == 1)
     {
         state = next_state;
