@@ -132,7 +132,7 @@ psa_return_type parse_expression_base(bool is_param)
             if (next_token_error > 0 && b.type != TOKEN_EOF)
             {
                 return_token(convertPSATokenToToken(b));
-                if (b.preceded_by_nl)
+                if (b.preceded_by_nl || b.type == TOKEN_L_CURLY)
                 {
                     next_token_error = 0;
                     b = PSA_TOKEN_EOF;
