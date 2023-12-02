@@ -103,6 +103,16 @@ psa_return_type parse_expression_base(bool is_param)
             PSA_Token_stack_push(s, b);
             a = PSA_Token_stack_top(s);
 
+            if (b.expr_type != TYPE_INVALID && b.type != TOKEN_EOF)
+            {
+                printf("tak pojd kamo jedu '%s'\n", b.token_value);
+                generate_instruction(CALL, convertPSATokenToToken(b));
+                generate_instruction(PUSHS, (Token){
+                                                .type = TOKEN_IDENTIFICATOR,
+                                                .token_value = "retval",
+                                            });
+            }
+
             b = readNextToken(s, &next_token_error, &num_of_brackets);
 
             DEBUG_PSA_CODE(printf_magenta("------------------------------\n"););

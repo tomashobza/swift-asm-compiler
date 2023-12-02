@@ -86,8 +86,8 @@ char *symb_resolve(Token *token)
         symtable_item *found = symtable_find_in_stack(token->token_value, sym_st, false);
         if (found == NULL)
         {
-            throw_error(INTERNAL_ERR, -1, "Variable '%s' not found\n", token->token_value);
-            return NULL;
+            sprintf(var_name, "%s@$%s", "TF", token->token_value);
+            break;
         }
         symtable_item item = *found;
         if (item.type == VARIABLE)
@@ -97,14 +97,17 @@ char *symb_resolve(Token *token)
                 throw_error(INTERNAL_ERR, -1, "Variable '%s' is invalid\n", token->token_value);
             }
             sprintf(var_name, "%s@$%s%d", item.scope == 0 ? "GF" : "LF", item.id, item.scope);
+            break;
         }
         else if (item.type == FUNCTION)
         {
             sprintf(var_name, "%s", item.id);
+            break;
         }
         else
         {
             sprintf(var_name, "%s", token->token_value);
+            break;
         }
         break;
     }
