@@ -222,3 +222,20 @@ Expression_type removeTypeNil(Expression_type expr_type)
         return TYPE_INVALID;
     }
 }
+
+Instruction tokenTypeToStackInstruction(Token_type tt)
+{
+    switch (tt)
+    {
+    case TOKEN_MUL:
+        return MULS;
+    case TOKEN_DIV:
+        return DIVS;
+    case TOKEN_PLUS:
+        return ADDS;
+    case TOKEN_MINUS:
+        return SUBS;
+    default:
+        return EMPTY;
+    }
+}
