@@ -120,6 +120,186 @@ char *format_token(Token *token)
     return formatted_value;
 }
 
+char *instructionToString(Instruction in)
+{
+    char *instruction = malloc(sizeof(char) * 100);
+    switch (in)
+    {
+    case CREATEFRAME:
+        sprintf(instruction, "CREATEFRAME");
+        break;
+    case PUSHFRAME:
+        sprintf(instruction, "PUSHFRAME");
+        break;
+    case POPFRAME:
+        sprintf(instruction, "POPFRAME");
+        break;
+    case RETURN:
+        sprintf(instruction, "RETURN");
+        break;
+    case CLEARS:
+        sprintf(instruction, "CLEARS");
+        break;
+    case ADDS:
+        sprintf(instruction, "ADDS");
+        break;
+    case SUBS:
+        sprintf(instruction, "SUBS");
+        break;
+    case DIVS:
+        sprintf(instruction, "DIVS");
+        break;
+    case IDIVS:
+        sprintf(instruction, "IDIVS");
+        break;
+    case MULS:
+        sprintf(instruction, "MULS");
+        break;
+    case LTS:
+        sprintf(instruction, "LTS");
+        break;
+    case EQS:
+        sprintf(instruction, "EQS");
+        break;
+    case GTS:
+        sprintf(instruction, "GTS");
+        break;
+    case ANDS:
+        sprintf(instruction, "ANDS");
+        break;
+    case ORS:
+        sprintf(instruction, "ORS");
+        break;
+    case NOTS:
+        sprintf(instruction, "NOTS");
+        break;
+    case INT2FLOATS:
+        sprintf(instruction, "INT2FLOATS");
+        break;
+    case FLOAT2INTS:
+        sprintf(instruction, "FLOAT2INTS");
+        break;
+    case INT2CHARS:
+        sprintf(instruction, "INT2CHARS");
+        break;
+    case STRI2INTS:
+        sprintf(instruction, "STRI2INTS");
+        break;
+    case BREAK:
+        sprintf(instruction, "BREAK");
+        break;
+    case CALL:
+        sprintf(instruction, "CALL");
+        break;
+    case LABEL:
+        sprintf(instruction, "LABEL");
+        break;
+    case JUMP:
+        sprintf(instruction, "JUMP");
+        break;
+    case JUMPIFEQS:
+        sprintf(instruction, "JUMPIFEQS");
+        break;
+    case JUMPIFNEQS:
+        sprintf(instruction, "JUMPIFNEQS");
+        break;
+    case DEFVAR:
+        sprintf(instruction, "DEFVAR");
+        break;
+    case POPS:
+        sprintf(instruction, "POPS");
+        break;
+    case PUSHS:
+        sprintf(instruction, "PUSHS");
+        break;
+    case WRITE:
+        sprintf(instruction, "WRITE");
+        break;
+    case EXIT:
+        sprintf(instruction, "EXIT");
+        break;
+    case DPRINT:
+        sprintf(instruction, "DPRINT");
+        break;
+    case READ:
+        sprintf(instruction, "READ");
+        break;
+    case MOVE:
+        sprintf(instruction, "MOVE");
+        break;
+    case INT2FLOAT:
+        sprintf(instruction, "INT2FLOAT");
+        break;
+    case FLOAT2INT:
+        sprintf(instruction, "FLOAT2INT");
+        break;
+    case INT2CHAR:
+        sprintf(instruction, "INT2CHAR");
+        break;
+    case STRI2INT:
+        sprintf(instruction, "STRI2INT");
+        break;
+    case STRLEN:
+        sprintf(instruction, "STRLEN");
+        break;
+    case TYPE:
+        sprintf(instruction, "TYPE");
+        break;
+    case ADD:
+        sprintf(instruction, "ADD");
+        break;
+    case SUB:
+        sprintf(instruction, "SUB");
+        break;
+    case DIV:
+        sprintf(instruction, "DIV");
+        break;
+    case IDIV:
+        sprintf(instruction, "IDIV");
+        break;
+    case MUL:
+        sprintf(instruction, "MUL");
+        break;
+    case LT:
+        sprintf(instruction, "LT");
+        break;
+    case GT:
+        sprintf(instruction, "GT");
+        break;
+    case EQ:
+        sprintf(instruction, "EQ");
+        break;
+    case AND:
+        sprintf(instruction, "AND");
+        break;
+    case OR:
+        sprintf(instruction, "OR");
+        break;
+    case NOT:
+        sprintf(instruction, "NOT");
+        break;
+    case CONCAT:
+        sprintf(instruction, "CONCAT");
+        break;
+    case GETCHAR:
+        sprintf(instruction, "GETCHAR");
+        break;
+    case SETCHAR:
+        sprintf(instruction, "SETCHAR");
+        break;
+    case JUMPIFEQ:
+        sprintf(instruction, "JUMPIFEQ");
+        break;
+    case JUMPIFNEQ:
+        sprintf(instruction, "JUMPIFNEQ");
+        break;
+    default:
+        sprintf(instruction, "UNKNOWN");
+        break;
+    }
+
+    return instruction;
+}
 
 void print_out_code()
 {

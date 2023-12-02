@@ -20,7 +20,8 @@
 
 extern FILE *out_code_file;
 
-typedef enum {
+typedef enum
+{
     // -
     CREATEFRAME, // 0
     PUSHFRAME,   // 1
@@ -43,23 +44,23 @@ typedef enum {
     INT2CHARS,   // 18
     STRI2INTS,   // 19
     BREAK,       // 20
-    // <label>
+                 // <label>
     CALL,        // 21
     LABEL,       // 22
     JUMP,        // 23
     JUMPIFEQS,   // 24
     JUMPIFNEQS,  // 25
-    // <var>
+                 // <var>
     DEFVAR,      // 26
     POPS,        // 27
-    // <symb>
+                 // <symb>
     PUSHS,       // 28
     WRITE,       // 29
     EXIT,        // 30
     DPRINT,      // 31
-    // <var> <type>
+                 // <var> <type>
     READ,        // 32
-    // <var> <symb>
+                 // <var> <symb>
     MOVE,        // 33
     INT2FLOAT,   // 34
     FLOAT2INT,   // 35
@@ -67,7 +68,7 @@ typedef enum {
     STRI2INT,    // 37
     STRLEN,      // 38
     TYPE,        // 39
-    // <var> <symb> <symb>
+                 // <var> <symb> <symb>
     ADD,         // 40
     SUB,         // 41
     DIV,         // 42
@@ -82,10 +83,10 @@ typedef enum {
     CONCAT,      // 51
     GETCHAR,     // 52
     SETCHAR,     // 53
-    // <label> <symb> <symb>
+                 // <label> <symb> <symb>
     JUMPIFEQ,    // 54
     JUMPIFNEQ,   // 55
-}           Instruction;
+} Instruction;
 
 /**
  * @brief Returns the format of symb for IFJcode23.
@@ -102,7 +103,6 @@ char *symb_resolve(Token *token);
  * @return char* - string with the literal in the format for IFJcode23
  */
 char *format_token(Token *token);
-
 
 /**
  * @brief Returns the format of the literal for IFJcode23.
@@ -228,6 +228,14 @@ void handle_label_symb_symb_instructions(Instruction inst, Token label, Token sy
             break;                                                  \
         }                                                           \
     } while (0)
+
+/**
+ * @brief Converts the instruction to string.
+ *
+ * @param in Instruction to be converted.
+ * @return char* - string with the instruction
+ */
+char *instructionToString(Instruction in);
 
 /**
  * @brief Prints the output code to stdout.
