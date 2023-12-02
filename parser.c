@@ -559,8 +559,8 @@ int parser_main()
 
     semantic_init();
     sym_items *items = malloc(sizeof(sym_items));
-    items->funcItem = NULL;
-    items->varItem = NULL;
+    items->funcItem = init_symtable_item(true);
+    items->varItem = init_symtable_item(false);
 
     add_builtin_functions(items);
 

@@ -521,6 +521,7 @@ void state_func_id(Token *token, sym_items *items)
 void state_p_name(Token *token, sym_items *items)
 {
     printf("%p, %p\n", token, items);
+    printf("PARAM NAME: %s\n", token->token_value);
     add_param(items->funcItem->data.func_data);
     items->funcItem->data.func_data->params[items->funcItem->data.func_data->params_count - 1].name = token->token_value;
 }
@@ -579,11 +580,12 @@ void state_func_header_done(Token *token, sym_items *items)
     symtable_stack_push(sym_st, symtable);
 
     // add params as vars to new scope
-    if (items->funcItem->data.func_data->params_count - 1 <= 0) // no params
+    if (items->funcItem->data.func_data->params_count <= 0) // no params
     {
         return;
     }
-    for (int i = 0; i < items->funcItem->data.func_data->params_count - 1; i++)
+    printf("PARAMS COUNT: %d\n", items->funcItem->data.func_data->params_count - 1);
+    for (int i = 0; i < items->funcItem->data.func_data->params_count; i++)
     {
         if (strcmp(items->funcItem->data.func_data->params[i].id, "_") != 0)
         {
@@ -723,7 +725,7 @@ void state_load_identif(Token *token, sym_items *items)
 {
     printf("%p, %p\n", token, items);
 
-    // items->varItem = init_symtable_item(false);
+    items->varItem = init_symtable_item(false);
     DEBUG_SEMANTIC_CODE(printf(CYAN);
                         symtable_print(symtable_stack_top(sym_st)););
     symtable_item *item = symtable_find_in_stack(token->token_value, sym_st, false);
@@ -742,8 +744,9 @@ void state_load_identif(Token *token, sym_items *items)
 
 void state_identif_exp(Token *token, sym_items *items)
 {
-    printf("%p, %p\n", token, items);
-
+    printf("IDENTIF EXP\n");
+    DEBUG_SEMANTIC_CODE(printf(CYAN);
+                        symtable_print(symtable_stack_top(sym_st)););
     psa_return_type return_type4 = parse_expression();
     DEBUG_SEMANTIC_CODE(print_expression_type(return_type4.type););
     if (return_type4.is_ok == false)
@@ -761,7 +764,7 @@ void state_identif_exp(Token *token, sym_items *items)
 void state_func_call_psa(Token *token, sym_items *items)
 {
     printf("%p, %p\n", token, items);
-
+    symtable_print(symtable_stack_top(sym_st));
     psa_return_type return_type5 = parse_expression();
     if (return_type5.is_ok)
     {
