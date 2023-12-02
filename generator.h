@@ -144,7 +144,7 @@ void handle_label_symb_symb_instructions(Instruction inst, Token label, Token sy
         case CALL:                                                  \
         case LABEL:                                                 \
         case JUMP:                                                  \
-        case JUMIFEQS:                                              \
+        case JUMPIFEQS:                                             \
         case JUMPIFNEQS:                                            \
             handle_label_instructions(INST);                        \
             break;                                                  \
@@ -201,7 +201,7 @@ void handle_label_symb_symb_instructions(Instruction inst, Token label, Token sy
         case ANDS:                                                  \
         case ORS:                                                   \
         case NOTS:                                                  \
-        case INT2FLOAT2:                                            \
+        case INT2FLOATS:                                            \
         case FLOAT2INTS:                                            \
         case INT2CHARS:                                             \
         case STRI2INTS:                                             \
