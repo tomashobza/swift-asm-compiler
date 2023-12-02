@@ -165,6 +165,12 @@ psa_return_type parse_expression_base(bool is_param)
             };
         }
 
+        if (isTokenLiteral(b.type) || b.type == TOKEN_IDENTIFICATOR)
+        {
+            // printf("Pico volee pushuju '%s'\n", b.token_value);
+            generate_instruction(PUSHS, convertPSATokenToToken(b));
+        }
+
         DEBUG_PSA_CODE(printf_blue("Bracket count: %d\n", num_of_brackets););
         DEBUG_PSA_CODE(printf("na stacku: ");
                        printStack(s->top);
@@ -204,6 +210,11 @@ psa_return_type parse_expression_base(bool is_param)
             break;
         case '>':
         {
+            if (isTokenBinaryOperator(a.type))
+            {
+                generate_instruction(tokenTypeToStackInstruction(a.type));
+            }
+
             int handle_len = 0;
             PSA_Token *handle = getHandleFromStack(s, &handle_len);
             int handle_line_num = handle_len > 0 ? handle[0].line_num : b.line_num;
