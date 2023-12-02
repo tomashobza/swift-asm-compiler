@@ -105,9 +105,16 @@ psa_return_type parse_expression_base(bool is_param)
 
             if (b.expr_type != TYPE_INVALID && b.type != TOKEN_EOF)
             {
-                if (isBuiltInFunction(convertPSATokenToToken(b))) {
+                if (isBuiltInFunction(convertPSATokenToToken(b)))
+                {
                     printf_cyan("bultin funkce %s\n", getBuiltInFunctionName(convertPSATokenToToken(b)));
-                } else {
+                    generate_builtin_func_call((Token){
+                        .type = TOKEN_IDENTIFICATOR,
+                        .token_value = getBuiltInFunctionName(convertPSATokenToToken(b)),
+                    });
+                }
+                else
+                {
                     printf_cyan("tak pojd kamo jedu '%s'\n", b.token_value);
                     generate_instruction(CALL, convertPSATokenToToken(b));
                     generate_instruction(PUSHS, (Token){
