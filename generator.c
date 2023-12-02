@@ -73,6 +73,7 @@ char *format_token(Token *token)
         // Format integer literals with "int@"
         formatted_value = malloc(strlen(token->token_value) + 5); //"int@" and '\0'
         sprintf(formatted_value, "int@%s", token->token_value);
+        break;
     }
     case TOKEN_DOUBLE:
     {
@@ -80,18 +81,21 @@ char *format_token(Token *token)
         double double_value = atof(token->token_value); // Convert to double
         formatted_value = malloc(sizeof(char) * 60);    // Allocating enough space
         sprintf(formatted_value, "float@%a", double_value);
+        break;
     }
     case TOKEN_STRING:
     {
         // Format string literals with "string@"
         formatted_value = malloc(strlen(token->token_value) + 8); //"string@" and '\0'
         sprintf(formatted_value, "string@%s", token->token_value);
+        break;
     }
     case TOKEN_BOOL:
     {
         // Format bool literals with "bool@"
         formatted_value = malloc(strlen(token->token_value) + 6); //"bool@" and '\0'
         sprintf(formatted_value, "bool@%s", token->token_value);
+        break;
     }
     case TOKEN_NIL:
     {
