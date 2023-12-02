@@ -22,61 +22,48 @@
 
 // float konstanty prevedeme na hexadecimalni format pomoci %a
 
-typedef struct
-{
-    char *type;        // Type of the token
-    char *token_value; // Value of the token
-} Token;
-
 // Formating the token for IFJcode23
 char *format_token_for_IFJcode23(Token *token)
 {
     char *formatted_value;
 
-    if (strcmp(token->type, "identifier") == 0)
+    switch (token->type)
+    {
+    case TOKEN_IDENTIFICATOR:
     {
         formatted_value = malloc(strlen(token->token_value) + 12); // Including "identifier@" and '\0'
         sprintf(formatted_value, "identifier@%s", token->token_value);
     }
-    else if (strcmp(token->type, "integer_literal") == 0)
+    case TOKEN_INT:
     {
         // Format integer literals with "int@"
         formatted_value = malloc(strlen(token->token_value) + 5); //"int@" and '\0'
         sprintf(formatted_value, "int@%s", token->token_value);
     }
-    else if (strcmp(token->type, "floating_point_literal") == 0)
+    case TOKEN_DOUBLE:
     {
         // Format floating-point literals with "float@"
         double double_value = atof(token->token_value); // Convert to double
         formatted_value = malloc(sizeof(char) * 60);    // Allocating enough space
         sprintf(formatted_value, "float@%a", double_value);
     }
-    else if (strcmp(token->type, "string_literal") == 0)
+    case TOKEN_STRING:
     {
         // Format string literals with "string@"
         formatted_value = malloc(strlen(token->token_value) + 8); //"string@" and '\0'
         sprintf(formatted_value, "string@%s", token->token_value);
     }
-    else if (strcmp(token->type, "nil") == 0)
+    case TOKEN_NIL:
     {
         // Format nil with "nil@"
         formatted_value = strdup("nil@");
     }
-    else
+    default:
     {
-        // For unknown types
-        formatted_value = strdup("UNKNOWN");
+        // Format other tokens with their value
+        formatted_value = strdup(token->token_value);
+    }
     }
 
     return formatted_value;
 }
-
-// // test
-// int main()
-// {
-//     Token token = {"integer_literal", "123"};
-//     char *formatted_token = format_token_for_IFJcode23(&token);
-//     printf("Formatted Token: %s\n", formatted_token);
-//     free(formatted_token);
-//     return 0;
-// }
