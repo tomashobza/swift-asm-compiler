@@ -11,21 +11,21 @@
 
 #include "semantic.h"
 
-void state_let(Token *token, sym_items *items)
+void sem_let(Token *token, sym_items *items)
 {
     printf("%p, %p\n", token, items);
     items->varItem = init_symtable_item(false);
     items->varItem->data.var_data->is_const = true;
 }
 
-void state_var(Token *token, sym_items *items)
+void sem_var(Token *token, sym_items *items)
 {
     printf("%p, %p\n", token, items);
     items->varItem = init_symtable_item(false);
     items->varItem->data.var_data->is_const = false;
 }
 
-void state_var_id(Token *token, sym_items *items)
+void sem_var_id(Token *token, sym_items *items)
 {
     printf("%p, %p\n", token, items);
     symtable_item *var_id_item = symtable_find(token->token_value, symtable_stack_top(sym_st), false);
@@ -40,13 +40,13 @@ void state_var_id(Token *token, sym_items *items)
     items->varItem->id = token->token_value;
 }
 
-void state_var_type(Token *token, sym_items *items)
+void sem_var_type(Token *token, sym_items *items)
 {
     printf("%p, %p\n", token, items);
     items->varItem->data.var_data->type = get_expression_type(token);
 }
 
-void state_var_exp(Token *token, sym_items *items)
+void sem_var_exp(Token *token, sym_items *items)
 {
     printf("%p, %p\n", token, items);
     items->varItem->data.var_data->is_initialized = true;
@@ -87,10 +87,10 @@ void state_var_exp(Token *token, sym_items *items)
     }
     DEBUG_SEMANTIC_CODE(
         (symtable_stack_top(sym_st)););
-    state_var_add(token, items);
+    sem_var_add(token, items);
 }
 
-void state_var_add(Token *token, sym_items *items)
+void sem_var_add(Token *token, sym_items *items)
 {
     printf("%p, %p\n", token, items);
     if (items->varItem->data.var_data->is_param == false) // new symmbol
@@ -109,7 +109,7 @@ void state_var_add(Token *token, sym_items *items)
     }
 }
 
-void state_func_id(Token *token, sym_items *items)
+void sem_func_id(Token *token, sym_items *items)
 {
     printf("%p, %p\n", token, items);
     items->funcItem = init_symtable_item(true);
@@ -124,7 +124,7 @@ void state_func_id(Token *token, sym_items *items)
     items->funcItem->id = token->token_value;
 }
 
-void state_p_name(Token *token, sym_items *items)
+void sem_p_name(Token *token, sym_items *items)
 {
     printf("%p, %p\n", token, items);
     printf("PARAM NAME: %s\n", token->token_value);
@@ -132,7 +132,7 @@ void state_p_name(Token *token, sym_items *items)
     items->funcItem->data.func_data->params[items->funcItem->data.func_data->params_count - 1].name = token->token_value;
 }
 
-void state_p_id(Token *token, sym_items *items)
+void sem_p_id(Token *token, sym_items *items)
 {
     printf("%p, %p\n", token, items);
     items->funcItem->data.func_data->params[items->funcItem->data.func_data->params_count - 1].id = token->token_value;
@@ -140,7 +140,7 @@ void state_p_id(Token *token, sym_items *items)
     items->varItem->id = token->token_value;
 }
 
-void state_p_type(Token *token, sym_items *items)
+void sem_p_type(Token *token, sym_items *items)
 {
     printf("%p, %p\n", token, items);
 
@@ -164,13 +164,13 @@ void state_p_type(Token *token, sym_items *items)
     // reset param
 }
 
-void state_r_type(Token *token, sym_items *items)
+void sem_r_type(Token *token, sym_items *items)
 {
     printf("%p, %p\n", token, items);
     items->funcItem->data.func_data->return_type = get_expression_type(token);
 }
 
-void state_func_header_done(Token *token, sym_items *items)
+void sem_func_header_done(Token *token, sym_items *items)
 {
     printf("%p, %p\n", token, items);
     printf(RED "FUNC_HEADER_DONE\n" RESET);
@@ -208,7 +208,7 @@ void state_func_header_done(Token *token, sym_items *items)
     DEBUG_SEMANTIC_CODE(symtable_print(symtable_stack_top(sym_st)););
 }
 
-void state_push_scope(Token *token, sym_items *items)
+void sem_push_scope(Token *token, sym_items *items)
 {
     printf("%p, %p\n", token, items);
 
@@ -217,7 +217,7 @@ void state_push_scope(Token *token, sym_items *items)
     symtable_stack_push(sym_st, symtable);
 }
 
-void state_pop_scope(Token *token, sym_items *items)
+void sem_pop_scope(Token *token, sym_items *items)
 {
     printf("%p, %p\n", token, items);
     DEBUG_SEMANTIC_CODE(printf(RED "POP_SCOPE\n"););
@@ -225,7 +225,7 @@ void state_pop_scope(Token *token, sym_items *items)
     symtable_stack_pop(sym_st);
 }
 
-void state_r_exp(Token *token, sym_items *items)
+void sem_r_exp(Token *token, sym_items *items)
 {
     printf("%p, %p\n", token, items);
     psa_return_type return_type2 = parse_expression();
@@ -245,7 +245,7 @@ void state_r_exp(Token *token, sym_items *items)
     DEBUG_SEMANTIC_CODE(print_expression_type(return_type2.type););
 }
 
-void state_cond_exp(Token *token, sym_items *items)
+void sem_cond_exp(Token *token, sym_items *items)
 {
     printf("%p, %p\n", token, items);
 
@@ -270,7 +270,7 @@ void state_cond_exp(Token *token, sym_items *items)
     DEBUG_SEMANTIC_CODE(print_expression_type(return_type3.type););
 }
 
-void state_let_in_if(Token *token, sym_items *items)
+void sem_let_in_if(Token *token, sym_items *items)
 {
     printf("%p, %p\n", token, items);
 
@@ -315,7 +315,7 @@ void state_let_in_if(Token *token, sym_items *items)
     DEBUG_SEMANTIC_CODE(symtable_print(symtable_stack_top(sym_st)););
 }
 
-void state_func_body_done(Token *token, sym_items *items)
+void sem_func_body_done(Token *token, sym_items *items)
 {
     printf("%p, %p\n", token, items);
 
@@ -324,10 +324,10 @@ void state_func_body_done(Token *token, sym_items *items)
     {
         throw_error(PARAM_TYPE_ERR, token->line_num, "Function %s of type: %d does not have a return statement!\n", items->funcItem->id, func_body_item->data.func_data->return_type);
     }
-    state_pop_scope(token, items);
+    sem_pop_scope(token, items);
 }
 
-void state_load_identif(Token *token, sym_items *items)
+void sem_load_identif(Token *token, sym_items *items)
 {
     printf("%p, %p\n", token, items);
 
@@ -348,7 +348,7 @@ void state_load_identif(Token *token, sym_items *items)
     items->varItem->id = token->token_value;
 }
 
-void state_identif_exp(Token *token, sym_items *items)
+void sem_identif_exp(Token *token, sym_items *items)
 {
     printf("IDENTIF EXP\n");
     DEBUG_SEMANTIC_CODE(printf(CYAN);
@@ -367,7 +367,7 @@ void state_identif_exp(Token *token, sym_items *items)
     identif_exp_item->data.var_data->is_initialized = true;
 }
 
-void state_func_call_psa(Token *token, sym_items *items)
+void sem_func_call_psa(Token *token, sym_items *items)
 {
     printf("%p, %p\n", token, items);
     symtable_print(symtable_stack_top(sym_st));
