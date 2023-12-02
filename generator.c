@@ -16,7 +16,12 @@
 
 // TODO: napsat funkci, ktera bere token (token.type je jeho typ a token.token_value je string s jeho hodnotou) a vraci string s jeho hodnotou ve formatu pro IFJcode23
 
-void handle_label_instructions(Instruction inst);
+void handle_label_instructions(Instruction inst)
+{
+    char *instruction = instructionToString(inst);
+    fprintf(out_code_file, "%s\n", instruction);
+    free(instruction);
+}
 
 void handle_var_instructions(Instruction inst, Token var);
 
