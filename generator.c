@@ -31,6 +31,7 @@ char *variable_to_ifjcode23(symtable_item *var)
 
     char *var_name = malloc(sizeof(char) * (10 + strlen(var->id)));
     sprintf(var_name, "%s@$%s%d", var->scope == 0 ? "GF" : "LF", var->id, var->scope);
+    return var_name;
 }
 
 void print_out_code()
