@@ -16,6 +16,7 @@
 #include <stdlib.h>
 #include "error.h"
 #include "symtable.h"
+#include "scanner.h"
 
 extern FILE *out_code_file;
 
@@ -94,6 +95,14 @@ typedef enum
  * @return char* - string with the variable in the format for IFJcode23
  */
 char *variable_to_ifjcode23(symtable_item *var);
+
+/**
+ * @brief Returns the format of the literal for IFJcode23.
+ *
+ * @param token Token record of the literal.
+ * @return char* - string with the literal in the format for IFJcode23
+ */
+char *format_token_for_IFJcode23(Token *token);
 
 /**
  * @brief Prints the IFJcode23 instruction without operands to the output file.
