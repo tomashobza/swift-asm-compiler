@@ -115,14 +115,14 @@ void handle_label_symb_symb_instructions(Instruction inst, int label, int symb1,
         case JUMPIFNEQ:                                             \
             handle_label_symb_symb_instructions(INST, __VA_ARGS__); \
             break;                                                  \
-    // Add other cases as necessary
-}
-}
-while (0)
+        default:                                                    \
+            break;                                                  \
+        }                                                           \
+    } while (0)
 
-    /**
-     * @brief Prints the output code to stdout.
-     */
-    void print_out_code();
+/**
+ * @brief Prints the output code to stdout.
+ */
+void print_out_code();
 
 #endif // GENERATOR_H
