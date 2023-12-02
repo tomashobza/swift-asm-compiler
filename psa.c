@@ -242,7 +242,7 @@ psa_return_type parse_expression_base(bool is_param)
                 // printf("Pico volee pushuju '%s'\n", top.token_value);
                 // printf("rule type: ");
                 // print_expression_type(rule.expr_type);
-                generate_instruction(PUSHS, convertPSATokenToToken(top));
+                generate_instruction(PUSHS, getOperandFromToken(convertPSATokenToToken(top)));
             }
 
             if (rule.type != TOKEN_EOF)
