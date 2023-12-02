@@ -390,12 +390,13 @@ void print_out_code()
 void generate_func_header(symtable_item func_item)
 {
     Token token;
-
-    token.type = TOKEN_FUNC_ID;
-    // sprintf(token.token_value, "end_%s", func_item.id);
-    generate_instruction(JUMP, getOperandFromToken(token));
-
-    token.type = TOKEN_FUNC_ID;
+    Token token_end;
+    token.type = token_end.type = TOKEN_FUNC_ID;
     token.token_value = func_item.id;
-    generate_instruction(LABEL, getOperandFromToken(token));
+    token_end.token_value = malloc(sizeof(char) * (strlen(func_item.id) + 5));
+    sprintf(token_end.token_value, "%s_end", func_item.id);
+
+    generate_instruction(JUMP, token_end);
+
+    generate_instruction(LABEL, token);
 }
