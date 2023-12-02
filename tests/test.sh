@@ -1,5 +1,6 @@
 #!/bin/bash
 
+
 TESTFILE=$1
 
 ## ENUM ##
@@ -63,10 +64,10 @@ print_error() {
     local should_be_error_code=$2
 
     if [ "$error_code" != "$should_be_error_code" ]; then
-        printf "\033[41m\033[1;37m FAIL \033[0m"
+        printf "\033[41m\033[1;37m You shall FAIL! \033[0m"
         echo " \033[0;31m[expected: $(convert_code_to_string $should_be_error_code), got: $(convert_code_to_string $error_code)]\033[0m"
     else
-        printf "\033[42m\033[1;37m PASS \033[0m\n"
+        printf "\033[42m\033[1;37m You shall PASS! \033[0m\n"
     fi
 }
 
@@ -123,3 +124,36 @@ fi
 for testfile in "$(dirname "$0")"/tests/*.swift; do
     test_file "$(basename "$testfile")"
 done
+
+echo "                                  ....							"
+	    echo "                                .'' .'''							"
+	    echo ".                             .'   :								"
+	    echo "\\                          .:    :								"
+	    echo " \\                        _:    :       ..----.._			    "
+	    echo "  \\                    .:::.....:::.. .'         ''.				"	
+	    echo "   \\                 .'  #-. .-######'     #        '.			"
+	    echo "    \\                 '.##'/ ' ################       :			"
+	    echo "     \\                  #####################         :			"
+	    echo "      \\               ..##.-.#### .''''###'.._        :			"
+	    echo "       \\             :--:########:            '.    .' :			"
+	    echo "        \\..__...--.. :--:#######.'   '.         '.     :			"
+	    echo "        :     :  : : '':'-:'':'::        .         '.  .'			"
+	    echo "        '---'''..: :    ':    '..'''.      '.        :'			"
+	    echo "           \\  :: : :     '      ''''''.     '.      .:			"
+	    echo "            \\ ::  : :     '            '.      '      :			"
+	    echo "             \\::   : :           ....' ..:       '     '.		"
+	    echo "              \\::  : :    .....####\\ .~~.:.             :		"
+	    echo "               \\':.:.:.:'#########.===. ~ |.'-.   . '''.. :		"
+	    echo "                \\    .'  ########## \ \ _.' '. '-.       '''.	"
+	    echo "                :\\  :     ########   \ \      '.  '-.        :	"
+	    echo "               :  \\'    '   #### :    \ \      :.    '-.      :	"
+	    echo "              :  .'\\   :'  :     :     \ \       :      '-.    :	"
+	    echo "             : .'  .\\  '  :      :     :\ \       :        '.   :"
+	    echo "             ::   :  \\'  :.      :     : \ \      :          '. :"
+	    echo "             ::. :    \\  : :      :    ;  \ \     :           '.:"
+	    echo "              : ':    '\\ :  :     :     :  \:\     :        ..'	"
+	    echo "                 :    ' \\ :        :     ;  \|      :   .'''		"
+	    echo "                 '.   '  \\:                         :.''			"
+	    echo "                  .:..... \\:       :            ..''				"
+	    echo "                 '._____|'.\\......'''''''.:..'''					"
+	    echo "                            \\                                    "
