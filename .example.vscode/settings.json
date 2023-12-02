@@ -2,6 +2,24 @@
   "files.associations": {
     "general_stack.h": "c",
     "scanner.h": "c",
-    "error.h": "c"
-  }
+    "error.h": "c",
+    "__hash_table": "c",
+    "array": "c",
+    "charconv": "c",
+    "type_traits": "c",
+    "limits": "c",
+    "ratio": "c",
+    "tuple": "c",
+    "variant": "c",
+    "utils.h": "c",
+    "symtable.h": "c",
+    "parser.h": "c",
+    "stdlib.h": "c",
+    "debug.h": "c",
+    "colorful_printf.h": "c",
+    "semantic.h": "c",
+    "stdio.h": "c",
+    "generator.h": "c"
+  },
+  "discord.enabled": true
 }
