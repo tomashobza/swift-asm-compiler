@@ -1,62 +1,60 @@
 /**
  * @file generator.c
- * @brief generating project
- * @author Simona Valkovská <xvalko12@vutbr.cz>
+ * @author Tomáš Hobza (xhobza03@vutbr.cz), Jakub Všetečka (xvsete00@vutbr.cz)
+ * @brief Generator of IFJcode20.
+ * @version 0.1
+ * @date 2023-11-24
  *
- * Project: IFJ compiler
+ * @copyright Copyright (c) 2023
+ *
  */
 
 #include "generator.h"
-#include <stdio.h>
+// TODO: napsat funkci, ktera bere token (token.type je jeho typ a token.token_value je string s jeho hodnotou) a vraci string s jeho hodnotou ve formatu pro IFJcode23
 
-// Function definitions
-void define_function(char *name, char *param_val[]) {
-    LABEL_INST("JUMP","end");
-    LABEL_INST("LABEL", name);
-    ZERO_INST("PUSHFRAME");
-    ONE_INST("DEFVAR", "LF", "retval");
-    for (int i = 0; param_val[i] != NULL; i++) {
-        ONE_INST("DEFVAR", "LF", ("param%d", i + 1));
-        TWO_INST("MOVE", "LF", ("param%d", i + 1), "LF", ("%s", param_val[i])); // TODO retype string and float
+void handle_label_instructions(Instruction inst);
+void handle_var_instructions(Instruction inst, Token var);
+void handle_symb_instructions(Instruction inst, Token symb);
+void handle_var_symb_instructions(Instruction inst, Token var, Token symb);
+void handle_var_symb_symb_instructions(Instruction inst, Token var, Token symb1, Token symb2);
+void handle_var_type_instructions(Instruction inst, Token var, Token type);
+void handle_no_operand_instructions(Instruction inst);
+void handle_label_symb_symb_instructions(Instruction inst, Token label, Token symb1, Token symb2);
+
+char *variable_to_ifjcode23(symtable_item *var)
+{
+    if (var == NULL || var->id == NULL)
+    {
+        throw_error(INTERNAL_ERR, -1, "Error: variable_to_ifjcode23 got NULL as an argument.\n");
+        return NULL;
     }
-    frame = "LF";
+
+    char *var_name = malloc(sizeof(char) * (10 + strlen(var->id)));
+    sprintf(var_name, "%s@$%s%d", var->scope == 0 ? "GF" : "LF", var->id, var->scope);
+    return var_name;
 }
 
-void return_function(char *type, char *value) {
-    TWO_INST("MOVE", "LF", "retval", type, value); // TODO retype string and float
-    ZERO_INST("POPFRAME");
-    ZERO_INST("RETURN");
-    LABEL_INST("LABEL","end")
-    frame = "TF";
-}
-
-void call_function(char *name, char *param_val[]) {
-    ZERO_INST("CREATEFRAME");
-    for (int i = 0; param_val[i] != NULL; i++) {
-        TWO_INST("DEFVAR", "TF", ("param%d", i + 1));
-        TWO_INST("MOVE", "LF", ("param%d", i + 1), "TF", ("%s", param_val[i])); // TODO retype string, float, func_call
+void print_out_code()
+{
+    // Check if out_code_file is NULL
+    if (out_code_file == NULL)
+    {
+        throw_error(INTERNAL_ERR, -1, "Error: out_code_file is not initialized.\n");
+        return;
     }
-    LABEL_INST("CALL", name);
-    frame = "TF";
-}
 
-void assign_func_call(char *frame_var, char *name) {
-    TWO_INST("MOVE", frame_var, name, "TF", "retval");
-}
-
-void def_var(char *name, char *val, char *val_type) {
-    TWO_INST("DEFVAR", frame, name);
-    if (val) {
-        THREE_INST("MOVE", frame, name, val_type, val);
+    // Reset the file position to the beginning of the file
+    if (fseek(out_code_file, 0, SEEK_SET) != 0)
+    {
+        throw_error(INTERNAL_ERR, -1, "Error: Failed to seek in out_code_file.\n");
+        return;
     }
-}
 
-void pushs(char *type, char *val) {
-    TWO_INST("PUSHS", type, val);
-}
-
-void pops(char *frame_var, char *name_var) {
-    TWO_INST("POPS", frame_var, name_var);
+    int c; // fgetc returns int, not char
+    while ((c = fgetc(out_code_file)) != EOF)
+    {
+        printf("%c", (char)c);
+    }
 }
 
 void assign(char *frame_var_to, char *name_var_to, char *frame_var_from, char *name_var_from) {
@@ -77,3 +75,4 @@ int main() {
     fclose(file);
     return NO_ERR;
 }
+>>>>>>>>> Temporary merge branch 2

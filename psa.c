@@ -255,8 +255,8 @@ psa_return_type parse_expression_base(bool is_param)
 
         a = PSA_Token_stack_top(s);
     }
-    printf("\n");
-    printf_green("PSA: ✅ | All good! \n");
+    DEBUG_PSA_CODE(printf("\n");
+                   printf_green("PSA: ✅ | All good! \n"););
 
     // TODO: checking bracket count might be redundant because of handles
     if (num_of_brackets != 0 && !(is_param && num_of_brackets == -1))
