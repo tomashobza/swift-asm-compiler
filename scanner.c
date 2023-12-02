@@ -23,7 +23,7 @@ char       *char_without_space[] = {":", "{", "}", "(", ")", ",", " ", "=", "!",
                                     "_", "?"};
 
 int          ret      = 0;
-unsigned int line_num = 0;
+unsigned int line_num = 1;
 Token_stack  *scanner_stack;
 
 int main_scanner(Token *token) {
@@ -34,14 +34,10 @@ int main_scanner(Token *token) {
         if (ret != 0) {
             exit(1);
         }
-        token->line_num = line_num;
-        code = NULL;
+        code       = NULL;
     }
     else {
         *token = Token_stack_pop(scanner_stack);
-    }
-    if (token->preceded_by_nl) {
-        line_num++;
     }
     DEBUG_LEXER_CODE(printf("ret: %d\n", ret););
     return ret;
@@ -89,10 +85,10 @@ int generate_token(Token *token, char *code) {
                     case '\t':
                     case ' ':
                     case '\v':
-                    case '\f':
                     case '\r':
                         state = NEW_TOKEN;
                         break;
+                    case '\f':
                     case '\n':
                         token->preceded_by_nl = true;
                         state = NEW_TOKEN;
@@ -266,7 +262,7 @@ int generate_token(Token *token, char *code) {
                  */
             case COMMENTARY: {
                 char c = (char) getchar();
-                while (c != '\n' && c != EOF) {
+                while (c != '\n' && c != '\f' && c != EOF) {
                     c = (char) getchar();
                 }
                 ungetc(c, stdin);
@@ -279,14 +275,17 @@ int generate_token(Token *token, char *code) {
             case COMMENTARY_BL: {
                 char c = (char) getchar();
                 while (1) {
-                    if (c == '*') {
+                    if (c == '\n') {
+                        line_num++;
+                    }
+                    else if (c == '*') {
                         c = (char) getchar();
                         if (c == '/') {
                             state = NEW_TOKEN;
                             break;
                         }
                     }
-                    if (c == EOF) {
+                    else if (c == EOF) {
                         ungetc(c, stdin);
                         return LEXICAL_ERR;
                     }
@@ -326,7 +325,8 @@ int generate_token(Token *token, char *code) {
                     if (c == ' ') {
                         had_space = true;
                     }
-                    else {
+                    else if (c == '\n' || c == '\f') {
+                        line_num++;
                         had_newline = true;
                     }
                     c = (char) getchar();
@@ -343,6 +343,7 @@ int generate_token(Token *token, char *code) {
                         ungetc(' ', stdin);
                     }
                     if (had_newline) {
+                        line_num--;
                         ungetc('\n', stdin);
                     }
                     return set_token(NEW_TOKEN, code, TOKEN_IDENTIFICATOR, token);
@@ -446,6 +447,9 @@ int generate_token(Token *token, char *code) {
                         return LEXICAL_ERR;
                     }
                     else {
+                        if (c == '\n') {
+                            line_num++;
+                        }
                         check_length(&code_len, 0, &code);
                         strncat(code, &c, 1);
                         c = '\0';
@@ -463,7 +467,6 @@ int generate_token(Token *token, char *code) {
                 /*
                  * '\' was read while in STRING state
                  */
-                // TODO fix realloc
             case STRING_BLOCK_ESCAPE:
             case STRING_ESCAPE: {
                 char c = (char) getchar();
@@ -695,7 +698,8 @@ int set_token(int next_state, char *val, Token_type type, Token *token) {
         state = next_state;
         token->type        = type;
         token->token_value = val;
-        DEBUG_LEXER_CODE(printf("type:%d, value:%s\n", token->type, token->token_value););
+        token->line_num    = line_num;
+        DEBUG_LEXER_CODE(printf("type:%d, value:%s, line_num:%d\n", token->type, token->token_value, line_num););
         return 0;
     }
     else {
