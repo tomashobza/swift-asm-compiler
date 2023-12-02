@@ -14,10 +14,10 @@
 #include <stdlib.h>
 #include <string.h>
 
-void handle_label_instructions(Instruction inst)
+void handle_label_instructions(Instruction inst, Token label)
 {
     char *instruction = instructionToString(inst);
-    fprintf(out_code_file, "%s\n", instruction);
+    fprintf(out_code_file, "%s %s\n", instruction, label.token_value);
     free(instruction);
 }
 

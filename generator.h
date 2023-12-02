@@ -117,7 +117,7 @@ char *format_token_for_IFJcode23(Token *token);
  *
  * @param inst Instruction to be printed.
  */
-void handle_label_instructions(Instruction inst);
+void handle_label_instructions(Instruction inst, Token label);
 
 /**
  * @brief Prints the IFJcode23 instruction with one operand to the output file.
@@ -158,7 +158,7 @@ void handle_label_symb_symb_instructions(Instruction inst, Token label, Token sy
         case JUMP:                                                  \
         case JUMPIFEQS:                                             \
         case JUMPIFNEQS:                                            \
-            handle_label_instructions(INST);                        \
+            handle_label_instructions(INST, __VA_ARGS__);           \
             break;                                                  \
         case DEFVAR:                                                \
         case POPS:                                                  \
