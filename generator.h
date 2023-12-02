@@ -202,10 +202,17 @@ char *instructionToString(Instruction in);
 void print_out_code();
 
 /**
- * @brief Generates the header of the IFJcode23 file.
+ * @brief Generates the header of the IFJcode23 function.
  *
- * @param func_item
+ * @param func_item symtable item of the function.
  */
 void generate_func_header(symtable_item func_item);
+
+/**
+ * @brief Generates the end of the IFJcode23 function.
+ *
+ * @param func_item symtable item of the function.
+ */
+void generate_func_end(symtable_item func_item);
 
 #endif // GENERATOR_H

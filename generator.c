@@ -397,6 +397,29 @@ void generate_func_header(symtable_item func_item)
     sprintf(token_end.token_value, "%s_end", func_item.id);
 
     generate_instruction(JUMP, token_end);
-
     generate_instruction(LABEL, token);
+
+    fprintf(out_code_file, "\n");
+
+    for (int i = func_item.data.func_data->params_count - 1; i >= 0; i--)
+    {
+        token.type = TOKEN_IDENTIFICATOR;
+        token.token_value = func_item.data.func_data->params[i].id;
+        generate_instruction(DEFVAR, token);
+        generate_instruction(POPS, token);
+    }
+
+    fprintf(out_code_file, "\n");
+}
+
+void generate_func_end(symtable_item func_item)
+{
+    Token token;
+    token.type = TOKEN_FUNC_ID;
+    token.token_value = malloc(sizeof(char) * (strlen(func_item.id) + 5));
+    sprintf(token.token_value, "%s_end", func_item.id);
+
+    fprintf(out_code_file, "\n");
+    generate_instruction(LABEL, token);
+    fprintf(out_code_file, "\n");
 }

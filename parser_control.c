@@ -95,6 +95,7 @@ int run_control(Token *token, sym_items *items, Control_state sem_rule)
         break;
     case FUNC_BODY_DONE:
         sem_func_body_done(token, items);
+        generate_func_end(*(items->funcItem));
         break;
     case LOAD_IDENTIF:
         sem_load_identif(token, items);
