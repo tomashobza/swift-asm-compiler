@@ -105,12 +105,16 @@ psa_return_type parse_expression_base(bool is_param)
 
             if (b.expr_type != TYPE_INVALID && b.type != TOKEN_EOF)
             {
-                printf("tak pojd kamo jedu '%s'\n", b.token_value);
-                generate_instruction(CALL, convertPSATokenToToken(b));
-                generate_instruction(PUSHS, (Token){
-                                                .type = TOKEN_IDENTIFICATOR,
-                                                .token_value = "retval",
-                                            });
+                if (isBuiltInFunction(convertPSATokenToToken(b))) {
+                    printf_cyan("bultin funkce %s\n", getBuiltInFunctionName(convertPSATokenToToken(b)));
+                } else {
+                    printf_cyan("tak pojd kamo jedu '%s'\n", b.token_value);
+                    generate_instruction(CALL, convertPSATokenToToken(b));
+                    generate_instruction(PUSHS, (Token){
+                                                    .type = TOKEN_IDENTIFICATOR,
+                                                    .token_value = "retval",
+                                                });
+                }
             }
 
             b = readNextToken(s, &next_token_error, &num_of_brackets);

@@ -253,3 +253,96 @@ PSA_Token convertTokenToPSAToken(Token tkn)
         .line_num = tkn.line_num,
     };
 }
+
+bool isBuiltInFunction(Token token)
+{
+    if (token.type == TOKEN_FUNC_ID)
+    {
+        if (strcmp(token.token_value, "readString") == 0)
+        {
+            return true;
+        }
+        else if (strcmp(token.token_value, "readInt") == 0)
+        {
+            return true;
+        }
+        else if (strcmp(token.token_value, "readDouble") == 0)
+        {
+            return true;
+        }
+        else if (strcmp(token.token_value, "write") == 0)
+        {
+            return true;
+        }
+        else if (strcmp(token.token_value, "Int2Double") == 0)
+        {
+            return true;
+        }
+        else if (strcmp(token.token_value, "Double2Int") == 0)
+        {
+            return true;
+        }
+        else if (strcmp(token.token_value, "length") == 0)
+        {
+            return true;
+        }
+        else if (strcmp(token.token_value, "substring") == 0)
+        {
+            return true;
+        }
+        else if (strcmp(token.token_value, "ord") == 0)
+        {
+            return true;
+        }
+        else if (strcmp(token.token_value, "chr") == 0)
+        {
+            return true;
+        }
+    }
+    return false;
+}
+
+char* getBuiltInFunctionName(Token token) {
+    char *name = malloc(sizeof(char) * (strlen(token.token_value) + 1));
+    if (strcmp(token.token_value, "readString") == 0)
+    {
+        strcpy(name, "inputs");
+    }
+    else if (strcmp(token.token_value, "readInt") == 0)
+    {
+        strcpy(name, "inputi");
+    }
+    else if (strcmp(token.token_value, "readDouble") == 0)
+    {
+        strcpy(name, "inputf");
+    }
+    else if (strcmp(token.token_value, "write") == 0)
+    {
+        strcpy(name, "print");
+    }
+    else if (strcmp(token.token_value, "Int2Double") == 0)
+    {
+        strcpy(name, "int2float");
+    }
+    else if (strcmp(token.token_value, "Double2Int") == 0)
+    {
+        strcpy(name, "float2int");
+    }
+    else if (strcmp(token.token_value, "length") == 0)
+    {
+        strcpy(name, "length");
+    }
+    else if (strcmp(token.token_value, "substring") == 0)
+    {
+        strcpy(name, "substr");
+    }
+    else if (strcmp(token.token_value, "ord") == 0)
+    {
+        strcpy(name, "ord");
+    }
+    else if (strcmp(token.token_value, "chr") == 0)
+    {
+        strcpy(name, "chr");
+    }
+    return name;
+}

@@ -423,3 +423,10 @@ void generate_func_end(symtable_item func_item)
     generate_instruction(LABEL, token);
     fprintf(out_code_file, "\n");
 }
+
+void generate_builtin_func_call(Token func) {
+    Token token;
+    token.type = TOKEN_FUNC_ID;
+    token.token_value = func.token_value;
+    generate_instruction(CALL, token);
+}
