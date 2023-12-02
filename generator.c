@@ -1,6 +1,6 @@
 /**
  * @file generator.c
- * @author Tomáš Hobza (xhobza03@vutbr.cz), Jakub Všetečka (xvsete00@vutbr.cz)
+ * @author Tomáš Hobza (xhobza03@vutbr.cz), Jakub Všetečka (xvsete00@vutbr.cz), Simona Valkovská <xvalko12@vutbr.cz>, Anastasia Butok <xbutok00@vutbr.cz>
  * @brief Generator of IFJcode20.
  * @version 0.1
  * @date 2023-11-24
