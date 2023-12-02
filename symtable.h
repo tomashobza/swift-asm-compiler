@@ -84,6 +84,12 @@ typedef struct symtable_item
 
 typedef symtable_item **symtable;
 
+typedef struct
+{
+    symtable_item *varItem;
+    symtable_item *funcItem;
+} sym_items;
+
 DECLARE_STACK_FUNCTIONS(symtable);
 
 extern symtable_stack *sym_st;
@@ -117,7 +123,7 @@ symtable symtable_init();
  * @param table table to put the symbol into
  * @return symtable_item* - pointer to the new symbol
  */
-symtable_item *symtable_add(symtable_item item, symtable table);
+symtable_item *symtable_add(symtable_item *item, symtable table);
 
 /**
  * @brief Finds a symbol in the table and returns it's pointer.
@@ -144,12 +150,19 @@ VariableData *init_var_data();
 ParamData *init_param_data(int count);
 
 /**
+ * @brief Adds a new parameter to the function.
+ *
+ * @param func function data to add the parameter to
+ */
+void add_param(FunctionData *func);
+
+/**
  * @brief Creates a new symbol object.
  *
  * @param item return a pointer to the new symbol
  * @return symtable_item*
  */
-symtable_item *init_symtable_item(symtable_item item);
+symtable_item *init_symtable_item(bool is_func);
 
 /**
  * @brief Prints the content of the symtable.

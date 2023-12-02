@@ -1,13 +1,15 @@
 // NO_ERR
-let a = readInt()
-let b = readInt()
-
-if let a {
-    if (a > 0 && b! > 0) || (a < 0 && (b ?? 0) < 0) {
-        write("A a B maji stejne znamenko")
+func fibonacci(_ n: Int) -> Int {
+    if n <= 1 {
+        return n
     } else {
-        write("A a B maji ruzne znamenko")
+        return fibonacci(n - 1) + fibonacci(n - 2)
     }
+}
+
+let n = readInt()
+if let n {
+    write("Fibonacciho cislo: ", fibonacci(n))
 } else {
     write("Chyba pri nacitani vstupu")
 }

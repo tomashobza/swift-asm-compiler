@@ -32,7 +32,7 @@ int main(void)
 
     sym_st = symtable_stack_init();
 
-    parser_main();
+    run_parser();
 
     Error_code error_code = print_errors();
     if (error_code == NO_ERR)

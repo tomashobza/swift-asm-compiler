@@ -31,7 +31,7 @@ void get_token(Token *token)
     }
 }
 
-bool cmp_type(Token *token, Token_type type, Sem_rule sem_rule)
+bool cmp_type(Token *token, sym_items *items, Token_type type, Control_state sem_rule)
 {
     switch (token->type)
     {
@@ -43,7 +43,7 @@ bool cmp_type(Token *token, Token_type type, Sem_rule sem_rule)
 
         if (result)
         {
-            check_semantic(token, sem_rule);
+            run_control(token, items, sem_rule);
         }
         get_token(token);
         return result;
@@ -51,7 +51,7 @@ bool cmp_type(Token *token, Token_type type, Sem_rule sem_rule)
     }
 }
 
-bool START(Token *token)
+bool START(Token *token, sym_items *items)
 {
     DEBUG_SYNTAX_CODE(printf("START token: %d value: %s\n", token->type, token->token_value););
     switch (token->type)
@@ -65,13 +65,13 @@ bool START(Token *token)
     case TOKEN_WHILE:
     case TOKEN_VAR:
     case TOKEN_LET:
-        return STMT_LIST(token) && cmp_type(token, TOKEN_EOF, SEM_NONE);
+        return STMT_LIST(token, items) && cmp_type(token, items, TOKEN_EOF, SEM_NONE);
     default:
         return false;
     }
 }
 
-bool STMT_LIST(Token *token)
+bool STMT_LIST(Token *token, sym_items *items)
 {
     DEBUG_SYNTAX_CODE(printf("STMT_LIST token: %d value: %s\n", token->type, token->token_value););
     switch (token->type)
@@ -88,42 +88,42 @@ bool STMT_LIST(Token *token)
     case TOKEN_WHILE:
     case TOKEN_VAR:
     case TOKEN_LET:
-        return STMT(token) && STMT_LIST(token);
+        return STMT(token, items) && STMT_LIST(token, items);
     default:
         return false;
     }
 }
 
-bool STMT(Token *token)
+bool STMT(Token *token, sym_items *items)
 {
     DEBUG_SYNTAX_CODE(printf("STMT token: %d value: %s\n", token->type, token->token_value););
     switch (token->type)
     {
     // STMT -> DEF_FUNC
     case TOKEN_FUNC:
-        return DEF_FUNC(token);
+        return DEF_FUNC(token, items);
     // STMT -> IF_STMT
     case TOKEN_IF:
-        return IF_STMT(token);
+        return IF_STMT(token, items);
     // STMT -> LOAD_ID
     case TOKEN_IDENTIFICATOR:
     case TOKEN_FUNC_ID:
-        return LOAD_ID(token);
+        return LOAD_ID(token, items);
     // STMT -> WHILE_STMT
     case TOKEN_WHILE:
-        return WHILE_STMT(token);
+        return WHILE_STMT(token, items);
     // STMT -> VAR_LET
     case TOKEN_VAR:
-        return VAR_LET(token);
+        return VAR_LET(token, items);
     // STMT -> VAR_LET
     case TOKEN_LET:
-        return VAR_LET(token);
+        return VAR_LET(token, items);
     default:
         return false;
     }
 }
 
-bool VAR_LET(Token *token)
+bool VAR_LET(Token *token, sym_items *items)
 {
     DEBUG_SYNTAX_CODE(printf("VAR_LET token: %d value: %s\n", token->type, token->token_value););
     switch (token->type)
@@ -131,50 +131,50 @@ bool VAR_LET(Token *token)
     // VAR_LET -> VAR_SCOPE id TYPE_AND_ASSIGN
     case TOKEN_VAR:
     case TOKEN_LET:
-        return VAR_SCOPE(token) && cmp_type(token, TOKEN_IDENTIFICATOR, VAR_ID) && TYPE_AND_ASIGN(token);
+        return VAR_SCOPE(token, items) && cmp_type(token, items, TOKEN_IDENTIFICATOR, VAR_ID) && TYPE_AND_ASIGN(token, items);
     default:
         return false;
     }
 }
 
-bool VAR_SCOPE(Token *token)
+bool VAR_SCOPE(Token *token, sym_items *items)
 {
     DEBUG_SYNTAX_CODE(printf("VAR_SCOPE token: %d value: %s\n", token->type, token->token_value););
     switch (token->type)
     {
     case TOKEN_VAR:
-        return cmp_type(token, TOKEN_VAR, VAR);
+        return cmp_type(token, items, TOKEN_VAR, VAR);
     case TOKEN_LET:
-        return cmp_type(token, TOKEN_LET, LET);
+        return cmp_type(token, items, TOKEN_LET, LET);
     default:
         return false;
     }
 }
 
-bool TYPE_AND_ASIGN(Token *token)
+bool TYPE_AND_ASIGN(Token *token, sym_items *items)
 {
     DEBUG_SYNTAX_CODE(printf("TYPE_AND_ASIGN token: %d value: %s\n", token->type, token->token_value););
     switch (token->type)
     {
     // TYPE_AND_ASIGN -> : D_TYPE R_FLEX
     case TOKEN_DOUBLE_DOT:
-        return cmp_type(token, TOKEN_DOUBLE_DOT, SEM_NONE) && D_TYPE(token, VAR_TYPE) && R_FLEX(token);
+        return cmp_type(token, items, TOKEN_DOUBLE_DOT, SEM_NONE) && D_TYPE(token, items, VAR_TYPE) && R_FLEX(token, items);
     // TYPE_AND_ASIGN -> = EXP
     case TOKEN_ASSIGN:
-        return cmp_type(token, TOKEN_ASSIGN, VAR_ASSIGN1) && EXP(token, VAR_EXP);
+        return cmp_type(token, items, TOKEN_ASSIGN, VAR_ASSIGN1) && EXP(token, items, VAR_EXP);
     default:
         return false;
     }
 }
 
-bool R_FLEX(Token *token)
+bool R_FLEX(Token *token, sym_items *items)
 {
     DEBUG_SYNTAX_CODE(printf("R_FLEX token: %d value: %s\n", token->type, token->token_value););
     switch (token->type)
     {
     // R_FLEX -> = EXP
     case TOKEN_ASSIGN:
-        return cmp_type(token, TOKEN_ASSIGN, VAR_ASSIGN2) && EXP(token, VAR_EXP);
+        return cmp_type(token, items, TOKEN_ASSIGN, VAR_ASSIGN2) && EXP(token, items, VAR_EXP);
     // R_FLEX -> eps
     case TOKEN_EOF:
     case TOKEN_IDENTIFICATOR:
@@ -186,62 +186,62 @@ bool R_FLEX(Token *token)
     case TOKEN_RETURN:
     case TOKEN_WHILE:
     case TOKEN_IF:
-        check_semantic(token, VAR_ADD);
+        run_control(token, items, VAR_ADD);
         return true;
     default:
         return false;
     }
 }
 
-bool D_TYPE(Token *token, Sem_rule sem_rule)
+bool D_TYPE(Token *token, sym_items *items, Control_state sem_rule)
 {
     DEBUG_SYNTAX_CODE(printf("D_TYPE token: %d value: %s\n", token->type, token->token_value););
     switch (token->type)
     {
     case TOKEN_TYPE_STRING:
-        return cmp_type(token, TOKEN_TYPE_STRING, sem_rule);
+        return cmp_type(token, items, TOKEN_TYPE_STRING, sem_rule);
     case TOKEN_TYPE_INT:
-        return cmp_type(token, TOKEN_TYPE_INT, sem_rule);
+        return cmp_type(token, items, TOKEN_TYPE_INT, sem_rule);
     case TOKEN_TYPE_DOUBLE:
-        return cmp_type(token, TOKEN_TYPE_DOUBLE, sem_rule);
+        return cmp_type(token, items, TOKEN_TYPE_DOUBLE, sem_rule);
     case TOKEN_TYPE_BOOL:
-        return cmp_type(token, TOKEN_TYPE_BOOL, sem_rule);
+        return cmp_type(token, items, TOKEN_TYPE_BOOL, sem_rule);
     case TOKEN_TYPE_STRING_NIL:
-        return cmp_type(token, TOKEN_TYPE_STRING_NIL, sem_rule);
+        return cmp_type(token, items, TOKEN_TYPE_STRING_NIL, sem_rule);
     case TOKEN_TYPE_INT_NIL:
-        return cmp_type(token, TOKEN_TYPE_INT_NIL, sem_rule);
+        return cmp_type(token, items, TOKEN_TYPE_INT_NIL, sem_rule);
     case TOKEN_TYPE_DOUBLE_NIL:
-        return cmp_type(token, TOKEN_TYPE_DOUBLE_NIL, sem_rule);
+        return cmp_type(token, items, TOKEN_TYPE_DOUBLE_NIL, sem_rule);
     case TOKEN_TYPE_BOOL_NIL:
-        return cmp_type(token, TOKEN_TYPE_BOOL_NIL, sem_rule);
+        return cmp_type(token, items, TOKEN_TYPE_BOOL_NIL, sem_rule);
     default:
         return false;
     }
 }
 
-bool DEF_FUNC(Token *token)
+bool DEF_FUNC(Token *token, sym_items *items)
 {
     DEBUG_SYNTAX_CODE(printf("DEF_FUNC token: %d value: %s\n", token->type, token->token_value););
     switch (token->type)
     {
     //  DEF_FUNC -> func func_id ( P_LIST ) RET_TYPE { FUNC_STMT_LIST }
     case TOKEN_FUNC:
-        return cmp_type(token, TOKEN_FUNC, SEM_NONE) && cmp_type(token, TOKEN_FUNC_ID, FUNC_ID) && cmp_type(token, TOKEN_L_BRACKET, SEM_NONE) &&
-               P_LIST(token) && cmp_type(token, TOKEN_R_BRACKET, SEM_NONE) && RET_TYPE(token) && cmp_type(token, TOKEN_L_CURLY, FUNC_HEADER_DONE) &&
-               FUNC_STMT_LIST(token) && cmp_type(token, TOKEN_R_CURLY, FUNC_BODY_DONE);
+        return cmp_type(token, items, TOKEN_FUNC, SEM_NONE) && cmp_type(token, items, TOKEN_FUNC_ID, FUNC_ID) && cmp_type(token, items, TOKEN_L_BRACKET, SEM_NONE) &&
+               P_LIST(token, items) && cmp_type(token, items, TOKEN_R_BRACKET, SEM_NONE) && RET_TYPE(token, items) && cmp_type(token, items, TOKEN_L_CURLY, FUNC_HEADER_DONE) &&
+               FUNC_STMT_LIST(token, items) && cmp_type(token, items, TOKEN_R_CURLY, FUNC_BODY_DONE);
     default:
         return false;
     }
 }
 
-bool P_LIST(Token *token)
+bool P_LIST(Token *token, sym_items *items)
 {
     DEBUG_SYNTAX_CODE(printf("P_LIST token: %d value: %s\n", token->type, token->token_value););
     switch (token->type)
     {
     // P_LIST -> PARAM
     case TOKEN_IDENTIFICATOR:
-        return PARAM(token);
+        return PARAM(token, items);
     // P_LIST -> eps
     case TOKEN_R_BRACKET:
         return true;
@@ -250,21 +250,21 @@ bool P_LIST(Token *token)
     }
 }
 
-bool PARAM(Token *token)
+bool PARAM(Token *token, sym_items *items)
 {
     DEBUG_SYNTAX_CODE(printf("PARAM token: %d value: %s\n", token->type, token->token_value););
     switch (token->type)
     {
     // PARAM -> id id : D_TYPE SEP
     case TOKEN_IDENTIFICATOR:
-        return cmp_type(token, TOKEN_IDENTIFICATOR, P_NAME) && cmp_type(token, TOKEN_IDENTIFICATOR, P_ID) && cmp_type(token, TOKEN_DOUBLE_DOT, SEM_NONE) &&
-               D_TYPE(token, P_TYPE) && P_SEP(token);
+        return cmp_type(token, items, TOKEN_IDENTIFICATOR, P_NAME) && cmp_type(token, items, TOKEN_IDENTIFICATOR, P_ID) && cmp_type(token, items, TOKEN_DOUBLE_DOT, SEM_NONE) &&
+               D_TYPE(token, items, P_TYPE) && P_SEP(token, items);
     default:
         return false;
     }
 }
 
-bool P_SEP(Token *token)
+bool P_SEP(Token *token, sym_items *items)
 {
     DEBUG_SYNTAX_CODE(printf("P_SEP token: %d value: %s\n", token->type, token->token_value););
     switch (token->type)
@@ -274,13 +274,13 @@ bool P_SEP(Token *token)
         return true;
     // P_SEP -> , PARAM
     case TOKEN_COMMA:
-        return cmp_type(token, TOKEN_COMMA, SEM_NONE) && PARAM(token);
+        return cmp_type(token, items, TOKEN_COMMA, SEM_NONE) && PARAM(token, items);
     default:
         return false;
     }
 }
 
-bool RET_TYPE(Token *token)
+bool RET_TYPE(Token *token, sym_items *items)
 {
     DEBUG_SYNTAX_CODE(printf("RET_TYPE token: %d value: %s\n", token->type, token->token_value););
     switch (token->type)
@@ -290,13 +290,13 @@ bool RET_TYPE(Token *token)
         return true;
     // RET_TYPE -> -> D_TYPE
     case TOKEN_ARROW:
-        return cmp_type(token, TOKEN_ARROW, SEM_NONE) && D_TYPE(token, R_TYPE);
+        return cmp_type(token, items, TOKEN_ARROW, SEM_NONE) && D_TYPE(token, items, R_TYPE);
     default:
         return false;
     }
 }
 
-bool FUNC_STMT_LIST(Token *token)
+bool FUNC_STMT_LIST(Token *token, sym_items *items)
 {
     DEBUG_SYNTAX_CODE(printf("FUNC_STMT_LIST token: %d value: %s\n", token->type, token->token_value););
     switch (token->type)
@@ -309,7 +309,7 @@ bool FUNC_STMT_LIST(Token *token)
     case TOKEN_RETURN:
     case TOKEN_WHILE:
     case TOKEN_IF:
-        return FUNC_STMT(token) && FUNC_STMT_LIST(token);
+        return FUNC_STMT(token, items) && FUNC_STMT_LIST(token, items);
     // FUNC_STMT_LIST -> eps
     case TOKEN_R_CURLY:
         return true;
@@ -318,7 +318,7 @@ bool FUNC_STMT_LIST(Token *token)
     }
 }
 
-bool FUNC_STMT(Token *token)
+bool FUNC_STMT(Token *token, sym_items *items)
 {
     DEBUG_SYNTAX_CODE(printf("FUNC_STMT token: %d value: %s\n", token->type, token->token_value););
     switch (token->type)
@@ -326,68 +326,68 @@ bool FUNC_STMT(Token *token)
     // FUNC_STMT -> LOAD_ID
     case TOKEN_IDENTIFICATOR:
     case TOKEN_FUNC_ID:
-        return LOAD_ID(token);
+        return LOAD_ID(token, items);
     // FUNC_STMT -> VAR_LET
     case TOKEN_VAR:
-        return VAR_LET(token);
+        return VAR_LET(token, items);
     case TOKEN_LET:
-        return VAR_LET(token);
+        return VAR_LET(token, items);
     // FUNC_STMT -> RET
     case TOKEN_RETURN:
-        return RET(token);
+        return RET(token, items);
     // FUNC_STMT -> FUNC_WHILE
     case TOKEN_WHILE:
-        return FUNC_WHILE(token);
+        return FUNC_WHILE(token, items);
     // FUNC_STMT -> FUNC_IF
     case TOKEN_IF:
-        return FUNC_IF(token);
+        return FUNC_IF(token, items);
     default:
         return false;
     }
 }
 
-bool RET(Token *token)
+bool RET(Token *token, sym_items *items)
 {
     DEBUG_SYNTAX_CODE(printf("RET token: %d value: %s\n", token->type, token->token_value););
     switch (token->type)
     {
     // RET -> return EXP
     case TOKEN_RETURN:
-        return cmp_type(token, TOKEN_RETURN, SEM_NONE) && EXP(token, R_EXP);
+        return cmp_type(token, items, TOKEN_RETURN, SEM_NONE) && EXP(token, items, R_EXP);
     default:
         return false;
     }
 }
 
-bool FUNC_WHILE(Token *token)
+bool FUNC_WHILE(Token *token, sym_items *items)
 {
     DEBUG_SYNTAX_CODE(printf("FUNC_WHILE token: %d value: %s\n", token->type, token->token_value););
     switch (token->type)
     {
     // FUNC_WHILE -> while EXP { FUNC_STMT_LIST }
     case TOKEN_WHILE:
-        return cmp_type(token, TOKEN_WHILE, SEM_NONE) && EXP(token, COND_EXP) && cmp_type(token, TOKEN_L_CURLY, SEM_NONE) &&
-               FUNC_STMT_LIST(token) && cmp_type(token, TOKEN_R_CURLY, POP_SCOPE);
+        return cmp_type(token, items, TOKEN_WHILE, SEM_NONE) && EXP(token, items, COND_EXP) && cmp_type(token, items, TOKEN_L_CURLY, SEM_NONE) &&
+               FUNC_STMT_LIST(token, items) && cmp_type(token, items, TOKEN_R_CURLY, POP_SCOPE);
     default:
         return false;
     }
 }
 
-bool FUNC_IF(Token *token)
+bool FUNC_IF(Token *token, sym_items *items)
 {
     DEBUG_SYNTAX_CODE(printf("FUNC_IF token: %d value: %s\n", token->type, token->token_value););
     switch (token->type)
     {
     // 	FUNC_IF -> if IF_COND { FUNC_STMT_LIST } FUNC_ELSE_CLAUSE
     case TOKEN_IF:
-        return cmp_type(token, TOKEN_IF, SEM_NONE) && IF_COND(token) && cmp_type(token, TOKEN_L_CURLY, PUSH_SCOPE) &&
-               FUNC_STMT_LIST(token) && cmp_type(token, TOKEN_R_CURLY, POP_SCOPE) && FUNC_ELSE_CLAUSE(token);
+        return cmp_type(token, items, TOKEN_IF, SEM_NONE) && IF_COND(token, items) && cmp_type(token, items, TOKEN_L_CURLY, PUSH_SCOPE) &&
+               FUNC_STMT_LIST(token, items) && cmp_type(token, items, TOKEN_R_CURLY, POP_SCOPE) && FUNC_ELSE_CLAUSE(token, items);
     default:
         return false;
     }
 }
 
-bool FUNC_ELSE_CLAUSE(Token *token)
+bool FUNC_ELSE_CLAUSE(Token *token, sym_items *items)
 {
     DEBUG_SYNTAX_CODE(printf("FUNC_ELSE_CLAUSE token: %d value: %s\n", token->type, token->token_value););
     switch (token->type)
@@ -410,43 +410,43 @@ bool FUNC_ELSE_CLAUSE(Token *token)
         return true;
     // FUNC_ELSE_CLAUSE -> else FUNC_AFTER_ELSE
     case TOKEN_ELSE:
-        return cmp_type(token, TOKEN_ELSE, SEM_NONE) && FUNC_AFTER_ELSE(token);
+        return cmp_type(token, items, TOKEN_ELSE, SEM_NONE) && FUNC_AFTER_ELSE(token, items);
     default:
         return false;
     }
 }
 
-bool FUNC_AFTER_ELSE(Token *token)
+bool FUNC_AFTER_ELSE(Token *token, sym_items *items)
 {
     DEBUG_SYNTAX_CODE(printf("FUNC_AFTER_ELSE token: %d value: %s\n", token->type, token->token_value););
     switch (token->type)
     {
     // FUNC_AFTER_ELSE -> { FUNC_STMT_LIST }
     case TOKEN_L_CURLY:
-        return cmp_type(token, TOKEN_L_CURLY, PUSH_SCOPE) && FUNC_STMT_LIST(token) && cmp_type(token, TOKEN_R_CURLY, POP_SCOPE);
+        return cmp_type(token, items, TOKEN_L_CURLY, PUSH_SCOPE) && FUNC_STMT_LIST(token, items) && cmp_type(token, items, TOKEN_R_CURLY, POP_SCOPE);
     // FUNC_AFTER_ELSE -> FUNC_IF
     case TOKEN_IF:
-        return FUNC_IF(token);
+        return FUNC_IF(token, items);
     default:
         return false;
     }
 }
 
-bool IF_STMT(Token *token)
+bool IF_STMT(Token *token, sym_items *items)
 {
     DEBUG_SYNTAX_CODE(printf("IF_STMT token: %d value: %s\n", token->type, token->token_value););
     switch (token->type)
     {
     // IF_STMT -> if EXP { STMT_LIST } ELSE_CLAUSE
     case TOKEN_IF:
-        return cmp_type(token, TOKEN_IF, SEM_NONE) && IF_COND(token) && cmp_type(token, TOKEN_L_CURLY, SEM_NONE) &&
-               STMT_LIST(token) && cmp_type(token, TOKEN_R_CURLY, POP_SCOPE) && ELSE_CLAUSE(token);
+        return cmp_type(token, items, TOKEN_IF, SEM_NONE) && IF_COND(token, items) && cmp_type(token, items, TOKEN_L_CURLY, SEM_NONE) &&
+               STMT_LIST(token, items) && cmp_type(token, items, TOKEN_R_CURLY, POP_SCOPE) && ELSE_CLAUSE(token, items);
     default:
         return false;
     }
 }
 
-bool IF_COND(Token *token)
+bool IF_COND(Token *token, sym_items *items)
 {
     DEBUG_SYNTAX_CODE(printf("IF_COND token: %d value: %s\n", token->type, token->token_value););
     switch (token->type)
@@ -462,16 +462,16 @@ bool IF_COND(Token *token)
     case TOKEN_NIL:
     case TOKEN_EXP:
     case TOKEN_NOT:
-        return EXP(token, COND_EXP);
+        return EXP(token, items, COND_EXP);
     // IF_COND -> let id
     case TOKEN_LET:
-        return cmp_type(token, TOKEN_LET, SEM_NONE) && cmp_type(token, TOKEN_IDENTIFICATOR, LET_IN_IF);
+        return cmp_type(token, items, TOKEN_LET, SEM_NONE) && cmp_type(token, items, TOKEN_IDENTIFICATOR, LET_IN_IF);
     default:
         return false;
     }
 }
 
-bool ELSE_CLAUSE(Token *token)
+bool ELSE_CLAUSE(Token *token, sym_items *items)
 {
     DEBUG_SYNTAX_CODE(printf("ELSE_CLAUSE token: %d value: %s\n", token->type, token->token_value););
     switch (token->type)
@@ -489,90 +489,63 @@ bool ELSE_CLAUSE(Token *token)
         return true;
     // ELSE_CLAUSE -> else AFTER_ELSE
     case TOKEN_ELSE:
-        return cmp_type(token, TOKEN_ELSE, SEM_NONE) && AFTER_ELSE(token);
+        return cmp_type(token, items, TOKEN_ELSE, SEM_NONE) && AFTER_ELSE(token, items);
     default:
         return false;
     }
 }
 
-bool AFTER_ELSE(Token *token)
+bool AFTER_ELSE(Token *token, sym_items *items)
 {
     DEBUG_SYNTAX_CODE(printf("AFTER_ELSE token: %d value: %s\n", token->type, token->token_value););
     switch (token->type)
     {
     // AFTER_ELSE -> { STMT_LIST }
     case TOKEN_L_CURLY:
-        return cmp_type(token, TOKEN_L_CURLY, PUSH_SCOPE) && STMT_LIST(token) && cmp_type(token, TOKEN_R_CURLY, POP_SCOPE);
+        return cmp_type(token, items, TOKEN_L_CURLY, PUSH_SCOPE) && STMT_LIST(token, items) && cmp_type(token, items, TOKEN_R_CURLY, POP_SCOPE);
     // AFTER_ELSE -> IF_STMT
     case TOKEN_IF:
-        return IF_STMT(token);
+        return IF_STMT(token, items);
     default:
         return false;
     }
 }
 
-bool WHILE_STMT(Token *token)
+bool WHILE_STMT(Token *token, sym_items *items)
 {
     DEBUG_SYNTAX_CODE(printf("WHILE_STMT token: %d value: %s\n", token->type, token->token_value););
     switch (token->type)
     {
     // WHILE_STMT -> while EXP { STMT_LIST }
     case TOKEN_WHILE:
-        return cmp_type(token, TOKEN_WHILE, SEM_NONE) && EXP(token, COND_EXP) && cmp_type(token, TOKEN_L_CURLY, SEM_NONE) &&
-               STMT_LIST(token) && cmp_type(token, TOKEN_R_CURLY, POP_SCOPE);
+        return cmp_type(token, items, TOKEN_WHILE, SEM_NONE) && EXP(token, items, COND_EXP) && cmp_type(token, items, TOKEN_L_CURLY, SEM_NONE) &&
+               STMT_LIST(token, items) && cmp_type(token, items, TOKEN_R_CURLY, POP_SCOPE);
     default:
         return false;
     }
 }
 
-bool LOAD_ID(Token *token)
+bool LOAD_ID(Token *token, sym_items *items)
 {
     DEBUG_SYNTAX_CODE(printf("LOAD_ID token: %d value: %s\n", token->type, token->token_value););
     switch (token->type)
     {
     // LOAD_ID -> id = EXP
     case TOKEN_IDENTIFICATOR:
-        return cmp_type(token, TOKEN_IDENTIFICATOR, LOAD_IDENTIF) && cmp_type(token, TOKEN_ASSIGN, SEM_NONE) && EXP(token, IDENTIF_EXP);
+        return cmp_type(token, items, TOKEN_IDENTIFICATOR, LOAD_IDENTIF) && cmp_type(token, items, TOKEN_ASSIGN, SEM_NONE) && EXP(token, items, IDENTIF_EXP);
     // LOAD_ID -> func_id
     case TOKEN_FUNC_ID:
-        return EXP(token, FUNC_CALL_PSA);
+        return EXP(token, items, FUNC_CALL_PSA);
     default:
         return false;
     }
 }
 
-bool EXP(Token *token, Sem_rule sem_rule)
+bool EXP(Token *token, sym_items *items, Control_state sem_rule)
 {
     DEBUG_SYNTAX_CODE(printf("EXP token: %d value: %s\n", token->type, token->token_value););
     return_token(*token);
-    check_semantic(token, sem_rule);
+    run_control(token, items, sem_rule);
     get_token(token);
     return true;
-}
-
-/**
- * @brief PARSER MAIN
- */
-int parser_main()
-{
-    Token *token = malloc(sizeof(Token));
-
-    semantic_init();
-    add_builtin_functions();
-
-    get_token(token);
-    bool all_ok = START(token);
-    if (all_ok)
-    {
-        DEBUG_SYNTAX_CODE(printf(GREEN "\nAll OK" RESET "\n"););
-    }
-    else
-    {
-        throw_error(SYNTACTIC_ERR, token->line_num, RED "Something went wrong!" RESET "\n");
-    }
-    free(token);
-
-    semantic_destroy();
-
-    return EXIT_SUCCESS;
 }
