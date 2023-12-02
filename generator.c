@@ -48,12 +48,14 @@ char *format_token_for_IFJcode23(Token *token)
     {
         formatted_value = malloc(strlen(token->token_value) + 12); // Including "identifier@" and '\0'
         sprintf(formatted_value, "identifier@%s", token->token_value);
+        break;
     }
     case TOKEN_INT:
     {
         // Format integer literals with "int@"
         formatted_value = malloc(strlen(token->token_value) + 5); //"int@" and '\0'
         sprintf(formatted_value, "int@%s", token->token_value);
+        break;
     }
     case TOKEN_DOUBLE:
     {
@@ -61,22 +63,28 @@ char *format_token_for_IFJcode23(Token *token)
         double double_value = atof(token->token_value); // Convert to double
         formatted_value = malloc(sizeof(char) * 60);    // Allocating enough space
         sprintf(formatted_value, "float@%a", double_value);
+        break;
     }
     case TOKEN_STRING:
     {
         // Format string literals with "string@"
         formatted_value = malloc(strlen(token->token_value) + 8); //"string@" and '\0'
         sprintf(formatted_value, "string@%s", token->token_value);
+        break;
     }
     case TOKEN_NIL:
     {
         // Format nil with "nil@"
-        formatted_value = strdup("nil@");
+        formatted_value = malloc(strlen("nil@") + 1); //"nil@" and '\0'
+        sprintf(formatted_value, "nil@");
+        break;
     }
     default:
     {
         // Format other tokens with their value
-        formatted_value = strdup(token->token_value);
+        formatted_value = malloc(strlen(token->token_value) + 1);
+        sprintf(formatted_value, "%s", token->token_value);
+        break;
     }
     }
 
