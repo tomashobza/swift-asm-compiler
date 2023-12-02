@@ -1,17 +1,13 @@
 .IFJcode23
 CREATEFRAME
 PUSHFRAME
-# 1+3/2*4-5
+# 1+2*4-5
 
 DEFVAR LF@l_op
 DEFVAR LF@r_op
 
 PUSHS int@1
-PUSHS int@3
 PUSHS int@2
-
-IDIVS
-
 PUSHS int@4
 
 MULS
