@@ -404,3 +404,16 @@ void print_out_code()
         printf("%c", (char)c);
     }
 }
+
+void generate_func_header(symtable_item func_item)
+{
+    Token token;
+
+    token.type = TOKEN_FUNC_ID;
+    // sprintf(token.token_value, "end_%s", func_item.id);
+    generate_instruction(JUMP, token);
+
+    token.type = TOKEN_FUNC_ID;
+    token.token_value = func_item.id;
+    generate_instruction(LABEL, token);
+}
