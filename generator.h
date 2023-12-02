@@ -22,6 +22,7 @@ extern FILE *out_code_file;
 
 typedef enum
 {
+    EMPTY,
     // -
     CREATEFRAME, // 0
     PUSHFRAME,   // 1
