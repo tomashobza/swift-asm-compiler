@@ -28,7 +28,7 @@ void run_parser()
     bool all_ok = START(token, items);
     if (all_ok)
     {
-        printf(GREEN "\nAll OK" RESET "\n");
+        DEBUG_SYNTAX_CODE(printf(GREEN "\nAll OK" RESET "\n"););
     }
     else
     {

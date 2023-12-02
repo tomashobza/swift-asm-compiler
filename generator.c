@@ -38,15 +38,20 @@ char *symb_resolve(Token *token)
     switch (token->type)
     {
     case TOKEN_IDENTIFICATOR:
+    {
         symtable_item item = *symtable_find_in_stack(token->token_value, sym_st, false);
         sprintf(var_name, "%s@$%s%d", item.scope == 0 ? "GF" : "LF", item.id, item.scope);
         break;
+    }
     case TOKEN_STRING:
     case TOKEN_INT:
     case TOKEN_DOUBLE:
     case TOKEN_NIL:
+    {
+        free(var_name);
         var_name = format_token(token);
         break;
+    }
     default:
         throw_error(INTERNAL_ERR, -1, "Not valid\n");
         break;
@@ -56,57 +61,12 @@ char *symb_resolve(Token *token)
 
 char *format_token(Token *token)
 {
-    char *formatted_value;
+    char *formatted_value = NULL;
 
     switch (token->type)
     {
     case TOKEN_IDENTIFICATOR:
-    {
-        formatted_value = malloc(strlen(token->token_value) + 12); // Including "identifier@" and '\0'
-        sprintf(formatted_value, "identifier@%s", token->token_value);
-    }
-    case TOKEN_INT:
-    {
-        // Format integer literals with "int@"
-        formatted_value = malloc(strlen(token->token_value) + 5); //"int@" and '\0'
-        sprintf(formatted_value, "int@%s", token->token_value);
-    }
-    case TOKEN_DOUBLE:
-    {
-        // Format floating-point literals with "float@"
-        double double_value = atof(token->token_value); // Convert to double
-        formatted_value = malloc(sizeof(char) * 60);    // Allocating enough space
-        sprintf(formatted_value, "float@%a", double_value);
-    }
-    case TOKEN_STRING:
-    {
-        // Format string literals with "string@"
-        formatted_value = malloc(strlen(token->token_value) + 8); //"string@" and '\0'
-        sprintf(formatted_value, "string@%s", token->token_value);
-    }
-    case TOKEN_NIL:
-    {
-        // Format nil with "nil@"
-        formatted_value = strdup("nil@");
-    }
-    default:
-    {
-        // Format other tokens with their value
-        formatted_value = strdup(token->token_value);
-    }
-    }
-
-    return formatted_value;
-}
-
-char *format_token(Token *token)
-{
-    char *formatted_value;
-
-    switch (token->type)
-    {
-    case TOKEN_IDENTIFICATOR:
-        throw_err(INTERNAL_ERR, -1, "Identificator\n");
+        throw_error(INTERNAL_ERR, -1, "Identificator\n");
         break;
     case TOKEN_INT:
     {
