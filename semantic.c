@@ -93,6 +93,16 @@ void sem_var_exp(Token *token, sym_items *items)
 void sem_var_add(Token *token, sym_items *items)
 {
     printf("%p, %p\n", token, items);
+    // check if var is in uninitialized and can be nil
+    if (items->varItem->data.var_data->is_initialized == false)
+    {
+        Expression_type type = items->varItem->data.var_data->type;
+        if (type == TYPE_INT_NIL || type == TYPE_DOUBLE_NIL || type == TYPE_STRING_NIL || type == TYPE_BOOL_NIL)
+        {
+            items->varItem->data.var_data->is_initialized = true;
+        }
+    }
+
     if (items->varItem->data.var_data->is_param == false) // new symmbol
     {
         DEBUG_SEMANTIC_CODE(printf(YELLOW "ADDING VAR: %s, type: %d, const: %d\n", items->varItem->id, items->varItem->data.var_data->type, items->varItem->data.var_data->is_const););
