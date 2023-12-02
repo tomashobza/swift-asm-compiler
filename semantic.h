@@ -66,9 +66,28 @@ void add_builtin_functions(sym_items *items);
 void print_items(sym_items *items);
 int push_token_get_next(Token *token, Token_stack *token_stack);
 bool get_func_definition(Token *token, char *name, symtable_item *psa_item);
-int check_semantic(Token *token, sym_items *items, Control_state sem_rule);
 
+void state_func_call_psa(Token *token, sym_items *items);
+void state_identif_exp(Token *token, sym_items *items);
+void state_load_identif(Token *token, sym_items *items);
+void state_func_body_done(Token *token, sym_items *items);
+void state_let_in_if(Token *token, sym_items *items);
+void state_cond_exp(Token *token, sym_items *items);
+void state_r_exp(Token *token, sym_items *items);
+void state_pop_scope(Token *token, sym_items *items);
+void state_push_scope(Token *token, sym_items *items);
+void state_func_header_done(Token *token, sym_items *items);
+void state_r_type(Token *token, sym_items *items);
+void state_p_type(Token *token, sym_items *items);
+void state_p_id(Token *token, sym_items *items);
+void state_p_name(Token *token, sym_items *items);
+void state_func_id(Token *token, sym_items *items);
 void state_var_add(Token *token, sym_items *items);
+void state_var_exp(Token *token, sym_items *items);
+void state_var_type(Token *token, sym_items *items);
+void state_var_id(Token *token, sym_items *items);
+void state_var(Token *token, sym_items *items);
+void state_let(Token *token, sym_items *items);
 
 /**
  * @brief Checks if the expression is convertable to the variable type. This behavior is defined in the documentation only for implicit type conversion of literals Int -> Double.

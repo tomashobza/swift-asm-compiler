@@ -33,6 +33,7 @@
 
 void get_token(Token *token);
 bool cmp_type(Token *token, sym_items *items, Token_type type, Control_state sem_rule);
+int run_control(Token *token, sym_items *items, Control_state sem_rule);
 
 bool START(Token *token, sym_items *items);
 bool STMT_LIST(Token *token, sym_items *items);

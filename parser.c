@@ -43,7 +43,7 @@ bool cmp_type(Token *token, sym_items *items, Token_type type, Control_state sem
 
         if (result)
         {
-            check_semantic(token, items, sem_rule);
+            run_control(token, items, sem_rule);
         }
         get_token(token);
         return result;
@@ -186,7 +186,7 @@ bool R_FLEX(Token *token, sym_items *items)
     case TOKEN_RETURN:
     case TOKEN_WHILE:
     case TOKEN_IF:
-        check_semantic(token, items, VAR_ADD);
+        run_control(token, items, VAR_ADD);
         return true;
     default:
         return false;
@@ -545,7 +545,7 @@ bool EXP(Token *token, sym_items *items, Control_state sem_rule)
 {
     DEBUG_SYNTAX_CODE(printf("EXP token: %d value: %s\n", token->type, token->token_value););
     return_token(*token);
-    check_semantic(token, items, sem_rule);
+    run_control(token, items, sem_rule);
     get_token(token);
     return true;
 }
