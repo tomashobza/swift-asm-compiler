@@ -39,5 +39,6 @@ int main(void)
     {
         print_out_code();
     }
+    fclose(out_code_file);
     return error_code;
 }
