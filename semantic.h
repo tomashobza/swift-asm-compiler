@@ -63,6 +63,7 @@ typedef enum
 
 int semantic_init();
 void add_builtin_functions(sym_items *items);
+void print_items(sym_items *items);
 int push_token_get_next(Token *token, Token_stack *token_stack);
 bool get_func_definition(Token *token, char *name, symtable_item *psa_item);
 int check_semantic(Token *token, sym_items *items, Control_state sem_rule);

@@ -153,7 +153,7 @@ void add_param(FunctionData *func)
     if (func->params == NULL)
     {
         // First param
-        func->params = malloc(sizeof(ParamData));
+        func->params = init_param_data(1);
         if (func->params == NULL)
         {
             // Handle memory allocation error
@@ -240,8 +240,14 @@ symtable_item *init_symtable_item(bool is_func)
     }
     else if (is_func == true) // is function
     {
+        new_sti->id = NULL;
         new_sti->type = FUNCTION;
         new_sti->data.func_data = init_func_data();
+        new_sti->data.func_data->params = NULL;
+        new_sti->data.func_data->params_count = 0;
+        new_sti->data.func_data->capacity = 0;
+        new_sti->data.func_data->return_type = TYPE_EMPTY;
+        new_sti->data.func_data->found_return = false;
     }
     new_sti->next = NULL;
 
