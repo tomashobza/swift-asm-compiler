@@ -139,7 +139,7 @@ char *format_token(Token *token)
         // Format floating-point literals with "float@"
         double double_value = atof(token->token_value); // Convert to double
         formatted_value = malloc(sizeof(char) * 60);    // Allocating enough space
-        sprintf(formatted_value, "float@%g", double_value);
+        sprintf(formatted_value, "float@%a", double_value);
         break;
     }
     case TOKEN_STRING:
