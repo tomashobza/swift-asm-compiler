@@ -14,8 +14,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-// TODO: napsat funkci, ktera bere token (token.type je jeho typ a token.token_value je string s jeho hodnotou) a vraci string s jeho hodnotou ve formatu pro IFJcode23
-
 void handle_label_instructions(Instruction inst)
 {
     char *instruction = instructionToString(inst);
