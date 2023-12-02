@@ -33,12 +33,12 @@ def run_compiler_and_interpreter(source_code, expected_output):
                 asm_file.write(compile_result.stdout)
 
             # Check if interpreter executable exists
-            if not os.path.isfile('./ifj20vm'):
-                return False, "Interpreter './ifj20vm' not found"
+            if not os.path.isfile('./utils/ic23int'):
+                return False, "Interpreter './utils/ic23int' not found"
 
             # Start interpreter
             try:
-                interpreter_result = subprocess.run(['./ifj2023', asm_path], capture_output=True, text=True, timeout=40)
+                interpreter_result = subprocess.run(['./utils/ic23int', asm_path], capture_output=True, text=True, timeout=40)
             except subprocess.TimeoutExpired:
                 return False, "Interpreter timeout"
             except Exception as e:
@@ -58,8 +58,17 @@ def run_compiler_and_interpreter(source_code, expected_output):
 def test_examples():
     examples = [
         {"source": "write('Hello, world!')", "expected": "Hello, world!"},
-        # Other examples...
+        {"source": "write('Hello, world!')\nwrite('Hello, world!')", "expected": "Hello, world!Hello, world!"},
+        {"source": "write('Hello, world!')\nwrite('Hello, world!')\nwrite('Hello, world!')", "expected": "Hello, world!Hello, world!Hello, world!"},
+        {"source": "write('Hello, world!')\nwrite('Hello, world!')\nwrite('Hello, world!')\nwrite('Hello, world!')", "expected": "Hello, world!Hello, world!Hello, world!Hello, world!"},
+        {"source": "var a = 5 \n write(a)", "expected": "5"},
+        {"source": "var a = 5 \n var b = 10 \n write(a + b)", "expected": "15"},
+        {"source": "var a = 0 \n var b = 1 \n for i in 1...5 { var temp = a \n a = b \n b = temp + b } \n write(a)", "expected": "5"},  # Fibonacci
+        {"source": "var number = 10 \n if number > 5 { write('OK') }", "expected": "OK"},
+        {"source": "var number = 4 \n if number > 5 { write('OK') } else { write('NOT OK') }", "expected": "NOT OK"},
+        {"source": "write('1') \n write('2') \n write('3') \n write('4')", "expected": "1234"}
     ]
+    
 
     for example in examples:
         result, output = run_compiler_and_interpreter(example["source"], example["expected"])
