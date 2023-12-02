@@ -100,7 +100,7 @@ char *symb_resolve(Token *token);
  * @param token Token record of the literal.
  * @return char* - string with the literal in the format for IFJcode23
  */
-char *format_token_for_IFJcode23(Token *token);
+char *format_token(Token *token);
 
 
 /**
