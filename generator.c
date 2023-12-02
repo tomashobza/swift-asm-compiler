@@ -5,12 +5,9 @@
  *
  * Project: IFJ compiler
  */
+
 #include "generator.h"
-
-
 #include <stdio.h>
-
-
 
 // Function definitions
 void define_function(char *name, char *param_val[]) {
@@ -64,6 +61,10 @@ void pops(char *frame_var, char *name_var) {
 
 void assign(char *frame_var_to, char *name_var_to, char *frame_var_from, char *name_var_from) {
     THREE_INST("MOVE", frame_var_to, name_var_to, frame_var_from, name_var_from);
+}
+
+void add(var_frame,var_name,symb_type,symb_val,symb_type_2,symb_val_2){
+    THREE_INST("ADD", var_fame, var_name, symb_val, name_var_from);
 }
 
 int main() {
