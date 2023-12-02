@@ -18,10 +18,10 @@
 DEFINE_STACK_FUNCTIONS(Token)
 #define CHAR_WTH_SPACE_LENGTH (sizeof(char_without_space) / sizeof(*char_without_space)) // length of array *char_without_space
 Token_type state = NEW_TOKEN;                                                            // initial state of scanner
-char *char_without_space[] = {":", ".", "{", "}", "(", ")", ",", " ", "=", "!", "+", "-", "*", "/", "<", ">", "\n", "_"};
+char *char_without_space[] = {":",  "{", "}", "(", ")", ",", " ", "=", "!", "+", "-", "*", "/", "<", ">", "\n", "_","?"};
 
 int ret = 0;
-unsigned int line_num = 1;
+unsigned int line_num = 0;
 Token_stack *scanner_stack;
 
 int main_scanner(Token *token)
@@ -30,7 +30,10 @@ int main_scanner(Token *token)
     if (Token_stack_empty(scanner_stack))
     {
         char *code = "\0";
-        ret = generate_token(token, code);
+        int ret = generate_token(token, code);
+        if(ret != 0){
+            exit(1);
+        }
         token->line_num = line_num;
         code = NULL;
     }
@@ -40,7 +43,7 @@ int main_scanner(Token *token)
     }
     if (token->preceded_by_nl)
     {
-        // line_num++;
+        line_num++;
     }
     DEBUG_LEXER_CODE(printf("ret: %d\n", ret););
     return ret;
@@ -166,6 +169,7 @@ int generate_token(Token *token, char *code)
                 }
                 else
                 {
+                    ungetc(c, stdin);
                     ret = LEXICAL_ERR;
                     return LEXICAL_ERR;
                 }
@@ -228,6 +232,7 @@ int generate_token(Token *token, char *code)
                 }
                 else
                 {
+                    ungetc(c, stdin);
                     ret = LEXICAL_ERR;
                     return LEXICAL_ERR;
                 }
@@ -239,6 +244,7 @@ int generate_token(Token *token, char *code)
                 }
                 else
                 {
+                    ungetc(c, stdin);
                     ret = LEXICAL_ERR;
                     return LEXICAL_ERR;
                 }
@@ -280,6 +286,7 @@ int generate_token(Token *token, char *code)
             }
             else
             {
+                ungetc(c, stdin);
                 return LEXICAL_ERR;
             }
             break;
@@ -317,6 +324,7 @@ int generate_token(Token *token, char *code)
                 }
                 if (c == EOF)
                 {
+                    ungetc(c, stdin);
                     return LEXICAL_ERR;
                 }
                 c = (char)getchar();
@@ -353,6 +361,13 @@ int generate_token(Token *token, char *code)
                 }
             }
             c = (char)getchar();
+            bool had_space = false;
+            while (c == ' ')
+            {
+                had_space = true;
+                c = (char)getchar();
+
+            }
             if (c == '(')
             {
                 ungetc(c, stdin);
@@ -361,6 +376,9 @@ int generate_token(Token *token, char *code)
             else
             {
                 ungetc(c, stdin);
+                if(had_space){
+                    ungetc(' ',stdin);
+                }
                 return set_token(NEW_TOKEN, code, TOKEN_IDENTIFICATOR, token);
             }
             // return set_token(NEW_TOKEN, code, TOKEN_IDENTIFICATOR, token, code);
@@ -395,14 +413,9 @@ int generate_token(Token *token, char *code)
             }
             if (c == 'e' || c == 'E')
             {
-                if (state == INTEGER)
-                {
-                    return set_token(EXP_START, code, TOKEN_INT, token);
-                }
-                else
-                {
-                    return set_token(EXP_START, code, TOKEN_DOUBLE, token);
-                }
+                check_length(&code_len, 0, &code);
+                strncat(code, &c, 1);
+                state = EXP_START;
             }
             else if (c == '.' && state == INTEGER)
             {
@@ -424,6 +437,7 @@ int generate_token(Token *token, char *code)
                 }
             }
         }
+        break;
             /*
              * E/e was read and after possible sign there has to be integer otherwise its LEXICAL_ERR
              */
@@ -451,6 +465,7 @@ int generate_token(Token *token, char *code)
             }
             else
             {
+                ungetc(c, stdin);
                 return LEXICAL_ERR;
             }
             if (*code == '\0')
@@ -484,6 +499,7 @@ int generate_token(Token *token, char *code)
                 }
                 else if (c == EOF)
                 {
+                    ungetc(c, stdin);
                     return LEXICAL_ERR;
                 }
                 else
@@ -733,6 +749,7 @@ int generate_token(Token *token, char *code)
             }
             else
             {
+                ungetc(c, stdin);
                 return LEXICAL_ERR;
             }
             break;
@@ -775,7 +792,9 @@ int set_token(int next_state, char *val, Token_type type, Token *token)
             correct = 1;
         }
     }
+
     ungetc(c, stdin);
+
     if (correct == 1)
     {
         state = next_state;

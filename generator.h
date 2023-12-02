@@ -19,6 +19,74 @@
 
 extern FILE *out_code_file;
 
+typedef enum
+{
+    // -
+    CREATEFRAME, // 0
+    PUSHFRAME,   // 1
+    POPFRAME,    // 2
+    RETURN,      // 3
+    CLEARS,      // 4
+    ADDS,        // 5
+    SUBS,        // 6
+    DIVS,        // 7
+    IDIVS,       // 8
+    MULS,        // 9
+    LTS,         // 10
+    EQS,         // 11
+    GTS,         // 12
+    ANDS,        // 13
+    ORS,         // 14
+    NOTS,        // 15
+    INT2FLOATS,  // 16
+    FLOAT2INTS,  // 17
+    INT2CHARS,   // 18
+    STRI2INTS,   // 19
+    BREAK,       // 20
+           // <label>
+    CALL,       // 21
+    LABEL,      // 22
+    JUMP,       // 23
+    JUMPIFEQS,  // 24
+    JUMPIFNEQS, // 25
+                // <var>
+    DEFVAR, // 26
+    POPS,   // 27
+          // <symb>
+    PUSHS,  // 28
+    WRITE,  // 29
+    EXIT,   // 30
+    DPRINT, // 31
+            // <var> <type>
+    READ, // 32
+          // <var> <symb>
+    MOVE,      // 33
+    INT2FLOAT, // 34
+    FLOAT2INT, // 35
+    INT2CHAR,  // 36
+    STRI2INT,  // 37
+    STRLEN,    // 38
+    TYPE,      // 39
+          // <var> <symb> <symb>
+    ADD,     // 40
+    SUB,     // 41
+    DIV,     // 42
+    IDIV,    // 43
+    MUL,     // 44
+    LT,      // 45
+    GT,      // 46
+    EQ,      // 47
+    AND,     // 48
+    OR,      // 49
+    NOT,     // 50
+    CONCAT,  // 51
+    GETCHAR, // 52
+    SETCHAR, // 53
+             // <label> <symb> <symb>
+    JUMPIFEQ,  // 54
+    JUMPIFNEQ, // 55
+} Instruction;
+
 /**
  * @brief Returns the format of the variable for IFJcode23.
  *
