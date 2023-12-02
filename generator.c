@@ -14,51 +14,78 @@
 #include <stdlib.h>
 #include <string.h>
 
-Operand getOperandFromToken(Token token) {
-    Operand op;
+Operand getOperandFromToken(Token token)
+{
+    Operand op = {
+        .type = OP_NONE,
+        .token_type = token.type,
+        .scope = 0,
+        .value = NULL,
+
+    };
     switch (token.type)
     {
-        case TOKEN_IDENTIFICATOR:
+    case TOKEN_IDENTIFICATOR:
+    {
+        symtable_item *found = symtable_find_in_stack(token.token_value, sym_st, false);
+        if (found == NULL)
         {
-            symtable_item *found = symtable_find_in_stack(token.token_value, sym_st, false);
-            if (found == NULL)
-            {
-                throw_error(INTERNAL_ERR, -1, "Variable '%s' not found\n", token.token_value);
-                return op;
-            }
-            symtable_item item = *found;
-            if (item.type == VARIABLE)
-            {
-                if (item.data.var_data->type == TYPE_INVALID)
-                {
-                    throw_error(INTERNAL_ERR, -1, "Variable '%s' is invalid\n", token.token_value);
-                }
-                op.type = OPERAND_VAR;
-                sprintf(op.name, "%s@$%s%d", item.scope == 0 ? "GF" : "LF", item.id, item.scope);
-            }
-            else if (item.type == FUNCTION)
-            {
-                op.type = OPERAND_LABEL;
-                sprintf(op.name, "%s", item.id);
-            }
-            else
-            {   
-                op.type = OPERAND_NONE;
-                sprintf(op.name, "%s", token.token_value);
-            }
+            throw_error(INTERNAL_ERR, -1, "Variable '%s' not found\n", token.token_value);
             break;
         }
-
-        case TOKEN_STRING:
-        case TOKEN_INT:
-        case TOKEN_DOUBLE:
-        case TOKEN_NIL:
+        symtable_item item = *found;
+        if (item.type == VARIABLE)
         {
-            op.type = OPERAND_CONST;
-            sprintf(op.name, "%s", format_token(&token));
-            break;
+            if (item.data.var_data->type == TYPE_INVALID)
+            {
+                throw_error(INTERNAL_ERR, -1, "Variable '%s' is invalid\n", token.token_value);
+            }
+            op.type = OP_VAR;
+            op.value = malloc(sizeof(char) * (strlen(item.id) + 10)); // 10 for "GF@$%s%d\0"
+            sprintf(op.value, "%s@$%s%d", item.scope == 0 ? "GF" : "LF", item.id, item.scope);
         }
+        else if (item.type == FUNCTION)
+        {
+            op.type = OP_LBL;
+            op.value = malloc(sizeof(char) * (strlen(item.id) + 1)); // 1 for '\0'
+            sprintf(op.value, "%s", item.id);
+        }
+        else
+        {
+            op.type = OP_NONE;
+            op.value = malloc(sizeof(char) * (strlen(item.id) + 1)); // 1 for '\0'
+            sprintf(op.value, "%s", token.token_value);
+        }
+        break;
     }
+
+    case TOKEN_STRING:
+    case TOKEN_INT:
+    case TOKEN_DOUBLE:
+    case TOKEN_NIL:
+    {
+        op.type = OP_VAR;
+        op.token_type = token.type;
+        op.value = malloc(sizeof(char) * (strlen(token.token_value) + 1)); // 1 for '\0'
+        sprintf(op.value, "%s", token.token_value);
+        break;
+    }
+    case TOKEN_TYPE_INT:
+    case TOKEN_TYPE_DOUBLE:
+    case TOKEN_TYPE_STRING:
+    case TOKEN_TYPE_BOOL:
+    {
+        op.type = OP_TYPE;
+        op.value = malloc(sizeof(char) * (strlen(token.token_value) + 1)); // 1 for '\0'
+        sprintf(op.value, "%s", token.token_value);
+        break;
+    }
+    default:
+        throw_error(INTERNAL_ERR, -1, "Invalid token type for <var> operand.\n");
+        op.type = OP_NONE;
+        break;
+    }
+    return op;
 }
 
 void handle_0_operand_instructions(Instruction inst)
@@ -68,32 +95,32 @@ void handle_0_operand_instructions(Instruction inst)
     free(instruction);
 }
 
-void handle_1_operand_instructions(Instruction inst, Token op1)
+void handle_1_operand_instructions(Instruction inst, Operand op1)
 {
     char *instruction = instructionToString(inst);
-    char *var_name = symb_resolve(&op1);
+    char *var_name = symb_resolve(op1);
     fprintf(out_code_file, "%s %s\n", instruction, var_name);
     free(instruction);
     free(var_name);
 }
 
-void handle_2_operand_instructions(Instruction inst, Token op1, Token op2)
+void handle_2_operand_instructions(Instruction inst, Operand op1, Operand op2)
 {
     char *instruction = instructionToString(inst);
-    char *var_name1 = symb_resolve(&op1);
-    char *var_name2 = symb_resolve(&op2);
+    char *var_name1 = symb_resolve(op1);
+    char *var_name2 = symb_resolve(op2);
     fprintf(out_code_file, "%s %s %s\n", instruction, var_name1, var_name2);
     free(instruction);
     free(var_name1);
     free(var_name2);
 }
 
-void handle_3_operand_instructions(Instruction inst, Token op1, Token op2, Token op3)
+void handle_3_operand_instructions(Instruction inst, Operand op1, Operand op2, Operand op3)
 {
     char *instruction = instructionToString(inst);
-    char *var_name1 = symb_resolve(&op1);
-    char *var_name2 = symb_resolve(&op2);
-    char *var_name3 = symb_resolve(&op3);
+    char *var_name1 = symb_resolve(op1);
+    char *var_name2 = symb_resolve(op2);
+    char *var_name3 = symb_resolve(op3);
     fprintf(out_code_file, "%s %s %s %s\n", instruction, var_name1, var_name2, var_name3);
     free(instruction);
     free(var_name1);
@@ -101,86 +128,89 @@ void handle_3_operand_instructions(Instruction inst, Token op1, Token op2, Token
     free(var_name3);
 }
 
-void processInstruction(Instruction inst, Token *tokens, int tokens_count)
+void processInstruction(Instruction inst, Operand *operands, int operands_count)
 {
-    switch (tokens_count)
+    switch (operands_count)
     {
     case 0:
         handle_0_operand_instructions(inst);
         break;
     case 1:
-        handle_1_operand_instructions(inst, tokens[0]);
+        handle_1_operand_instructions(inst, operands[0]);
         break;
     case 2:
-        handle_2_operand_instructions(inst, tokens[0], tokens[1]);
+        handle_2_operand_instructions(inst, operands[0], operands[1]);
         break;
     case 3:
-        handle_3_operand_instructions(inst, tokens[0], tokens[1], tokens[2]);
+        handle_3_operand_instructions(inst, operands[0], operands[1], operands[2]);
         break;
     default:
-        throw_error(INTERNAL_ERR, -1, "Invalid number of tokens\n");
+        throw_error(INTERNAL_ERR, -1, "Invalid number of operands\n");
         break;
     }
 }
 
-char *symb_resolve(Operand *op)
+char *symb_resolve(Operand op)
 {
-    char *op_name = malloc(sizeof(char) *);
-    
-    switch (op.type) {
-        case OP_VAR:
-            sprintf(op_name, "%s", op.name);
-            break;
-        case OPERAND_CONST:
-            sprintf(op_name, "%s", op.name);
-            break;
-        case OPERAND_LABEL:
-            sprintf(op_name, "%s", op.name);
-            break;
-        case OPERAND_NONE:
-            sprintf(op_name, "%s", op.name);
-            break;
+    int size = op.value == NULL ? 1 : strlen(op.value);
+    char *op_name = malloc(sizeof(char) * (size + 1));
+
+    switch (op.type)
+    {
+    case OP_VAR:
+    case OP_LIT:
+        sprintf(op_name, "%s", format_operand(op));
+        break;
+    case OP_LBL:
+    case OP_TYPE:
+        sprintf(op_name, "%s", op.value);
+        break;
+    case OP_NONE:
+        throw_error(INTERNAL_ERR, -1, "Invalid operand type. Recieved operator type NONE.\n");
+        sprintf(op_name, "");
+        break;
     }
 
-    return var_name;
+    return op_name;
 }
 
-char *format_operand(Operand *token)
+char *format_operand(Operand op)
 {
     char *formatted_value = NULL;
 
-    switch (token->type)
+    switch (op.token_type)
     {
     case TOKEN_IDENTIFICATOR:
-        throw_error(INTERNAL_ERR, -1, "Identificator\n");
+        formatted_value = malloc(strlen(op.value) + 5);                                                                //"int@" and '\0'
+        sprintf(formatted_value, "%s@$%s%d", op.scope == 0 ? "GF" : (op.scope < 0 ? "TF" : "LF"), op.value, op.scope); // -1 for TF, 0 for GF, 1+ for LF
         break;
     case TOKEN_INT:
     {
         // Format integer literals with "int@"
-        formatted_value = malloc(strlen(token->token_value) + 5); //"int@" and '\0'
-        sprintf(formatted_value, "int@%s", token->token_value);
+        formatted_value = malloc(strlen(op.value) + 5); //"int@" and '\0'
+        sprintf(formatted_value, "int@%s", op.value);
         break;
     }
     case TOKEN_DOUBLE:
     {
         // Format floating-point literals with "float@"
-        double double_value = atof(token->token_value); // Convert to double
-        formatted_value = malloc(sizeof(char) * 60);    // Allocating enough space
+        double double_value = atof(op.value);        // Convert to double
+        formatted_value = malloc(sizeof(char) * 60); // Allocating enough space
         sprintf(formatted_value, "float@%a", double_value);
         break;
     }
     case TOKEN_STRING:
     {
         // Format string literals with "string@"
-        formatted_value = malloc(strlen(token->token_value) + 8); //"string@" and '\0'
-        sprintf(formatted_value, "string@%s", token->token_value);
+        formatted_value = malloc(strlen(op.value) + 8); //"string@" and '\0'
+        sprintf(formatted_value, "string@%s", op.value);
         break;
     }
     case TOKEN_BOOL:
     {
         // Format bool literals with "bool@"
-        formatted_value = malloc(strlen(token->token_value) + 6); //"bool@" and '\0'
-        sprintf(formatted_value, "bool@%s", token->token_value);
+        formatted_value = malloc(strlen(op.value) + 6); //"bool@" and '\0'
+        sprintf(formatted_value, "bool@%s", op.value);
         break;
     }
     case TOKEN_NIL:
@@ -193,14 +223,14 @@ char *format_operand(Operand *token)
     default:
     {
         // Format other tokens with their value
-        formatted_value = malloc(strlen(token->token_value) + 1);
-        sprintf(formatted_value, "%s", token->token_value);
+        throw_error(INTERNAL_ERR, -1, "Invalid token type for <var> operand.\n");
         break;
     }
     }
     return formatted_value;
 }
 
+// TODO: rewrite this using a marco
 char *instructionToString(Instruction in)
 {
     char *instruction = malloc(sizeof(char) * 100);
@@ -411,9 +441,9 @@ void generate_func_header(symtable_item func_item)
 
     token.type = TOKEN_FUNC_ID;
     // sprintf(token.token_value, "end_%s", func_item.id);
-    generate_instruction(JUMP, token);
+    generate_instruction(JUMP, getOperandFromToken(token));
 
     token.type = TOKEN_FUNC_ID;
     token.token_value = func_item.id;
-    generate_instruction(LABEL, token);
+    generate_instruction(LABEL, getOperandFromToken(token));
 }

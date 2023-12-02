@@ -95,13 +95,14 @@ typedef enum
     OP_VAR,
     OP_LIT,
     OP_LBL,
+    OP_TYPE,
 } OperandType;
 
 typedef struct
 {
     OperandType type;
     char *value;
-    char *token_type;
+    Token_type token_type;
     int scope; // -1 for TF, 0 for GF, 1+ for LF
 } Operand;
 
@@ -116,10 +117,10 @@ Operand getOperandFromToken(Token token);
 /**
  * @brief Returns the format of symb for IFJcode23.
  *
- * @param token Token with type and value.
+ * @param op Operand with type and value.
  * @return char* - string with the variable in the format for IFJcode23
  */
-char *symb_resolve(Token *token);
+char *symb_resolve(Operand op);
 
 /**
  * @brief Returns the format of the operand for IFJcode23.
@@ -127,15 +128,7 @@ char *symb_resolve(Token *token);
  * @param op Operand record of the operand.
  * @return char* - string with the operand in the format for IFJcode23
  */
-char *format_operand(Operand *op);
-
-/**
- * @brief Returns the format of the literal for IFJcode23.
- *
- * @param token Token record of the literal.
- * @return char* - string with the literal in the format for IFJcode23
- */
-char *format_token_for_IFJcode23(Token *token);
+char *format_operand(Operand op);
 
 /**
  * @brief -
@@ -150,7 +143,7 @@ void handle_0_operand_instructions(Instruction inst);
  * @param inst
  * @param symb
  */
-void handle_1_operand_instructions(Instruction inst, Token op1);
+void handle_1_operand_instructions(Instruction inst, Operand op1);
 
 /**
  * @brief <var> <symb>/<var> <type>
@@ -159,7 +152,7 @@ void handle_1_operand_instructions(Instruction inst, Token op1);
  * @param var
  * @param symb
  */
-void handle_2_operand_instructions(Instruction inst, Token op1, Token op2);
+void handle_2_operand_instructions(Instruction inst, Operand op1, Operand op2);
 
 /**
  * @brief <var> <symb> <symb>/<label> <symb> <symb>
@@ -169,25 +162,25 @@ void handle_2_operand_instructions(Instruction inst, Token op1, Token op2);
  * @param symb1
  * @param symb2
  */
-void handle_3_operand_instructions(Instruction inst, Token op1, Token op2, Token op3);
+void handle_3_operand_instructions(Instruction inst, Operand op1, Operand op2, Operand op3);
 
 /**
- * @brief Based on the number of tokens provided, calls the appropriate function to handle the instruction.
+ * @brief Based on the number of operands provided, calls the appropriate function to handle the instruction.
  *
  * @param inst Instruction to be handled.
- * @param tokens Array of tokens.
- * @param tokens_count Number of tokens in the array.
+ * @param operands Array of operands.
+ * @param operands_count Number of operands in the array.
  */
-void processInstruction(Instruction inst, Token *tokens, int tokens_count);
+void processInstruction(Instruction inst, Operand *operands, int operands_count);
 
 /**
  * @brief Macro that generates the IFJcode23 instruction based on the given arguments.
  */
-#define generate_instruction(instruction, ...)                                   \
-    do                                                                           \
-    {                                                                            \
-        Token tokens[] = {__VA_ARGS__};                                          \
-        processInstruction(instruction, tokens, sizeof(tokens) / sizeof(Token)); \
+#define generate_instruction(instruction, ...)                                         \
+    do                                                                                 \
+    {                                                                                  \
+        Operand operands[] = {__VA_ARGS__};                                            \
+        processInstruction(instruction, operands, sizeof(operands) / sizeof(Operand)); \
     } while (0)
 
 /**
