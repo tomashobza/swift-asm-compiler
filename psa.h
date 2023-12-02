@@ -23,6 +23,7 @@
 #include "scanner.h"
 #include "stack.h"
 #include "symtable.h"
+#include "generator.h"
 
 extern symtable_stack *sym_st;
 
