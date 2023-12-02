@@ -31,8 +31,10 @@
 #define CYAN "\x1B[36m"
 #define RESET "\x1B[0m"
 
+void run_parser();
 void get_token(Token *token);
 bool cmp_type(Token *token, sym_items *items, Token_type type, Control_state sem_rule);
+void add_builtin_functions(sym_items *items);
 int run_control(Token *token, sym_items *items, Control_state sem_rule);
 
 bool START(Token *token, sym_items *items);

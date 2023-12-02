@@ -11,9 +11,34 @@
 
 #include "parser.h"
 
+void run_parser()
+{
+    Token *token = malloc(sizeof(Token));
+
+    symtable s_tb = symtable_init();
+    symtable_stack_push(sym_st, s_tb);
+    sym_items *items = malloc(sizeof(sym_items));
+    items->funcItem = init_symtable_item(true);
+    items->varItem = init_symtable_item(false);
+
+    add_builtin_functions(items);
+
+    get_token(token);
+
+    bool all_ok = START(token, items);
+    if (all_ok)
+    {
+        printf(GREEN "\nAll OK" RESET "\n");
+    }
+    else
+    {
+        throw_error(SYNTACTIC_ERR, token->line_num, RED "Unexpected token: '%s'!" RESET "\n", token->token_value);
+    }
+    free(token);
+}
+
 int run_control(Token *token, sym_items *items, Control_state sem_rule)
 {
-
     switch (sem_rule)
     {
     case LET:

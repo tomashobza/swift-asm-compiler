@@ -549,32 +549,3 @@ bool EXP(Token *token, sym_items *items, Control_state sem_rule)
     get_token(token);
     return true;
 }
-
-/**
- * @brief PARSER MAIN
- */
-int parser_main()
-{
-    Token *token = malloc(sizeof(Token));
-
-    semantic_init();
-    sym_items *items = malloc(sizeof(sym_items));
-    items->funcItem = init_symtable_item(true);
-    items->varItem = init_symtable_item(false);
-
-    add_builtin_functions(items);
-
-    get_token(token);
-    bool all_ok = START(token, items);
-    if (all_ok)
-    {
-        printf(GREEN "\nAll OK" RESET "\n");
-    }
-    else
-    {
-        throw_error(SYNTACTIC_ERR, token->line_num, RED "Something went wrong!" RESET "\n");
-    }
-    free(token);
-
-    return EXIT_SUCCESS;
-}

@@ -24,7 +24,7 @@ int main(void)
 
     sym_st = symtable_stack_init();
 
-    parser_main();
+    run_parser();
 
     return print_errors();
 }
