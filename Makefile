@@ -36,7 +36,6 @@ test-all: main.c $(SRCS)
 	@$(CC) $(CFLAGS) -D DEBUG_PSA=$(DEBUG_PSA) $(TESTFLAGS) $^ -o $(TEST_TARGET)
 	bash tests/test.sh $(TESTFILE)
 
-
 # clean, compile and run
 run: clean all
 	.$(TARGET) <tests/test.swift

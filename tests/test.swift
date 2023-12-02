@@ -1,7 +1,26 @@
 // NO_ERR
-let a : String?
+func 
 
-if let a {
-} else {
-    let b = a
-}
+
+
+
+
+
+
+
+test
+
+
+
+
+
+()
+
+
+
+
+
+
+
+
+{}
