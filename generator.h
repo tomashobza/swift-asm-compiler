@@ -89,6 +89,24 @@ typedef enum
     JUMPIFNEQ,   // 55
 } Instruction;
 
+typedef enum {
+    OP_VAR,
+    OP_LIT,
+    OP_LBL,
+} OperandType;
+
+typedef struct {
+    OperandType type;
+    union {
+        struct {
+            char *id;
+            int scope; // -1 for TF, 0 for GF, 1+ for LF
+        } var;
+        Token lit;
+        char *lbl;
+    } data;
+} Operand;
+
 /**
  * @brief Returns the format of symb for IFJcode23.
  *
