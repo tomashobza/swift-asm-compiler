@@ -80,7 +80,7 @@ extract_expected_values() {
     read -r first_line <"$testfile"
 
     # Use bash regex to extract the values
-    if [[ $first_line =~ \/\/\ *([^\ ]+) ]]; then
+    if [[ $first_line =~ \/\/\ *([^\s]+) ]]; then
         EXPECTED_RETURN_CODE=$(convert_return_code ${BASH_REMATCH[1]})
     else
         echo "Error: First line of test file is not in expected format."

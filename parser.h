@@ -21,7 +21,7 @@
 #include "stack.h"
 #include "semantic.h"
 #include "generator.h"
-#include "parser_control.h"
+#include "symtable.h"
 
 #define RED "\x1B[31m"
 #define GREEN "\x1B[32m"
@@ -31,36 +31,39 @@
 #define CYAN "\x1B[36m"
 #define RESET "\x1B[0m"
 
+void run_parser();
 void get_token(Token *token);
-bool cmp_type(Token *token, Token_type type, Control_state sem_rule);
+bool cmp_type(Token *token, sym_items *items, Token_type type, Control_state sem_rule);
+void add_builtin_functions(sym_items *items);
+int run_control(Token *token, sym_items *items, Control_state sem_rule);
 
-bool START(Token *token);
-bool STMT_LIST(Token *token);
-bool STMT(Token *token);
-bool VAR_LET(Token *token);
-bool VAR_SCOPE(Token *token);
-bool TYPE_AND_ASIGN(Token *token);
-bool D_TYPE(Token *token, Control_state sem_rule);
-bool R_FLEX(Token *token);
-bool DEF_FUNC(Token *token);
-bool P_LIST(Token *token);
-bool PARAM(Token *token);
-bool P_SEP(Token *token);
-bool RET_TYPE(Token *token);
-bool FUNC_STMT_LIST(Token *token);
-bool FUNC_STMT(Token *token);
-bool RET(Token *token);
-bool FUNC_WHILE(Token *token);
-bool FUNC_IF(Token *token);
-bool FUNC_ELSE_CLAUSE(Token *token);
-bool FUNC_AFTER_ELSE(Token *token);
-bool IF_STMT(Token *token);
-bool IF_COND(Token *token);
-bool ELSE_CLAUSE(Token *token);
-bool AFTER_ELSE(Token *token);
-bool WHILE_STMT(Token *token);
-bool LOAD_ID(Token *token);
-bool EXP(Token *token, Control_state sem_rule);
+bool START(Token *token, sym_items *items);
+bool STMT_LIST(Token *token, sym_items *items);
+bool STMT(Token *token, sym_items *items);
+bool VAR_LET(Token *token, sym_items *items);
+bool VAR_SCOPE(Token *token, sym_items *items);
+bool TYPE_AND_ASIGN(Token *token, sym_items *items);
+bool D_TYPE(Token *token, sym_items *items, Control_state sem_rule);
+bool R_FLEX(Token *token, sym_items *items);
+bool DEF_FUNC(Token *token, sym_items *items);
+bool P_LIST(Token *token, sym_items *items);
+bool PARAM(Token *token, sym_items *items);
+bool P_SEP(Token *token, sym_items *items);
+bool RET_TYPE(Token *token, sym_items *items);
+bool FUNC_STMT_LIST(Token *token, sym_items *items);
+bool FUNC_STMT(Token *token, sym_items *items);
+bool RET(Token *token, sym_items *items);
+bool FUNC_WHILE(Token *token, sym_items *items);
+bool FUNC_IF(Token *token, sym_items *items);
+bool FUNC_ELSE_CLAUSE(Token *token, sym_items *items);
+bool FUNC_AFTER_ELSE(Token *token, sym_items *items);
+bool IF_STMT(Token *token, sym_items *items);
+bool IF_COND(Token *token, sym_items *items);
+bool ELSE_CLAUSE(Token *token, sym_items *items);
+bool AFTER_ELSE(Token *token, sym_items *items);
+bool WHILE_STMT(Token *token, sym_items *items);
+bool LOAD_ID(Token *token, sym_items *items);
+bool EXP(Token *token, sym_items *items, Control_state sem_rule);
 
 int parser_main();
 

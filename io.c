@@ -29,12 +29,12 @@ PSA_Token readNextToken(PSA_Token_stack *s, char *next_token_error, int *num_of_
     if (scanner_returned != NO_ERR)
     {
         throw_error(scanner_returned, tkn->line_num, "Scanner error.");
-        printf_red("\nSCANNER VRATIL: ");
-        printError((Error){
-            .code = scanner_returned,
-            .line_num = line_num,
-            .message = "Scanner error."});
-        printf("\n\n");
+        DEBUG_PSA_CODE(printf_red("\nSCANNER VRATIL: ");
+                       printError((Error){
+                           .code = scanner_returned,
+                           .line_num = line_num,
+                           .message = "Scanner error."});
+                       printf("\n\n"););
     }
 
     if (tkn->type == TOKEN_EOF)

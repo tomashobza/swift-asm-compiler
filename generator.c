@@ -15,14 +15,29 @@
 #include <string.h>
 
 // TODO: napsat funkci, ktera bere token (token.type je jeho typ a token.token_value je string s jeho hodnotou) a vraci string s jeho hodnotou ve formatu pro IFJcode23
-// ⟨symb⟩ konstantu nebo proměnnou
-//. Identifikátor proměnné se skládá ze dvou částí oddělených zavináčem (znak @; bez bílých znaků), označení rámce LF, TF nebo GF a samotného jména proměnné (sekvence libovolných alfanumerických
-// a speciálních znaků bez bílých znaků začínající písmenem nebo speciálním znakem, kde speciální znaky jsou: _, -, $, &, %, *, !, ?). Např. GF@_x značí proměnnou _x uloženou
-// v globálním rámci.
 
-// float konstanty prevedeme na hexadecimalni format pomoci %a
+void handle_label_instructions(Instruction inst);
+void handle_var_instructions(Instruction inst, Token var);
+void handle_symb_instructions(Instruction inst, Token symb);
+void handle_var_symb_instructions(Instruction inst, Token var, Token symb);
+void handle_var_symb_symb_instructions(Instruction inst, Token var, Token symb1, Token symb2);
+void handle_var_type_instructions(Instruction inst, Token var, Token type);
+void handle_no_operand_instructions(Instruction inst);
+void handle_label_symb_symb_instructions(Instruction inst, Token label, Token symb1, Token symb2);
 
-// Formating the token for IFJcode23
+char *variable_to_ifjcode23(symtable_item *var)
+{
+    if (var == NULL || var->id == NULL)
+    {
+        throw_error(INTERNAL_ERR, -1, "Error: variable_to_ifjcode23 got NULL as an argument.\n");
+        return NULL;
+    }
+
+    char *var_name = malloc(sizeof(char) * (10 + strlen(var->id)));
+    sprintf(var_name, "%s@$%s%d", var->scope == 0 ? "GF" : "LF", var->id, var->scope);
+    return var_name;
+}
+
 char *format_token_for_IFJcode23(Token *token)
 {
     char *formatted_value;
@@ -66,4 +81,27 @@ char *format_token_for_IFJcode23(Token *token)
     }
 
     return formatted_value;
+}
+
+void print_out_code()
+{
+    // Check if out_code_file is NULL
+    if (out_code_file == NULL)
+    {
+        throw_error(INTERNAL_ERR, -1, "Error: out_code_file is not initialized.\n");
+        return;
+    }
+
+    // Reset the file position to the beginning of the file
+    if (fseek(out_code_file, 0, SEEK_SET) != 0)
+    {
+        throw_error(INTERNAL_ERR, -1, "Error: Failed to seek in out_code_file.\n");
+        return;
+    }
+
+    int c; // fgetc returns int, not char
+    while ((c = fgetc(out_code_file)) != EOF)
+    {
+        printf("%c", (char)c);
+    }
 }

@@ -61,18 +61,33 @@ typedef enum
 
 // TODO: pridat komentare
 
-int semantic_init();
-void add_param(FunctionData *func, ParamData new_param);
-void reset_param();
-void reset_func();
-void reset_var();
-void add_builtin_functions();
-void semantic_destroy();
+void print_items(sym_items *items);
 int push_token_get_next(Token *token, Token_stack *token_stack);
 bool get_func_definition(Token *token, char *name, symtable_item *psa_item);
-int check_semantic(Token *token, Control_state sem_rule);
+Expression_type get_expression_type(Token *token);
+bool check_ret_values(Expression_type t_exp, Expression_type t_id);
 
-void state_var_add(Token *token, symtable_item *varItem, symtable_item *funItem);
+void sem_func_call_psa(Token *token, sym_items *items);
+void sem_identif_exp(Token *token, sym_items *items);
+void sem_load_identif(Token *token, sym_items *items);
+void sem_func_body_done(Token *token, sym_items *items);
+void sem_let_in_if(Token *token, sym_items *items);
+void sem_cond_exp(Token *token, sym_items *items);
+void sem_r_exp(Token *token, sym_items *items);
+void sem_pop_scope(Token *token, sym_items *items);
+void sem_push_scope(Token *token, sym_items *items);
+void sem_func_header_done(Token *token, sym_items *items);
+void sem_r_type(Token *token, sym_items *items);
+void sem_p_type(Token *token, sym_items *items);
+void sem_p_id(Token *token, sym_items *items);
+void sem_p_name(Token *token, sym_items *items);
+void sem_func_id(Token *token, sym_items *items);
+void sem_var_add(Token *token, sym_items *items);
+void sem_var_exp(Token *token, sym_items *items);
+void sem_var_type(Token *token, sym_items *items);
+void sem_var_id(Token *token, sym_items *items);
+void sem_var(Token *token, sym_items *items);
+void sem_let(Token *token, sym_items *items);
 
 /**
  * @brief Checks if the expression is convertable to the variable type. This behavior is defined in the documentation only for implicit type conversion of literals Int -> Double.
