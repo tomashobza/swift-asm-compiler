@@ -89,23 +89,29 @@ typedef enum
     JUMPIFNEQ,   // 55
 } Instruction;
 
-typedef enum {
+typedef enum
+{
+    OP_NONE,
     OP_VAR,
     OP_LIT,
     OP_LBL,
 } OperandType;
 
-typedef struct {
+typedef struct
+{
     OperandType type;
-    union {
-        struct {
-            char *id;
-            int scope; // -1 for TF, 0 for GF, 1+ for LF
-        } var;
-        Token lit;
-        char *lbl;
-    } data;
+    char *value;
+    char *token_type;
+    int scope; // -1 for TF, 0 for GF, 1+ for LF
 } Operand;
+
+/**
+ * @brief Returns the analogous Operand for the given token. (Used for literals and user defined variables)
+ *
+ * @param token Token with type and value.
+ * @return Operand - analogous Operand for the given token.
+ */
+Operand getOperandFromToken(Token token);
 
 /**
  * @brief Returns the format of symb for IFJcode23.
@@ -116,12 +122,12 @@ typedef struct {
 char *symb_resolve(Token *token);
 
 /**
- * @brief Returns the format of the literal for IFJcode23.
+ * @brief Returns the format of the operand for IFJcode23.
  *
- * @param token Token record of the literal.
- * @return char* - string with the literal in the format for IFJcode23
+ * @param op Operand record of the operand.
+ * @return char* - string with the operand in the format for IFJcode23
  */
-char *format_token(Token *token);
+char *format_operand(Operand *op);
 
 /**
  * @brief Returns the format of the literal for IFJcode23.

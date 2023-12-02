@@ -14,6 +14,53 @@
 #include <stdlib.h>
 #include <string.h>
 
+Operand getOperandFromToken(Token token) {
+    Operand op;
+    switch (token.type)
+    {
+        case TOKEN_IDENTIFICATOR:
+        {
+            symtable_item *found = symtable_find_in_stack(token.token_value, sym_st, false);
+            if (found == NULL)
+            {
+                throw_error(INTERNAL_ERR, -1, "Variable '%s' not found\n", token.token_value);
+                return op;
+            }
+            symtable_item item = *found;
+            if (item.type == VARIABLE)
+            {
+                if (item.data.var_data->type == TYPE_INVALID)
+                {
+                    throw_error(INTERNAL_ERR, -1, "Variable '%s' is invalid\n", token.token_value);
+                }
+                op.type = OPERAND_VAR;
+                sprintf(op.name, "%s@$%s%d", item.scope == 0 ? "GF" : "LF", item.id, item.scope);
+            }
+            else if (item.type == FUNCTION)
+            {
+                op.type = OPERAND_LABEL;
+                sprintf(op.name, "%s", item.id);
+            }
+            else
+            {   
+                op.type = OPERAND_NONE;
+                sprintf(op.name, "%s", token.token_value);
+            }
+            break;
+        }
+
+        case TOKEN_STRING:
+        case TOKEN_INT:
+        case TOKEN_DOUBLE:
+        case TOKEN_NIL:
+        {
+            op.type = OPERAND_CONST;
+            sprintf(op.name, "%s", format_token(&token));
+            break;
+        }
+    }
+}
+
 void handle_0_operand_instructions(Instruction inst)
 {
     char *instruction = instructionToString(inst);
@@ -76,55 +123,29 @@ void processInstruction(Instruction inst, Token *tokens, int tokens_count)
     }
 }
 
-char *symb_resolve(Token *token)
+char *symb_resolve(Operand *op)
 {
-    char *var_name = malloc(sizeof(char) * (10 + strlen(token->token_value)));
-    switch (token->type)
-    {
-    case TOKEN_IDENTIFICATOR:
-    {
-        symtable_item *found = symtable_find_in_stack(token->token_value, sym_st, false);
-        if (found == NULL)
-        {
-            throw_error(INTERNAL_ERR, -1, "Variable '%s' not found\n", token->token_value);
-            return NULL;
-        }
-        symtable_item item = *found;
-        if (item.type == VARIABLE)
-        {
-            if (item.data.var_data->type == TYPE_INVALID)
-            {
-                throw_error(INTERNAL_ERR, -1, "Variable '%s' is invalid\n", token->token_value);
-            }
-            sprintf(var_name, "%s@$%s%d", item.scope == 0 ? "GF" : "LF", item.id, item.scope);
-        }
-        else if (item.type == FUNCTION)
-        {
-            sprintf(var_name, "%s", item.id);
-        }
-        else
-        {
-            sprintf(var_name, "%s", token->token_value);
-        }
-        break;
+    char *op_name = malloc(sizeof(char) *);
+    
+    switch (op.type) {
+        case OP_VAR:
+            sprintf(op_name, "%s", op.name);
+            break;
+        case OPERAND_CONST:
+            sprintf(op_name, "%s", op.name);
+            break;
+        case OPERAND_LABEL:
+            sprintf(op_name, "%s", op.name);
+            break;
+        case OPERAND_NONE:
+            sprintf(op_name, "%s", op.name);
+            break;
     }
-    case TOKEN_STRING:
-    case TOKEN_INT:
-    case TOKEN_DOUBLE:
-    case TOKEN_NIL:
-    {
-        free(var_name);
-        var_name = format_token(token);
-        break;
-    }
-    default:
-        sprintf(var_name, "%s", token->token_value);
-        break;
-    }
+
     return var_name;
 }
 
-char *format_token(Token *token)
+char *format_operand(Operand *token)
 {
     char *formatted_value = NULL;
 
