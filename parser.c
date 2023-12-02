@@ -564,7 +564,7 @@ int parser_main()
     bool all_ok = START(token);
     if (all_ok)
     {
-        printf(GREEN "\nAll OK" RESET "\n");
+        DEBUG_SYNTAX_CODE(printf(GREEN "\nAll OK" RESET "\n"););
     }
     else
     {

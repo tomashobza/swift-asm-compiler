@@ -684,7 +684,7 @@ int check_semantic(Token *token, Sem_rule sem_rule)
     case POP_SCOPE:
     POP_SCOPE:
         DEBUG_SEMANTIC_CODE(printf(RED "POP_SCOPE\n"););
-        symtable_print(symtable_stack_top(sym_st));
+        DEBUG_SEMANTIC_CODE(symtable_print(symtable_stack_top(sym_st)););
         symtable_stack_pop(sym_st);
         break;
     case R_EXP:
