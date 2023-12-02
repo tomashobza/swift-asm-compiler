@@ -95,14 +95,34 @@ typedef enum
  */
 char *variable_to_ifjcode23(symtable_item *var);
 
+/**
+ * @brief Prints the IFJcode23 instruction without operands to the output file.
+ *
+ * @param inst Instruction to be printed.
+ */
 void handle_label_instructions(Instruction inst);
-void handle_var_instructions(Instruction inst, int var);
-void handle_symb_instructions(Instruction inst, int symb);
-void handle_var_symb_instructions(Instruction inst, int var, int symb);
-void handle_var_symb_symb_instructions(Instruction inst, int var, int symb1, int symb2);
-void handle_var_type_instructions(Instruction inst, int var, int type);
+
+/**
+ * @brief Prints the IFJcode23 instruction with one operand to the output file.
+ *
+ * @param inst Instruction to be printed.
+ * @param var Variable to be printed.
+ */
+void handle_var_instructions(Instruction inst, Token var);
+
+/**
+ * @brief Prints the IFJcode23 instruction with one operand to the output file.
+ *
+ * @param inst
+ * @param symb
+ */
+void handle_symb_instructions(Instruction inst, Token symb);
+void handle_var_symb_instructions(Instruction inst, Token var, Token symb);
+void handle_var_symb_symb_instructions(Instruction inst, Token var, Token symb1, Token symb2);
+void handle_var_type_instructions(Instruction inst, Token var, Token type);
 void handle_no_operand_instructions(Instruction inst);
-void handle_label_symb_symb_instructions(Instruction inst, int label, int symb1, int symb2);
+
+void handle_label_symb_symb_instructions(Instruction inst, Token label, Token symb1, Token symb2);
 
 /**
  * @brief Generates the IFJcode23 instruction based on the given arguments.

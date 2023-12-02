@@ -13,13 +13,13 @@
 // TODO: napsat funkci, ktera bere token (token.type je jeho typ a token.token_value je string s jeho hodnotou) a vraci string s jeho hodnotou ve formatu pro IFJcode23
 
 void handle_label_instructions(Instruction inst);
-void handle_var_instructions(Instruction inst, int var);
-void handle_symb_instructions(Instruction inst, int symb);
-void handle_var_symb_instructions(Instruction inst, int var, int symb);
-void handle_var_symb_symb_instructions(Instruction inst, int var, int symb1, int symb2);
-void handle_var_type_instructions(Instruction inst, int var, int type);
+void handle_var_instructions(Instruction inst, Token var);
+void handle_symb_instructions(Instruction inst, Token symb);
+void handle_var_symb_instructions(Instruction inst, Token var, Token symb);
+void handle_var_symb_symb_instructions(Instruction inst, Token var, Token symb1, Token symb2);
+void handle_var_type_instructions(Instruction inst, Token var, Token type);
 void handle_no_operand_instructions(Instruction inst);
-void handle_label_symb_symb_instructions(Instruction inst, int label, int symb1, int symb2);
+void handle_label_symb_symb_instructions(Instruction inst, Token label, Token symb1, Token symb2);
 
 char *variable_to_ifjcode23(symtable_item *var)
 {
