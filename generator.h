@@ -202,7 +202,7 @@ char *instructionToString(Instruction in);
 void print_out_code();
 
 /**
- * @brief
+ * @brief Generates the header of the IFJcode23 file.
  *
  * @param func_item
  */
