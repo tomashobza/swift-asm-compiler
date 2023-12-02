@@ -179,4 +179,9 @@ char *instructionToString(Instruction in);
  */
 void print_out_code();
 
+/**
+ * @brief Generates the header of the IFJcode23 file.
+ */
+void generate_func_header(symtable_item func_item);
+
 #endif // GENERATOR_H
