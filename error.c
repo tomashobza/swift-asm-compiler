@@ -36,7 +36,7 @@ Error_code print_errors()
 {
     if (error_st == NULL || Error_stack_empty(error_st))
     {
-        printf_green("✅ The compiler found no errors.\n");
+        fprintf_green(stderr, "✅ The compiler found no errors.\n");
         return NO_ERR;
     }
 

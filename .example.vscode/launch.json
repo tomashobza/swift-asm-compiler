@@ -5,11 +5,33 @@
       "type": "lldb",
       "request": "launch",
       "name": "Launch",
-      "program": "${workspaceFolder}/bin/ifjcompiler_debug",
+      "program": "${workspaceFolder}/ifjcompiler_debug",
       "stdio": "${workspaceFolder}/tests/test.swift",
       "cwd": "${workspaceFolder}",
-      // "preLaunchTask": "Build and Clear",
-      "console": "integratedTerminal"
+      "args": [],
+      "console": "integratedTerminal",
+      "environment": [
+        {
+          "name": "MallocScribble",
+          "value": "1"
+        },
+        {
+          "name": "MallocPreScribble",
+          "value": "1"
+        },
+        {
+          "name": "MallocGuardEdges",
+          "value": "1"
+        },
+        {
+          "name": "MallocStackLogging",
+          "value": "1"
+        },
+        {
+          "name": "MallocStackLoggingNoCompact",
+          "value": "1"
+        }
+      ]
     }
   ]
 }
