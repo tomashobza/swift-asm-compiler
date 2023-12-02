@@ -22,7 +22,7 @@ FILE *out_code_file = NULL;
 
 int main(void)
 {
-    FILE *out_code_file = tmpfile();
+    out_code_file = tmpfile();
     if (out_code_file == NULL)
     {
         return INTERNAL_ERR;
