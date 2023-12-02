@@ -332,6 +332,7 @@ int generate_token(Token *token, char *code) {
                     c = (char) getchar();
 
                 }
+                DEBUG_LEXER_CODE((printf("bools:%d:%d:\n", had_space, had_newline)););
                 if (c == '(') {
                     ungetc(c, stdin);
                     return set_token(NEW_TOKEN, code, TOKEN_FUNC_ID, token);
@@ -341,7 +342,7 @@ int generate_token(Token *token, char *code) {
                     if (had_space) {
                         ungetc(' ', stdin);
                     }
-                    else if (had_newline) {
+                    if (had_newline) {
                         ungetc('\n', stdin);
                     }
                     return set_token(NEW_TOKEN, code, TOKEN_IDENTIFICATOR, token);
