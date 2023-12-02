@@ -139,6 +139,7 @@ symtable_item *symtable_find_in_stack(char *name, symtable_stack *stack, bool is
         if (item != NULL)
         {
             DEBUG_SEMANTIC_CODE(printf("Found %s in %d. symtable\n", name, cnt););
+            item->scope = (int)sym_st->size - cnt - 1;
             return item;
         }
         node = node->next;

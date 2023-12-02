@@ -68,6 +68,7 @@ typedef struct
 typedef struct symtable_item
 {
     char *id;
+    int scope;
     enum
     {
         VARIABLE = 0,

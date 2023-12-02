@@ -12,6 +12,27 @@
 #include "generator.h"
 // TODO: napsat funkci, ktera bere token (token.type je jeho typ a token.token_value je string s jeho hodnotou) a vraci string s jeho hodnotou ve formatu pro IFJcode23
 
+void handle_label_instructions(Instruction inst);
+void handle_var_instructions(Instruction inst, int var);
+void handle_symb_instructions(Instruction inst, int symb);
+void handle_var_symb_instructions(Instruction inst, int var, int symb);
+void handle_var_symb_symb_instructions(Instruction inst, int var, int symb1, int symb2);
+void handle_var_type_instructions(Instruction inst, int var, int type);
+void handle_no_operand_instructions(Instruction inst);
+void handle_label_symb_symb_instructions(Instruction inst, int label, int symb1, int symb2);
+
+char *variable_to_ifjcode23(symtable_item *var)
+{
+    if (var == NULL || var->id == NULL)
+    {
+        throw_error(INTERNAL_ERR, -1, "Error: variable_to_ifjcode23 got NULL as an argument.\n");
+        return NULL;
+    }
+
+    char *var_name = malloc(sizeof(char) * (10 + strlen(var->id)));
+    sprintf(var_name, "%s@$%s%d", var->scope == 0 ? "GF" : "LF", var->id, var->scope);
+}
+
 void print_out_code()
 {
     // Check if out_code_file is NULL
