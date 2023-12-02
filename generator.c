@@ -183,6 +183,75 @@ char *format_token(Token *token)
     return formatted_value;
 }
 
+void print_out_code()
+{
+    // Check if out_code_file is NULL
+    if (out_code_file == NULL)
+    {
+        throw_error(INTERNAL_ERR, -1, "Error: out_code_file is not initialized.\n");
+        return;
+    }
+
+    // Reset the file position to the beginning of the file
+    if (fseek(out_code_file, 0, SEEK_SET) != 0)
+    {
+        throw_error(INTERNAL_ERR, -1, "Error: Failed to seek in out_code_file.\n");
+        return;
+    }
+
+    int c; // fgetc returns int, not char
+    while ((c = fgetc(out_code_file)) != EOF)
+    {
+        printf("%c", (char)c);
+    }
+}
+
+void generate_func_header(symtable_item func_item)
+{
+    Token token;
+    Token token_end;
+    token.type = token_end.type = TOKEN_FUNC_ID;
+    token.token_value = func_item.id;
+    token_end.token_value = malloc(sizeof(char) * (strlen(func_item.id) + 5));
+    sprintf(token_end.token_value, "%s_end", func_item.id);
+
+    generate_instruction(JUMP, token_end);
+    generate_instruction(LABEL, token);
+
+    fprintf(out_code_file, "\n");
+
+    for (int i = func_item.data.func_data->params_count - 1; i >= 0; i--)
+    {
+        token.type = TOKEN_IDENTIFICATOR;
+        token.token_value = func_item.data.func_data->params[i].id;
+        generate_instruction(DEFVAR, token);
+        generate_instruction(POPS, token);
+    }
+
+    fprintf(out_code_file, "\n");
+}
+
+void generate_func_end(symtable_item func_item)
+{
+    Token token;
+    token.type = TOKEN_FUNC_ID;
+    token.token_value = malloc(sizeof(char) * (strlen(func_item.id) + 5));
+    sprintf(token.token_value, "%s_end", func_item.id);
+
+    fprintf(out_code_file, "\n");
+    generate_instruction(LABEL, token);
+    fprintf(out_code_file, "\n");
+}
+
+void generate_builtin_func_call(Token func)
+{
+    Token token;
+    token.type = TOKEN_FUNC_ID;
+    token.token_value = func.token_value;
+    generate_instruction(CALL, token);
+}
+
+/// UTILITY FUNCTIONS
 char *instructionToString(Instruction in)
 {
     char *instruction = malloc(sizeof(char) * 100);
@@ -364,69 +433,93 @@ char *instructionToString(Instruction in)
     return instruction;
 }
 
-void print_out_code()
+Instruction stringToInstruction(char *str)
 {
-    // Check if out_code_file is NULL
-    if (out_code_file == NULL)
+    if (strcmp(str, "CREATEFRAME") == 0)
     {
-        throw_error(INTERNAL_ERR, -1, "Error: out_code_file is not initialized.\n");
-        return;
+        return CREATEFRAME;
     }
-
-    // Reset the file position to the beginning of the file
-    if (fseek(out_code_file, 0, SEEK_SET) != 0)
+    else if (strcmp(str, "PUSHFRAME") == 0)
     {
-        throw_error(INTERNAL_ERR, -1, "Error: Failed to seek in out_code_file.\n");
-        return;
+        return PUSHFRAME;
     }
-
-    int c; // fgetc returns int, not char
-    while ((c = fgetc(out_code_file)) != EOF)
+    else if (strcmp(str, "POPFRAME") == 0)
     {
-        printf("%c", (char)c);
+        return POPFRAME;
     }
-}
-
-void generate_func_header(symtable_item func_item)
-{
-    Token token;
-    Token token_end;
-    token.type = token_end.type = TOKEN_FUNC_ID;
-    token.token_value = func_item.id;
-    token_end.token_value = malloc(sizeof(char) * (strlen(func_item.id) + 5));
-    sprintf(token_end.token_value, "%s_end", func_item.id);
-
-    generate_instruction(JUMP, token_end);
-    generate_instruction(LABEL, token);
-
-    fprintf(out_code_file, "\n");
-
-    for (int i = func_item.data.func_data->params_count - 1; i >= 0; i--)
+    else if (strcmp(str, "RETURN") == 0)
     {
-        token.type = TOKEN_IDENTIFICATOR;
-        token.token_value = func_item.data.func_data->params[i].id;
-        generate_instruction(DEFVAR, token);
-        generate_instruction(POPS, token);
+        return RETURN;
     }
-
-    fprintf(out_code_file, "\n");
-}
-
-void generate_func_end(symtable_item func_item)
-{
-    Token token;
-    token.type = TOKEN_FUNC_ID;
-    token.token_value = malloc(sizeof(char) * (strlen(func_item.id) + 5));
-    sprintf(token.token_value, "%s_end", func_item.id);
-
-    fprintf(out_code_file, "\n");
-    generate_instruction(LABEL, token);
-    fprintf(out_code_file, "\n");
-}
-
-void generate_builtin_func_call(Token func) {
-    Token token;
-    token.type = TOKEN_FUNC_ID;
-    token.token_value = func.token_value;
-    generate_instruction(CALL, token);
-}
+    else if (strcmp(str, "CLEARS") == 0)
+    {
+        return CLEARS;
+    }
+    else if (strcmp(str, "ADDS") == 0)
+    {
+        return ADDS;
+    }
+    else if (strcmp(str, "SUBS") == 0)
+    {
+        return SUBS;
+    }
+    else if (strcmp(str, "DIVS") == 0)
+    {
+        return DIVS;
+    }
+    else if (strcmp(str, "IDIVS") == 0)
+    {
+        return IDIVS;
+    }
+    else if (strcmp(str, "MULS") == 0)
+    {
+        return MULS;
+    }
+    else if (strcmp(str, "LTS") == 0)
+    {
+        return LTS;
+    }
+    else if (strcmp(str, "EQS") == 0)
+    {
+        return EQS;
+    }
+    else if (strcmp(str, "GTS") == 0)
+    {
+        return GTS;
+    }
+    else if (strcmp(str, "ANDS") == 0)
+    {
+        return ANDS;
+    }
+    else if (strcmp(str, "ORS") == 0)
+    {
+        return ORS;
+    }
+    else if (strcmp(str, "NOTS") == 0)
+    {
+        return NOTS;
+    }
+    else if (strcmp(str, "INT2FLOATS") == 0)
+    {
+        return INT2FLOATS;
+    }
+    else if (strcmp(str, "FLOAT2INTS") == 0)
+    {
+        return FLOAT2INTS;
+    }
+    else if (strcmp(str, "INT2CHARS") == 0)
+    {
+        return INT2CHARS;
+    }
+    else if (strcmp(str, "STRI2INTS") == 0)
+    {
+        return STRI2INTS;
+    }
+    else if (strcmp(str, "BREAK") == 0)
+    {
+        return BREAK;
+    }
+    else if (strcmp(str, "CALL") == 0)
+    {
+        return CALL;
+    }

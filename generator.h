@@ -189,14 +189,6 @@ void processInstruction(Instruction inst, Token *tokens, int tokens_count);
     } while (0)
 
 /**
- * @brief Converts the instruction to string.
- *
- * @param in Instruction to be converted.
- * @return char* - string with the instruction
- */
-char *instructionToString(Instruction in);
-
-/**
  * @brief Prints the output code to stdout.
  */
 void print_out_code();
@@ -214,5 +206,30 @@ void generate_func_header(symtable_item func_item);
  * @param func_item symtable item of the function.
  */
 void generate_func_end(symtable_item func_item);
+
+/**
+ * @brief Generates the IFJcode23 built-in function call.
+ *
+ * @param func Token record of the function.
+ */
+void generate_builtin_func_call(Token func);
+
+/// UTILITY FUNCTIONS
+
+/**
+ * @brief Converts the instruction to string.
+ *
+ * @param in Instruction to be converted.
+ * @return char* - string with the instruction
+ */
+char *instructionToString(Instruction in);
+
+/**
+ * @brief Converts the string to instruction.
+ *
+ * @param str String to be converted.
+ * @return Instruction - instruction
+ */
+Instruction stringToInstruction(char *str);
 
 #endif // GENERATOR_H
