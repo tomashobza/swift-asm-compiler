@@ -96,16 +96,21 @@ char *format_token(Token *token)
     case TOKEN_NIL:
     {
         // Format nil with "nil@"
-        formatted_value = strdup("nil@");
+        formatted_value = malloc(strlen("nil@") + 1); //"nil@" and '\0'
+        sprintf(formatted_value, "nil@");
+        break;
     }
     default:
     {
         // Format other tokens with their value
-        formatted_value = strdup(token->token_value);
+        formatted_value = malloc(strlen(token->token_value) + 1);
+        sprintf(formatted_value, "%s", token->token_value);
+        break;
     }
     }
     return formatted_value;
 }
+
 
 void print_out_code()
 {
