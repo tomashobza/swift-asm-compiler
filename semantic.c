@@ -11,23 +11,20 @@
 
 #include "semantic.h"
 
-void sem_let(Token *token, sym_items *items)
+void sem_let(__attribute__((unused)) Token *token, __attribute__((unused)) sym_items *items)
 {
-    printf("%p, %p\n", token, items);
     items->varItem = init_symtable_item(false);
     items->varItem->data.var_data->is_const = true;
 }
 
-void sem_var(Token *token, sym_items *items)
+void sem_var(__attribute__((unused)) Token *token, __attribute__((unused)) sym_items *items)
 {
-    printf("%p, %p\n", token, items);
     items->varItem = init_symtable_item(false);
     items->varItem->data.var_data->is_const = false;
 }
 
-void sem_var_id(Token *token, sym_items *items)
+void sem_var_id(__attribute__((unused)) Token *token, __attribute__((unused)) sym_items *items)
 {
-    printf("%p, %p\n", token, items);
     symtable_item *var_id_item = symtable_find(token->token_value, symtable_stack_top(sym_st), false);
     if (var_id_item != NULL && var_id_item->data.var_data->is_param == false)
     {
@@ -40,15 +37,13 @@ void sem_var_id(Token *token, sym_items *items)
     items->varItem->id = token->token_value;
 }
 
-void sem_var_type(Token *token, sym_items *items)
+void sem_var_type(__attribute__((unused)) Token *token, __attribute__((unused)) sym_items *items)
 {
-    printf("%p, %p\n", token, items);
     items->varItem->data.var_data->type = get_expression_type(token);
 }
 
-void sem_var_exp(Token *token, sym_items *items)
+void sem_var_exp(__attribute__((unused)) Token *token, __attribute__((unused)) sym_items *items)
 {
-    printf("%p, %p\n", token, items);
     items->varItem->data.var_data->is_initialized = true;
 
     DEBUG_SEMANTIC_CODE(
@@ -90,9 +85,8 @@ void sem_var_exp(Token *token, sym_items *items)
     sem_var_add(token, items);
 }
 
-void sem_var_add(Token *token, sym_items *items)
+void sem_var_add(__attribute__((unused)) Token *token, __attribute__((unused)) sym_items *items)
 {
-    printf("%p, %p\n", token, items);
     // check if var is in uninitialized and can be nil
     if (items->varItem->data.var_data->is_initialized == false)
     {
@@ -119,9 +113,8 @@ void sem_var_add(Token *token, sym_items *items)
     }
 }
 
-void sem_func_id(Token *token, sym_items *items)
+void sem_func_id(__attribute__((unused)) Token *token, __attribute__((unused)) sym_items *items)
 {
-    printf("%p, %p\n", token, items);
     items->funcItem = init_symtable_item(true);
     symtable_item *func_id_item = symtable_find_in_stack(token->token_value, sym_st, true);
     if (func_id_item != NULL) // is in stack
@@ -134,25 +127,21 @@ void sem_func_id(Token *token, sym_items *items)
     items->funcItem->id = token->token_value;
 }
 
-void sem_p_name(Token *token, sym_items *items)
+void sem_p_name(__attribute__((unused)) Token *token, __attribute__((unused)) sym_items *items)
 {
-    printf("%p, %p\n", token, items);
-    printf("PARAM NAME: %s\n", token->token_value);
     add_param(items->funcItem->data.func_data);
     items->funcItem->data.func_data->params[items->funcItem->data.func_data->params_count - 1].name = token->token_value;
 }
 
-void sem_p_id(Token *token, sym_items *items)
+void sem_p_id(__attribute__((unused)) Token *token, __attribute__((unused)) sym_items *items)
 {
-    printf("%p, %p\n", token, items);
     items->funcItem->data.func_data->params[items->funcItem->data.func_data->params_count - 1].id = token->token_value;
     items->varItem = init_symtable_item(false);
     items->varItem->id = token->token_value;
 }
 
-void sem_p_type(Token *token, sym_items *items)
+void sem_p_type(__attribute__((unused)) Token *token, __attribute__((unused)) sym_items *items)
 {
-    printf("%p, %p\n", token, items);
 
     items->funcItem->data.func_data->params[items->funcItem->data.func_data->params_count - 1].type = get_expression_type(token);
 
@@ -174,17 +163,13 @@ void sem_p_type(Token *token, sym_items *items)
     // reset param
 }
 
-void sem_r_type(Token *token, sym_items *items)
+void sem_r_type(__attribute__((unused)) Token *token, __attribute__((unused)) sym_items *items)
 {
-    printf("%p, %p\n", token, items);
     items->funcItem->data.func_data->return_type = get_expression_type(token);
 }
 
-void sem_func_header_done(Token *token, sym_items *items)
+void sem_func_header_done(__attribute__((unused)) Token *token, __attribute__((unused)) sym_items *items)
 {
-    printf("%p, %p\n", token, items);
-    printf(RED "FUNC_HEADER_DONE\n" RESET);
-    print_items(items);
 
     DEBUG_SEMANTIC_CODE(printf(YELLOW "ADDING FUNC: %s, return type: %d\n", items->funcItem->id, items->funcItem->data.func_data->return_type););
     symtable_add(items->funcItem, symtable_stack_top(sym_st));
@@ -200,7 +185,6 @@ void sem_func_header_done(Token *token, sym_items *items)
     {
         return;
     }
-    printf("PARAMS COUNT: %d\n", items->funcItem->data.func_data->params_count - 1);
     for (int i = 0; i < items->funcItem->data.func_data->params_count; i++)
     {
         if (strcmp(items->funcItem->data.func_data->params[i].id, "_") != 0)
@@ -218,26 +202,22 @@ void sem_func_header_done(Token *token, sym_items *items)
     DEBUG_SEMANTIC_CODE(symtable_print(symtable_stack_top(sym_st)););
 }
 
-void sem_push_scope(Token *token, sym_items *items)
+void sem_push_scope(__attribute__((unused)) Token *token, __attribute__((unused)) sym_items *items)
 {
-    printf("%p, %p\n", token, items);
 
     DEBUG_SEMANTIC_CODE(printf(RED "PUSH_SCOPE\n" RESET););
     symtable symtable = symtable_init();
     symtable_stack_push(sym_st, symtable);
 }
 
-void sem_pop_scope(Token *token, sym_items *items)
+void sem_pop_scope(__attribute__((unused)) Token *token, __attribute__((unused)) sym_items *items)
 {
-    printf("%p, %p\n", token, items);
     DEBUG_SEMANTIC_CODE(printf(RED "POP_SCOPE\n"););
-    symtable_print(symtable_stack_top(sym_st));
     symtable_stack_pop(sym_st);
 }
 
-void sem_r_exp(Token *token, sym_items *items)
+void sem_r_exp(__attribute__((unused)) Token *token, __attribute__((unused)) sym_items *items)
 {
-    printf("%p, %p\n", token, items);
     psa_return_type return_type2 = parse_expression();
     if (((items->funcItem->data.func_data->return_type == TYPE_EMPTY) ^ (return_type2.type == TYPE_EMPTY))) // items->funcItem_type XOR exp_type
     {
@@ -255,9 +235,8 @@ void sem_r_exp(Token *token, sym_items *items)
     DEBUG_SEMANTIC_CODE(print_expression_type(return_type2.type););
 }
 
-void sem_cond_exp(Token *token, sym_items *items)
+void sem_cond_exp(__attribute__((unused)) Token *token, __attribute__((unused)) sym_items *items)
 {
-    printf("%p, %p\n", token, items);
 
     DEBUG_SEMANTIC_CODE(printf(CYAN "COND EXP: %s\n", token->token_value);
                         symtable_print(symtable_stack_top(sym_st)););
@@ -280,9 +259,8 @@ void sem_cond_exp(Token *token, sym_items *items)
     DEBUG_SEMANTIC_CODE(print_expression_type(return_type3.type););
 }
 
-void sem_let_in_if(Token *token, sym_items *items)
+void sem_let_in_if(__attribute__((unused)) Token *token, __attribute__((unused)) sym_items *items)
 {
-    printf("%p, %p\n", token, items);
 
     items->varItem = init_symtable_item(false);
     symtable_item *let_in_if_item = symtable_find_in_stack(token->token_value, sym_st, false);
@@ -325,9 +303,8 @@ void sem_let_in_if(Token *token, sym_items *items)
     DEBUG_SEMANTIC_CODE(symtable_print(symtable_stack_top(sym_st)););
 }
 
-void sem_func_body_done(Token *token, sym_items *items)
+void sem_func_body_done(__attribute__((unused)) Token *token, __attribute__((unused)) sym_items *items)
 {
-    printf("%p, %p\n", token, items);
 
     symtable_item *func_body_item = symtable_find_in_stack(items->funcItem->id, sym_st, true);
     if (func_body_item->data.func_data->found_return == false && func_body_item->data.func_data->return_type != TYPE_EMPTY)
@@ -337,9 +314,8 @@ void sem_func_body_done(Token *token, sym_items *items)
     sem_pop_scope(token, items);
 }
 
-void sem_load_identif(Token *token, sym_items *items)
+void sem_load_identif(__attribute__((unused)) Token *token, __attribute__((unused)) sym_items *items)
 {
-    printf("%p, %p\n", token, items);
 
     items->varItem = init_symtable_item(false);
     DEBUG_SEMANTIC_CODE(printf(CYAN);
@@ -358,9 +334,8 @@ void sem_load_identif(Token *token, sym_items *items)
     items->varItem->id = token->token_value;
 }
 
-void sem_identif_exp(Token *token, sym_items *items)
+void sem_identif_exp(__attribute__((unused)) Token *token, __attribute__((unused)) sym_items *items)
 {
-    printf("IDENTIF EXP\n");
     DEBUG_SEMANTIC_CODE(printf(CYAN);
                         symtable_print(symtable_stack_top(sym_st)););
     psa_return_type return_type4 = parse_expression();
@@ -377,10 +352,8 @@ void sem_identif_exp(Token *token, sym_items *items)
     identif_exp_item->data.var_data->is_initialized = true;
 }
 
-void sem_func_call_psa(Token *token, sym_items *items)
+void sem_func_call_psa(__attribute__((unused)) Token *token, __attribute__((unused)) sym_items *items)
 {
-    printf("%p, %p\n", token, items);
-    symtable_print(symtable_stack_top(sym_st));
     psa_return_type return_type5 = parse_expression();
     if (return_type5.is_ok)
     {

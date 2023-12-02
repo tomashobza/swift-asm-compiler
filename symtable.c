@@ -227,7 +227,6 @@ FunctionData *init_func_data()
 symtable_item *init_symtable_item(bool is_func)
 {
 
-    printf("sizeof(symtable_item): %lu\n", sizeof(symtable_item));
     symtable_item *new_sti = malloc(sizeof(symtable_item));
     if (new_sti == NULL)
     {
@@ -255,7 +254,6 @@ symtable_item *init_symtable_item(bool is_func)
     return new_sti;
 }
 
-// void symtable_print(symtable_t table)
 void symtable_print(symtable table)
 {
     for (int i = 0; i < SYMTABLE_MAX_ITEMS; i++)

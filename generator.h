@@ -1,6 +1,6 @@
 /**
  * @file generator.h
- * @author Tomáš Hobza (xhobza03@vutbr.cz), Jakub Všetečka (xvsete00@vutbr.cz)
+ * @author Tomáš Hobza (xhobza03@vutbr.cz), Jakub Všetečka (xvsete00@vutbr.cz), Simona Valkovská <xvalko12@vutbr.cz>, Anastasia Butok <xbutok00@vutbr.cz>
  * @brief Header file for the ifjcode2023 code generator.
  * @version 0.1
  * @date 2023-11-24
@@ -16,6 +16,7 @@
 #include <stdlib.h>
 #include "error.h"
 #include "symtable.h"
+#include "scanner.h"
 
 extern FILE *out_code_file;
 
@@ -104,6 +105,14 @@ char *format_token(Token *token);
 
 
 /**
+ * @brief Returns the format of the literal for IFJcode23.
+ *
+ * @param token Token record of the literal.
+ * @return char* - string with the literal in the format for IFJcode23
+ */
+char *format_token_for_IFJcode23(Token *token);
+
+/**
  * @brief Prints the IFJcode23 instruction without operands to the output file.
  *
  * @param inst Instruction to be printed.
@@ -147,7 +156,7 @@ void handle_label_symb_symb_instructions(Instruction inst, Token label, Token sy
         case CALL:                                                  \
         case LABEL:                                                 \
         case JUMP:                                                  \
-        case JUMIFEQS:                                              \
+        case JUMPIFEQS:                                             \
         case JUMPIFNEQS:                                            \
             handle_label_instructions(INST);                        \
             break;                                                  \
@@ -204,7 +213,7 @@ void handle_label_symb_symb_instructions(Instruction inst, Token label, Token sy
         case ANDS:                                                  \
         case ORS:                                                   \
         case NOTS:                                                  \
-        case INT2FLOAT2:                                            \
+        case INT2FLOATS:                                            \
         case FLOAT2INTS:                                            \
         case INT2CHARS:                                             \
         case STRI2INTS:                                             \
