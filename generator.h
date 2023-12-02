@@ -89,16 +89,20 @@ typedef enum
     JUMPIFNEQ,   // 55
 } Instruction;
 
-typedef enum {
+typedef enum
+{
     OP_VAR,
     OP_LIT,
     OP_LBL,
 } OperandType;
 
-typedef struct {
+typedef struct
+{
     OperandType type;
-    union {
-        struct {
+    union
+    {
+        struct
+        {
             char *id;
             int scope; // -1 for TF, 0 for GF, 1+ for LF
         } var;
@@ -196,5 +200,12 @@ char *instructionToString(Instruction in);
  * @brief Prints the output code to stdout.
  */
 void print_out_code();
+
+/**
+ * @brief
+ *
+ * @param func_item
+ */
+void generate_func_header(symtable_item func_item);
 
 #endif // GENERATOR_H
