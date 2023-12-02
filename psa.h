@@ -216,6 +216,14 @@ char getOperationChar(Token_type token);
  */
 Expression_type removeTypeNil(Expression_type expr_type);
 
+/**
+ * @brief Converts the token type to the instruction type.
+ *
+ * @param tt token type
+ * @return Instruction
+ */
+Instruction tokenTypeToStackInstruction(Token_type tt);
+
 // PSA FUNCTIONS
 
 /**
