@@ -165,12 +165,6 @@ psa_return_type parse_expression_base(bool is_param)
             };
         }
 
-        if (isTokenLiteral(b.type) || b.type == TOKEN_IDENTIFICATOR)
-        {
-            // printf("Pico volee pushuju '%s'\n", b.token_value);
-            generate_instruction(PUSHS, convertPSATokenToToken(b));
-        }
-
         DEBUG_PSA_CODE(printf_blue("Bracket count: %d\n", num_of_brackets););
         DEBUG_PSA_CODE(printf("na stacku: ");
                        printStack(s->top);
@@ -210,10 +204,7 @@ psa_return_type parse_expression_base(bool is_param)
             break;
         case '>':
         {
-            if (isTokenBinaryOperator(a.type))
-            {
-                generate_instruction(tokenTypeToStackInstruction(a.type));
-            }
+            PSA_Token top = a;
 
             int handle_len = 0;
             PSA_Token *handle = getHandleFromStack(s, &handle_len);
@@ -224,6 +215,25 @@ psa_return_type parse_expression_base(bool is_param)
             DEBUG_PSA_CODE(printf_cyan("rule type: ");
                            print_expression_type(rule.expr_type);
                            printf("\n"););
+
+            bool derivation_ok = rule.expr_type != TYPE_INVALID && rule.type != TOKEN_EOF;
+
+            /// GENERATOR STUFF
+
+            if (derivation_ok && isTokenBinaryOperator(top.type))
+            {
+                // printf("Mrda volee pushuju '%s'\n", top.token_value);
+                // printf("rule type: ");
+                // print_expression_type(rule.expr_type);
+                generate_instruction(tokenTypeToStackInstruction(top.type));
+            }
+            else if (derivation_ok && (isTokenLiteral(top.type) || top.type == TOKEN_IDENTIFICATOR))
+            {
+                // printf("Pico volee pushuju '%s'\n", top.token_value);
+                // printf("rule type: ");
+                // print_expression_type(rule.expr_type);
+                generate_instruction(PUSHS, convertPSATokenToToken(top));
+            }
 
             if (rule.type != TOKEN_EOF)
             {

@@ -1,1 +1,3 @@
-let x = 4*2+3/1
+let y = 2+4/3
+let x = 2*y + y*y
+write(x)

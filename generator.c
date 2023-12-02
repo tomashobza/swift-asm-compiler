@@ -83,7 +83,13 @@ char *symb_resolve(Token *token)
     {
     case TOKEN_IDENTIFICATOR:
     {
-        symtable_item item = *symtable_find_in_stack(token->token_value, sym_st, false);
+        symtable_item *found = symtable_find_in_stack(token->token_value, sym_st, false);
+        if (found == NULL)
+        {
+            throw_error(INTERNAL_ERR, -1, "Variable '%s' not found\n", token->token_value);
+            return NULL;
+        }
+        symtable_item item = *found;
         if (item.type == VARIABLE)
         {
             if (item.data.var_data->type == TYPE_INVALID)
