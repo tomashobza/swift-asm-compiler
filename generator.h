@@ -8,3 +8,20 @@
  * @copyright Copyright (c) 2023
  *
  */
+
+#ifndef GENERATOR_H
+#define GENERATOR_H
+
+#include <stdio.h>
+#include <stdlib.h>
+#include "error.h"
+
+extern FILE *out_code_file;
+
+/**
+ * @brief Prints the output code to stdout.
+ *
+ */
+void print_out_code();
+
+#endif // GENERATOR_H
