@@ -22,6 +22,7 @@ extern FILE *out_code_file;
 
 typedef enum
 {
+    EMPTY,
     // -
     CREATEFRAME, // 0
     PUSHFRAME,   // 1
@@ -89,12 +90,20 @@ typedef enum
 } Instruction;
 
 /**
- * @brief Returns the format of the variable for IFJcode23.
+ * @brief Returns the format of symb for IFJcode23.
  *
- * @param var Symbol record of the variable.
+ * @param token Token with type and value.
  * @return char* - string with the variable in the format for IFJcode23
  */
-char *variable_to_ifjcode23(symtable_item *var);
+char *symb_resolve(Token *token);
+
+/**
+ * @brief Returns the format of the literal for IFJcode23.
+ *
+ * @param token Token record of the literal.
+ * @return char* - string with the literal in the format for IFJcode23
+ */
+char *format_token(Token *token);
 
 /**
  * @brief Returns the format of the literal for IFJcode23.
@@ -105,121 +114,74 @@ char *variable_to_ifjcode23(symtable_item *var);
 char *format_token_for_IFJcode23(Token *token);
 
 /**
- * @brief Prints the IFJcode23 instruction without operands to the output file.
+ * @brief -
  *
- * @param inst Instruction to be printed.
+ * @param inst
  */
-void handle_label_instructions(Instruction inst);
+void handle_0_operand_instructions(Instruction inst);
 
 /**
- * @brief Prints the IFJcode23 instruction with one operand to the output file.
- *
- * @param inst Instruction to be printed.
- * @param var Variable to be printed.
- */
-void handle_var_instructions(Instruction inst, Token var);
-
-/**
- * @brief Prints the IFJcode23 instruction with one operand to the output file.
+ * @brief <label>/<var>/<symb>
  *
  * @param inst
  * @param symb
  */
-void handle_symb_instructions(Instruction inst, Token symb);
-void handle_var_symb_instructions(Instruction inst, Token var, Token symb);
-void handle_var_symb_symb_instructions(Instruction inst, Token var, Token symb1, Token symb2);
-void handle_var_type_instructions(Instruction inst, Token var, Token type);
-void handle_no_operand_instructions(Instruction inst);
-
-void handle_label_symb_symb_instructions(Instruction inst, Token label, Token symb1, Token symb2);
+void handle_1_operand_instructions(Instruction inst, Token op1);
 
 /**
- * @brief Generates the IFJcode23 instruction based on the given arguments.
+ * @brief <var> <symb>/<var> <type>
+ *
+ * @param inst
+ * @param var
+ * @param symb
  */
-#define generate_instruction(INST, ...)                             \
-    do                                                              \
-    {                                                               \
-        switch (INST)                                               \
-        {                                                           \
-        case CALL:                                                  \
-        case LABEL:                                                 \
-        case JUMP:                                                  \
-        case JUMIFEQS:                                              \
-        case JUMPIFNEQS:                                            \
-            handle_label_instructions(INST);                        \
-            break;                                                  \
-        case DEFVAR:                                                \
-        case POPS:                                                  \
-            handle_var_instructions(INST, __VA_ARGS__);             \
-            break;                                                  \
-        case PUSHS:                                                 \
-        case WRITE:                                                 \
-        case EXIT:                                                  \
-        case DPRINT:                                                \
-            handle_symb_instructions(INST, __VA_ARGS__);            \
-            break;                                                  \
-        case MOVE:                                                  \
-        case INT2FLOAT:                                             \
-        case FLOAT2INT:                                             \
-        case INT2CHAR:                                              \
-        case STRI2INT:                                              \
-        case STRLEN:                                                \
-        case TYPE:                                                  \
-            handle_var_symb_instructions(INST, __VA_ARGS__);        \
-            break;                                                  \
-        case ADD:                                                   \
-        case SUB:                                                   \
-        case MUL:                                                   \
-        case DIV:                                                   \
-        case IDIV:                                                  \
-        case LT:                                                    \
-        case GT:                                                    \
-        case EQ:                                                    \
-        case AND:                                                   \
-        case OR:                                                    \
-        case NOT:                                                   \
-        case CONCAT:                                                \
-        case GETCHAT:                                               \
-        case SETCHAR:                                               \
-            handle_var_symb_symb_instructions(INST, __VA_ARGS__);   \
-            break;                                                  \
-        case READ:                                                  \
-            handle_var_type_instructions(INST, __VA_ARGS__);        \
-            break;                                                  \
-        case CREATEFRAME:                                           \
-        case PUSHFRAME:                                             \
-        case POPFRAME:                                              \
-        case CLEARS:                                                \
-        case ADDS:                                                  \
-        case SUBS:                                                  \
-        case MULS:                                                  \
-        case DIVS:                                                  \
-        case IDIVS:                                                 \
-        case LTS:                                                   \
-        case EQS:                                                   \
-        case GTS:                                                   \
-        case ANDS:                                                  \
-        case ORS:                                                   \
-        case NOTS:                                                  \
-        case INT2FLOAT2:                                            \
-        case FLOAT2INTS:                                            \
-        case INT2CHARS:                                             \
-        case STRI2INTS:                                             \
-        case BREAK:                                                 \
-            handle_no_operand_instructions(INST);                   \
-            break;                                                  \
-        case JUMPIFEQ:                                              \
-        case JUMPIFNEQ:                                             \
-            handle_label_symb_symb_instructions(INST, __VA_ARGS__); \
-            break;                                                  \
-        default:                                                    \
-            break;                                                  \
-        }                                                           \
+void handle_2_operand_instructions(Instruction inst, Token op1, Token op2);
+
+/**
+ * @brief <var> <symb> <symb>/<label> <symb> <symb>
+ *
+ * @param inst
+ * @param var
+ * @param symb1
+ * @param symb2
+ */
+void handle_3_operand_instructions(Instruction inst, Token op1, Token op2, Token op3);
+
+/**
+ * @brief Based on the number of tokens provided, calls the appropriate function to handle the instruction.
+ *
+ * @param inst Instruction to be handled.
+ * @param tokens Array of tokens.
+ * @param tokens_count Number of tokens in the array.
+ */
+void processInstruction(Instruction inst, Token *tokens, int tokens_count);
+
+/**
+ * @brief Macro that generates the IFJcode23 instruction based on the given arguments.
+ */
+#define generate_instruction(instruction, ...)                                   \
+    do                                                                           \
+    {                                                                            \
+        Token tokens[] = {__VA_ARGS__};                                          \
+        processInstruction(instruction, tokens, sizeof(tokens) / sizeof(Token)); \
     } while (0)
+
+/**
+ * @brief Converts the instruction to string.
+ *
+ * @param in Instruction to be converted.
+ * @return char* - string with the instruction
+ */
+char *instructionToString(Instruction in);
 
 /**
  * @brief Prints the output code to stdout.
  */
 void print_out_code();
+
+/**
+ * @brief Generates the header of the IFJcode23 file.
+ */
+void generate_func_header(symtable_item func_item);
 
 #endif // GENERATOR_H

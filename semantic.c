@@ -268,28 +268,26 @@ void sem_let_in_if(__attribute__((unused)) Token *token, __attribute__((unused))
     {
         throw_error(SEMANTICS_ERR, token->line_num, "Variable %s is not a defined const!\n", token->token_value);
     }
-    else
+
+    // prepare items->varItem
+    *(items->varItem->data.var_data) = *(let_in_if_item->data.var_data);
+    items->varItem->id = token->token_value;
+    switch (items->varItem->data.var_data->type)
     {
-        // prepare items->varItem
-        *(items->varItem->data.var_data) = *(let_in_if_item->data.var_data);
-        items->varItem->id = token->token_value;
-        switch (items->varItem->data.var_data->type)
-        {
-        case TYPE_BOOL_NIL:
-            items->varItem->data.var_data->type = TYPE_BOOL;
-            break;
-        case TYPE_DOUBLE_NIL:
-            items->varItem->data.var_data->type = TYPE_DOUBLE;
-            break;
-        case TYPE_INT_NIL:
-            items->varItem->data.var_data->type = TYPE_INT;
-            break;
-        case TYPE_STRING_NIL:
-            items->varItem->data.var_data->type = TYPE_STRING;
-            break;
-        default:
-            break;
-        }
+    case TYPE_BOOL_NIL:
+        items->varItem->data.var_data->type = TYPE_BOOL;
+        break;
+    case TYPE_DOUBLE_NIL:
+        items->varItem->data.var_data->type = TYPE_DOUBLE;
+        break;
+    case TYPE_INT_NIL:
+        items->varItem->data.var_data->type = TYPE_INT;
+        break;
+    case TYPE_STRING_NIL:
+        items->varItem->data.var_data->type = TYPE_STRING;
+        break;
+    default:
+        break;
     }
 
     // push new scope

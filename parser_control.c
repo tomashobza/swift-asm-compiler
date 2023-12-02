@@ -28,7 +28,7 @@ void run_parser()
     bool all_ok = START(token, items);
     if (all_ok)
     {
-        printf(GREEN "\nAll OK" RESET "\n");
+        DEBUG_SYNTAX_CODE(printf(GREEN "\nAll OK" RESET "\n"););
     }
     else
     {
@@ -76,6 +76,7 @@ int run_control(Token *token, sym_items *items, Control_state sem_rule)
         break;
     case FUNC_HEADER_DONE:
         sem_func_header_done(token, items);
+        generate_func_header(*(items->funcItem));
         break;
     case PUSH_SCOPE:
         sem_push_scope(token, items);

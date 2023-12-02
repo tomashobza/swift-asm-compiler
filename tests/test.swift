@@ -1,7 +1,5 @@
-// NO_ERR
-let a : String?
-
-if let a {
-} else {
-    let b = a
+func foo (_ x: Int)  {
+  //return x + 1
 }
+
+foo(1)
