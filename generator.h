@@ -191,7 +191,7 @@ void handle_label_symb_symb_instructions(Instruction inst, Token label, Token sy
         case OR:                                                    \
         case NOT:                                                   \
         case CONCAT:                                                \
-        case GETCHAT:                                               \
+        case GETCHAR:                                               \
         case SETCHAR:                                               \
             handle_var_symb_symb_instructions(INST, __VA_ARGS__);   \
             break;                                                  \
