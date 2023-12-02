@@ -14,26 +14,67 @@
 #include <stdlib.h>
 #include <string.h>
 
-void handle_label_instructions(Instruction inst, Token label)
+void handle_0_operand_instructions(Instruction inst)
 {
     char *instruction = instructionToString(inst);
-    fprintf(out_code_file, "%s %s\n", instruction, label.token_value);
+    fprintf(out_code_file, "%s\n", instruction);
     free(instruction);
 }
 
-void handle_var_instructions(Instruction inst, Token var);
+void handle_1_operand_instructions(Instruction inst, Token op1)
+{
+    char *instruction = instructionToString(inst);
+    char *var_name = symb_resolve(&op1);
+    fprintf(out_code_file, "%s %s\n", instruction, var_name);
+    free(instruction);
+    free(var_name);
+}
 
-void handle_symb_instructions(Instruction inst, Token symb);
+void handle_2_operand_instructions(Instruction inst, Token op1, Token op2)
+{
+    char *instruction = instructionToString(inst);
+    char *var_name1 = symb_resolve(&op1);
+    char *var_name2 = symb_resolve(&op2);
+    fprintf(out_code_file, "%s %s %s\n", instruction, var_name1, var_name2);
+    free(instruction);
+    free(var_name1);
+    free(var_name2);
+}
 
-void handle_var_symb_instructions(Instruction inst, Token var, Token symb);
+void handle_3_operand_instructions(Instruction inst, Token op1, Token op2, Token op3)
+{
+    char *instruction = instructionToString(inst);
+    char *var_name1 = symb_resolve(&op1);
+    char *var_name2 = symb_resolve(&op2);
+    char *var_name3 = symb_resolve(&op3);
+    fprintf(out_code_file, "%s %s %s %s\n", instruction, var_name1, var_name2, var_name3);
+    free(instruction);
+    free(var_name1);
+    free(var_name2);
+    free(var_name3);
+}
 
-void handle_var_symb_symb_instructions(Instruction inst, Token var, Token symb1, Token symb2);
-
-void handle_var_type_instructions(Instruction inst, Token var, Token type);
-
-void handle_no_operand_instructions(Instruction inst);
-
-void handle_label_symb_symb_instructions(Instruction inst, Token label, Token symb1, Token symb2);
+void processInstruction(Instruction inst, Token *tokens, int tokens_count)
+{
+    switch (tokens_count)
+    {
+    case 0:
+        handle_0_operand_instructions(inst);
+        break;
+    case 1:
+        handle_1_operand_instructions(inst, tokens[0]);
+        break;
+    case 2:
+        handle_2_operand_instructions(inst, tokens[0], tokens[1]);
+        break;
+    case 3:
+        handle_3_operand_instructions(inst, tokens[0], tokens[1], tokens[2]);
+        break;
+    default:
+        throw_error(INTERNAL_ERR, -1, "Invalid number of tokens\n");
+        break;
+    }
+}
 
 char *symb_resolve(Token *token)
 {
@@ -43,7 +84,22 @@ char *symb_resolve(Token *token)
     case TOKEN_IDENTIFICATOR:
     {
         symtable_item item = *symtable_find_in_stack(token->token_value, sym_st, false);
-        sprintf(var_name, "%s@$%s%d", item.scope == 0 ? "GF" : "LF", item.id, item.scope);
+        if (item.type == VARIABLE)
+        {
+            if (item.data.var_data->type == TYPE_INVALID)
+            {
+                throw_error(INTERNAL_ERR, -1, "Variable '%s' is invalid\n", token->token_value);
+            }
+            sprintf(var_name, "%s@$%s%d", item.scope == 0 ? "GF" : "LF", item.id, item.scope);
+        }
+        else if (item.type == FUNCTION)
+        {
+            sprintf(var_name, "%s", item.id);
+        }
+        else
+        {
+            sprintf(var_name, "%s", token->token_value);
+        }
         break;
     }
     case TOKEN_STRING:
@@ -56,7 +112,7 @@ char *symb_resolve(Token *token)
         break;
     }
     default:
-        throw_error(INTERNAL_ERR, -1, "Not valid\n");
+        sprintf(var_name, "%s", token->token_value);
         break;
     }
     return var_name;
@@ -83,7 +139,7 @@ char *format_token(Token *token)
         // Format floating-point literals with "float@"
         double double_value = atof(token->token_value); // Convert to double
         formatted_value = malloc(sizeof(char) * 60);    // Allocating enough space
-        sprintf(formatted_value, "float@%a", double_value);
+        sprintf(formatted_value, "float@%g", double_value);
         break;
     }
     case TOKEN_STRING:
