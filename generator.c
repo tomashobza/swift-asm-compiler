@@ -10,6 +10,10 @@
  */
 
 #include "generator.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
 // TODO: napsat funkci, ktera bere token (token.type je jeho typ a token.token_value je string s jeho hodnotou) a vraci string s jeho hodnotou ve formatu pro IFJcode23
 
 void handle_label_instructions(Instruction inst);
@@ -21,17 +25,118 @@ void handle_var_type_instructions(Instruction inst, Token var, Token type);
 void handle_no_operand_instructions(Instruction inst);
 void handle_label_symb_symb_instructions(Instruction inst, Token label, Token symb1, Token symb2);
 
-char *variable_to_ifjcode23(symtable_item *var)
+char *symb_resolve(Token *token)
 {
-    if (var == NULL || var->id == NULL)
+    char *var_name = malloc(sizeof(char) * (10 + strlen(var->id)));
+    switch (token->type)
     {
-        throw_error(INTERNAL_ERR, -1, "Error: variable_to_ifjcode23 got NULL as an argument.\n");
-        return NULL;
+        case TOKEN_IDENTIFICATOR:
+            symtable_item item = symtable_find_in_stack(token->value,sym_st,false);
+            sprintf(var_name, "%s@$%s%d", var->scope == 0 ? "GF" : "LF", item->id, item->scope);
+            break;
+        case TOKEN_STRING:
+        case TOKEN_INT:
+        case TOKEN_DOUBLE:
+        case TOKEN_NIL:
+            var_name = format_token(token);
+            break;
+        default:
+
+    }
+    return var_name;
+}
+
+char *format_token_for_IFJcode23(Token *token)
+{
+    char *formatted_value;
+
+    switch (token->type)
+    {
+    case TOKEN_IDENTIFICATOR:
+    {
+        formatted_value = malloc(strlen(token->token_value) + 12); // Including "identifier@" and '\0'
+        sprintf(formatted_value, "identifier@%s", token->token_value);
+    }
+    case TOKEN_INT:
+    {
+        // Format integer literals with "int@"
+        formatted_value = malloc(strlen(token->token_value) + 5); //"int@" and '\0'
+        sprintf(formatted_value, "int@%s", token->token_value);
+    }
+    case TOKEN_DOUBLE:
+    {
+        // Format floating-point literals with "float@"
+        double double_value = atof(token->token_value); // Convert to double
+        formatted_value = malloc(sizeof(char) * 60);    // Allocating enough space
+        sprintf(formatted_value, "float@%a", double_value);
+    }
+    case TOKEN_STRING:
+    {
+        // Format string literals with "string@"
+        formatted_value = malloc(strlen(token->token_value) + 8); //"string@" and '\0'
+        sprintf(formatted_value, "string@%s", token->token_value);
+    }
+    case TOKEN_NIL:
+    {
+        // Format nil with "nil@"
+        formatted_value = strdup("nil@");
+    }
+    default:
+    {
+        // Format other tokens with their value
+        formatted_value = strdup(token->token_value);
+    }
     }
 
-    char *var_name = malloc(sizeof(char) * (10 + strlen(var->id)));
-    sprintf(var_name, "%s@$%s%d", var->scope == 0 ? "GF" : "LF", var->id, var->scope);
-    return var_name;
+    return formatted_value;
+}
+
+char *format_token(Token *token)
+{
+    char *formatted_value;
+
+    switch (token->type)
+    {
+        case TOKEN_IDENTIFICATOR:
+            throw_err(INTERNAL_ERR,-1,"Identificator\n");
+            break;
+        case TOKEN_INT:
+        {
+            // Format integer literals with "int@"
+            formatted_value = malloc(strlen(token->token_value) + 5); //"int@" and '\0'
+            sprintf(formatted_value, "int@%s", token->token_value);
+        }
+        case TOKEN_DOUBLE:
+        {
+            // Format floating-point literals with "float@"
+            double double_value = atof(token->token_value); // Convert to double
+            formatted_value = malloc(sizeof(char) * 60);    // Allocating enough space
+            sprintf(formatted_value, "float@%a", double_value);
+        }
+        case TOKEN_STRING:
+        {
+            // Format string literals with "string@"
+            formatted_value = malloc(strlen(token->token_value) + 8); //"string@" and '\0'
+            sprintf(formatted_value, "string@%s", token->token_value);
+        }
+        case TOKEN_BOOL:
+        {
+            // Format bool literals with "bool@"
+            formatted_value = malloc(strlen(token->token_value) + 6); //"bool@" and '\0'
+            sprintf(formatted_value, "bool@%s", token->token_value);
+        }
+        case TOKEN_NIL:
+        {
+            // Format nil with "nil@"
+            formatted_value = strdup("nil@");
+        }
+        default:
+        {
+            // Format other tokens with their value
+            formatted_value = strdup(token->token_value);
+        }
+    }
+    return formatted_value;
 }
 
 void print_out_code()
@@ -56,23 +161,3 @@ void print_out_code()
         printf("%c", (char)c);
     }
 }
-
-void assign(char *frame_var_to, char *name_var_to, char *frame_var_from, char *name_var_from) {
-    THREE_INST("MOVE", frame_var_to, name_var_to, frame_var_from, name_var_from);
-}
-
-void add(var_frame,var_name,symb_type,symb_val,symb_type_2,symb_val_2){
-    THREE_INST("ADD", var_fame, var_name, symb_val, name_var_from);
-}
-
-int main() {
-    file = tmpfile();
-    if (file == NULL) {
-        fprintf(stderr, "Error creating file.\n");
-        return INTERNAL_ERR;
-    }
-
-    fclose(file);
-    return NO_ERR;
-}
->>>>>>>>> Temporary merge branch 2

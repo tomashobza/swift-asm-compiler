@@ -19,8 +19,7 @@
 
 extern FILE *out_code_file;
 
-typedef enum
-{
+typedef enum {
     // -
     CREATEFRAME, // 0
     PUSHFRAME,   // 1
@@ -43,23 +42,23 @@ typedef enum
     INT2CHARS,   // 18
     STRI2INTS,   // 19
     BREAK,       // 20
-                 // <label>
+    // <label>
     CALL,        // 21
     LABEL,       // 22
     JUMP,        // 23
     JUMPIFEQS,   // 24
     JUMPIFNEQS,  // 25
-                 // <var>
+    // <var>
     DEFVAR,      // 26
     POPS,        // 27
-                 // <symb>
+    // <symb>
     PUSHS,       // 28
     WRITE,       // 29
     EXIT,        // 30
     DPRINT,      // 31
-                 // <var> <type>
+    // <var> <type>
     READ,        // 32
-                 // <var> <symb>
+    // <var> <symb>
     MOVE,        // 33
     INT2FLOAT,   // 34
     FLOAT2INT,   // 35
@@ -67,7 +66,7 @@ typedef enum
     STRI2INT,    // 37
     STRLEN,      // 38
     TYPE,        // 39
-                 // <var> <symb> <symb>
+    // <var> <symb> <symb>
     ADD,         // 40
     SUB,         // 41
     DIV,         // 42
@@ -82,18 +81,27 @@ typedef enum
     CONCAT,      // 51
     GETCHAR,     // 52
     SETCHAR,     // 53
-                 // <label> <symb> <symb>
+    // <label> <symb> <symb>
     JUMPIFEQ,    // 54
     JUMPIFNEQ,   // 55
-} Instruction;
+}           Instruction;
 
 /**
- * @brief Returns the format of the variable for IFJcode23.
+ * @brief Returns the format of symb for IFJcode23.
  *
- * @param var Symbol record of the variable.
+ * @param token Token with type and value.
  * @return char* - string with the variable in the format for IFJcode23
  */
-char *variable_to_ifjcode23(symtable_item *var);
+char *symb_resolve(Token *token);
+
+/**
+ * @brief Returns the format of the literal for IFJcode23.
+ *
+ * @param token Token record of the literal.
+ * @return char* - string with the literal in the format for IFJcode23
+ */
+char *format_token_for_IFJcode23(Token *token);
+
 
 /**
  * @brief Prints the IFJcode23 instruction without operands to the output file.
@@ -117,9 +125,13 @@ void handle_var_instructions(Instruction inst, Token var);
  * @param symb
  */
 void handle_symb_instructions(Instruction inst, Token symb);
+
 void handle_var_symb_instructions(Instruction inst, Token var, Token symb);
+
 void handle_var_symb_symb_instructions(Instruction inst, Token var, Token symb1, Token symb2);
+
 void handle_var_type_instructions(Instruction inst, Token var, Token type);
+
 void handle_no_operand_instructions(Instruction inst);
 
 void handle_label_symb_symb_instructions(Instruction inst, Token label, Token symb1, Token symb2);
