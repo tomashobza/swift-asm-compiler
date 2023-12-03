@@ -128,12 +128,18 @@ bool checkParameter(PSA_Token_stack *main_s, unsigned int param_index, symtable_
         return true;
     }
 
-    if ((*parsed_param).type != found_func->data.func_data->params[param_index].type)
+    bool types_match = (*parsed_param).type == found_func->data.func_data->params[param_index].type;
+    if (found_func->data.func_data->params[param_index].type == TYPE_DOUBLE && (*parsed_param).type == TYPE_INT && (*parsed_param).is_literal)
+    {
+        types_match = true;
+    }
+
+    if (!types_match)
     {
         throw_error(PARAM_TYPE_ERR, id.line_num, "Parameter %d of function '%s' should be of type %d!", param_index + 1, found_func->id, found_func->data.func_data->params[param_index].type);
     }
 
-    return (*parsed_param).is_ok && (*parsed_param).type == found_func->data.func_data->params[param_index].type && name_ok;
+    return (*parsed_param).is_ok && types_match && name_ok;
 }
 
 bool checkParamName(PSA_Token_stack *main_s, unsigned int param_index, symtable_item *found_func, bool unknown_params, PSA_Token func_id)
