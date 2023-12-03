@@ -1,1 +1,1 @@
-write(3)
+write(readInt())

@@ -62,21 +62,4 @@ Token convertPSATokenToToken(PSA_Token psa_tkn);
  */
 PSA_Token convertTokenToPSAToken(Token tkn);
 
-/**
- * @brief Checks if the token is a built-in function.
- * 
- * @param token Function id token
- * @return true 
- * @return false 
- */
-bool isBuiltInFunction(Token token);
-
-/**
- * @brief Gets the intruction associated with the built-in function.
- * 
- * @param token 
- * @return char* 
- */
-char* getBuiltInFunctionName(Token token);
-
 #endif // UTILS_H

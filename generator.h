@@ -232,4 +232,29 @@ char *instructionToString(Instruction in);
  */
 Instruction stringToInstruction(char *str);
 
+/**
+ * @brief Checks if the token is a built-in function.
+ *
+ * @param token Function id token
+ * @return true
+ * @return false
+ */
+bool isBuiltInFunction(Token token);
+
+/**
+ * @brief Gets the intruction associated with the built-in function.
+ *
+ * @param token
+ * @return char*
+ */
+char *getBuiltInFunctionName(Token token);
+
+/**
+ * @brief Returns the data type of the read function
+ *
+ * @param token
+ * @return Token
+ */
+Token getReadType(Token token);
+
 #endif // GENERATOR_H

@@ -253,9 +253,26 @@ void generate_builtin_func_call(Token func)
     tmp_token.type = TOKEN_IDENTIFICATOR;
     tmp_token.token_value = malloc(sizeof(char) * 20);
     sprintf(tmp_token.token_value, "tmp%d", tmp_counter);
+    Instruction builting_inst = stringToInstruction(getBuiltInFunctionName(func));
 
-    generate_instruction(POPS, tmp_token);
-    generate_instruction(stringToInstruction(func.token_value), tmp_token);
+    switch (builting_inst)
+    {
+    case WRITE:
+        generate_instruction(DEFVAR, tmp_token);
+        generate_instruction(POPS, tmp_token);
+        generate_instruction(builting_inst, tmp_token);
+        fprintf(out_code_file, "\n");
+        break;
+    case READ:
+        generate_instruction(DEFVAR, tmp_token);
+        generate_instruction(READ, tmp_token, getReadType(func));
+        generate_instruction(PUSHS, tmp_token);
+        fprintf(out_code_file, "\n");
+        break;
+    default:
+        throw_error(INTERNAL_ERR, -1, "Invalid built-in function.\n");
+        break;
+    }
 
     tmp_counter++;
 }
@@ -669,4 +686,126 @@ Instruction stringToInstruction(char *str)
         return JUMPIFNEQ;
     }
     return EMPTY;
+}
+
+bool isBuiltInFunction(Token token)
+{
+
+    if (strcmp(token.token_value, "readString") == 0)
+    {
+        return true;
+    }
+    else if (strcmp(token.token_value, "readInt") == 0)
+    {
+        return true;
+    }
+    else if (strcmp(token.token_value, "readDouble") == 0)
+    {
+        return true;
+    }
+    else if (strcmp(token.token_value, "write") == 0)
+    {
+        return true;
+    }
+    else if (strcmp(token.token_value, "Int2Double") == 0)
+    {
+        return true;
+    }
+    else if (strcmp(token.token_value, "Double2Int") == 0)
+    {
+        return true;
+    }
+    else if (strcmp(token.token_value, "length") == 0)
+    {
+        return true;
+    }
+    else if (strcmp(token.token_value, "substring") == 0)
+    {
+        return true;
+    }
+    else if (strcmp(token.token_value, "ord") == 0)
+    {
+        return true;
+    }
+    else if (strcmp(token.token_value, "chr") == 0)
+    {
+        return true;
+    }
+
+    return false;
+}
+
+char *getBuiltInFunctionName(Token token)
+{
+    char *name = malloc(sizeof(char) * (strlen(token.token_value) + 1));
+    if (strcmp(token.token_value, "readString") == 0)
+    {
+        strcpy(name, "READ");
+    }
+    else if (strcmp(token.token_value, "readInt") == 0)
+    {
+        strcpy(name, "READ");
+    }
+    else if (strcmp(token.token_value, "readDouble") == 0)
+    {
+        strcpy(name, "READ");
+    }
+    else if (strcmp(token.token_value, "write") == 0)
+    {
+        strcpy(name, "WRITE");
+    }
+    else if (strcmp(token.token_value, "Int2Double") == 0)
+    {
+        strcpy(name, "INT2FLOAT");
+    }
+    else if (strcmp(token.token_value, "Double2Int") == 0)
+    {
+        strcpy(name, "FLOAT2INT");
+    }
+    else if (strcmp(token.token_value, "length") == 0)
+    {
+        strcpy(name, "STRLEN");
+    }
+    else if (strcmp(token.token_value, "substring") == 0)
+    {
+        strcpy(name, "TODO_add"); // TODO: add this functionality
+    }
+    else if (strcmp(token.token_value, "ord") == 0)
+    {
+        strcpy(name, "TODO_add"); // TODO: add this functionality
+    }
+    else if (strcmp(token.token_value, "chr") == 0)
+    {
+        strcpy(name, "TODO_add"); // TODO: add this functionality
+    }
+    return name;
+}
+
+Token getReadType(Token token)
+{
+    if (strcmp(token.token_value, "readString") == 0)
+    {
+        return (Token){
+            .type = TOKEN_TYPE_STRING,
+            .token_value = "string",
+        };
+    }
+    else if (strcmp(token.token_value, "readInt") == 0)
+    {
+        return (Token){
+            .type = TOKEN_TYPE_INT,
+            .token_value = "int",
+        };
+    }
+    else if (strcmp(token.token_value, "readDouble") == 0)
+    {
+        return (Token){
+            .type = TOKEN_TYPE_DOUBLE,
+            .token_value = "float",
+        };
+    }
+    return (Token){
+        .type = TOKEN_EOF,
+        .token_value = "EOF",
+    };
 }

@@ -29,6 +29,7 @@ int main(void)
     }
     fprintf(out_code_file, ".IFJcode23\n");
     generate_instruction(CREATEFRAME);
+    fprintf(out_code_file, "\n");
 
     scanner_init();
 

@@ -108,10 +108,7 @@ psa_return_type parse_expression_base(bool is_param)
                 if (isBuiltInFunction(convertPSATokenToToken(b)))
                 {
                     printf_cyan("bultin funkce %s\n", getBuiltInFunctionName(convertPSATokenToToken(b)));
-                    generate_builtin_func_call((Token){
-                        .type = TOKEN_IDENTIFICATOR,
-                        .token_value = getBuiltInFunctionName(convertPSATokenToToken(b)),
-                    });
+                    generate_builtin_func_call(convertPSATokenToToken(b));
                 }
                 else
                 {
