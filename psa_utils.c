@@ -230,7 +230,7 @@ Instruction tokenTypeToStackInstruction(Token_type tt)
     case TOKEN_MUL:
         return MULS;
     case TOKEN_DIV:
-        return DIVS;
+        return IDIVS;
     case TOKEN_PLUS:
         return ADDS;
     case TOKEN_MINUS:

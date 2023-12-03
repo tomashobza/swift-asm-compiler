@@ -108,12 +108,10 @@ psa_return_type parse_expression_base(bool is_param)
             {
                 if (isBuiltInFunction(convertPSATokenToToken(b)))
                 {
-                    printf_cyan("bultin funkce %s\n", getBuiltInFunctionName(convertPSATokenToToken(b)));
                     generate_builtin_func_call(convertPSATokenToToken(b));
                 }
                 else
                 {
-                    printf_cyan("tak pojd kamo jedu '%s'\n", b.token_value);
                     generate_instruction(CALL, convertPSATokenToToken(b));
                     generate_instruction(PUSHS, (Token){
                                                     .type = TOKEN_IDENTIFICATOR,
@@ -241,16 +239,15 @@ psa_return_type parse_expression_base(bool is_param)
 
             if (derivation_ok && isTokenBinaryOperator(top.type))
             {
-                // printf("Mrda volee pushuju '%s'\n", top.token_value);
-                // printf("rule type: ");
-                // print_expression_type(rule.expr_type);
-                generate_instruction(tokenTypeToStackInstruction(top.type));
+                Instruction inst = tokenTypeToStackInstruction(top.type);
+                if (inst == IDIVS && rule.expr_type == TYPE_DOUBLE)
+                {
+                    inst = DIVS;
+                }
+                generate_instruction(inst);
             }
             else if (derivation_ok && (isTokenLiteral(top.type) || top.type == TOKEN_IDENTIFICATOR))
             {
-                // printf("Pico volee pushuju '%s'\n", top.token_value);
-                // printf("rule type: ");
-                // print_expression_type(rule.expr_type);
                 generate_instruction(PUSHS, convertPSATokenToToken(top));
             }
 
