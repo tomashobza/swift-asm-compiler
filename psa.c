@@ -16,7 +16,8 @@ psa_return_type parse_expression_base(bool is_param)
 {
 
     // TODO: add checking if variable is initialized before use
-    // TODO: add functions for expressions in parameters
+    // TODO: add DIV vs IDIV
+    // TODO: add implicit type conversion Int -> Double
     int num_of_brackets = 0; // number of brackets in the expression
 
     PSA_Token_stack *s = PSA_Token_stack_init();

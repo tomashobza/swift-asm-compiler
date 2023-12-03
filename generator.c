@@ -100,7 +100,7 @@ char *symb_resolve(Token *token)
             {
                 throw_error(INTERNAL_ERR, -1, "Variable '%s' is invalid\n", token->token_value);
             }
-            sprintf(var_name, "%s@$%s%d", item.scope == -1 ? "GF" : (item.scope < 0 ? "TF" : "LF"), item.id, item.scope);
+            sprintf(var_name, "%s@$%s%d", item.scope == 0 ? "GF" : (item.scope < 0 ? "TF" : "LF"), item.id, item.scope);
             break;
         }
         else if (item.type == FUNCTION)
@@ -224,6 +224,8 @@ void generate_func_header(symtable_item func_item)
 
     fprintf(out_code_file, "\n");
 
+    generate_instruction(PUSHFRAME);
+
     for (int i = func_item.data.func_data->params_count - 1; i >= 0; i--)
     {
         token.type = TOKEN_IDENTIFICATOR;
@@ -295,12 +297,12 @@ void generate_builtin_func_call(Token func)
 
 void generate_var_definition(Token var, int scope)
 {
-    fprintf(out_code_file, "DEFVAR %s@%s%d\n", scope == -1 ? "GF" : (scope < 0 ? "TF" : "LF"), var.token_value, scope);
+    fprintf(out_code_file, "DEFVAR %s@$%s%d\n", scope == 0 ? "GF" : (scope < 0 ? "TF" : "LF"), var.token_value, scope);
 }
 
 void generate_var_assignment(Token var, int scope)
 {
-    fprintf(out_code_file, "POPS %s@%s%d\n", scope == -1 ? "GF" : (scope < 0 ? "TF" : "LF"), var.token_value, scope);
+    fprintf(out_code_file, "POPS %s@$%s%d\n", scope == 0 ? "GF" : (scope < 0 ? "TF" : "LF"), var.token_value, scope);
 }
 
 /// UTILITY FUNCTIONS

@@ -96,8 +96,19 @@ int run_control(Token *token, sym_items *items, Control_state sem_rule)
         sem_pop_scope(token, items);
         break;
     case R_EXP:
+    {
         sem_r_exp(token, items);
-        break;
+
+        Token retval = (Token){
+            .type = TOKEN_IDENTIFICATOR,
+            .token_value = "retval",
+        };
+        generate_instruction(POPFRAME);
+        generate_instruction(DEFVAR, retval);
+        generate_instruction(POPS, retval);
+        generate_instruction(RETURN);
+    }
+    break;
     case COND_EXP:
         sem_cond_exp(token, items);
         break;
