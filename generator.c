@@ -273,11 +273,10 @@ void print_out_code()
 
 void generate_func_header(symtable_item func_item)
 {
-    char *func_lbl;
-    func_lbl = func_item.id;
+    char *func_lbl = malloc(sizeof(char) * (strlen(func_item.id) + 5));
+    strcpy(func_lbl, func_item.id);
 
-    char *func_end_lbl;
-    func_end_lbl = malloc(sizeof(char) * (strlen(func_item.id) + 5));
+    char *func_end_lbl = malloc(sizeof(char) * (strlen(func_item.id) + 5));
     sprintf(func_end_lbl, "%s_end", func_item.id);
 
     generate_instruction(JUMP, label(func_end_lbl));
@@ -285,9 +284,18 @@ void generate_func_header(symtable_item func_item)
 
     fprintf(out_code_file, "\n");
 
+    generate_instruction(PUSHFRAME);
+
+    fprintf(out_code_file, "# function params\n");
     for (int i = func_item.data.func_data->params_count - 1; i >= 0; i--)
     {
-        char *var_name = variable(func_item.data.func_data->params[i].id, -1, true);
+        Token param = (Token){
+            .type = TOKEN_IDENTIFICATOR,
+            .token_value = malloc(sizeof(char) * (strlen(func_item.data.func_data->params[i].id) + 1)),
+        };
+        strcpy(param.token_value, func_item.data.func_data->params[i].id);
+
+        char *var_name = symbol(param);
 
         generate_instruction(DEFVAR, var_name);
         generate_instruction(POPS, var_name);
@@ -295,9 +303,7 @@ void generate_func_header(symtable_item func_item)
         free(var_name);
     }
 
-    generate_instruction(PUSHFRAME);
-
-    fprintf(out_code_file, "\n");
+    fprintf(out_code_file, "# function params end\n\n");
 
     free(func_end_lbl);
     free(func_lbl);
@@ -309,7 +315,6 @@ void generate_func_end(symtable_item func_item)
     func_lbl = malloc(sizeof(char) * (strlen(func_item.id) + 5));
     sprintf(func_lbl, "%s_end", func_item.id);
 
-    fprintf(out_code_file, "\n");
     generate_instruction(LABEL, label(func_lbl));
     fprintf(out_code_file, "\n");
 
@@ -873,11 +878,11 @@ Expression_type getReadType(Token token)
     }
     else if (strcmp(token.token_value, "readInt") == 0)
     {
-        return TYPE_STRING;
+        return TYPE_INT;
     }
     else if (strcmp(token.token_value, "readDouble") == 0)
     {
-        return TYPE_STRING;
+        return TYPE_DOUBLE;
     }
     return TYPE_INVALID;
 }
