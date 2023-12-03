@@ -27,6 +27,7 @@ int main(void)
     {
         return INTERNAL_ERR;
     }
+    fprintf(out_code_file, ".IFJcode23\n");
 
     scanner_init();
 
