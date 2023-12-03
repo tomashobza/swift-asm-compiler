@@ -119,6 +119,7 @@ char *symb_resolve(Token *token)
     case TOKEN_INT:
     case TOKEN_DOUBLE:
     case TOKEN_NIL:
+    case TOKEN_BOOL:
     {
         free(var_name);
         var_name = format_token(token);
