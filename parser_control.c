@@ -49,16 +49,23 @@ int run_control(Token *token, sym_items *items, Control_state sem_rule)
         break;
     case VAR_ID:
         sem_var_id(token, items);
-        generate_instruction(DEFVAR, *token);
+        // generate_instruction(DEFVAR, *token);
         break;
     case VAR_TYPE:
         sem_var_type(token, items);
         break;
     case VAR_EXP:
         sem_var_exp(token, items);
-        Token new_token;
-        new_token.token_value = items->varItem->id;
-        generate_instruction(POPS, new_token);
+        generate_var_definition((Token){
+                                    .type = TOKEN_IDENTIFICATOR,
+                                    .token_value = items->varItem->id,
+                                },
+                                sym_st->size - 1);
+        generate_var_assignment((Token){
+                                    .type = TOKEN_IDENTIFICATOR,
+                                    .token_value = items->varItem->id,
+                                },
+                                sym_st->size - 1);
         break;
     case VAR_ADD:
         sem_var_add(token, items);

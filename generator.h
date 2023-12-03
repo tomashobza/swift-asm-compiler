@@ -214,6 +214,22 @@ void generate_func_end(symtable_item func_item);
  */
 void generate_builtin_func_call(Token func);
 
+/**
+ * @brief Generates the IFJcode23 variable definition.
+ *
+ * @param var Token record of the variable.
+ * @param scope Scope index of the variable.
+ */
+void generate_var_definition(Token var, int scope);
+
+/**
+ * @brief Generates the IFJcode23 variable assignment.
+ *
+ * @param var Token record of the variable.
+ * @param scope Scope index of the variable.
+ */
+void generate_var_assignment(Token var, int scope);
+
 /// UTILITY FUNCTIONS
 
 /**
