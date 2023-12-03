@@ -14,6 +14,10 @@
 #include <stdlib.h>
 #include <string.h>
 
+int if_counter = 0;
+int while_counter = 0;
+int tmp_counter = 0;
+
 void handle_0_operand_instructions(Instruction inst)
 {
     char *instruction = instructionToString(inst);
@@ -248,7 +252,16 @@ void generate_builtin_func_call(Token func)
     Token token;
     token.type = TOKEN_FUNC_ID;
     token.token_value = func.token_value;
-    generate_instruction(CALL, token);
+
+    Token tmp_token;
+    tmp_token.type = TOKEN_IDENTIFICATOR;
+    tmp_token.token_value = malloc(sizeof(char) * 20);
+    sprintf(tmp_token.token_value, "tmp%d", tmp_counter);
+
+    generate_instruction(POPS, tmp_token);
+    generate_instruction(stringToInstruction(func.token_value), tmp_token);
+
+    tmp_counter++;
 }
 
 /// UTILITY FUNCTIONS
@@ -523,3 +536,141 @@ Instruction stringToInstruction(char *str)
     {
         return CALL;
     }
+    else if (strcmp(str, "LABEL") == 0)
+    {
+        return LABEL;
+    }
+    else if (strcmp(str, "JUMP") == 0)
+    {
+        return JUMP;
+    }
+    else if (strcmp(str, "JUMPIFEQS") == 0)
+    {
+        return JUMPIFEQS;
+    }
+    else if (strcmp(str, "JUMPIFNEQS") == 0)
+    {
+        return JUMPIFNEQS;
+    }
+    else if (strcmp(str, "DEFVAR") == 0)
+    {
+        return DEFVAR;
+    }
+    else if (strcmp(str, "POPS") == 0)
+    {
+        return POPS;
+    }
+    else if (strcmp(str, "PUSHS") == 0)
+    {
+        return PUSHS;
+    }
+    else if (strcmp(str, "WRITE") == 0)
+    {
+        return WRITE;
+    }
+    else if (strcmp(str, "EXIT") == 0)
+    {
+        return EXIT;
+    }
+    else if (strcmp(str, "DPRINT") == 0)
+    {
+        return DPRINT;
+    }
+    else if (strcmp(str, "READ") == 0)
+    {
+        return READ;
+    }
+    else if (strcmp(str, "MOVE") == 0)
+    {
+        return MOVE;
+    }
+    else if (strcmp(str, "INT2FLOAT") == 0)
+    {
+        return INT2FLOAT;
+    }
+    else if (strcmp(str, "FLOAT2INT") == 0)
+    {
+        return FLOAT2INT;
+    }
+    else if (strcmp(str, "INT2CHAR") == 0)
+    {
+        return INT2CHAR;
+    }
+    else if (strcmp(str, "STRI2INT") == 0)
+    {
+        return STRI2INT;
+    }
+    else if (strcmp(str, "STRLEN") == 0)
+    {
+        return STRLEN;
+    }
+    else if (strcmp(str, "TYPE") == 0)
+    {
+        return TYPE;
+    }
+    else if (strcmp(str, "ADD") == 0)
+    {
+        return ADD;
+    }
+    else if (strcmp(str, "SUB") == 0)
+    {
+        return SUB;
+    }
+    else if (strcmp(str, "DIV") == 0)
+    {
+        return DIV;
+    }
+    else if (strcmp(str, "IDIV") == 0)
+    {
+        return IDIV;
+    }
+    else if (strcmp(str, "MUL") == 0)
+    {
+        return MUL;
+    }
+    else if (strcmp(str, "LT") == 0)
+    {
+        return LT;
+    }
+    else if (strcmp(str, "GT") == 0)
+    {
+        return GT;
+    }
+    else if (strcmp(str, "EQ") == 0)
+    {
+        return EQ;
+    }
+    else if (strcmp(str, "AND") == 0)
+    {
+        return AND;
+    }
+    else if (strcmp(str, "OR") == 0)
+    {
+        return OR;
+    }
+    else if (strcmp(str, "NOT") == 0)
+    {
+        return NOT;
+    }
+    else if (strcmp(str, "CONCAT") == 0)
+    {
+        return CONCAT;
+    }
+    else if (strcmp(str, "GETCHAR") == 0)
+    {
+        return GETCHAR;
+    }
+    else if (strcmp(str, "SETCHAR") == 0)
+    {
+        return SETCHAR;
+    }
+    else if (strcmp(str, "JUMPIFEQ") == 0)
+    {
+        return JUMPIFEQ;
+    }
+    else if (strcmp(str, "JUMPIFNEQ") == 0)
+    {
+        return JUMPIFNEQ;
+    }
+    return EMPTY;
+}
