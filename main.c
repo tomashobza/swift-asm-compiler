@@ -28,6 +28,7 @@ int main(void)
         return INTERNAL_ERR;
     }
     fprintf(out_code_file, ".IFJcode23\n");
+    generate_instruction(CREATEFRAME);
 
     scanner_init();
 
