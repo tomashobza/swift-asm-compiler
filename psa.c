@@ -112,11 +112,8 @@ psa_return_type parse_expression_base(bool is_param)
                 }
                 else
                 {
-                    generate_instruction(CALL, convertPSATokenToToken(b));
-                    generate_instruction(PUSHS, (Token){
-                                                    .type = TOKEN_IDENTIFICATOR,
-                                                    .token_value = "retval",
-                                                });
+                    generate_instruction(CALL, label(b.token_value));
+                    generate_instruction(PUSHS, variable("retval", -1, false));
                 }
             }
 
@@ -248,7 +245,7 @@ psa_return_type parse_expression_base(bool is_param)
             }
             else if (derivation_ok && (isTokenLiteral(top.type) || top.type == TOKEN_IDENTIFICATOR))
             {
-                generate_instruction(PUSHS, convertPSATokenToToken(top));
+                generate_instruction(PUSHS, symbol(convertPSATokenToToken(top)));
             }
 
             if (rule.type != TOKEN_EOF)
