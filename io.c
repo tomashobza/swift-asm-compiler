@@ -51,6 +51,11 @@ PSA_Token readNextToken(PSA_Token_stack *s, char *next_token_error, int *num_of_
         .line_num = tkn->line_num,
     };
 
+    if (b.type == TOKEN_FUNC_ID)
+    {
+        b = parseFunctionCall(s, b);
+    }
+
     free(tkn);
 
     PSA_Token a = PSA_TOKEN_EOF;

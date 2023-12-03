@@ -107,7 +107,7 @@ PSA_Token parseFunctionCall(PSA_Token_stack *main_s, PSA_Token id)
         symtable_item func_item = *found_func;
         free(found_func);
         return (PSA_Token){
-            .type = TOKEN_EXPRSN,
+            .type = TOKEN_FUNC_ID,
             .token_value = func_item.id,
             .expr_type = func_item.data.func_data->return_type,
             .preceded_by_nl = id.preceded_by_nl};

@@ -16,7 +16,6 @@ psa_return_type parse_expression_base(bool is_param)
 {
 
     // TODO: add checking if variable is initialized before use
-    // TODO: add DIV vs IDIV
     // TODO: add implicit type conversion Int -> Double
     int num_of_brackets = 0; // number of brackets in the expression
 
@@ -90,80 +89,6 @@ psa_return_type parse_expression_base(bool is_param)
                 next_token_error = 0;
                 b = PSA_TOKEN_EOF;
             }
-        }
-
-        // CHECK FOR FUNCTION CALL
-        // if the next token is a function identificator, start parsing function call
-        if (b.type == TOKEN_FUNC_ID)
-        {
-            DEBUG_PSA_CODE(
-                printf_magenta("--------Je to funkce! --------\n");
-                print_token_type(b.type););
-
-            b = parseFunctionCall(s, b);
-            PSA_Token_stack_push(s, b);
-            a = PSA_Token_stack_top(s);
-
-            if (b.expr_type != TYPE_INVALID && b.type != TOKEN_EOF)
-            {
-                if (isBuiltInFunction(convertPSATokenToToken(b)))
-                {
-                    generate_builtin_func_call(convertPSATokenToToken(b));
-                }
-                else
-                {
-                    generate_instruction(CALL, label(b.token_value));
-                    generate_instruction(PUSHS, variable("retval", -1, false));
-                }
-            }
-
-            b = readNextToken(s, &next_token_error, &num_of_brackets);
-
-            DEBUG_PSA_CODE(printf_magenta("------------------------------\n"););
-
-            if (is_param)
-            {
-                switch (b.type)
-                {
-                case TOKEN_R_BRACKET:
-                    if (num_of_brackets >= 0)
-                    {
-                        break;
-                    }
-
-                    return_token(convertPSATokenToToken(b));
-
-                    __attribute__((fallthrough));
-                case TOKEN_COMMA:
-                    next_token_error = 0;
-                    b = PSA_TOKEN_EOF;
-                    break;
-                default:
-                    break;
-                }
-            }
-            // CHECK NEXT TOKEN FOR ERRORS
-            if (next_token_error > 0 && b.type != TOKEN_EOF)
-            {
-                return_token(convertPSATokenToToken(b));
-                if (b.preceded_by_nl || b.type == TOKEN_L_CURLY)
-                {
-                    next_token_error = 0;
-                    b = PSA_TOKEN_EOF;
-                }
-                else
-                {
-                    throw_error(SYNTACTIC_ERR, b.line_num, "Missing separator (EOL) after expression, before '%s'.", b.token_value);
-
-                    next_token_error = 0;
-                    b = PSA_TOKEN_EOF;
-                }
-            }
-
-            continue;
-
-            // read the next token
-            // b = readNextToken(s, &next_token_error, num_of_brackets);
         }
 
         // check for an empty expression
