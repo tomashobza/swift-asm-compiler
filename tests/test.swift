@@ -1,5 +1,9 @@
-func add(_ a: Int, _ b: Int) -> Int {
-    return a + b
+func sqr(_ x: Int) -> Int {
+    return x * x
 }
 
-write(add(3, 2))
+let x = readInt()!
+
+if true {}
+
+write(sqr(x))
