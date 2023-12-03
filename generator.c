@@ -269,6 +269,22 @@ void generate_builtin_func_call(Token func)
         generate_instruction(PUSHS, tmp_token);
         fprintf(out_code_file, "\n");
         break;
+    case INT2FLOAT:
+        generate_instruction(DEFVAR, tmp_token);
+        generate_instruction(POPS, tmp_token);
+        generate_instruction(INT2FLOATS, tmp_token, tmp_token);
+        generate_instruction(PUSHS, tmp_token);
+        fprintf(out_code_file, "\n");
+        break;
+    case FLOAT2INT:
+        generate_instruction(DEFVAR, tmp_token);
+        generate_instruction(POPS, tmp_token);
+        generate_instruction(FLOAT2INTS, tmp_token, tmp_token);
+        generate_instruction(PUSHS, tmp_token);
+        fprintf(out_code_file, "\n");
+        break;
+    case STRLEN:
+        break;
     default:
         throw_error(INTERNAL_ERR, -1, "Invalid built-in function.\n");
         break;
