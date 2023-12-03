@@ -89,27 +89,49 @@ typedef enum
     JUMPIFNEQ,   // 55
 } Instruction;
 
-typedef enum
-{
-    OP_VAR,
-    OP_LIT,
-    OP_LBL,
-} OperandType;
+/**
+ * @brief Generates a label operand for IFJcode23.
+ *
+ * @param name Name of the label.
+ * @return char*
+ */
+char *label(char *name);
 
-typedef struct
-{
-    OperandType type;
-    union
-    {
-        struct
-        {
-            char *id;
-            int scope; // -1 for TF, 0 for GF, 1+ for LF
-        } var;
-        Token lit;
-        char *lbl;
-    } data;
-} Operand;
+/**
+ * @brief Generates a type operand for IFJcode23.
+ *
+ * @param type Type of the expression.
+ * @return char*
+ */
+char *type(Expression_type type);
+
+/**
+ * @brief Generates a variable operand for IFJcode23.
+ *
+ * @param id Token with the id of the variable.
+ * @param scope -1 for temporary, 0 for global, 1+ for local
+ * @param has_suffix Whether the variable has a suffix with the scope index
+ * @return char*
+ */
+char *variable(char *id, int scope, bool has_suffix);
+
+/**
+ * @brief Generates a symbol operand for IFJcode23.
+ *
+ * @param token Token with type and value.
+ * @return char*
+ */
+char *literal(Token token);
+
+/**
+ * @brief Generates a symbol operand for IFJcode23.
+ *
+ * @param symbol Token with type and value.
+ * @return char*
+ */
+char *symbol(Token symbol);
+
+// TODO: delete unused
 
 /**
  * @brief Returns the format of symb for IFJcode23.
@@ -117,7 +139,7 @@ typedef struct
  * @param token Token with type and value.
  * @return char* - string with the variable in the format for IFJcode23
  */
-char *symb_resolve(Token *token);
+char *symb_resolve(Token token);
 
 /**
  * @brief Returns the format of the literal for IFJcode23.
@@ -125,15 +147,7 @@ char *symb_resolve(Token *token);
  * @param token Token record of the literal.
  * @return char* - string with the literal in the format for IFJcode23
  */
-char *format_token(Token *token);
-
-/**
- * @brief Returns the format of the literal for IFJcode23.
- *
- * @param token Token record of the literal.
- * @return char* - string with the literal in the format for IFJcode23
- */
-char *format_token_for_IFJcode23(Token *token);
+char *format_token(Token token);
 
 /**
  * @brief -
@@ -148,7 +162,7 @@ void handle_0_operand_instructions(Instruction inst);
  * @param inst
  * @param symb
  */
-void handle_1_operand_instructions(Instruction inst, Token op1);
+void handle_1_operand_instructions(Instruction inst, char *op1);
 
 /**
  * @brief <var> <symb>/<var> <type>
@@ -157,7 +171,7 @@ void handle_1_operand_instructions(Instruction inst, Token op1);
  * @param var
  * @param symb
  */
-void handle_2_operand_instructions(Instruction inst, Token op1, Token op2);
+void handle_2_operand_instructions(Instruction inst, char *op1, char *op2);
 
 /**
  * @brief <var> <symb> <symb>/<label> <symb> <symb>
@@ -167,25 +181,25 @@ void handle_2_operand_instructions(Instruction inst, Token op1, Token op2);
  * @param symb1
  * @param symb2
  */
-void handle_3_operand_instructions(Instruction inst, Token op1, Token op2, Token op3);
+void handle_3_operand_instructions(Instruction inst, char *op1, char *op2, char *op3);
 
 /**
- * @brief Based on the number of tokens provided, calls the appropriate function to handle the instruction.
+ * @brief Based on the number of operands provided, calls the appropriate function to handle the instruction.
  *
  * @param inst Instruction to be handled.
- * @param tokens Array of tokens.
- * @param tokens_count Number of tokens in the array.
+ * @param operands Array of operands.
+ * @param operands_count Number of operands in the array.
  */
-void processInstruction(Instruction inst, Token *tokens, int tokens_count);
+void processInstruction(Instruction inst, char **operands, int operands_count);
 
 /**
  * @brief Macro that generates the IFJcode23 instruction based on the given arguments.
  */
-#define generate_instruction(instruction, ...)                                   \
-    do                                                                           \
-    {                                                                            \
-        Token tokens[] = {__VA_ARGS__};                                          \
-        processInstruction(instruction, tokens, sizeof(tokens) / sizeof(Token)); \
+#define generate_instruction(instruction, ...)                                        \
+    do                                                                                \
+    {                                                                                 \
+        char *operands[] = {__VA_ARGS__};                                             \
+        processInstruction(instruction, operands, sizeof(operands) / sizeof(char *)); \
     } while (0)
 
 /**
@@ -213,22 +227,6 @@ void generate_func_end(symtable_item func_item);
  * @param func Token record of the function.
  */
 void generate_builtin_func_call(Token func);
-
-/**
- * @brief Generates the IFJcode23 variable definition.
- *
- * @param var Token record of the variable.
- * @param scope Scope index of the variable.
- */
-void generate_var_definition(Token var, int scope);
-
-/**
- * @brief Generates the IFJcode23 variable assignment.
- *
- * @param var Token record of the variable.
- * @param scope Scope index of the variable.
- */
-void generate_var_assignment(Token var, int scope);
 
 /// UTILITY FUNCTIONS
 
@@ -271,6 +269,6 @@ char *getBuiltInFunctionName(Token token);
  * @param token
  * @return Token
  */
-Token getReadType(Token token);
+Expression_type getReadType(Token token);
 
 #endif // GENERATOR_H
