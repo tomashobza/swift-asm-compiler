@@ -249,10 +249,6 @@ void generate_func_end(symtable_item func_item)
 
 void generate_builtin_func_call(Token func)
 {
-    Token token;
-    token.type = TOKEN_FUNC_ID;
-    token.token_value = func.token_value;
-
     Token tmp_token;
     tmp_token.type = TOKEN_IDENTIFICATOR;
     tmp_token.token_value = malloc(sizeof(char) * 20);
