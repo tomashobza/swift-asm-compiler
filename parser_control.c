@@ -37,11 +37,6 @@ void run_parser()
     free(token);
 }
 
-Token defined_var = (Token){
-    .type = TOKEN_EOF,
-    .token_value = "ERROE",
-};
-
 int run_control(Token *token, sym_items *items, Control_state sem_rule)
 {
     switch (sem_rule)
@@ -56,10 +51,9 @@ int run_control(Token *token, sym_items *items, Control_state sem_rule)
     case VAR_ID:
         sem_var_id(token, items);
 
-        // fprintf(out_code_file, "# variable definition\n");
-        // defined_var = *token;
-        // generate_instruction(DEFVAR, variable(defined_var.token_value, sym_st->size - 1, true));
-        // fprintf(out_code_file, "\n");
+        fprintf(out_code_file, "# variable definition\n");
+        generate_instruction(DEFVAR, variable(items->varItem->id, sym_st->size - 1, true));
+        fprintf(out_code_file, "\n");
 
         break;
     case VAR_TYPE:
@@ -68,9 +62,9 @@ int run_control(Token *token, sym_items *items, Control_state sem_rule)
     case VAR_EXP:
         sem_var_exp(token, items);
 
-        // fprintf(out_code_file, "# variable initialization\n");
-        // generate_instruction(POPS, variable(defined_var.token_value, sym_st->size - 1, true));
-        // fprintf(out_code_file, "\n");
+        fprintf(out_code_file, "# variable initialization\n");
+        generate_instruction(POPS, variable(items->varItem->id, sym_st->size - 1, true));
+        fprintf(out_code_file, "\n");
 
         break;
     case VAR_ADD:
@@ -94,8 +88,8 @@ int run_control(Token *token, sym_items *items, Control_state sem_rule)
     case FUNC_HEADER_DONE:
         sem_func_header_done(token, items);
 
-        // fprintf(out_code_file, "# function header\n");
-        // generate_func_header(*(items->funcItem));
+        fprintf(out_code_file, "# function header\n");
+        generate_func_header(*(items->funcItem));
 
         break;
     case PUSH_SCOPE:
@@ -108,12 +102,13 @@ int run_control(Token *token, sym_items *items, Control_state sem_rule)
     {
         sem_r_exp(token, items);
 
-        // fprintf(out_code_file, "# return\n");
-        // generate_instruction(DEFVAR, variable("retval", 1, false));
-        // generate_instruction(POPS, variable("retval", 1, false));
-        // generate_instruction(POPFRAME);
-        // generate_instruction(RETURN);
-        // fprintf(out_code_file, "\n");
+        fprintf(out_code_file, "\n");
+        fprintf(out_code_file, "# return\n");
+        generate_instruction(DEFVAR, variable("retval", 1, false));
+        generate_instruction(POPS, variable("retval", 1, false));
+        generate_instruction(POPFRAME);
+        generate_instruction(RETURN);
+        fprintf(out_code_file, "\n");
 
         break;
     }
@@ -126,22 +121,20 @@ int run_control(Token *token, sym_items *items, Control_state sem_rule)
     case FUNC_BODY_DONE:
         sem_func_body_done(token, items);
 
-        // fprintf(out_code_file, "# function end\n");
-        // generate_func_end(*(items->funcItem));
+        fprintf(out_code_file, "# function end\n");
+        generate_func_end(*(items->funcItem));
 
         break;
     case LOAD_IDENTIF:
         sem_load_identif(token, items);
 
-        // defined_var = *token;
-
         break;
     case IDENTIF_EXP:
         sem_identif_exp(token, items);
 
-        // fprintf(out_code_file, "# variable assigment\n");
-        // generate_instruction(POPS, variable(defined_var.token_value, sym_st->size - 1, true));
-        // fprintf(out_code_file, "\n");
+        fprintf(out_code_file, "# variable assigment\n");
+        generate_instruction(POPS, variable(items->varItem->id, sym_st->size - 1, true));
+        fprintf(out_code_file, "\n");
 
         break;
     case FUNC_CALL_PSA:
