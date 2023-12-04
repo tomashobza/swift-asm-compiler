@@ -288,6 +288,7 @@ void generate_func_header(symtable_item func_item)
     fprintf(out_code_file, "\n");
 
     generate_instruction(PUSHFRAME);
+    generate_instruction(CREATEFRAME);
 
     fprintf(out_code_file, "# function params\n");
     for (int i = func_item.data.func_data->params_count - 1; i >= 0; i--)
