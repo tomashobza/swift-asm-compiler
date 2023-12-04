@@ -152,6 +152,11 @@ bool checkParamName(PSA_Token_stack *main_s, unsigned int param_index, symtable_
     // read the second token (should be : token)
     PSA_Token colon = readNextToken(main_s, &next_token_error, NULL, true);
 
+    if (id.type == TOKEN_R_BRACKET)
+    {
+        throw_error(PARAM_TYPE_ERR, id.line_num, "Missing parameter %d of function '%s'!", param_index + 1, found_func->id);
+    }
+
     bool has_name = id.type == TOKEN_IDENTIFICATOR && colon.type == TOKEN_DOUBLE_DOT;
 
     // if the tokens don't match the pattern of a parameter name, return them

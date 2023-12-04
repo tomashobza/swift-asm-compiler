@@ -69,13 +69,26 @@ PSA_Token readNextToken(PSA_Token_stack *s, char *next_token_error, int *num_of_
         if ((is_after_binary_operator || is_first_token) && !is_after_unwrap_operator)
         {
 
-            PSA_Token og_b = b;
-            printf("func call: %s\n", og_b.token_value);
+            DEBUG_PSA_CODE(PSA_Token og_b = b;
+                           printf("func call: %s\n", og_b.token_value););
 
             b = parseFunctionCall(s, b);
 
-            printf_cyan("func call type: ");
-            print_expression_type(b.expr_type);
+            if (b.expr_type != TYPE_INVALID && b.type != TOKEN_EOF)
+            {
+                if (isBuiltInFunction(convertPSATokenToToken(b)))
+                {
+                    generate_builtin_func_call(convertPSATokenToToken(b));
+                }
+                else
+                {
+                    generate_instruction(CALL, label(b.token_value));
+                    generate_instruction(PUSHS, variable("retval", -1, false));
+                }
+            }
+
+            DEBUG_PSA_CODE(printf_cyan("func call type: ");
+                           print_expression_type(b.expr_type););
         }
         else
         {
