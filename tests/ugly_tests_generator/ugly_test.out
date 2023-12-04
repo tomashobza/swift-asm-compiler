@@ -1,21 +1,16 @@
-var x = 5 + 5
-var x :Int
-while 5 + 5 {
-    if 5 + 5 {
-        func foo ( x x :Double, x x :Double )  {
-            return 5 + 5
-            x = 5 + 5
-        }
-        if 5 + 5 {
-            let x = 5 + 5
-        }
-    }
-    if 5 + 5 {
-    }
-    func foo ( x x :Bool )  -> Int? {
-        return 5 + 5
-    }
-    func foo ( x x :Double?, x x :String, x x :Bool, x x :Bool? )  -> Int? {
+func foo ( x x :Double )  {
+}
+if 5 + 5 {
+    var x = 5 + 5
+    var x :Bool?
+    var x = 5 + 5
+    foo()
+    while 5 + 5 {
+        let x = 5 + 5
+        var x :String
+        x = 5 + 5
     }
 }
+x = 5 + 5
+var x :String?
  
