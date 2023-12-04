@@ -9,9 +9,9 @@ gen.o: gen.c gen.h
 
 run: gen
 ifdef DEBUG
-	./gen
+	@./gen
 else
-	./gen 2>/dev/null
+	@./gen 2>/dev/null
 endif
 
 clean:

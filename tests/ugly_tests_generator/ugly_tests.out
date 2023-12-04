@@ -1,0 +1,17 @@
+func foo ( x x :String )  {
+}
+let x :Int?
+foo()
+func foo ( x x :Bool )  -> Bool? {
+    while 5 + 5 {
+        while 5 + 5 {
+            return 5 + 5
+            if 5 + 5 {
+            }
+            var x :String?
+            let x = 5 + 5
+        }
+        return 5 + 5
+    }
+}
+ 

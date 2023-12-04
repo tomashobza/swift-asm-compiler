@@ -1,9 +1,4 @@
-func sqr(_ x: Int) -> Int {
-    return x * x
+func foo ( x x : Bool )  {
+    foo()
+    return 5 + 5
 }
-
-let x = readInt()!
-
-if true {}
-
-write(sqr(x))

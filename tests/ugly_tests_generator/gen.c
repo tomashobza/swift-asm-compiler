@@ -230,8 +230,6 @@ bool START()
     };
     int numAvailableTokens = sizeof(availableTokens) / sizeof(Token_type);
 
-    // High resolution time for seeding
-
     shuffleTokens(availableTokens, numAvailableTokens);
 
     // Select the first token after shuffle
@@ -272,8 +270,6 @@ bool STMT_LIST()
     };
     int numAvailableTokens = sizeof(availableTokens) / sizeof(Token_type);
 
-    // High resolution time for seeding
-
     shuffleTokens(availableTokens, numAvailableTokens);
 
     // Select the first token after shuffle
@@ -313,8 +309,6 @@ bool STMT()
         TOKEN_LET,
     };
     int numAvailableTokens = sizeof(availableTokens) / sizeof(Token_type);
-
-    // High resolution time for seeding
 
     shuffleTokens(availableTokens, numAvailableTokens);
 
@@ -357,8 +351,6 @@ bool VAR_LET()
     };
     int numAvailableTokens = sizeof(availableTokens) / sizeof(Token_type);
 
-    // High resolution time for seeding
-
     shuffleTokens(availableTokens, numAvailableTokens);
 
     // Select the first token after shuffle
@@ -389,8 +381,6 @@ bool VAR_SCOPE()
     };
     int numAvailableTokens = sizeof(availableTokens) / sizeof(Token_type);
 
-    // High resolution time for seeding
-
     shuffleTokens(availableTokens, numAvailableTokens);
 
     // Select the first token after shuffle
@@ -416,8 +406,6 @@ bool TYPE_AND_ASIGN()
         TOKEN_ASSIGN,
     };
     int numAvailableTokens = sizeof(availableTokens) / sizeof(Token_type);
-
-    // High resolution time for seeding
 
     shuffleTokens(availableTokens, numAvailableTokens);
 
@@ -454,8 +442,6 @@ bool R_FLEX()
         TOKEN_IF,
     };
     int numAvailableTokens = sizeof(availableTokens) / sizeof(Token_type);
-
-    // High resolution time for seeding
 
     shuffleTokens(availableTokens, numAvailableTokens);
 
@@ -500,8 +486,6 @@ bool D_TYPE()
     };
     int numAvailableTokens = sizeof(availableTokens) / sizeof(Token_type);
 
-    // High resolution time for seeding
-
     shuffleTokens(availableTokens, numAvailableTokens);
 
     // Select the first token after shuffle
@@ -539,8 +523,6 @@ bool DEF_FUNC()
     };
     int numAvailableTokens = sizeof(availableTokens) / sizeof(Token_type);
 
-    // High resolution time for seeding
-
     shuffleTokens(availableTokens, numAvailableTokens);
 
     // Select the first token after shuffle
@@ -568,8 +550,6 @@ bool P_LIST()
     };
     int numAvailableTokens = sizeof(availableTokens) / sizeof(Token_type);
 
-    // High resolution time for seeding
-
     shuffleTokens(availableTokens, numAvailableTokens);
 
     // Select the first token after shuffle
@@ -596,8 +576,6 @@ bool PARAM()
         TOKEN_IDENTIFICATOR,
     };
     int numAvailableTokens = sizeof(availableTokens) / sizeof(Token_type);
-
-    // High resolution time for seeding
 
     shuffleTokens(availableTokens, numAvailableTokens);
 
@@ -627,8 +605,6 @@ bool P_SEP()
     };
     int numAvailableTokens = sizeof(availableTokens) / sizeof(Token_type);
 
-    // High resolution time for seeding
-
     shuffleTokens(availableTokens, numAvailableTokens);
 
     // Select the first token after shuffle
@@ -656,8 +632,6 @@ bool RET_TYPE()
         TOKEN_ARROW,
     };
     int numAvailableTokens = sizeof(availableTokens) / sizeof(Token_type);
-
-    // High resolution time for seeding
 
     shuffleTokens(availableTokens, numAvailableTokens);
 
@@ -691,10 +665,9 @@ bool FUNC_STMT_LIST()
         TOKEN_IF,
         TOKEN_R_CURLY,
         TOKEN_R_CURLY,
+        TOKEN_R_CURLY,
     };
     int numAvailableTokens = sizeof(availableTokens) / sizeof(Token_type);
-
-    // High resolution time for seeding
 
     shuffleTokens(availableTokens, numAvailableTokens);
 
@@ -735,8 +708,6 @@ bool FUNC_STMT()
     };
     int numAvailableTokens = sizeof(availableTokens) / sizeof(Token_type);
 
-    // High resolution time for seeding
-
     shuffleTokens(availableTokens, numAvailableTokens);
 
     // Select the first token after shuffle
@@ -776,8 +747,6 @@ bool RET()
     };
     int numAvailableTokens = sizeof(availableTokens) / sizeof(Token_type);
 
-    // High resolution time for seeding
-
     shuffleTokens(availableTokens, numAvailableTokens);
 
     // Select the first token after shuffle
@@ -804,8 +773,6 @@ bool FUNC_WHILE()
     };
     int numAvailableTokens = sizeof(availableTokens) / sizeof(Token_type);
 
-    // High resolution time for seeding
-
     shuffleTokens(availableTokens, numAvailableTokens);
 
     // Select the first token after shuffle
@@ -830,8 +797,6 @@ bool FUNC_IF()
         TOKEN_IF,
     };
     int numAvailableTokens = sizeof(availableTokens) / sizeof(Token_type);
-
-    // High resolution time for seeding
 
     shuffleTokens(availableTokens, numAvailableTokens);
 
@@ -865,8 +830,6 @@ bool FUNC_ELSE_CLAUSE()
         TOKEN_ELSE,
     };
     int numAvailableTokens = sizeof(availableTokens) / sizeof(Token_type);
-
-    // High resolution time for seeding
 
     shuffleTokens(availableTokens, numAvailableTokens);
 
@@ -909,8 +872,6 @@ bool FUNC_AFTER_ELSE()
     };
     int numAvailableTokens = sizeof(availableTokens) / sizeof(Token_type);
 
-    // High resolution time for seeding
-
     shuffleTokens(availableTokens, numAvailableTokens);
 
     // Select the first token after shuffle
@@ -938,8 +899,6 @@ bool IF_STMT()
         TOKEN_IF,
     };
     int numAvailableTokens = sizeof(availableTokens) / sizeof(Token_type);
-
-    // High resolution time for seeding
 
     shuffleTokens(availableTokens, numAvailableTokens);
 
@@ -975,8 +934,6 @@ bool IF_COND()
         TOKEN_LET,
     };
     int numAvailableTokens = sizeof(availableTokens) / sizeof(Token_type);
-
-    // High resolution time for seeding
 
     shuffleTokens(availableTokens, numAvailableTokens);
 
@@ -1022,8 +979,6 @@ bool ELSE_CLAUSE()
     };
     int numAvailableTokens = sizeof(availableTokens) / sizeof(Token_type);
 
-    // High resolution time for seeding
-
     shuffleTokens(availableTokens, numAvailableTokens);
 
     // Select the first token after shuffle
@@ -1057,20 +1012,8 @@ bool AFTER_ELSE()
     Token_type availableTokens[] = {
         TOKEN_L_CURLY,
         TOKEN_IF,
-        TOKEN_IDENTIFICATOR,
-        TOKEN_FUNC_ID,
-        TOKEN_VAR,
-        TOKEN_LET,
-        TOKEN_FUNC,
-        TOKEN_R_CURLY,
-        TOKEN_WHILE,
-        TOKEN_IF,
-        TOKEN_ELSE,
-        TOKEN_EOF,
     };
     int numAvailableTokens = sizeof(availableTokens) / sizeof(Token_type);
-
-    // High resolution time for seeding
 
     shuffleTokens(availableTokens, numAvailableTokens);
 
@@ -1099,8 +1042,6 @@ bool WHILE_STMT()
     };
     int numAvailableTokens = sizeof(availableTokens) / sizeof(Token_type);
 
-    // High resolution time for seeding
-
     shuffleTokens(availableTokens, numAvailableTokens);
 
     // Select the first token after shuffle
@@ -1126,8 +1067,6 @@ bool LOAD_ID()
         TOKEN_FUNC_ID,
     };
     int numAvailableTokens = sizeof(availableTokens) / sizeof(Token_type);
-
-    // High resolution time for seeding
 
     shuffleTokens(availableTokens, numAvailableTokens);
 
