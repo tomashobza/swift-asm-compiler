@@ -1,14 +1,55 @@
 .IFJcode23
-JUMP a_end
-LABEL a
+CREATEFRAME
 
-DEFVAR LF@$b1
-POPS LF@$b1
-DEFVAR LF@$a1
-POPS LF@$a1
+# variable definition
+DEFVAR GF@$x0
 
-PUSHS LF@$a1
-PUSHS LF@$b1
-ADDS
+DEFVAR TF@$tmp0
+READ TF@$tmp0 int
+PUSHS TF@$tmp0
 
-LABEL a_end
+# variable initialization
+POPS GF@$x0
+
+PUSHS GF@$x0
+PUSHS int@0
+EQS
+# if0 start
+PUSHS bool@true
+JUMPIFNEQS else0_0
+CLEARS
+
+PUSHS string@pica
+DEFVAR TF@$tmp1
+POPS TF@$tmp1
+WRITE TF@$tmp1
+
+JUMP endif0
+LABEL else0_0
+CLEARS
+
+PUSHS GF@$x0
+PUSHS int@1
+EQS
+# elseif1 start
+PUSHS bool@true
+JUMPIFNEQS else0_1
+CLEARS
+
+PUSHS string@mrdat
+DEFVAR TF@$tmp2
+POPS TF@$tmp2
+WRITE TF@$tmp2
+
+# if0 else
+JUMP endif0
+LABEL else0_1
+CLEARS
+
+PUSHS string@kokot
+DEFVAR TF@$tmp3
+POPS TF@$tmp3
+WRITE TF@$tmp3
+
+# if0 end
+LABEL endif0
