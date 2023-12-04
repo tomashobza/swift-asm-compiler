@@ -4,6 +4,4 @@ func sqr(_ x: Int) -> Int {
 
 let x = readInt()!
 
-if true {}
-
 write(sqr(x))
