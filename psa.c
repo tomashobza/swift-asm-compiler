@@ -167,12 +167,16 @@ psa_return_type parse_expression_base(bool is_param)
 
             if (derivation_ok && isTokenBinaryOperator(top.type))
             {
-                Instruction inst = tokenTypeToStackInstruction(top.type);
-                if (inst == IDIVS && rule.expr_type == TYPE_DOUBLE)
+                Instruction_list inst_list = tokenTypeToStackInstruction(top.type);
+                for (int i = 0; i < inst_list.len; i++)
                 {
-                    inst = DIVS;
+                    Instruction inst = inst_list.inst[i];
+                    if (inst == IDIVS && rule.expr_type == TYPE_DOUBLE)
+                    {
+                        inst = DIVS;
+                    }
+                    generate_instruction(inst);
                 }
-                generate_instruction(inst);
             }
             else if (derivation_ok && (isTokenLiteral(top.type) || top.type == TOKEN_IDENTIFICATOR))
             {
