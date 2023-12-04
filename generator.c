@@ -219,7 +219,8 @@ char *format_token(Token token)
     {
         // Format string literals with "string@"
         formatted_value = malloc(strlen(token.token_value) + 8); //"string@" and '\0'
-        sprintf(formatted_value, "string@%s", token.token_value);
+        char *escaped_token_value = escapeString(token.token_value);
+        sprintf(formatted_value, "string@%s", escaped_token_value);
         break;
     }
     case TOKEN_BOOL:
@@ -1054,4 +1055,90 @@ Expression_type getReadType(Token token)
         return TYPE_DOUBLE;
     }
     return TYPE_INVALID;
+}
+
+char *escapeString(char *s)
+{
+    char *result = malloc(sizeof(char) * (strlen(s) * 4 + 1));
+
+    for (int i = 0; i < (int)strlen(s); i++)
+    /*
+    characters with ASCII code 000-032, 035 and 092 are escaped with \000-\032, \035 and \092.
+    check if the string contains any of these characters and escape them
+    */
+    {
+        if (s[i] == '\0')
+        {
+            strcat(result, "\\000");
+        }
+        else if (s[i] == '\a')
+        {
+            strcat(result, "\\007");
+        }
+        else if (s[i] == '\b')
+        {
+            strcat(result, "\\008");
+        }
+        else if (s[i] == '\t')
+        {
+            strcat(result, "\\009");
+        }
+        else if (s[i] == '\n')
+        {
+            strcat(result, "\\010");
+        }
+        else if (s[i] == '\v')
+        {
+            strcat(result, "\\011");
+        }
+        else if (s[i] == '\f')
+        {
+            strcat(result, "\\012");
+        }
+        else if (s[i] == '\r')
+        {
+            strcat(result, "\\013");
+        }
+        else if (s[i] == '\e')
+        {
+            strcat(result, "\\027");
+        }
+        else if (s[i] == '\"')
+        {
+            strcat(result, "\\034");
+        }
+        else if (s[i] == '\\')
+        {
+            strcat(result, "\\092");
+        }
+        else if (s[i] == '\?')
+        {
+            strcat(result, "\\063");
+        }
+        else if (s[i] == '\'')
+        {
+            strcat(result, "\\039");
+        }
+        else if (s[i] == ' ')
+        {
+            strcat(result, "\\032");
+        }
+        else if (s[i] == '\035')
+        {
+            strcat(result, "\\035");
+        }
+        else if (s[i] == '\\')
+        {
+            strcat(result, "\\092");
+        }
+        else
+        {
+            char *tmp = malloc(sizeof(char) * 2);
+            sprintf(tmp, "%c", s[i]);
+            strcat(result, tmp);
+            free(tmp);
+        }
+    }
+
+    return result;
 }

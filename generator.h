@@ -312,4 +312,12 @@ char *getBuiltInFunctionName(Token token);
  */
 Expression_type getReadType(Token token);
 
+/**
+ * @brief Replaces the special characters in the string with their escape sequences.
+ *
+ * @param str
+ * @return char*
+ */
+char *escapeString(char *str);
+
 #endif // GENERATOR_H
