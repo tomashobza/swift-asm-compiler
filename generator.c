@@ -1057,33 +1057,65 @@ Expression_type getReadType(Token token)
     return TYPE_INVALID;
 }
 
-char *escapeString(char *s)
+char *escapeString(char *input)
 {
-    char *result = malloc(strlen(s) + 1); // Alokace paměti pro výsledek
+    char *result = malloc(strlen(input) * 4 + 1);
     if (!result)
-        return NULL; // Kontrola, zda byla alokace úspěšná
+        return NULL;
 
-    int pos = 0; // Pozice v řetězci result
-    for (int i = 0; s[i] != '\0'; i++)
+    int pos = 0;
+    for (int i = 0; input[i] != '\0'; i++)
     {
-        if (s[i] == '\\' && s[i + 1] >= '0' && s[i + 1] <= '9')
+        switch (input[i])
         {
-            // Detekce escape sekvence
-            char code[4] = {0};          // Buffer pro uložení číselné části escape sekvence
-            strncpy(code, &s[i + 1], 3); // Kopírování číselné části
-            int ascii_code = atoi(code); // Převod na celé číslo
-
-            result[pos++] = (char)ascii_code; // Převod ASCII kódu na znak a uložení do výsledku
-            i += 3;                           // Posunutí indexu za escape sekvenci
-        }
-        else
-        {
-            // Běžný znak, kopírování do výsledku
-            result[pos++] = s[i];
+        case '\0':
+            strcat(result, "\\000");
+            pos += 4;
+            break;
+        case '\a':
+            strcat(result, "\\007");
+            pos += 4;
+            break;
+        case '\b':
+            strcat(result, "\\008");
+            pos += 4;
+            break;
+        case '\t':
+            strcat(result, "\\009");
+            pos += 4;
+            break;
+        case '\n':
+            strcat(result, "\\010");
+            pos += 4;
+            break;
+        case '\v':
+            strcat(result, "\\011");
+            pos += 4;
+            break;
+        case '\f':
+            strcat(result, "\\012");
+            pos += 4;
+            break;
+        case '\r':
+            strcat(result, "\\013");
+            pos += 4;
+            break;
+        case ' ':
+            strcat(result, "\\032");
+            pos += 4;
+            break;
+        case '#':
+            strcat(result, "\\035");
+            pos += 4;
+            break;
+        case '\\':
+            strcat(result, "\\092");
+            pos += 4;
+            break;
+        default:
+            result[pos++] = input[i];
+            result[pos] = '\0'; // Udržujeme řetězec ukončený
         }
     }
-    result[pos] = '\0'; // Ukončení řetězce
-    return result;
-
     return result;
 }

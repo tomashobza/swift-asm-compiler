@@ -156,9 +156,11 @@ bool LOCAL_STMT(Token *token, sym_items *items)
     {
     // STMT -> IF_STMT
     case TOKEN_IF:
+    {
         bool res = IF_STMT(token, items);
         run_control(token, items, IF_END);
         return res;
+    }
     // STMT -> LOAD_ID
     case TOKEN_IDENTIFICATOR:
     case TOKEN_FUNC_ID:
