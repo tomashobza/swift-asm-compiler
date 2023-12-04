@@ -55,6 +55,12 @@ typedef struct
     int line_num;
 } PSA_Token;
 
+typedef struct
+{
+    Instruction inst[10];
+    int len;
+} Instruction_list;
+
 /**
  * @brief PSA_Token that represents the end of the file. It is used as a bottom of the stack and for error states.
  */
@@ -222,7 +228,7 @@ Expression_type removeTypeNil(Expression_type expr_type);
  * @param tt token type
  * @return Instruction
  */
-Instruction tokenTypeToStackInstruction(Token_type tt);
+Instruction_list tokenTypeToStackInstruction(Token_type tt);
 
 // PSA FUNCTIONS
 
@@ -325,7 +331,7 @@ psa_return_type parse_expression_param();
  * @param num_of_brackets number of brackets in the expression (NULL if not needed)
  * @return PSA_Token - next token
  */
-PSA_Token readNextToken(PSA_Token_stack *s, char *next_token_error, int *num_of_brackets);
+PSA_Token readNextToken(PSA_Token_stack *s, char *next_token_error, int *num_of_brackets, bool ignore_func_call);
 
 /**
  * @brief Prints the stack of tokens recursively.

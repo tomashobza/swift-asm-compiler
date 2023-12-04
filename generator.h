@@ -90,12 +90,56 @@ typedef enum
 } Instruction;
 
 /**
+ * @brief Generates a label operand for IFJcode23.
+ *
+ * @param name Name of the label.
+ * @return char*
+ */
+char *label(char *name);
+
+/**
+ * @brief Generates a type operand for IFJcode23.
+ *
+ * @param type Type of the expression.
+ * @return char*
+ */
+char *type(Expression_type type);
+
+/**
+ * @brief Generates a variable operand for IFJcode23.
+ *
+ * @param id Token with the id of the variable.
+ * @param scope -1 for temporary, 0 for global, 1+ for local
+ * @param has_suffix Whether the variable has a suffix with the scope index
+ * @return char*
+ */
+char *variable(char *id, int scope, bool has_suffix);
+
+/**
+ * @brief Generates a symbol operand for IFJcode23.
+ *
+ * @param token Token with type and value.
+ * @return char*
+ */
+char *literal(Token token);
+
+/**
+ * @brief Generates a symbol operand for IFJcode23.
+ *
+ * @param symbol Token with type and value.
+ * @return char*
+ */
+char *symbol(Token symbol);
+
+// TODO: delete unused
+
+/**
  * @brief Returns the format of symb for IFJcode23.
  *
  * @param token Token with type and value.
  * @return char* - string with the variable in the format for IFJcode23
  */
-char *symb_resolve(Token *token);
+char *symb_resolve(Token token);
 
 /**
  * @brief Returns the format of the literal for IFJcode23.
@@ -103,15 +147,7 @@ char *symb_resolve(Token *token);
  * @param token Token record of the literal.
  * @return char* - string with the literal in the format for IFJcode23
  */
-char *format_token(Token *token);
-
-/**
- * @brief Returns the format of the literal for IFJcode23.
- *
- * @param token Token record of the literal.
- * @return char* - string with the literal in the format for IFJcode23
- */
-char *format_token_for_IFJcode23(Token *token);
+char *format_token(Token token);
 
 /**
  * @brief -
@@ -126,7 +162,7 @@ void handle_0_operand_instructions(Instruction inst);
  * @param inst
  * @param symb
  */
-void handle_1_operand_instructions(Instruction inst, Token op1);
+void handle_1_operand_instructions(Instruction inst, char *op1);
 
 /**
  * @brief <var> <symb>/<var> <type>
@@ -135,7 +171,7 @@ void handle_1_operand_instructions(Instruction inst, Token op1);
  * @param var
  * @param symb
  */
-void handle_2_operand_instructions(Instruction inst, Token op1, Token op2);
+void handle_2_operand_instructions(Instruction inst, char *op1, char *op2);
 
 /**
  * @brief <var> <symb> <symb>/<label> <symb> <symb>
@@ -145,26 +181,97 @@ void handle_2_operand_instructions(Instruction inst, Token op1, Token op2);
  * @param symb1
  * @param symb2
  */
-void handle_3_operand_instructions(Instruction inst, Token op1, Token op2, Token op3);
+void handle_3_operand_instructions(Instruction inst, char *op1, char *op2, char *op3);
 
 /**
- * @brief Based on the number of tokens provided, calls the appropriate function to handle the instruction.
+ * @brief Based on the number of operands provided, calls the appropriate function to handle the instruction.
  *
  * @param inst Instruction to be handled.
- * @param tokens Array of tokens.
- * @param tokens_count Number of tokens in the array.
+ * @param operands Array of operands.
+ * @param operands_count Number of operands in the array.
  */
-void processInstruction(Instruction inst, Token *tokens, int tokens_count);
+void processInstruction(Instruction inst, char **operands, int operands_count);
 
 /**
  * @brief Macro that generates the IFJcode23 instruction based on the given arguments.
  */
-#define generate_instruction(instruction, ...)                                   \
-    do                                                                           \
-    {                                                                            \
-        Token tokens[] = {__VA_ARGS__};                                          \
-        processInstruction(instruction, tokens, sizeof(tokens) / sizeof(Token)); \
+#define generate_instruction(instruction, ...)                                        \
+    do                                                                                \
+    {                                                                                 \
+        char *operands[] = {__VA_ARGS__};                                             \
+        processInstruction(instruction, operands, sizeof(operands) / sizeof(char *)); \
     } while (0)
+
+/**
+ * @brief Prints the output code to stdout.
+ */
+void print_out_code();
+
+/**
+ * @brief Generates the header of the IFJcode23 function.
+ *
+ * @param func_item symtable item of the function.
+ */
+void generate_func_header(symtable_item func_item);
+
+/**
+ * @brief Generates the end of the IFJcode23 function.
+ *
+ * @param func_item symtable item of the function.
+ */
+void generate_func_end(symtable_item func_item);
+
+/**
+ * @brief Generates the IFJcode23 built-in function call.
+ *
+ * @param func Token record of the function.
+ */
+void generate_builtin_func_call(Token func);
+
+/**
+ * @brief Generates the IFJcode23 if header.
+ */
+void generate_if_start();
+
+/**
+ * @brief Generates the IFJcode23 the else part of the elseif.
+ */
+void generate_elseif_else();
+
+/**
+ * @brief Generates the IFJcode23 the if part of the elseif.
+ */
+void generate_elseif_if();
+
+/**
+ * @brief Generates the IFJcode23 else header.
+ */
+void generate_else();
+
+/**
+ * @brief Generates the IFJcode23 if end.
+ */
+void generate_if_end();
+
+/**
+ * @brief Generates the IFJcode23 while header.
+ */
+void generate_while_start();
+
+/**
+ * @brief Generates the IFJcode23 while condition.
+ */
+void generate_while_condition();
+
+/**
+ * @brief Generates the IFJcode23 while end.
+ *
+ */
+void generate_while_end();
+
+void generate_implicit_init(symtable_item var_item);
+
+/// UTILITY FUNCTIONS
 
 /**
  * @brief Converts the instruction to string.
@@ -175,13 +282,44 @@ void processInstruction(Instruction inst, Token *tokens, int tokens_count);
 char *instructionToString(Instruction in);
 
 /**
- * @brief Prints the output code to stdout.
+ * @brief Converts the string to instruction.
+ *
+ * @param str String to be converted.
+ * @return Instruction - instruction
  */
-void print_out_code();
+Instruction stringToInstruction(char *str);
 
 /**
- * @brief Generates the header of the IFJcode23 file.
+ * @brief Checks if the token is a built-in function.
+ *
+ * @param token Function id token
+ * @return true
+ * @return false
  */
-void generate_func_header(symtable_item func_item);
+bool isBuiltInFunction(Token token);
+
+/**
+ * @brief Gets the intruction associated with the built-in function.
+ *
+ * @param token
+ * @return char*
+ */
+char *getBuiltInFunctionName(Token token);
+
+/**
+ * @brief Returns the data type of the read function
+ *
+ * @param token
+ * @return Token
+ */
+Expression_type getReadType(Token token);
+
+/**
+ * @brief Replaces the special characters in the string with their escape sequences.
+ *
+ * @param input
+ * @return char*
+ */
+char *escapeString(char *input);
 
 #endif // GENERATOR_H

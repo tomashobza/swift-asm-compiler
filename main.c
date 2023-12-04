@@ -27,6 +27,11 @@ int main(void)
     {
         return INTERNAL_ERR;
     }
+    fprintf(out_code_file, ".IFJcode23\n");
+    generate_instruction(CREATEFRAME);
+    generate_instruction(PUSHFRAME);
+    generate_instruction(CREATEFRAME);
+    fprintf(out_code_file, "\n");
 
     scanner_init();
 
@@ -39,5 +44,6 @@ int main(void)
     {
         print_out_code();
     }
+    fclose(out_code_file);
     return error_code;
 }
