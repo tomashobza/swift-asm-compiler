@@ -132,6 +132,16 @@ int run_control(Token *token, sym_items *items, Control_state sem_rule)
     case IF_END:
         generate_if_end();
         break;
+    case WHILE_START:
+        generate_while_start();
+        break;
+    case WHILE_COND:
+        generate_while_condition();
+        break;
+    case WHILE_END:
+        run_control(token, items, POP_SCOPE);
+        generate_while_end();
+        break;
     case LET_IN_IF:
         generate_instruction(PUSHS, symbol((Token){.type = TOKEN_IDENTIFICATOR, .token_value = token->token_value, .line_num = token->line_num}));
         generate_instruction(PUSHS, literal((Token){.type = TOKEN_NIL, .token_value = "nil", .line_num = token->line_num}));

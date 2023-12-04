@@ -426,8 +426,8 @@ bool FUNC_WHILE(Token *token, sym_items *items)
     {
     // FUNC_WHILE -> while EXP { FUNC_STMT_LIST }
     case TOKEN_WHILE:
-        return cmp_type(token, items, TOKEN_WHILE, SEM_NONE) && EXP(token, items, COND_EXP) && cmp_type(token, items, TOKEN_L_CURLY, SEM_NONE) &&
-               FUNC_STMT_LIST(token, items) && cmp_type(token, items, TOKEN_R_CURLY, POP_SCOPE);
+        return cmp_type(token, items, TOKEN_WHILE, WHILE_START) && EXP(token, items, COND_EXP) && cmp_type(token, items, TOKEN_L_CURLY, WHILE_COND) &&
+               FUNC_STMT_LIST(token, items) && cmp_type(token, items, TOKEN_R_CURLY, WHILE_END);
     default:
         return false;
     }
@@ -600,8 +600,8 @@ bool WHILE_STMT(Token *token, sym_items *items)
     {
     // WHILE_STMT -> while EXP { LOCAL_STMT_LIST }
     case TOKEN_WHILE:
-        return cmp_type(token, items, TOKEN_WHILE, SEM_NONE) && EXP(token, items, COND_EXP) && cmp_type(token, items, TOKEN_L_CURLY, SEM_NONE) &&
-               LOCAL_STMT_LIST(token, items) && cmp_type(token, items, TOKEN_R_CURLY, POP_SCOPE);
+        return cmp_type(token, items, TOKEN_WHILE, WHILE_START) && EXP(token, items, COND_EXP) && cmp_type(token, items, TOKEN_L_CURLY, WHILE_COND) &&
+               LOCAL_STMT_LIST(token, items) && cmp_type(token, items, TOKEN_R_CURLY, WHILE_END);
     default:
         return false;
     }
