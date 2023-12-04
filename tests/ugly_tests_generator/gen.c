@@ -295,6 +295,46 @@ bool STMT_LIST()
         return false;
     }
 }
+bool LOCAL_STMT_LIST()
+{
+    PRINT_FUNC_NAME();
+    Token_type availableTokens[] = {
+        TOKEN_EOF,
+        TOKEN_R_CURLY,
+        TOKEN_R_CURLY,
+        TOKEN_IF,
+        TOKEN_IDENTIFICATOR,
+        TOKEN_FUNC_ID,
+        TOKEN_WHILE,
+        TOKEN_VAR,
+        TOKEN_LET,
+    };
+    int numAvailableTokens = sizeof(availableTokens) / sizeof(Token_type);
+
+    shuffleTokens(availableTokens, numAvailableTokens);
+
+    // Select the first token after shuffle
+    Token_type selectedToken = availableTokens[0];
+    fprintf(stderr, RED "%d\n" RESET, selectedToken);
+
+    switch (selectedToken)
+    {
+    // STMT_LIST -> eps
+    case TOKEN_EOF:
+    case TOKEN_R_CURLY:
+        return true;
+    // STMT_LIST -> STMT STMT_LIST
+    case TOKEN_IF:
+    case TOKEN_IDENTIFICATOR:
+    case TOKEN_FUNC_ID:
+    case TOKEN_WHILE:
+    case TOKEN_VAR:
+    case TOKEN_LET:
+        return STMT() && STMT_LIST();
+    default:
+        return false;
+    }
+}
 
 bool STMT()
 {
@@ -321,6 +361,47 @@ bool STMT()
     // STMT -> DEF_FUNC
     case TOKEN_FUNC:
         return DEF_FUNC();
+    // STMT -> IF_STMT
+    case TOKEN_IF:
+        return IF_STMT();
+    // STMT -> LOAD_ID
+    case TOKEN_IDENTIFICATOR:
+    case TOKEN_FUNC_ID:
+        return LOAD_ID();
+    // STMT -> WHILE_STMT
+    case TOKEN_WHILE:
+        return WHILE_STMT();
+    // STMT -> VAR_LET
+    case TOKEN_VAR:
+        return VAR_LET();
+    // STMT -> VAR_LET
+    case TOKEN_LET:
+        return VAR_LET();
+    default:
+        return false;
+    }
+}
+bool LOCAL_STMT()
+{
+    PRINT_FUNC_NAME();
+    Token_type availableTokens[] = {
+        TOKEN_IF,
+        TOKEN_IDENTIFICATOR,
+        TOKEN_FUNC_ID,
+        TOKEN_WHILE,
+        TOKEN_VAR,
+        TOKEN_LET,
+    };
+    int numAvailableTokens = sizeof(availableTokens) / sizeof(Token_type);
+
+    shuffleTokens(availableTokens, numAvailableTokens);
+
+    // Select the first token after shuffle
+    Token_type selectedToken = availableTokens[0];
+    fprintf(stderr, RED "%d\n" RESET, selectedToken);
+
+    switch (selectedToken)
+    {
     // STMT -> IF_STMT
     case TOKEN_IF:
         return IF_STMT();
@@ -815,6 +896,31 @@ bool FUNC_IF()
     }
 }
 
+bool FUNC_ELSE_IF()
+{
+    PRINT_FUNC_NAME();
+    Token_type availableTokens[] = {
+        TOKEN_IF,
+    };
+    int numAvailableTokens = sizeof(availableTokens) / sizeof(Token_type);
+
+    shuffleTokens(availableTokens, numAvailableTokens);
+
+    // Select the first token after shuffle
+    Token_type selectedToken = availableTokens[0];
+    fprintf(stderr, RED "%d\n" RESET, selectedToken);
+
+    switch (selectedToken)
+    {
+    // 	FUNC_IF -> if IF_COND { FUNC_STMT_LIST } FUNC_ELSE_CLAUSE
+    case TOKEN_IF:
+        return cmp_type(TOKEN_IF) && IF_COND() && cmp_type(TOKEN_L_CURLY) &&
+               FUNC_STMT_LIST() && cmp_type(TOKEN_R_CURLY) && FUNC_ELSE_CLAUSE();
+    default:
+        return false;
+    }
+}
+
 bool FUNC_ELSE_CLAUSE()
 {
     PRINT_FUNC_NAME();
@@ -886,13 +992,38 @@ bool FUNC_AFTER_ELSE()
     // FUNC_AFTER_ELSE -> FUNC_IF
     case TOKEN_IF:
         printf("\n");
-        return FUNC_IF();
+        return FUNC_ELSE_IF();
     default:
         return false;
     }
 }
 
 bool IF_STMT()
+{
+    PRINT_FUNC_NAME();
+    Token_type availableTokens[] = {
+        TOKEN_IF,
+    };
+    int numAvailableTokens = sizeof(availableTokens) / sizeof(Token_type);
+
+    shuffleTokens(availableTokens, numAvailableTokens);
+
+    // Select the first token after shuffle
+    Token_type selectedToken = availableTokens[0];
+    fprintf(stderr, RED "%d\n" RESET, selectedToken);
+
+    switch (selectedToken)
+    {
+    // IF_STMT -> if EXP { STMT_LIST } ELSE_CLAUSE
+    case TOKEN_IF:
+        return cmp_type(TOKEN_IF) && IF_COND() && cmp_type(TOKEN_L_CURLY) &&
+               LOCAL_STMT_LIST() && cmp_type(TOKEN_R_CURLY) && ELSE_CLAUSE();
+    default:
+        return false;
+    }
+}
+
+bool ELSE_IF_STMT()
 {
     PRINT_FUNC_NAME();
     Token_type availableTokens[] = {
@@ -1028,7 +1159,7 @@ bool AFTER_ELSE()
         return cmp_type(TOKEN_L_CURLY) && STMT_LIST() && cmp_type(TOKEN_R_CURLY);
     // AFTER_ELSE -> IF_STMT
     case TOKEN_IF:
-        return IF_STMT();
+        return ELSE_IF_STMT();
     default:
         return false;
     }
@@ -1053,7 +1184,7 @@ bool WHILE_STMT()
     // WHILE_STMT -> while EXP { STMT_LIST }
     case TOKEN_WHILE:
         return cmp_type(TOKEN_WHILE) && EXP(selectedToken) && cmp_type(TOKEN_L_CURLY) &&
-               STMT_LIST() && cmp_type(TOKEN_R_CURLY);
+               LOCAL_STMT_LIST() && cmp_type(TOKEN_R_CURLY);
     default:
         return false;
     }
