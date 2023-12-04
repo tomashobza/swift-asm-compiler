@@ -1,5 +1,7 @@
 .IFJcode23
 CREATEFRAME
+PUSHFRAME
+CREATEFRAME
 
 # variable definition
 DEFVAR GF@$a0

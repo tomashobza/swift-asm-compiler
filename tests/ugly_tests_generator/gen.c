@@ -178,7 +178,7 @@ void token_type_print(Token_type type)
         printf(" nil");
         break; // nil has been read 42
     case TOKEN_DOUBLE_DOT:
-        printf(" :");
+        printf(" : ");
         break; // : has been read 43
     case TOKEN_NOT:
         printf("!");
@@ -330,7 +330,7 @@ bool LOCAL_STMT_LIST()
     case TOKEN_WHILE:
     case TOKEN_VAR:
     case TOKEN_LET:
-        return STMT() && STMT_LIST();
+        return LOCAL_STMT() && LOCAL_STMT_LIST();
     default:
         return false;
     }
@@ -1014,7 +1014,7 @@ bool IF_STMT()
 
     switch (selectedToken)
     {
-    // IF_STMT -> if EXP { STMT_LIST } ELSE_CLAUSE
+    // IF_STMT -> if EXP { LOCAL_STMT_LIST } ELSE_CLAUSE
     case TOKEN_IF:
         return cmp_type(TOKEN_IF) && IF_COND() && cmp_type(TOKEN_L_CURLY) &&
                LOCAL_STMT_LIST() && cmp_type(TOKEN_R_CURLY) && ELSE_CLAUSE();
