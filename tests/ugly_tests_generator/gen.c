@@ -9,6 +9,9 @@
 
 #include "gen.h"
 
+int indentationLevel = 0;
+#define PRINT_FUNC_NAME() fprintf(stderr, CYAN "%s\n" RESET, __func__);
+
 void shuffleTokens(Token_type *tokens, int size)
 {
     for (int i = size - 1; i > 0; i--)
@@ -20,21 +23,33 @@ void shuffleTokens(Token_type *tokens, int size)
     }
 }
 
+void printIndentation()
+{
+    for (int i = 0; i < indentationLevel; i++)
+    {
+        printf("    "); // Předpokládá se odsazení čtyřmi mezerami
+    }
+}
+
 void token_type_print(Token_type type)
 {
     switch (type)
     {
     case TOKEN_IF:
-        printf("\nif ");
+        printIndentation();
+        printf("if ");
         break; // Keyword if 0
     case TOKEN_ELSE:
-        printf("\nelse ");
+        printIndentation();
+        printf("else ");
         break; // Keyword else 1
     case TOKEN_WHILE:
-        printf("\nwhile ");
+        printIndentation();
+        printf("while ");
         break; // Keyword while 2
     case TOKEN_RETURN:
-        printf("\n return ");
+        printIndentation();
+        printf("return ");
         break; // Keyword return 3
     case TOKEN_VAR:
         printf("var ");
@@ -59,7 +74,7 @@ void token_type_print(Token_type type)
         break; // Keyword Double 10
     case TOKEN_TYPE_BOOL:
         printf("Bool");
-        break; // Keyword Bool 11
+        break; // Keyword Boola 11
     case TOKEN_TYPE_STRING_NIL:
         printf("String?");
         break; // Keyword String? 12
@@ -73,12 +88,14 @@ void token_type_print(Token_type type)
         printf("Bool?");
         break; // Keyword Bool? 15
     case TOKEN_FUNC:
+        printIndentation();
         printf("func ");
         break; // Keyword func 16
     case TOKEN_IDENTIFICATOR:
         printf("x");
         break; // Identificator 17
     case TOKEN_EOF:
+        fprintf(stderr, "EOF\n");
         printf(" ");
         break; // EOF 18
     case TOKEN_INT:
@@ -89,10 +106,14 @@ void token_type_print(Token_type type)
         break; // Decimal number 20
     case TOKEN_BOOL:
         printf("true");
-        break; // Bool value 21;
+        break;
+        // Bool value 21;
     case TOKEN_EXP:
         printf("5 + 5");
         break; // Exponent 22
+    case TOKEN_FUNC_CALL:
+        printf("foo()");
+        break; // Function call foo() 23
     case TOKEN_STRING:
         printf("\"tvoje máma je vole\"");
         break; // String 23
@@ -139,16 +160,19 @@ void token_type_print(Token_type type)
         printf(" ) ");
         break; // Right bracket ) 37
     case TOKEN_R_CURLY:
-        printf(" }\n");
+        indentationLevel--;
+        printIndentation();
+        printf("}\n");
         break; // Right bracket } 38
     case TOKEN_L_CURLY:
         printf(" {\n");
+        indentationLevel++;
         break; // Left bracket { 39
     case TOKEN_COMMA:
         printf(", ");
         break; // Comma , 40
     case TOKEN_ARROW:
-        printf(" ->");
+        printf(" -> ");
         break; // Arrow -> 41
     case TOKEN_NIL:
         printf(" nil");
@@ -185,15 +209,17 @@ void token_type_print(Token_type type)
 
 bool cmp_type(Token_type type)
 {
+    // printf("\nIndetation lvl: %d\n", indentationLevel);
     token_type_print(type);
-    usleep(50000);
+    // usleep(10000);
     return true;
 }
 
 bool START()
 {
+    PRINT_FUNC_NAME();
     Token_type availableTokens[] = {
-        TOKEN_EOF,
+        // TOKEN_EOF,
         TOKEN_FUNC,
         TOKEN_IF,
         TOKEN_IDENTIFICATOR,
@@ -205,14 +231,12 @@ bool START()
     int numAvailableTokens = sizeof(availableTokens) / sizeof(Token_type);
 
     // High resolution time for seeding
-    struct timeval time;
-    gettimeofday(&time, NULL);
-    srand((time.tv_sec * 1000) + (time.tv_usec / 1000));
 
     shuffleTokens(availableTokens, numAvailableTokens);
 
     // Select the first token after shuffle
     Token_type selectedToken = availableTokens[0];
+    fprintf(stderr, RED "%d\n" RESET, selectedToken);
 
     switch (selectedToken)
     {
@@ -233,8 +257,11 @@ bool START()
 
 bool STMT_LIST()
 {
+    PRINT_FUNC_NAME();
     Token_type availableTokens[] = {
         TOKEN_EOF,
+        TOKEN_R_CURLY,
+        TOKEN_R_CURLY,
         TOKEN_FUNC,
         TOKEN_IF,
         TOKEN_IDENTIFICATOR,
@@ -246,14 +273,12 @@ bool STMT_LIST()
     int numAvailableTokens = sizeof(availableTokens) / sizeof(Token_type);
 
     // High resolution time for seeding
-    struct timeval time;
-    gettimeofday(&time, NULL);
-    srand((time.tv_sec * 1000) + (time.tv_usec / 1000));
 
     shuffleTokens(availableTokens, numAvailableTokens);
 
     // Select the first token after shuffle
     Token_type selectedToken = availableTokens[0];
+    fprintf(stderr, RED "%d\n" RESET, selectedToken);
 
     switch (selectedToken)
     {
@@ -277,8 +302,8 @@ bool STMT_LIST()
 
 bool STMT()
 {
+    PRINT_FUNC_NAME();
     Token_type availableTokens[] = {
-        TOKEN_EOF,
         TOKEN_FUNC,
         TOKEN_IF,
         TOKEN_IDENTIFICATOR,
@@ -290,14 +315,12 @@ bool STMT()
     int numAvailableTokens = sizeof(availableTokens) / sizeof(Token_type);
 
     // High resolution time for seeding
-    struct timeval time;
-    gettimeofday(&time, NULL);
-    srand((time.tv_sec * 1000) + (time.tv_usec / 1000));
 
     shuffleTokens(availableTokens, numAvailableTokens);
 
     // Select the first token after shuffle
     Token_type selectedToken = availableTokens[0];
+    fprintf(stderr, RED "%d\n" RESET, selectedToken);
 
     switch (selectedToken)
     {
@@ -327,6 +350,7 @@ bool STMT()
 
 bool VAR_LET()
 {
+    PRINT_FUNC_NAME();
     Token_type availableTokens[] = {
         TOKEN_VAR,
         TOKEN_LET,
@@ -334,14 +358,14 @@ bool VAR_LET()
     int numAvailableTokens = sizeof(availableTokens) / sizeof(Token_type);
 
     // High resolution time for seeding
-    struct timeval time;
-    gettimeofday(&time, NULL);
-    srand((time.tv_sec * 1000) + (time.tv_usec / 1000));
 
     shuffleTokens(availableTokens, numAvailableTokens);
 
     // Select the first token after shuffle
     Token_type selectedToken = availableTokens[0];
+    fprintf(stderr, RED "%d\n" RESET, selectedToken);
+
+    printIndentation();
 
     switch (selectedToken)
     {
@@ -358,6 +382,7 @@ bool VAR_LET()
 
 bool VAR_SCOPE()
 {
+    PRINT_FUNC_NAME();
     Token_type availableTokens[] = {
         TOKEN_VAR,
         TOKEN_LET,
@@ -365,14 +390,12 @@ bool VAR_SCOPE()
     int numAvailableTokens = sizeof(availableTokens) / sizeof(Token_type);
 
     // High resolution time for seeding
-    struct timeval time;
-    gettimeofday(&time, NULL);
-    srand((time.tv_sec * 1000) + (time.tv_usec / 1000));
 
     shuffleTokens(availableTokens, numAvailableTokens);
 
     // Select the first token after shuffle
     Token_type selectedToken = availableTokens[0];
+    fprintf(stderr, RED "%d\n" RESET, selectedToken);
 
     switch (selectedToken)
     {
@@ -387,6 +410,7 @@ bool VAR_SCOPE()
 
 bool TYPE_AND_ASIGN()
 {
+    PRINT_FUNC_NAME();
     Token_type availableTokens[] = {
         TOKEN_DOUBLE_DOT,
         TOKEN_ASSIGN,
@@ -394,14 +418,12 @@ bool TYPE_AND_ASIGN()
     int numAvailableTokens = sizeof(availableTokens) / sizeof(Token_type);
 
     // High resolution time for seeding
-    struct timeval time;
-    gettimeofday(&time, NULL);
-    srand((time.tv_sec * 1000) + (time.tv_usec / 1000));
 
     shuffleTokens(availableTokens, numAvailableTokens);
 
     // Select the first token after shuffle
     Token_type selectedToken = availableTokens[0];
+    fprintf(stderr, RED "%d\n" RESET, selectedToken);
 
     switch (selectedToken)
     {
@@ -410,7 +432,7 @@ bool TYPE_AND_ASIGN()
         return cmp_type(TOKEN_DOUBLE_DOT) && D_TYPE() && R_FLEX();
     // TYPE_AND_ASIGN -> = EXP
     case TOKEN_ASSIGN:
-        return cmp_type(TOKEN_ASSIGN) && EXP();
+        return cmp_type(TOKEN_ASSIGN) && EXP(selectedToken);
     default:
         return false;
     }
@@ -418,6 +440,7 @@ bool TYPE_AND_ASIGN()
 
 bool R_FLEX()
 {
+    PRINT_FUNC_NAME();
     Token_type availableTokens[] = {
         TOKEN_EOF,
         TOKEN_IDENTIFICATOR,
@@ -433,20 +456,18 @@ bool R_FLEX()
     int numAvailableTokens = sizeof(availableTokens) / sizeof(Token_type);
 
     // High resolution time for seeding
-    struct timeval time;
-    gettimeofday(&time, NULL);
-    srand((time.tv_sec * 1000) + (time.tv_usec / 1000));
 
     shuffleTokens(availableTokens, numAvailableTokens);
 
     // Select the first token after shuffle
     Token_type selectedToken = availableTokens[0];
+    fprintf(stderr, RED "%d\n" RESET, selectedToken);
 
     switch (selectedToken)
     {
     // R_FLEX -> = EXP
     case TOKEN_ASSIGN:
-        return cmp_type(TOKEN_ASSIGN) && EXP();
+        return cmp_type(TOKEN_ASSIGN) && EXP(selectedToken);
     // R_FLEX -> eps
     case TOKEN_EOF:
     case TOKEN_IDENTIFICATOR:
@@ -466,6 +487,7 @@ bool R_FLEX()
 
 bool D_TYPE()
 {
+    PRINT_FUNC_NAME();
     Token_type availableTokens[] = {
         TOKEN_TYPE_STRING,
         TOKEN_TYPE_INT,
@@ -479,14 +501,12 @@ bool D_TYPE()
     int numAvailableTokens = sizeof(availableTokens) / sizeof(Token_type);
 
     // High resolution time for seeding
-    struct timeval time;
-    gettimeofday(&time, NULL);
-    srand((time.tv_sec * 1000) + (time.tv_usec / 1000));
 
     shuffleTokens(availableTokens, numAvailableTokens);
 
     // Select the first token after shuffle
     Token_type selectedToken = availableTokens[0];
+    fprintf(stderr, RED "%d\n" RESET, selectedToken);
 
     switch (selectedToken)
     {
@@ -513,20 +533,19 @@ bool D_TYPE()
 
 bool DEF_FUNC()
 {
+    PRINT_FUNC_NAME();
     Token_type availableTokens[] = {
         TOKEN_FUNC,
     };
     int numAvailableTokens = sizeof(availableTokens) / sizeof(Token_type);
 
     // High resolution time for seeding
-    struct timeval time;
-    gettimeofday(&time, NULL);
-    srand((time.tv_sec * 1000) + (time.tv_usec / 1000));
 
     shuffleTokens(availableTokens, numAvailableTokens);
 
     // Select the first token after shuffle
     Token_type selectedToken = availableTokens[0];
+    fprintf(stderr, RED "%d\n" RESET, selectedToken);
 
     switch (selectedToken)
     {
@@ -542,6 +561,7 @@ bool DEF_FUNC()
 
 bool P_LIST()
 {
+    PRINT_FUNC_NAME();
     Token_type availableTokens[] = {
         TOKEN_IDENTIFICATOR,
         TOKEN_R_BRACKET,
@@ -549,14 +569,12 @@ bool P_LIST()
     int numAvailableTokens = sizeof(availableTokens) / sizeof(Token_type);
 
     // High resolution time for seeding
-    struct timeval time;
-    gettimeofday(&time, NULL);
-    srand((time.tv_sec * 1000) + (time.tv_usec / 1000));
 
     shuffleTokens(availableTokens, numAvailableTokens);
 
     // Select the first token after shuffle
     Token_type selectedToken = availableTokens[0];
+    fprintf(stderr, RED "%d\n" RESET, selectedToken);
 
     switch (selectedToken)
     {
@@ -573,27 +591,28 @@ bool P_LIST()
 
 bool PARAM()
 {
+    PRINT_FUNC_NAME();
     Token_type availableTokens[] = {
         TOKEN_IDENTIFICATOR,
     };
     int numAvailableTokens = sizeof(availableTokens) / sizeof(Token_type);
 
     // High resolution time for seeding
-    struct timeval time;
-    gettimeofday(&time, NULL);
-    srand((time.tv_sec * 1000) + (time.tv_usec / 1000));
 
     shuffleTokens(availableTokens, numAvailableTokens);
 
     // Select the first token after shuffle
     Token_type selectedToken = availableTokens[0];
+    fprintf(stderr, RED "%d\n" RESET, selectedToken);
 
     switch (selectedToken)
     {
     // PARAM -> id id : D_TYPE SEP
     case TOKEN_IDENTIFICATOR:
-        return cmp_type(TOKEN_IDENTIFICATOR) && cmp_type(TOKEN_IDENTIFICATOR) && cmp_type(TOKEN_DOUBLE_DOT) &&
-               D_TYPE() && P_SEP();
+        bool p1 = cmp_type(TOKEN_IDENTIFICATOR);
+        printf(" ");
+        bool p2 = cmp_type(TOKEN_IDENTIFICATOR) && cmp_type(TOKEN_DOUBLE_DOT) && D_TYPE() && P_SEP();
+        return p1 && p2;
     default:
         return false;
     }
@@ -601,6 +620,7 @@ bool PARAM()
 
 bool P_SEP()
 {
+    PRINT_FUNC_NAME();
     Token_type availableTokens[] = {
         TOKEN_COMMA,
         TOKEN_R_BRACKET,
@@ -608,14 +628,12 @@ bool P_SEP()
     int numAvailableTokens = sizeof(availableTokens) / sizeof(Token_type);
 
     // High resolution time for seeding
-    struct timeval time;
-    gettimeofday(&time, NULL);
-    srand((time.tv_sec * 1000) + (time.tv_usec / 1000));
 
     shuffleTokens(availableTokens, numAvailableTokens);
 
     // Select the first token after shuffle
     Token_type selectedToken = availableTokens[0];
+    fprintf(stderr, RED "%d\n" RESET, selectedToken);
 
     switch (selectedToken)
     {
@@ -632,6 +650,7 @@ bool P_SEP()
 
 bool RET_TYPE()
 {
+    PRINT_FUNC_NAME();
     Token_type availableTokens[] = {
         TOKEN_L_CURLY,
         TOKEN_ARROW,
@@ -639,14 +658,12 @@ bool RET_TYPE()
     int numAvailableTokens = sizeof(availableTokens) / sizeof(Token_type);
 
     // High resolution time for seeding
-    struct timeval time;
-    gettimeofday(&time, NULL);
-    srand((time.tv_sec * 1000) + (time.tv_usec / 1000));
 
     shuffleTokens(availableTokens, numAvailableTokens);
 
     // Select the first token after shuffle
     Token_type selectedToken = availableTokens[0];
+    fprintf(stderr, RED "%d\n" RESET, selectedToken);
 
     switch (selectedToken)
     {
@@ -663,6 +680,7 @@ bool RET_TYPE()
 
 bool FUNC_STMT_LIST()
 {
+    PRINT_FUNC_NAME();
     Token_type availableTokens[] = {
         TOKEN_IDENTIFICATOR,
         TOKEN_FUNC_ID,
@@ -672,18 +690,17 @@ bool FUNC_STMT_LIST()
         TOKEN_WHILE,
         TOKEN_IF,
         TOKEN_R_CURLY,
+        TOKEN_R_CURLY,
     };
     int numAvailableTokens = sizeof(availableTokens) / sizeof(Token_type);
 
     // High resolution time for seeding
-    struct timeval time;
-    gettimeofday(&time, NULL);
-    srand((time.tv_sec * 1000) + (time.tv_usec / 1000));
 
     shuffleTokens(availableTokens, numAvailableTokens);
 
     // Select the first token after shuffle
     Token_type selectedToken = availableTokens[0];
+    fprintf(stderr, RED "%d\n" RESET, selectedToken);
 
     switch (selectedToken)
     {
@@ -706,6 +723,7 @@ bool FUNC_STMT_LIST()
 
 bool FUNC_STMT()
 {
+    PRINT_FUNC_NAME();
     Token_type availableTokens[] = {
         TOKEN_IDENTIFICATOR,
         TOKEN_FUNC_ID,
@@ -718,14 +736,12 @@ bool FUNC_STMT()
     int numAvailableTokens = sizeof(availableTokens) / sizeof(Token_type);
 
     // High resolution time for seeding
-    struct timeval time;
-    gettimeofday(&time, NULL);
-    srand((time.tv_sec * 1000) + (time.tv_usec / 1000));
 
     shuffleTokens(availableTokens, numAvailableTokens);
 
     // Select the first token after shuffle
     Token_type selectedToken = availableTokens[0];
+    fprintf(stderr, RED "%d\n" RESET, selectedToken);
 
     switch (selectedToken)
     {
@@ -754,26 +770,27 @@ bool FUNC_STMT()
 
 bool RET()
 {
+    PRINT_FUNC_NAME();
     Token_type availableTokens[] = {
         TOKEN_RETURN,
     };
     int numAvailableTokens = sizeof(availableTokens) / sizeof(Token_type);
 
     // High resolution time for seeding
-    struct timeval time;
-    gettimeofday(&time, NULL);
-    srand((time.tv_sec * 1000) + (time.tv_usec / 1000));
 
     shuffleTokens(availableTokens, numAvailableTokens);
 
     // Select the first token after shuffle
     Token_type selectedToken = availableTokens[0];
+    fprintf(stderr, RED "%d\n" RESET, selectedToken);
 
     switch (selectedToken)
     {
     // RET -> return EXP
     case TOKEN_RETURN:
-        return cmp_type(TOKEN_RETURN) && EXP();
+        bool res = cmp_type(TOKEN_RETURN) && EXP(selectedToken);
+        printf("\n");
+        return res;
     default:
         return false;
     }
@@ -781,26 +798,25 @@ bool RET()
 
 bool FUNC_WHILE()
 {
+    PRINT_FUNC_NAME();
     Token_type availableTokens[] = {
         TOKEN_WHILE,
     };
     int numAvailableTokens = sizeof(availableTokens) / sizeof(Token_type);
 
     // High resolution time for seeding
-    struct timeval time;
-    gettimeofday(&time, NULL);
-    srand((time.tv_sec * 1000) + (time.tv_usec / 1000));
 
     shuffleTokens(availableTokens, numAvailableTokens);
 
     // Select the first token after shuffle
     Token_type selectedToken = availableTokens[0];
+    fprintf(stderr, RED "%d\n" RESET, selectedToken);
 
     switch (selectedToken)
     {
     // FUNC_WHILE -> while EXP { FUNC_STMT_LIST }
     case TOKEN_WHILE:
-        return cmp_type(TOKEN_WHILE) && EXP() && cmp_type(TOKEN_L_CURLY) &&
+        return cmp_type(TOKEN_WHILE) && EXP(selectedToken) && cmp_type(TOKEN_L_CURLY) &&
                FUNC_STMT_LIST() && cmp_type(TOKEN_R_CURLY);
     default:
         return false;
@@ -809,20 +825,19 @@ bool FUNC_WHILE()
 
 bool FUNC_IF()
 {
+    PRINT_FUNC_NAME();
     Token_type availableTokens[] = {
         TOKEN_IF,
     };
     int numAvailableTokens = sizeof(availableTokens) / sizeof(Token_type);
 
     // High resolution time for seeding
-    struct timeval time;
-    gettimeofday(&time, NULL);
-    srand((time.tv_sec * 1000) + (time.tv_usec / 1000));
 
     shuffleTokens(availableTokens, numAvailableTokens);
 
     // Select the first token after shuffle
     Token_type selectedToken = availableTokens[0];
+    fprintf(stderr, RED "%d\n" RESET, selectedToken);
 
     switch (selectedToken)
     {
@@ -837,6 +852,7 @@ bool FUNC_IF()
 
 bool FUNC_ELSE_CLAUSE()
 {
+    PRINT_FUNC_NAME();
     Token_type availableTokens[] = {
         TOKEN_IDENTIFICATOR,
         TOKEN_FUNC_ID,
@@ -851,14 +867,12 @@ bool FUNC_ELSE_CLAUSE()
     int numAvailableTokens = sizeof(availableTokens) / sizeof(Token_type);
 
     // High resolution time for seeding
-    struct timeval time;
-    gettimeofday(&time, NULL);
-    srand((time.tv_sec * 1000) + (time.tv_usec / 1000));
 
     shuffleTokens(availableTokens, numAvailableTokens);
 
     // Select the first token after shuffle
     Token_type selectedToken = availableTokens[0];
+    fprintf(stderr, RED "%d\n" RESET, selectedToken);
 
     switch (selectedToken)
     {
@@ -888,6 +902,7 @@ bool FUNC_ELSE_CLAUSE()
 
 bool FUNC_AFTER_ELSE()
 {
+    PRINT_FUNC_NAME();
     Token_type availableTokens[] = {
         TOKEN_L_CURLY,
         TOKEN_IF,
@@ -895,14 +910,12 @@ bool FUNC_AFTER_ELSE()
     int numAvailableTokens = sizeof(availableTokens) / sizeof(Token_type);
 
     // High resolution time for seeding
-    struct timeval time;
-    gettimeofday(&time, NULL);
-    srand((time.tv_sec * 1000) + (time.tv_usec / 1000));
 
     shuffleTokens(availableTokens, numAvailableTokens);
 
     // Select the first token after shuffle
     Token_type selectedToken = availableTokens[0];
+    fprintf(stderr, RED "%d\n" RESET, selectedToken);
 
     switch (selectedToken)
     {
@@ -911,6 +924,7 @@ bool FUNC_AFTER_ELSE()
         return cmp_type(TOKEN_L_CURLY) && FUNC_STMT_LIST() && cmp_type(TOKEN_R_CURLY);
     // FUNC_AFTER_ELSE -> FUNC_IF
     case TOKEN_IF:
+        printf("\n");
         return FUNC_IF();
     default:
         return false;
@@ -919,20 +933,19 @@ bool FUNC_AFTER_ELSE()
 
 bool IF_STMT()
 {
+    PRINT_FUNC_NAME();
     Token_type availableTokens[] = {
         TOKEN_IF,
     };
     int numAvailableTokens = sizeof(availableTokens) / sizeof(Token_type);
 
     // High resolution time for seeding
-    struct timeval time;
-    gettimeofday(&time, NULL);
-    srand((time.tv_sec * 1000) + (time.tv_usec / 1000));
 
     shuffleTokens(availableTokens, numAvailableTokens);
 
     // Select the first token after shuffle
     Token_type selectedToken = availableTokens[0];
+    fprintf(stderr, RED "%d\n" RESET, selectedToken);
 
     switch (selectedToken)
     {
@@ -947,6 +960,7 @@ bool IF_STMT()
 
 bool IF_COND()
 {
+    PRINT_FUNC_NAME();
     Token_type availableTokens[] = {
         TOKEN_IDENTIFICATOR,
         TOKEN_FUNC_ID,
@@ -963,14 +977,12 @@ bool IF_COND()
     int numAvailableTokens = sizeof(availableTokens) / sizeof(Token_type);
 
     // High resolution time for seeding
-    struct timeval time;
-    gettimeofday(&time, NULL);
-    srand((time.tv_sec * 1000) + (time.tv_usec / 1000));
 
     shuffleTokens(availableTokens, numAvailableTokens);
 
     // Select the first token after shuffle
     Token_type selectedToken = availableTokens[0];
+    fprintf(stderr, RED "%d\n" RESET, selectedToken);
 
     switch (selectedToken)
     {
@@ -985,7 +997,7 @@ bool IF_COND()
     case TOKEN_NIL:
     case TOKEN_EXP:
     case TOKEN_NOT:
-        return EXP();
+        return EXP(selectedToken);
     // IF_COND -> let id
     case TOKEN_LET:
         return cmp_type(TOKEN_LET) && cmp_type(TOKEN_IDENTIFICATOR);
@@ -996,6 +1008,7 @@ bool IF_COND()
 
 bool ELSE_CLAUSE()
 {
+    PRINT_FUNC_NAME();
     Token_type availableTokens[] = {
         TOKEN_IDENTIFICATOR,
         TOKEN_FUNC_ID,
@@ -1010,14 +1023,12 @@ bool ELSE_CLAUSE()
     int numAvailableTokens = sizeof(availableTokens) / sizeof(Token_type);
 
     // High resolution time for seeding
-    struct timeval time;
-    gettimeofday(&time, NULL);
-    srand((time.tv_sec * 1000) + (time.tv_usec / 1000));
 
     shuffleTokens(availableTokens, numAvailableTokens);
 
     // Select the first token after shuffle
     Token_type selectedToken = availableTokens[0];
+    fprintf(stderr, RED "%d\n" RESET, selectedToken);
 
     switch (selectedToken)
     {
@@ -1042,6 +1053,7 @@ bool ELSE_CLAUSE()
 
 bool AFTER_ELSE()
 {
+    PRINT_FUNC_NAME();
     Token_type availableTokens[] = {
         TOKEN_L_CURLY,
         TOKEN_IF,
@@ -1059,14 +1071,12 @@ bool AFTER_ELSE()
     int numAvailableTokens = sizeof(availableTokens) / sizeof(Token_type);
 
     // High resolution time for seeding
-    struct timeval time;
-    gettimeofday(&time, NULL);
-    srand((time.tv_sec * 1000) + (time.tv_usec / 1000));
 
     shuffleTokens(availableTokens, numAvailableTokens);
 
     // Select the first token after shuffle
     Token_type selectedToken = availableTokens[0];
+    fprintf(stderr, RED "%d\n" RESET, selectedToken);
 
     switch (selectedToken)
     {
@@ -1083,26 +1093,25 @@ bool AFTER_ELSE()
 
 bool WHILE_STMT()
 {
+    PRINT_FUNC_NAME();
     Token_type availableTokens[] = {
         TOKEN_WHILE,
     };
     int numAvailableTokens = sizeof(availableTokens) / sizeof(Token_type);
 
     // High resolution time for seeding
-    struct timeval time;
-    gettimeofday(&time, NULL);
-    srand((time.tv_sec * 1000) + (time.tv_usec / 1000));
 
     shuffleTokens(availableTokens, numAvailableTokens);
 
     // Select the first token after shuffle
     Token_type selectedToken = availableTokens[0];
+    fprintf(stderr, RED "%d\n" RESET, selectedToken);
 
     switch (selectedToken)
     {
     // WHILE_STMT -> while EXP { STMT_LIST }
     case TOKEN_WHILE:
-        return cmp_type(TOKEN_WHILE) && EXP() && cmp_type(TOKEN_L_CURLY) &&
+        return cmp_type(TOKEN_WHILE) && EXP(selectedToken) && cmp_type(TOKEN_L_CURLY) &&
                STMT_LIST() && cmp_type(TOKEN_R_CURLY);
     default:
         return false;
@@ -1111,6 +1120,7 @@ bool WHILE_STMT()
 
 bool LOAD_ID()
 {
+    PRINT_FUNC_NAME();
     Token_type availableTokens[] = {
         TOKEN_IDENTIFICATOR,
         TOKEN_FUNC_ID,
@@ -1118,25 +1128,25 @@ bool LOAD_ID()
     int numAvailableTokens = sizeof(availableTokens) / sizeof(Token_type);
 
     // High resolution time for seeding
-    struct timeval time;
-    gettimeofday(&time, NULL);
-    srand((time.tv_sec * 1000) + (time.tv_usec / 1000));
 
     shuffleTokens(availableTokens, numAvailableTokens);
 
     // Select the first token after shuffle
     Token_type selectedToken = availableTokens[0];
+    fprintf(stderr, RED "%d\n" RESET, selectedToken);
+
+    printIndentation();
 
     switch (selectedToken)
     {
     // LOAD_ID -> id = EXP
     case TOKEN_IDENTIFICATOR:
-        bool res = cmp_type(TOKEN_IDENTIFICATOR) && cmp_type(TOKEN_ASSIGN) && EXP();
+        bool res = cmp_type(TOKEN_IDENTIFICATOR) && cmp_type(TOKEN_ASSIGN) && EXP(selectedToken);
         printf("\n");
         return res;
     // LOAD_ID -> func_id
     case TOKEN_FUNC_ID:
-        bool res2 = EXP();
+        bool res2 = EXP(selectedToken);
         printf("\n");
         return res2;
     default:
@@ -1144,14 +1154,27 @@ bool LOAD_ID()
     }
 }
 
-bool EXP()
+bool EXP(Token_type type)
 {
-    cmp_type(TOKEN_EXP);
+    PRINT_FUNC_NAME();
+    switch (type)
+    {
+    case TOKEN_FUNC_ID:
+        cmp_type(TOKEN_FUNC_CALL);
+        break;
+    default:
+        cmp_type(TOKEN_EXP);
+        break;
+    }
     return true;
 }
 
 int main()
 {
+    struct timeval time;
+    gettimeofday(&time, NULL);
+    srand((time.tv_sec * 1000) + (time.tv_usec / 1000));
+
     START();
     return 0;
 }
