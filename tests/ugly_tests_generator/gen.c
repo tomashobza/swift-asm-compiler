@@ -12,6 +12,55 @@
 int indentationLevel = 0;
 #define PRINT_FUNC_NAME() fprintf(stderr, CYAN "%s\n" RESET, __func__);
 
+void generate_func_call()
+{
+    // print random builtin function
+    int rand_builtin = rand() % 9;
+    switch (rand_builtin)
+    {
+        // readString() -> String?
+    case 0:
+        printf("readString()");
+        break;
+        // readInt() -> Int?
+    case 1:
+        printf("readInt()");
+        break;
+        // readDouble() -> Double?
+    case 2:
+        printf("readDouble()");
+        break;
+        // write ( term1 , term2 , …, term𝑛 )
+    case 3:
+        printf("write(\"tvoje\", \"mama\", \"je\", \"tak\", \"tlusta\")");
+        break;
+        // Int2Double(_ term ∶ Int) -> Double
+    case 4:
+        printf("Int2Double(69)");
+        break;
+        // Double2Int(_ term ∶ Double) -> Int
+    case 5:
+        printf("Double2Int(69.69)");
+        break;
+        // length(_ 𝑠 : String) -> Int
+    case 6:
+        printf("length(\"tvoje mama je tak tlusta\")");
+        break;
+        // substring(of 𝑠 : String, startingAt 𝑖 : Int, endingBefore 𝑗 : Int) -> String?
+    case 7:
+        printf("substring(of : \"tvoje mama je tak tlusta\", startingAt : 0, endingBefore : 4)");
+        break;
+        // ord(_ 𝑐 : String) -> Int
+    case 8:
+        printf("ord(\"tvoje mama je tak tlusta\")");
+        break;
+        // chr(_ 𝑖 : Int) -> String
+    case 9:
+        printf("chr(69)");
+        break;
+    }
+}
+
 void shuffleTokens(Token_type *tokens, int size)
 {
     for (int i = size - 1; i > 0; i--)
@@ -112,7 +161,7 @@ void token_type_print(Token_type type)
         printf("5 + 5");
         break; // Exponent 22
     case TOKEN_FUNC_CALL:
-        printf("foo()");
+        generate_func_call();
         break; // Function call foo() 23
     case TOKEN_STRING:
         printf("\"tvoje máma je vole\"");

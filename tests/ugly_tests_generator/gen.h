@@ -80,6 +80,7 @@ typedef enum
 #define CYAN "\x1b[36m"
 #define RESET "\x1b[0m"
 
+void generate_func_call();
 bool cmp_type(Token_type type);
 void printIndentation();
 
