@@ -1,5 +1,6 @@
-var x = 5
-while x < 10 {
-    write(x)
-    x = x + 1
-}
+let a: Int? = 5
+    if let a {
+        let a = "shadowing"
+        write(a)
+    } else {
+    }

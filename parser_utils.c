@@ -115,9 +115,7 @@ void add_builtin_functions(sym_items *items)
     items->funcItem->data.func_data->params[items->funcItem->data.func_data->params_count - 1].type = TYPE_INT;
     symtable_add(items->funcItem, symtable_stack_top(sym_st));
 
-    printf(GREEN);
     DEBUG_SEMANTIC_CODE(symtable_print(symtable_stack_top(sym_st)););
-    printf(RESET);
 }
 
 Expression_type get_expression_type(Token *token)

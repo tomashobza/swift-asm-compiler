@@ -1,0 +1,15 @@
+.IFJcode23
+CREATEFRAME
+PUSHFRAME
+CREATEFRAME
+
+# variable definition
+DEFVAR GF@$result0
+
+PUSHS float@0x1.2p+2
+PUSHS int@4
+INT2FLOATS
+MULS
+# variable initialization
+POPS GF@$result0
+

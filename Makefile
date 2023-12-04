@@ -30,6 +30,9 @@ $(TARGET): main.c $(SRCS)
 test: main.c $(SRCS)
 	@$(CC) $(CFLAGS) -D DEBUG_PSA=$(DEBUG_PSA) $(TESTFLAGS) $^ -o $(TEST_TARGET)
 	./$(TEST_TARGET) <tests/test.swift
+	@./$(TEST_TARGET) <tests/test.swift > tests/test_out.ifjcode
+	./utils/ic23int tests/test_out.ifjcode
+
 
 # build the program and run with the tests/test.sh test script
 test-all: main.c $(SRCS)
