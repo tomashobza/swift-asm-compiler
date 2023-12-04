@@ -186,11 +186,11 @@ bool checkParamName(PSA_Token_stack *main_s, unsigned int param_index, symtable_
         // 3. should not have name, does have name -> error
         if (has_name)
         {
-            throw_error(SYNTACTIC_ERR, func_id.line_num, "Parameter %d of function '%s' should not have a name!", param_index + 1, found_func->id);
+            throw_error(PARAM_TYPE_ERR, func_id.line_num, "Parameter %d of function '%s' should not have a name!", param_index + 1, found_func->id);
         }
         else
         {
-            throw_error(SYNTACTIC_ERR, func_id.line_num, "Parameter %d of function '%s' should have a name!", param_index + 1, found_func->id);
+            throw_error(PARAM_TYPE_ERR, func_id.line_num, "Parameter %d of function '%s' should have a name!", param_index + 1, found_func->id);
         }
         name_is_ok = false;
     }

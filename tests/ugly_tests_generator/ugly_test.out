@@ -1,0 +1,16 @@
+func foo ( x x :Double )  {
+}
+if 5 + 5 {
+    var x = 5 + 5
+    var x :Bool?
+    var x = 5 + 5
+    foo()
+    while 5 + 5 {
+        let x = 5 + 5
+        var x :String
+        x = 5 + 5
+    }
+}
+x = 5 + 5
+var x :String?
+ 

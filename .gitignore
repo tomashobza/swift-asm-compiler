@@ -15,4 +15,5 @@ ifjcompiler_debug
 ifjcompiler_debug.dSYM/**/*
 ifjcompiler_debug
 odevzdavani/tempdir
-odevzdavani/tmpdir
+odevzdavani/tmpdiri
+tests/ugly_tests_generator/ugly_test.out

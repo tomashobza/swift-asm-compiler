@@ -331,7 +331,6 @@ void sem_load_identif(__attribute__((unused)) Token *token, __attribute__((unuse
     }
     else if (item->data.var_data->is_const == true)
     {
-        fprintf(stderr, RED "Variable %s is const!\n", token->token_value);
         throw_error(COMPATIBILITY_ERR, token->line_num, "Variable %s is const!\n", token->token_value);
     }
     // DEBUG_SEMANTIC_CODE(printf("FOUND: %s, type: %d, const: %d\n", item->id, item->data.var_data->type, item->data.var_data->is_const););
