@@ -64,7 +64,11 @@ int run_control(Token *token, sym_items *items, Control_state sem_rule)
         sem_var_add(token, items);
 
         fprintf(out_code_file, "# variable initialization\n");
-        generate_instruction(POPS, variable(items->varItem->id, sym_st->size - 1, true));
+        generate_instruction(POPS, symbol((Token){
+                                       .type = TOKEN_IDENTIFICATOR,
+                                       .token_value = items->varItem->id,
+                                       .line_num = token->line_num,
+                                   }));
         fprintf(out_code_file, "\n");
 
         break;
