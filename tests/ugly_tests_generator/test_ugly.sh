@@ -1,4 +1,5 @@
 #!/bin/bash
+set -e
 
 # Kontrola, zda byly zadány dva parametry
 if [ "$#" -ne 3 ]; then
@@ -10,12 +11,14 @@ GEN_PATH="$1"
 COMPILER_PATH="$2"
 OUTPUT_FILE="$3"
 
+echo OUTPUT_FILE
+
 while true; do
     # Spustí 'gen' a uloží výstup do souboru
     "$GEN_PATH" 2>/dev/null > "$OUTPUT_FILE"
 
     # Předá obsah souboru do 'ifj-compiler'
-    "$COMPILER_PATH" < "$OUTPUT_FILE"
+    "$COMPILER_PATH" >/dev/null 2>/dev/null < "$OUTPUT_FILE"
 
     # Získá návratový kód 'ifj-compiler'
     RET_VAL=$?
@@ -25,4 +28,6 @@ while true; do
         echo "Návratový kód ifj-compiler je 1 nebo 2, ukončení smyčky."
         break
     fi
+
+    printf "\033[42m\033[1;37m You shall PASS! \033[0m\n"
 done

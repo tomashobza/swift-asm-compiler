@@ -1,4 +1,3 @@
-func foo ( x x : Bool )  {
-    foo()
-    return 5 + 5
+while true {
 }
+x = 5 + 5
