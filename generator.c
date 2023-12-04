@@ -504,10 +504,6 @@ void generate_while_condition()
     char *endwhile_lbl = malloc(sizeof(char) * 10);
     sprintf(endwhile_lbl, "endwhile%d", while_counter);
 
-    char *tmp_token = malloc(sizeof(char) * 20);
-    sprintf(tmp_token, "tmp%d", tmp_counter);
-    char *tmp_op = variable(tmp_token, -1, false);
-
     char *true_op = literal((Token){
         .type = TOKEN_BOOL,
         .token_value = "true",
@@ -515,9 +511,9 @@ void generate_while_condition()
 
     fprintf(out_code_file, "# while%d condition\n", while_counter);
 
-    generate_instruction(DEFVAR, tmp_op);
-    generate_instruction(POPS, tmp_op);
-    generate_instruction(JUMPIFNEQS, label(endwhile_lbl), tmp_op, true_op);
+    generate_instruction(PUSHS, true_op);
+    generate_instruction(JUMPIFNEQS, label(endwhile_lbl));
+    generate_instruction(CLEARS);
 
     fprintf(out_code_file, "\n");
 
@@ -532,7 +528,13 @@ void generate_while_end()
 
     char *endwhile_lbl = malloc(sizeof(char) * 10);
     sprintf(endwhile_lbl, "endwhile%d", while_counter);
+
+    char *while_lbl = malloc(sizeof(char) * 10);
+    sprintf(while_lbl, "while%d", while_counter);
+
+    generate_instruction(JUMP, label(while_lbl));
     generate_instruction(LABEL, label(endwhile_lbl));
+    generate_instruction(CLEARS);
 
     fprintf(out_code_file, "\n");
 
@@ -546,10 +548,11 @@ void generate_implicit_init(symtable_item var_item)
         Expression_type type = var_item.data.var_data->type;
         if (type == TYPE_INT_NIL || type == TYPE_DOUBLE_NIL || type == TYPE_STRING_NIL || type == TYPE_BOOL_NIL)
         {
-            generate_instruction(MOVE, variable(var_item.id, sym_st->size - 1, true), literal((Token){
-                                                                                          .type = TOKEN_NIL,
-                                                                                          .token_value = "nil",
-                                                                                      }));
+            char *nil = literal((Token){
+                .type = TOKEN_NIL,
+                .token_value = "nil",
+            });
+            generate_instruction(MOVE, variable(var_item.id, sym_st->size - 1, true), nil);
         }
     }
 }
