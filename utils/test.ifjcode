@@ -1,12 +1,17 @@
 .IFJcode23
 CREATEFRAME
+PUSHFRAME
+CREATEFRAME
 
 # variable definition
 DEFVAR GF@$a0
 
 MOVE GF@$a0 nil@nil
+PUSHS GF@$a0
+PUSHS nil@nil
+EQS
+NOTS
 # if0 start
-PUSHS bool@true
 PUSHS bool@true
 JUMPIFNEQS else0_0
 CLEARS
@@ -17,7 +22,7 @@ POPS TF@$tmp0
 WRITE TF@$tmp0
 
 # if0 else
-JUMP endif0
+JUMP else0_1
 LABEL else0_0
 CLEARS
 
@@ -34,4 +39,4 @@ POPS TF@$tmp1
 WRITE TF@$tmp1
 
 # if0 end
-LABEL endif0
+LABEL else0_1
