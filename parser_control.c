@@ -108,7 +108,6 @@ int run_control(Token *token, sym_items *items, Control_state sem_rule)
         fprintf(out_code_file, "# return\n");
         generate_instruction(DEFVAR, variable("retval", 1, false));
         generate_instruction(POPS, variable("retval", 1, false));
-        generate_instruction(POPFRAME);
         generate_instruction(RETURN);
         fprintf(out_code_file, "\n");
 

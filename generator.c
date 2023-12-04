@@ -288,6 +288,7 @@ void generate_func_header(symtable_item func_item)
     fprintf(out_code_file, "\n");
 
     generate_instruction(PUSHFRAME);
+    generate_instruction(CREATEFRAME);
 
     fprintf(out_code_file, "# function params\n");
     for (int i = func_item.data.func_data->params_count - 1; i >= 0; i--)
@@ -448,8 +449,10 @@ void generate_else()
     char *else_lbl = malloc(sizeof(char) * 10);
     sprintf(else_lbl, "else%d_%d", if_counter, elif_counter);
 
+    elif_counter++;
+
     char *endif_lbl = malloc(sizeof(char) * 10);
-    sprintf(endif_lbl, "endif%d", if_counter);
+    sprintf(endif_lbl, "else%d_%d", if_counter, elif_counter);
 
     fprintf(out_code_file, "# if%d else\n", if_counter);
     generate_instruction(JUMP, label(endif_lbl));
@@ -461,7 +464,6 @@ void generate_else()
     free(else_lbl);
     free(endif_lbl);
 
-    elif_counter++;
     if_counter++;
 }
 
@@ -472,7 +474,7 @@ void generate_if_end()
     fprintf(out_code_file, "# if%d end\n", if_counter);
 
     char *endif_lbl = malloc(sizeof(char) * 10);
-    sprintf(endif_lbl, "endif%d", if_counter);
+    sprintf(endif_lbl, "else%d_%d", if_counter, elif_counter);
     generate_instruction(LABEL, label(endif_lbl));
 
     fprintf(out_code_file, "\n");
