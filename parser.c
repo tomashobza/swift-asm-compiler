@@ -104,9 +104,11 @@ bool STMT(Token *token, sym_items *items)
         return DEF_FUNC(token, items);
     // STMT -> IF_STMT
     case TOKEN_IF:
+    {
         bool res = IF_STMT(token, items);
         run_control(token, items, IF_END);
         return res;
+    }
     // STMT -> LOAD_ID
     case TOKEN_IDENTIFICATOR:
     case TOKEN_FUNC_ID:
@@ -342,9 +344,11 @@ bool FUNC_STMT(Token *token, sym_items *items)
         return FUNC_WHILE(token, items);
     // FUNC_STMT -> FUNC_IF
     case TOKEN_IF:
+    {
         bool res = FUNC_IF(token, items);
         run_control(token, items, IF_END);
         return res;
+    }
     default:
         return false;
     }
