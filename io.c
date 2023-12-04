@@ -69,13 +69,13 @@ PSA_Token readNextToken(PSA_Token_stack *s, char *next_token_error, int *num_of_
         if ((is_after_binary_operator || is_first_token) && !is_after_unwrap_operator)
         {
 
-            PSA_Token og_b = b;
-            printf("func call: %s\n", og_b.token_value);
+            DEBUG_PSA_CODE(PSA_Token og_b = b;
+                           printf("func call: %s\n", og_b.token_value););
 
             b = parseFunctionCall(s, b);
 
-            printf_cyan("func call type: ");
-            print_expression_type(b.expr_type);
+            DEBUG_PSA_CODE(printf_cyan("func call type: ");
+                           print_expression_type(b.expr_type););
         }
         else
         {
