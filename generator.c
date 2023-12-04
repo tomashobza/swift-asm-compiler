@@ -17,6 +17,7 @@
 /// COUNTERS
 
 int if_counter = 0;
+int elif_counter = 0;
 int while_counter = 0;
 int tmp_counter = 0;
 
@@ -368,27 +369,68 @@ void generate_builtin_func_call(Token func)
 
 void generate_if_start()
 {
-    char *tmp_token = malloc(sizeof(char) * 20);
-    sprintf(tmp_token, "tmp%d", tmp_counter);
-    char *tmp_op = variable(tmp_token, -1, false);
     char *true_op = literal((Token){
         .type = TOKEN_BOOL,
         .token_value = "true",
     });
 
-    char *if_lbl = malloc(sizeof(char) * 10);
-    sprintf(if_lbl, "else%d", if_counter);
+    char *if_lbl = malloc(sizeof(char) * 20);
+    sprintf(if_lbl, "else%d_%d", if_counter, elif_counter);
 
     fprintf(out_code_file, "# if%d start\n", if_counter);
 
-    generate_instruction(DEFVAR, tmp_op);
-    generate_instruction(POPS, tmp_op);
-    generate_instruction(JUMPIFNEQS, label(if_lbl), tmp_op, true_op);
-    fprintf(out_code_file, "\n");
-
+    generate_instruction(PUSHS, true_op);
+    generate_instruction(JUMPIFNEQS, label(if_lbl));
     fprintf(out_code_file, "\n");
 
     free(if_lbl);
+
+    if_counter++;
+}
+
+void generate_elseif_else()
+{
+    if_counter--;
+
+    char *end_lbl = malloc(sizeof(char) * 20);
+    sprintf(end_lbl, "endif%d", if_counter);
+
+    char *elsif_else_lbl = malloc(sizeof(char) * 20);
+    sprintf(elsif_else_lbl, "else%d_%d", if_counter, elif_counter);
+
+    generate_instruction(JUMP, label(end_lbl));
+    generate_instruction(LABEL, label(elsif_else_lbl));
+
+    fprintf(out_code_file, "\n");
+
+    elif_counter++;
+
+    free(end_lbl);
+    free(elsif_else_lbl);
+
+    if_counter++;
+}
+
+void generate_elseif_if()
+{
+    if_counter--;
+
+    char *true_op = literal((Token){
+        .type = TOKEN_BOOL,
+        .token_value = "true",
+    });
+
+    char *elsif_if_lbl = malloc(sizeof(char) * 20);
+    sprintf(elsif_if_lbl, "else%d_%d", if_counter, elif_counter);
+
+    fprintf(out_code_file, "# elseif%d start\n", elif_counter);
+
+    generate_instruction(PUSHS, true_op);
+    generate_instruction(JUMPIFNEQS, label(elsif_if_lbl));
+
+    fprintf(out_code_file, "\n");
+
+    free(elsif_if_lbl);
 
     if_counter++;
 }
@@ -397,20 +439,22 @@ void generate_else()
 {
     if_counter--;
 
-    char *if_lbl = malloc(sizeof(char) * 10);
-    sprintf(if_lbl, "else%d", if_counter);
+    char *else_lbl = malloc(sizeof(char) * 10);
+    sprintf(else_lbl, "else%d_%d", if_counter, elif_counter);
 
     char *endif_lbl = malloc(sizeof(char) * 10);
     sprintf(endif_lbl, "endif%d", if_counter);
 
     fprintf(out_code_file, "# if%d else\n", if_counter);
     generate_instruction(JUMP, label(endif_lbl));
-    generate_instruction(LABEL, label(if_lbl));
+    generate_instruction(LABEL, label(else_lbl));
 
     fprintf(out_code_file, "\n");
 
-    free(if_lbl);
+    free(else_lbl);
+    free(endif_lbl);
 
+    elif_counter++;
     if_counter++;
 }
 

@@ -234,6 +234,16 @@ void generate_builtin_func_call(Token func);
 void generate_if_start();
 
 /**
+ * @brief Generates the IFJcode23 the else part of the elseif.
+ */
+void generate_elseif_else();
+
+/**
+ * @brief Generates the IFJcode23 the if part of the elseif.
+ */
+void generate_elseif_if();
+
+/**
  * @brief Generates the IFJcode23 else header.
  */
 void generate_else();
