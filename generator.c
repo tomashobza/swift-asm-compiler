@@ -366,6 +366,126 @@ void generate_builtin_func_call(Token func)
     tmp_counter++;
 }
 
+void generate_if_start()
+{
+    char *tmp_token = malloc(sizeof(char) * 20);
+    sprintf(tmp_token, "tmp%d", tmp_counter);
+    char *tmp_op = variable(tmp_token, -1, false);
+    char *true_op = literal((Token){
+        .type = TOKEN_BOOL,
+        .token_value = "true",
+    });
+
+    char *if_lbl = malloc(sizeof(char) * 10);
+    sprintf(if_lbl, "else%d", if_counter);
+
+    fprintf(out_code_file, "# if%d start\n", if_counter);
+
+    generate_instruction(DEFVAR, tmp_op);
+    generate_instruction(POPS, tmp_op);
+    generate_instruction(JUMPIFNEQS, label(if_lbl), tmp_op, true_op);
+    fprintf(out_code_file, "\n");
+
+    fprintf(out_code_file, "\n");
+
+    free(if_lbl);
+
+    if_counter++;
+}
+
+void generate_else()
+{
+    if_counter--;
+
+    char *if_lbl = malloc(sizeof(char) * 10);
+    sprintf(if_lbl, "else%d", if_counter);
+
+    char *endif_lbl = malloc(sizeof(char) * 10);
+    sprintf(endif_lbl, "endif%d", if_counter);
+
+    fprintf(out_code_file, "# if%d else\n", if_counter);
+    generate_instruction(JUMP, label(endif_lbl));
+    generate_instruction(LABEL, label(if_lbl));
+
+    fprintf(out_code_file, "\n");
+
+    free(if_lbl);
+
+    if_counter++;
+}
+
+void generate_if_end()
+{
+    if_counter--;
+
+    fprintf(out_code_file, "# if%d end\n", if_counter);
+
+    char *endif_lbl = malloc(sizeof(char) * 10);
+    sprintf(endif_lbl, "endif%d", if_counter);
+    generate_instruction(LABEL, label(endif_lbl));
+
+    fprintf(out_code_file, "\n");
+
+    free(endif_lbl);
+}
+
+void generate_while_start()
+{
+    char *while_lbl = malloc(sizeof(char) * 10);
+    sprintf(while_lbl, "while%d", while_counter);
+
+    fprintf(out_code_file, "# while%d start\n", while_counter);
+    generate_instruction(LABEL, label(while_lbl));
+
+    fprintf(out_code_file, "\n");
+
+    free(while_lbl);
+
+    while_counter++;
+}
+
+void generate_while_condition()
+{
+    while_counter--;
+
+    char *endwhile_lbl = malloc(sizeof(char) * 10);
+    sprintf(endwhile_lbl, "endwhile%d", while_counter);
+
+    char *tmp_token = malloc(sizeof(char) * 20);
+    sprintf(tmp_token, "tmp%d", tmp_counter);
+    char *tmp_op = variable(tmp_token, -1, false);
+
+    char *true_op = literal((Token){
+        .type = TOKEN_BOOL,
+        .token_value = "true",
+    });
+
+    fprintf(out_code_file, "# while%d condition\n", while_counter);
+
+    generate_instruction(DEFVAR, tmp_op);
+    generate_instruction(POPS, tmp_op);
+    generate_instruction(JUMPIFNEQS, label(endwhile_lbl), tmp_op, true_op);
+
+    fprintf(out_code_file, "\n");
+
+    while_counter++;
+}
+
+void generate_while_end()
+{
+    if_counter--;
+
+    fprintf(out_code_file, "# while%d end\n", if_counter);
+
+    char *endwhile_lbl = malloc(sizeof(char) * 10);
+    sprintf(endwhile_lbl, "endwhile%d", while_counter);
+    generate_instruction(LABEL, label(endwhile_lbl));
+
+    fprintf(out_code_file, "\n");
+
+    free(endwhile_lbl);
+}
+
 /// UTILITY FUNCTIONS
 char *instructionToString(Instruction in)
 {

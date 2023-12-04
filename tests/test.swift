@@ -1,7 +1,3 @@
-func sqr(_ x: Int) -> Int {
-    return x * x
+if true {
+    
 }
-
-let x = readInt()!
-
-write(sqr(x))

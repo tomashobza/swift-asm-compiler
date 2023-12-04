@@ -228,6 +228,37 @@ void generate_func_end(symtable_item func_item);
  */
 void generate_builtin_func_call(Token func);
 
+/**
+ * @brief Generates the IFJcode23 if header.
+ */
+void generate_if_start();
+
+/**
+ * @brief Generates the IFJcode23 else header.
+ */
+void generate_else();
+
+/**
+ * @brief Generates the IFJcode23 if end.
+ */
+void generate_if_end();
+
+/**
+ * @brief Generates the IFJcode23 while header.
+ */
+void generate_while_start();
+
+/**
+ * @brief Generates the IFJcode23 while condition.
+ */
+void generate_while_condition();
+
+/**
+ * @brief Generates the IFJcode23 while end.
+ *
+ */
+void generate_while_end();
+
 /// UTILITY FUNCTIONS
 
 /**
