@@ -133,6 +133,10 @@ int run_control(Token *token, sym_items *items, Control_state sem_rule)
         generate_if_end();
         break;
     case LET_IN_IF:
+        generate_instruction(PUSHS, symbol((Token){.type = TOKEN_IDENTIFICATOR, .token_value = token->token_value, .line_num = token->line_num}));
+        generate_instruction(PUSHS, literal((Token){.type = TOKEN_NIL, .token_value = "nil", .line_num = token->line_num}));
+        generate_instruction(EQS);
+        generate_instruction(NOTS);
         sem_let_in_if(token, items);
         break;
     case FUNC_BODY_DONE:
