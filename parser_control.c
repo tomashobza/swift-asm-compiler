@@ -115,6 +115,22 @@ int run_control(Token *token, sym_items *items, Control_state sem_rule)
     case COND_EXP:
         sem_cond_exp(token, items);
         break;
+    case IF_START:
+        generate_if_start();
+        break;
+    case ELSE_IF_START:
+        generate_elseif_else();
+        break;
+    case ELSE_IF_AFTER_COND:
+        generate_elseif_if();
+        break;
+    case ELSE_START:
+        generate_else();
+        run_control(token, items, PUSH_SCOPE);
+        break;
+    case IF_END:
+        generate_if_end();
+        break;
     case LET_IN_IF:
         sem_let_in_if(token, items);
         break;

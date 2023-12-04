@@ -1,5 +1,5 @@
 #!/bin/bash
-set -e
+#set -e
 
 # Kontrola, zda byly zadány dva parametry
 if [ "$#" -ne 3 ]; then
@@ -24,8 +24,8 @@ while true; do
     RET_VAL=$?
 
     # Kontroluje návratový kód
-    if [ $RET_VAL -eq 2 ] || [ $RET_VAL -eq 1 ]; then
-        echo "Návratový kód ifj-compiler je 1 nebo 2, ukončení smyčky."
+   if { [[ $RET_VAL -lt 3 ]] || [[ $RET_VAL -gt 9 ]]; } && [[ $RET_VAL -ne 99 ]] && [[ $RET_VAL -ne 0 ]]; then
+        echo "Návratový kód ifj-compiler: $RET_VAL"
         break
     fi
 

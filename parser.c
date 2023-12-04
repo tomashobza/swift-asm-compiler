@@ -104,7 +104,9 @@ bool STMT(Token *token, sym_items *items)
         return DEF_FUNC(token, items);
     // STMT -> IF_STMT
     case TOKEN_IF:
-        return IF_STMT(token, items);
+        bool res = IF_STMT(token, items);
+        run_control(token, items, IF_END);
+        return res;
     // STMT -> LOAD_ID
     case TOKEN_IDENTIFICATOR:
     case TOKEN_FUNC_ID:
@@ -340,7 +342,9 @@ bool FUNC_STMT(Token *token, sym_items *items)
         return FUNC_WHILE(token, items);
     // FUNC_STMT -> FUNC_IF
     case TOKEN_IF:
-        return FUNC_IF(token, items);
+        bool res = FUNC_IF(token, items);
+        run_control(token, items, IF_END);
+        return res;
     default:
         return false;
     }
@@ -380,7 +384,21 @@ bool FUNC_IF(Token *token, sym_items *items)
     {
     // 	FUNC_IF -> if IF_COND { FUNC_STMT_LIST } FUNC_ELSE_CLAUSE
     case TOKEN_IF:
-        return cmp_type(token, items, TOKEN_IF, SEM_NONE) && IF_COND(token, items) && cmp_type(token, items, TOKEN_L_CURLY, PUSH_SCOPE) &&
+        return cmp_type(token, items, TOKEN_IF, SEM_NONE) && IF_COND(token, items) && cmp_type(token, items, TOKEN_L_CURLY, IF_START) &&
+               FUNC_STMT_LIST(token, items) && cmp_type(token, items, TOKEN_R_CURLY, POP_SCOPE) && FUNC_ELSE_CLAUSE(token, items);
+    default:
+        return false;
+    }
+}
+
+bool FUNC_ELSE_IF(Token *token, sym_items *items)
+{
+    DEBUG_SYNTAX_CODE(printf("FUNC_IF token: %d value: %s\n", token->type, token->token_value););
+    switch (token->type)
+    {
+    // 	FUNC_IF -> if IF_COND { FUNC_STMT_LIST } FUNC_ELSE_CLAUSE
+    case TOKEN_IF:
+        return cmp_type(token, items, TOKEN_IF, ELSE_IF_START) && IF_COND(token, items) && cmp_type(token, items, TOKEN_L_CURLY, ELSE_IF_AFTER_COND) &&
                FUNC_STMT_LIST(token, items) && cmp_type(token, items, TOKEN_R_CURLY, POP_SCOPE) && FUNC_ELSE_CLAUSE(token, items);
     default:
         return false;
@@ -395,17 +413,11 @@ bool FUNC_ELSE_CLAUSE(Token *token, sym_items *items)
     // FUNC_ELSE_CLAUSE -> eps
     case TOKEN_IDENTIFICATOR:
     case TOKEN_FUNC_ID:
-        return true;
     case TOKEN_VAR:
-        return true;
     case TOKEN_LET:
-        return true;
     case TOKEN_R_CURLY:
-        return true;
     case TOKEN_RETURN:
-        return true;
     case TOKEN_WHILE:
-        return true;
     case TOKEN_IF:
         return true;
     // FUNC_ELSE_CLAUSE -> else FUNC_AFTER_ELSE
@@ -423,10 +435,10 @@ bool FUNC_AFTER_ELSE(Token *token, sym_items *items)
     {
     // FUNC_AFTER_ELSE -> { FUNC_STMT_LIST }
     case TOKEN_L_CURLY:
-        return cmp_type(token, items, TOKEN_L_CURLY, PUSH_SCOPE) && FUNC_STMT_LIST(token, items) && cmp_type(token, items, TOKEN_R_CURLY, POP_SCOPE);
+        return cmp_type(token, items, TOKEN_L_CURLY, ELSE_START) && FUNC_STMT_LIST(token, items) && cmp_type(token, items, TOKEN_R_CURLY, POP_SCOPE);
     // FUNC_AFTER_ELSE -> FUNC_IF
     case TOKEN_IF:
-        return FUNC_IF(token, items);
+        return FUNC_ELSE_IF(token, items);
     default:
         return false;
     }
@@ -439,7 +451,21 @@ bool IF_STMT(Token *token, sym_items *items)
     {
     // IF_STMT -> if EXP { STMT_LIST } ELSE_CLAUSE
     case TOKEN_IF:
-        return cmp_type(token, items, TOKEN_IF, SEM_NONE) && IF_COND(token, items) && cmp_type(token, items, TOKEN_L_CURLY, SEM_NONE) &&
+        return cmp_type(token, items, TOKEN_IF, SEM_NONE) && IF_COND(token, items) && cmp_type(token, items, TOKEN_L_CURLY, IF_START) &&
+               STMT_LIST(token, items) && cmp_type(token, items, TOKEN_R_CURLY, POP_SCOPE) && ELSE_CLAUSE(token, items);
+    default:
+        return false;
+    }
+}
+
+bool ELSE_IF_STMT(Token *token, sym_items *items)
+{
+    DEBUG_SYNTAX_CODE(printf("IF_STMT token: %d value: %s\n", token->type, token->token_value););
+    switch (token->type)
+    {
+    // IF_STMT -> if EXP { STMT_LIST } ELSE_CLAUSE
+    case TOKEN_IF:
+        return cmp_type(token, items, TOKEN_IF, ELSE_IF_START) && IF_COND(token, items) && cmp_type(token, items, TOKEN_L_CURLY, ELSE_IF_AFTER_COND) &&
                STMT_LIST(token, items) && cmp_type(token, items, TOKEN_R_CURLY, POP_SCOPE) && ELSE_CLAUSE(token, items);
     default:
         return false;
@@ -502,10 +528,10 @@ bool AFTER_ELSE(Token *token, sym_items *items)
     {
     // AFTER_ELSE -> { STMT_LIST }
     case TOKEN_L_CURLY:
-        return cmp_type(token, items, TOKEN_L_CURLY, PUSH_SCOPE) && STMT_LIST(token, items) && cmp_type(token, items, TOKEN_R_CURLY, POP_SCOPE);
+        return cmp_type(token, items, TOKEN_L_CURLY, ELSE_START) && STMT_LIST(token, items) && cmp_type(token, items, TOKEN_R_CURLY, POP_SCOPE);
     // AFTER_ELSE -> IF_STMT
     case TOKEN_IF:
-        return IF_STMT(token, items);
+        return ELSE_IF_STMT(token, items);
     default:
         return false;
     }
