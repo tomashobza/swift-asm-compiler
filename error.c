@@ -30,6 +30,8 @@ void throw_error_base(Error_code code, char *message, int line_num)
                                    .code = code,
                                    .line_num = line_num,
                                    .message = message});
+
+    exit(print_errors());
 }
 
 Error_code print_errors()

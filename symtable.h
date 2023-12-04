@@ -22,6 +22,7 @@
 #include <stdbool.h>
 #include "stack.h"
 #include "debug.h"
+#include "error.h"
 
 /**
  * @brief Enum for the types of the expression.

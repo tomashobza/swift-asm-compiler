@@ -52,7 +52,7 @@ PSA_Token parseFunctionCall(PSA_Token_stack *main_s, PSA_Token id)
 
     // read the next token (should be ( token)
     char next_token_error = 0;
-    PSA_Token l_bracket = readNextToken(main_s, &next_token_error, NULL);
+    PSA_Token l_bracket = readNextToken(main_s, &next_token_error, NULL, true);
     if (l_bracket.type != TOKEN_L_BRACKET)
     {
         throw_error(SYNTACTIC_ERR, l_bracket.line_num, "Missing '(' after function name!");
@@ -85,10 +85,11 @@ PSA_Token parseFunctionCall(PSA_Token_stack *main_s, PSA_Token id)
         }
     }
     // read the next token (should be ) token)
-    if (readNextToken(main_s, &next_token_error, NULL).type != TOKEN_R_BRACKET)
+    PSA_Token r_bracket = readNextToken(main_s, &next_token_error, NULL, true);
+    if (r_bracket.type != TOKEN_R_BRACKET)
     {
-        // if not -> error
-        // TODO: throw error
+        throw_error(SYNTACTIC_ERR, r_bracket.line_num, "Missing ')' after function parameter list!");
+
         is_ok = false;
     }
 
@@ -107,7 +108,7 @@ PSA_Token parseFunctionCall(PSA_Token_stack *main_s, PSA_Token id)
         symtable_item func_item = *found_func;
         free(found_func);
         return (PSA_Token){
-            .type = TOKEN_EXPRSN,
+            .type = TOKEN_FUNC_ID,
             .token_value = func_item.id,
             .expr_type = func_item.data.func_data->return_type,
             .preceded_by_nl = id.preceded_by_nl};
@@ -128,22 +129,28 @@ bool checkParameter(PSA_Token_stack *main_s, unsigned int param_index, symtable_
         return true;
     }
 
-    if ((*parsed_param).type != found_func->data.func_data->params[param_index].type)
+    bool types_match = (*parsed_param).type == found_func->data.func_data->params[param_index].type;
+    if (found_func->data.func_data->params[param_index].type == TYPE_DOUBLE && (*parsed_param).type == TYPE_INT && (*parsed_param).is_literal)
+    {
+        types_match = true;
+    }
+
+    if (!types_match)
     {
         throw_error(PARAM_TYPE_ERR, id.line_num, "Parameter %d of function '%s' should be of type %d!", param_index + 1, found_func->id, found_func->data.func_data->params[param_index].type);
     }
 
-    return (*parsed_param).is_ok && (*parsed_param).type == found_func->data.func_data->params[param_index].type && name_ok;
+    return (*parsed_param).is_ok && types_match && name_ok;
 }
 
 bool checkParamName(PSA_Token_stack *main_s, unsigned int param_index, symtable_item *found_func, bool unknown_params, PSA_Token func_id)
 {
     // read the first token (should be an identificator)
     char next_token_error = 0;
-    PSA_Token id = readNextToken(main_s, &next_token_error, NULL);
+    PSA_Token id = readNextToken(main_s, &next_token_error, NULL, true);
 
     // read the second token (should be : token)
-    PSA_Token colon = readNextToken(main_s, &next_token_error, NULL);
+    PSA_Token colon = readNextToken(main_s, &next_token_error, NULL, true);
 
     bool has_name = id.type == TOKEN_IDENTIFICATOR && colon.type == TOKEN_DOUBLE_DOT;
 
@@ -179,11 +186,11 @@ bool checkParamName(PSA_Token_stack *main_s, unsigned int param_index, symtable_
         // 3. should not have name, does have name -> error
         if (has_name)
         {
-            throw_error(SYNTACTIC_ERR, func_id.line_num, "Parameter %d of function '%s' should not have a name!", param_index + 1, found_func->id);
+            throw_error(PARAM_TYPE_ERR, func_id.line_num, "Parameter %d of function '%s' should not have a name!", param_index + 1, found_func->id);
         }
         else
         {
-            throw_error(SYNTACTIC_ERR, func_id.line_num, "Parameter %d of function '%s' should have a name!", param_index + 1, found_func->id);
+            throw_error(PARAM_TYPE_ERR, func_id.line_num, "Parameter %d of function '%s' should have a name!", param_index + 1, found_func->id);
         }
         name_is_ok = false;
     }

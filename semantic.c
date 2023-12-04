@@ -82,7 +82,7 @@ void sem_var_exp(__attribute__((unused)) Token *token, __attribute__((unused)) s
     }
     DEBUG_SEMANTIC_CODE(
         (symtable_stack_top(sym_st)););
-    sem_var_add(token, items);
+    // sem_var_add(token, items);
 }
 
 void sem_var_add(__attribute__((unused)) Token *token, __attribute__((unused)) sym_items *items)
@@ -231,7 +231,13 @@ void sem_r_exp(__attribute__((unused)) Token *token, __attribute__((unused)) sym
     {
         throw_error(PARAM_TYPE_ERR, token->line_num, "Expression type: %d and return type: %d of function: %s do not match!\n", return_type2.type, items->funcItem->data.func_data->return_type, items->funcItem->id);
     }
-    symtable_find_in_stack(items->funcItem->id, sym_st, true)->data.func_data->found_return = true;
+    symtable_item *func_r_exp_item = symtable_find_in_stack(items->funcItem->id, sym_st, true);
+    if (func_r_exp_item == NULL)
+    {
+        throw_error(FUNCTIONS_ERR, token->line_num, "Function %s is not defined!\n", items->funcItem->id);
+        return;
+    }
+    func_r_exp_item->data.func_data->found_return = true;
     DEBUG_SEMANTIC_CODE(print_expression_type(return_type2.type););
 }
 
@@ -325,7 +331,6 @@ void sem_load_identif(__attribute__((unused)) Token *token, __attribute__((unuse
     }
     else if (item->data.var_data->is_const == true)
     {
-        fprintf(stderr, RED "Variable %s is const!\n", token->token_value);
         throw_error(COMPATIBILITY_ERR, token->line_num, "Variable %s is const!\n", token->token_value);
     }
     // DEBUG_SEMANTIC_CODE(printf("FOUND: %s, type: %d, const: %d\n", item->id, item->data.var_data->type, item->data.var_data->is_const););

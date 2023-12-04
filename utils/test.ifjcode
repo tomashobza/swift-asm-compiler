@@ -1,25 +1,42 @@
 .IFJcode23
 CREATEFRAME
 PUSHFRAME
-# 1+2*4-5
+CREATEFRAME
 
-DEFVAR LF@l_op
-DEFVAR LF@r_op
+# variable definition
+DEFVAR GF@$a0
 
-PUSHS int@1
-PUSHS int@2
-PUSHS int@4
+MOVE GF@$a0 nil@nil
+PUSHS GF@$a0
+PUSHS nil@nil
+EQS
+NOTS
+# if0 start
+PUSHS bool@true
+JUMPIFNEQS else0_0
+CLEARS
 
-MULS
-ADDS
+PUSHS string@string@
+DEFVAR TF@$tmp0
+POPS TF@$tmp0
+WRITE TF@$tmp0
 
-PUSHS int@5
+# if0 else
+JUMP else0_1
+LABEL else0_0
+CLEARS
 
-SUBS
+# variable definition
+DEFVAR LF@$b1
 
-DEFVAR LF@y
-POPS LF@y
+PUSHS GF@$a0
+# variable initialization
+POPS LF@$b1
 
+PUSHS LF@$b1
+DEFVAR TF@$tmp1
+POPS TF@$tmp1
+WRITE TF@$tmp1
 
-WRITE LF@y
-
+# if0 end
+LABEL else0_1

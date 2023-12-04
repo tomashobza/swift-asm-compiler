@@ -69,13 +69,25 @@ typedef enum
     TOKEN_EXPRSN,          // E 49
     TOKEN_SHIFT,           // < 50
     TOKEN_UNSHIFT,         // > 51
+    TOKEN_FUNC_CALL,
 } Token_type;
 
-bool cmp_type();
+#define RED "\x1b[31m"
+#define GREEN "\x1b[32m"
+#define YELLOW "\x1b[33m"
+#define BLUE "\x1b[34m"
+#define MAGENTA "\x1b[35m"
+#define CYAN "\x1b[36m"
+#define RESET "\x1b[0m"
+
+bool cmp_type(Token_type type);
+void printIndentation();
 
 bool START();
 bool STMT_LIST();
+bool LOCAL_STMT_LIST();
 bool STMT();
+bool LOCAL_STMT();
 bool VAR_LET();
 bool VAR_SCOPE();
 bool TYPE_AND_ASIGN();
@@ -91,14 +103,16 @@ bool FUNC_STMT();
 bool RET();
 bool FUNC_WHILE();
 bool FUNC_IF();
+bool FUNC_ELSE_IF();
 bool FUNC_ELSE_CLAUSE();
 bool FUNC_AFTER_ELSE();
 bool IF_STMT();
+bool ELSE_IF_STMT();
 bool IF_COND();
 bool ELSE_CLAUSE();
 bool AFTER_ELSE();
 bool WHILE_STMT();
 bool LOAD_ID();
-bool EXP();
+bool EXP(Token_type type);
 
 #endif // GEN_H
