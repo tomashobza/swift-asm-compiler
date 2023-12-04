@@ -315,9 +315,9 @@ Expression_type getReadType(Token token);
 /**
  * @brief Replaces the special characters in the string with their escape sequences.
  *
- * @param str
+ * @param input
  * @return char*
  */
-char *escapeString(char *str);
+char *escapeString(char *input);
 
 #endif // GENERATOR_H
