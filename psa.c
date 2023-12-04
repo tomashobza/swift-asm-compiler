@@ -35,7 +35,7 @@ psa_return_type parse_expression_base(bool is_param)
     PSA_Token a = PSA_Token_stack_top(s);
 
     char next_token_error = 0;
-    PSA_Token b = readNextToken(s, &next_token_error, &num_of_brackets);
+    PSA_Token b = readNextToken(s, &next_token_error, &num_of_brackets, false);
 
     while (!(a.type == (Token_type)TOKEN_EXPRSN && s->size == 2 && (b.type == (Token_type)TOKEN_EOF)))
     {
@@ -114,11 +114,17 @@ psa_return_type parse_expression_base(bool is_param)
         const unsigned int b_val = getSymbolValue(b.type);
 
         // choose further behaviour based on the value in the precedence table
-        switch (P_TABLE[a_val][b_val])
+        char ptable_val = P_TABLE[a_val][b_val];
+        if (s->size >= 2 && s->top->next->data.type == TOKEN_EXPRSN && a.type == TOKEN_NOT)
+        {
+            ptable_val = '>';
+        }
+
+        switch (ptable_val)
         {
         case '=': // just push the token on the stack
             PSA_Token_stack_push(s, b);
-            b = readNextToken(s, &next_token_error, &num_of_brackets);
+            b = readNextToken(s, &next_token_error, &num_of_brackets, false);
             break;
 
         case '<': // opening of a handle
@@ -130,7 +136,7 @@ psa_return_type parse_expression_base(bool is_param)
                                             .token_value = "<"});
                 PSA_Token_stack_push(s, tmp);
                 PSA_Token_stack_push(s, b);
-                b = readNextToken(s, &next_token_error, &num_of_brackets);
+                b = readNextToken(s, &next_token_error, &num_of_brackets, false);
             }
             else
             {
@@ -138,7 +144,7 @@ psa_return_type parse_expression_base(bool is_param)
                                             .type = (Token_type)TOKEN_SHIFT,
                                             .token_value = "<"});
                 PSA_Token_stack_push(s, b);
-                b = readNextToken(s, &next_token_error, &num_of_brackets);
+                b = readNextToken(s, &next_token_error, &num_of_brackets, false);
             }
             break;
         case '>':

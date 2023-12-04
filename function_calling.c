@@ -52,7 +52,7 @@ PSA_Token parseFunctionCall(PSA_Token_stack *main_s, PSA_Token id)
 
     // read the next token (should be ( token)
     char next_token_error = 0;
-    PSA_Token l_bracket = readNextToken(main_s, &next_token_error, NULL);
+    PSA_Token l_bracket = readNextToken(main_s, &next_token_error, NULL, true);
     if (l_bracket.type != TOKEN_L_BRACKET)
     {
         throw_error(SYNTACTIC_ERR, l_bracket.line_num, "Missing '(' after function name!");
@@ -85,10 +85,11 @@ PSA_Token parseFunctionCall(PSA_Token_stack *main_s, PSA_Token id)
         }
     }
     // read the next token (should be ) token)
-    if (readNextToken(main_s, &next_token_error, NULL).type != TOKEN_R_BRACKET)
+    PSA_Token r_bracket = readNextToken(main_s, &next_token_error, NULL, true);
+    if (r_bracket.type != TOKEN_R_BRACKET)
     {
-        // if not -> error
-        // TODO: throw error
+        throw_error(SYNTACTIC_ERR, r_bracket.line_num, "Missing ')' after function parameter list!");
+
         is_ok = false;
     }
 
@@ -146,10 +147,10 @@ bool checkParamName(PSA_Token_stack *main_s, unsigned int param_index, symtable_
 {
     // read the first token (should be an identificator)
     char next_token_error = 0;
-    PSA_Token id = readNextToken(main_s, &next_token_error, NULL);
+    PSA_Token id = readNextToken(main_s, &next_token_error, NULL, true);
 
     // read the second token (should be : token)
-    PSA_Token colon = readNextToken(main_s, &next_token_error, NULL);
+    PSA_Token colon = readNextToken(main_s, &next_token_error, NULL, true);
 
     bool has_name = id.type == TOKEN_IDENTIFICATOR && colon.type == TOKEN_DOUBLE_DOT;
 

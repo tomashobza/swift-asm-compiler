@@ -325,7 +325,7 @@ psa_return_type parse_expression_param();
  * @param num_of_brackets number of brackets in the expression (NULL if not needed)
  * @return PSA_Token - next token
  */
-PSA_Token readNextToken(PSA_Token_stack *s, char *next_token_error, int *num_of_brackets);
+PSA_Token readNextToken(PSA_Token_stack *s, char *next_token_error, int *num_of_brackets, bool ignore_func_call);
 
 /**
  * @brief Prints the stack of tokens recursively.

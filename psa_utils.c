@@ -82,6 +82,7 @@ bool isTokenOperand(Token_type token)
     case TOKEN_STRING:
     case TOKEN_EXPRSN:
     case TOKEN_IDENTIFICATOR:
+    case TOKEN_FUNC_ID:
         return true;
     default:
         return false;
