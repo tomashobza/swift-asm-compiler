@@ -82,7 +82,7 @@ void sem_var_exp(__attribute__((unused)) Token *token, __attribute__((unused)) s
     }
     DEBUG_SEMANTIC_CODE(
         (symtable_stack_top(sym_st)););
-    sem_var_add(token, items);
+    // sem_var_add(token, items);
 }
 
 void sem_var_add(__attribute__((unused)) Token *token, __attribute__((unused)) sym_items *items)

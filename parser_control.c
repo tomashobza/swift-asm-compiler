@@ -61,6 +61,7 @@ int run_control(Token *token, sym_items *items, Control_state sem_rule)
         break;
     case VAR_EXP:
         sem_var_exp(token, items);
+        sem_var_add(token, items);
 
         fprintf(out_code_file, "# variable initialization\n");
         generate_instruction(POPS, variable(items->varItem->id, sym_st->size - 1, true));
@@ -68,6 +69,7 @@ int run_control(Token *token, sym_items *items, Control_state sem_rule)
 
         break;
     case VAR_ADD:
+        generate_implicit_init(*(items->varItem));
         sem_var_add(token, items);
         break;
     case FUNC_ID:

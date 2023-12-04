@@ -269,6 +269,8 @@ void generate_while_condition();
  */
 void generate_while_end();
 
+void generate_implicit_init(symtable_item var_item);
+
 /// UTILITY FUNCTIONS
 
 /**

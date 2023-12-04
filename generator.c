@@ -234,8 +234,8 @@ char *format_token(Token token)
     case TOKEN_NIL:
     {
         // Format nil with "nil@"
-        formatted_value = malloc(strlen("nil@") + 1); //"nil@" and '\0'
-        sprintf(formatted_value, "nil@");
+        formatted_value = malloc(strlen("nil@nil") + 1); //"nil@" and '\0'
+        sprintf(formatted_value, "nil@nil");
         break;
     }
     default:
@@ -535,6 +535,21 @@ void generate_while_end()
     fprintf(out_code_file, "\n");
 
     free(endwhile_lbl);
+}
+
+void generate_implicit_init(symtable_item var_item)
+{
+    if (var_item.data.var_data->is_initialized == false)
+    {
+        Expression_type type = var_item.data.var_data->type;
+        if (type == TYPE_INT_NIL || type == TYPE_DOUBLE_NIL || type == TYPE_STRING_NIL || type == TYPE_BOOL_NIL)
+        {
+            generate_instruction(MOVE, variable(var_item.id, sym_st->size - 1, true), literal((Token){
+                                                                                          .type = TOKEN_NIL,
+                                                                                          .token_value = "nil",
+                                                                                      }));
+        }
+    }
 }
 
 /// UTILITY FUNCTIONS
