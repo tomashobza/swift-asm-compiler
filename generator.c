@@ -219,7 +219,8 @@ char *format_token(Token token)
     {
         // Format string literals with "string@"
         formatted_value = malloc(strlen(token.token_value) + 8); //"string@" and '\0'
-        char *escaped_token_value = escapeString(token.token_value);
+        // char *escaped_token_value = escapeString(token.token_value);
+        char *escaped_token_value = formatted_value;
         sprintf(formatted_value, "string@%s", escaped_token_value);
         break;
     }
