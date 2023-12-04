@@ -83,6 +83,7 @@ PSA_Token readNextToken(PSA_Token_stack *s, char *next_token_error, int *num_of_
                 else
                 {
                     generate_instruction(CALL, label(b.token_value));
+                    generate_instruction(POPFRAME);
                     generate_instruction(PUSHS, variable("retval", -1, false));
                 }
             }
