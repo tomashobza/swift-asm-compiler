@@ -1,5 +1,5 @@
 CC=gcc
-CFLAGS=-I.
+CFLAGS=-Iinclude -Werror -Wall -Wextra -std=c99 -fdiagnostics-color=always
 
 gen: gen.o
 	$(CC) -o gen gen.o

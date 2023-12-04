@@ -39,7 +39,9 @@ int run_control(Token *token, sym_items *items, Control_state sem_rule);
 
 bool START(Token *token, sym_items *items);
 bool STMT_LIST(Token *token, sym_items *items);
+bool LOCAL_STMT_LIST(Token *token, sym_items *items);
 bool STMT(Token *token, sym_items *items);
+bool LOCAL_STMT(Token *token, sym_items *items);
 bool VAR_LET(Token *token, sym_items *items);
 bool VAR_SCOPE(Token *token, sym_items *items);
 bool TYPE_AND_ASIGN(Token *token, sym_items *items);

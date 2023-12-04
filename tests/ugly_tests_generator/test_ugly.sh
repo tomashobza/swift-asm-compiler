@@ -11,11 +11,10 @@ GEN_PATH="$1"
 COMPILER_PATH="$2"
 OUTPUT_FILE="$3"
 
-echo OUTPUT_FILE
-
 while true; do
     # Spustí 'gen' a uloží výstup do souboru
     "$GEN_PATH" 2>/dev/null > "$OUTPUT_FILE"
+    cat "$OUTPUT_FILE"
 
     # Předá obsah souboru do 'ifj-compiler'
     "$COMPILER_PATH" >/dev/null 2>/dev/null < "$OUTPUT_FILE"

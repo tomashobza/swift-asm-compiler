@@ -94,6 +94,28 @@ bool STMT_LIST(Token *token, sym_items *items)
     }
 }
 
+bool LOCAL_STMT_LIST(Token *token, sym_items *items)
+{
+    DEBUG_SYNTAX_CODE(printf("STMT_LIST token: %d value: %s\n", token->type, token->token_value););
+    switch (token->type)
+    {
+    // STMT_LIST -> eps
+    case TOKEN_EOF:
+    case TOKEN_R_CURLY:
+        return true;
+    // STMT_LIST -> STMT STMT_LIST
+    case TOKEN_IF:
+    case TOKEN_IDENTIFICATOR:
+    case TOKEN_FUNC_ID:
+    case TOKEN_WHILE:
+    case TOKEN_VAR:
+    case TOKEN_LET:
+        return LOCAL_STMT(token, items) && LOCAL_STMT_LIST(token, items);
+    default:
+        return false;
+    }
+}
+
 bool STMT(Token *token, sym_items *items)
 {
     DEBUG_SYNTAX_CODE(printf("STMT token: %d value: %s\n", token->type, token->token_value););
@@ -102,6 +124,34 @@ bool STMT(Token *token, sym_items *items)
     // STMT -> DEF_FUNC
     case TOKEN_FUNC:
         return DEF_FUNC(token, items);
+    // STMT -> IF_STMT
+    case TOKEN_IF:
+        bool res = IF_STMT(token, items);
+        run_control(token, items, IF_END);
+        return res;
+    // STMT -> LOAD_ID
+    case TOKEN_IDENTIFICATOR:
+    case TOKEN_FUNC_ID:
+        return LOAD_ID(token, items);
+    // STMT -> WHILE_STMT
+    case TOKEN_WHILE:
+        return WHILE_STMT(token, items);
+    // STMT -> VAR_LET
+    case TOKEN_VAR:
+        return VAR_LET(token, items);
+    // STMT -> VAR_LET
+    case TOKEN_LET:
+        return VAR_LET(token, items);
+    default:
+        return false;
+    }
+}
+
+bool LOCAL_STMT(Token *token, sym_items *items)
+{
+    DEBUG_SYNTAX_CODE(printf("STMT token: %d value: %s\n", token->type, token->token_value););
+    switch (token->type)
+    {
     // STMT -> IF_STMT
     case TOKEN_IF:
         bool res = IF_STMT(token, items);
@@ -449,10 +499,10 @@ bool IF_STMT(Token *token, sym_items *items)
     DEBUG_SYNTAX_CODE(printf("IF_STMT token: %d value: %s\n", token->type, token->token_value););
     switch (token->type)
     {
-    // IF_STMT -> if EXP { STMT_LIST } ELSE_CLAUSE
+    // IF_STMT -> if EXP { LOCAL_STMT_LIST } ELSE_CLAUSE
     case TOKEN_IF:
         return cmp_type(token, items, TOKEN_IF, SEM_NONE) && IF_COND(token, items) && cmp_type(token, items, TOKEN_L_CURLY, IF_START) &&
-               STMT_LIST(token, items) && cmp_type(token, items, TOKEN_R_CURLY, POP_SCOPE) && ELSE_CLAUSE(token, items);
+               LOCAL_STMT_LIST(token, items) && cmp_type(token, items, TOKEN_R_CURLY, POP_SCOPE) && ELSE_CLAUSE(token, items);
     default:
         return false;
     }
@@ -463,10 +513,10 @@ bool ELSE_IF_STMT(Token *token, sym_items *items)
     DEBUG_SYNTAX_CODE(printf("IF_STMT token: %d value: %s\n", token->type, token->token_value););
     switch (token->type)
     {
-    // IF_STMT -> if EXP { STMT_LIST } ELSE_CLAUSE
+    // IF_STMT -> if EXP { LOCAL_STMT_LIST } ELSE_CLAUSE
     case TOKEN_IF:
         return cmp_type(token, items, TOKEN_IF, ELSE_IF_START) && IF_COND(token, items) && cmp_type(token, items, TOKEN_L_CURLY, ELSE_IF_AFTER_COND) &&
-               STMT_LIST(token, items) && cmp_type(token, items, TOKEN_R_CURLY, POP_SCOPE) && ELSE_CLAUSE(token, items);
+               LOCAL_STMT_LIST(token, items) && cmp_type(token, items, TOKEN_R_CURLY, POP_SCOPE) && ELSE_CLAUSE(token, items);
     default:
         return false;
     }
@@ -526,9 +576,9 @@ bool AFTER_ELSE(Token *token, sym_items *items)
     DEBUG_SYNTAX_CODE(printf("AFTER_ELSE token: %d value: %s\n", token->type, token->token_value););
     switch (token->type)
     {
-    // AFTER_ELSE -> { STMT_LIST }
+    // AFTER_ELSE -> { LOCAL_STMT_LIST }
     case TOKEN_L_CURLY:
-        return cmp_type(token, items, TOKEN_L_CURLY, ELSE_START) && STMT_LIST(token, items) && cmp_type(token, items, TOKEN_R_CURLY, POP_SCOPE);
+        return cmp_type(token, items, TOKEN_L_CURLY, ELSE_START) && LOCAL_STMT_LIST(token, items) && cmp_type(token, items, TOKEN_R_CURLY, POP_SCOPE);
     // AFTER_ELSE -> IF_STMT
     case TOKEN_IF:
         return ELSE_IF_STMT(token, items);
@@ -542,10 +592,10 @@ bool WHILE_STMT(Token *token, sym_items *items)
     DEBUG_SYNTAX_CODE(printf("WHILE_STMT token: %d value: %s\n", token->type, token->token_value););
     switch (token->type)
     {
-    // WHILE_STMT -> while EXP { STMT_LIST }
+    // WHILE_STMT -> while EXP { LOCAL_STMT_LIST }
     case TOKEN_WHILE:
         return cmp_type(token, items, TOKEN_WHILE, SEM_NONE) && EXP(token, items, COND_EXP) && cmp_type(token, items, TOKEN_L_CURLY, SEM_NONE) &&
-               STMT_LIST(token, items) && cmp_type(token, items, TOKEN_R_CURLY, POP_SCOPE);
+               LOCAL_STMT_LIST(token, items) && cmp_type(token, items, TOKEN_R_CURLY, POP_SCOPE);
     default:
         return false;
     }
