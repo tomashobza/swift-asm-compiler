@@ -1059,86 +1059,31 @@ Expression_type getReadType(Token token)
 
 char *escapeString(char *s)
 {
-    char *result = malloc(sizeof(char) * (strlen(s) * 4 + 1));
+    char *result = malloc(strlen(s) + 1); // Alokace paměti pro výsledek
+    if (!result)
+        return NULL; // Kontrola, zda byla alokace úspěšná
 
-    for (int i = 0; i < (int)strlen(s); i++)
-    /*
-    characters with ASCII code 000-032, 035 and 092 are escaped with \000-\032, \035 and \092.
-    check if the string contains any of these characters and escape them
-    */
+    int pos = 0; // Pozice v řetězci result
+    for (int i = 0; s[i] != '\0'; i++)
     {
-        if (s[i] == '\0')
+        if (s[i] == '\\' && s[i + 1] >= '0' && s[i + 1] <= '9')
         {
-            strcat(result, "\\000");
-        }
-        else if (s[i] == '\a')
-        {
-            strcat(result, "\\007");
-        }
-        else if (s[i] == '\b')
-        {
-            strcat(result, "\\008");
-        }
-        else if (s[i] == '\t')
-        {
-            strcat(result, "\\009");
-        }
-        else if (s[i] == '\n')
-        {
-            strcat(result, "\\010");
-        }
-        else if (s[i] == '\v')
-        {
-            strcat(result, "\\011");
-        }
-        else if (s[i] == '\f')
-        {
-            strcat(result, "\\012");
-        }
-        else if (s[i] == '\r')
-        {
-            strcat(result, "\\013");
-        }
-        else if (s[i] == '\e')
-        {
-            strcat(result, "\\027");
-        }
-        else if (s[i] == '\"')
-        {
-            strcat(result, "\\034");
-        }
-        else if (s[i] == '\\')
-        {
-            strcat(result, "\\092");
-        }
-        else if (s[i] == '\?')
-        {
-            strcat(result, "\\063");
-        }
-        else if (s[i] == '\'')
-        {
-            strcat(result, "\\039");
-        }
-        else if (s[i] == ' ')
-        {
-            strcat(result, "\\032");
-        }
-        else if (s[i] == '\035')
-        {
-            strcat(result, "\\035");
-        }
-        else if (s[i] == '\\')
-        {
-            strcat(result, "\\092");
+            // Detekce escape sekvence
+            char code[4] = {0};          // Buffer pro uložení číselné části escape sekvence
+            strncpy(code, &s[i + 1], 3); // Kopírování číselné části
+            int ascii_code = atoi(code); // Převod na celé číslo
+
+            result[pos++] = (char)ascii_code; // Převod ASCII kódu na znak a uložení do výsledku
+            i += 3;                           // Posunutí indexu za escape sekvenci
         }
         else
         {
-            char *tmp = malloc(sizeof(char) * 2);
-            sprintf(tmp, "%c", s[i]);
-            strcat(result, tmp);
-            free(tmp);
+            // Běžný znak, kopírování do výsledku
+            result[pos++] = s[i];
         }
     }
+    result[pos] = '\0'; // Ukončení řetězce
+    return result;
 
     return result;
 }
