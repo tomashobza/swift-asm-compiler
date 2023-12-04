@@ -55,6 +55,12 @@ typedef struct
     int line_num;
 } PSA_Token;
 
+typedef struct
+{
+    Instruction inst[10];
+    int len;
+} Instruction_list;
+
 /**
  * @brief PSA_Token that represents the end of the file. It is used as a bottom of the stack and for error states.
  */
@@ -222,7 +228,7 @@ Expression_type removeTypeNil(Expression_type expr_type);
  * @param tt token type
  * @return Instruction
  */
-Instruction tokenTypeToStackInstruction(Token_type tt);
+Instruction_list tokenTypeToStackInstruction(Token_type tt);
 
 // PSA FUNCTIONS
 

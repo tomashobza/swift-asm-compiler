@@ -224,19 +224,39 @@ Expression_type removeTypeNil(Expression_type expr_type)
     }
 }
 
-Instruction tokenTypeToStackInstruction(Token_type tt)
+Instruction_list tokenTypeToStackInstruction(Token_type tt)
 {
     switch (tt)
     {
     case TOKEN_MUL:
-        return MULS;
+        return (Instruction_list){.inst = {MULS}, .len = 1};
     case TOKEN_DIV:
-        return IDIVS;
+        return (Instruction_list){.inst = {DIVS}, .len = 1};
     case TOKEN_PLUS:
-        return ADDS;
+        return (Instruction_list){.inst = {ADDS}, .len = 1};
     case TOKEN_MINUS:
-        return SUBS;
+        return (Instruction_list){.inst = {SUBS}, .len = 1};
+    case TOKEN_EQ:
+        return (Instruction_list){.inst = {EQS}, .len = 1};
+    case TOKEN_NEQ:
+        return (Instruction_list){.inst = {EQS, NOTS}, .len = 2};
+    case TOKEN_LESS:
+        return (Instruction_list){.inst = {LTS}, .len = 1};
+    case TOKEN_MORE:
+        return (Instruction_list){.inst = {GTS}, .len = 1};
+    case TOKEN_LESS_EQ:
+        return (Instruction_list){.inst = {GTS, NOTS}, .len = 2};
+    case TOKEN_MORE_EQ:
+        return (Instruction_list){.inst = {LTS, NOTS}, .len = 2};
+    case TOKEN_AND:
+        return (Instruction_list){.inst = {ANDS}, .len = 1};
+    case TOKEN_OR:
+        return (Instruction_list){.inst = {ORS}, .len = 1};
+    case TOKEN_BINARY_OPERATOR:
+        // TODO: posefit toto
+        return (Instruction_list){.inst = {EMPTY}, .len = 1};
+
     default:
-        return EMPTY;
+        return (Instruction_list){.inst = {EMPTY}, .len = 1};
     }
 }

@@ -381,6 +381,8 @@ void generate_if_start()
 
     generate_instruction(PUSHS, true_op);
     generate_instruction(JUMPIFNEQS, label(if_lbl));
+    generate_instruction(CLEARS);
+
     fprintf(out_code_file, "\n");
 
     free(if_lbl);
@@ -400,6 +402,7 @@ void generate_elseif_else()
 
     generate_instruction(JUMP, label(end_lbl));
     generate_instruction(LABEL, label(elsif_else_lbl));
+    generate_instruction(CLEARS);
 
     fprintf(out_code_file, "\n");
 
@@ -427,6 +430,7 @@ void generate_elseif_if()
 
     generate_instruction(PUSHS, true_op);
     generate_instruction(JUMPIFNEQS, label(elsif_if_lbl));
+    generate_instruction(CLEARS);
 
     fprintf(out_code_file, "\n");
 
@@ -448,6 +452,7 @@ void generate_else()
     fprintf(out_code_file, "# if%d else\n", if_counter);
     generate_instruction(JUMP, label(endif_lbl));
     generate_instruction(LABEL, label(else_lbl));
+    generate_instruction(CLEARS);
 
     fprintf(out_code_file, "\n");
 
