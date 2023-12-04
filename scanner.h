@@ -69,7 +69,7 @@ typedef enum
     TOKEN_EXP,             // Exponent 22
     TOKEN_STRING,          // String 23
     TOKEN_EQ,              // Equals == 24
-    TOKEN_NEQ,             // Not equal !== 25
+    TOKEN_NEQ,             // Not equal != 25
     TOKEN_LESS,            // Less than < 26
     TOKEN_MORE,            // More than > 27
     TOKEN_MORE_EQ,         // More than or equal >= 28
