@@ -522,7 +522,7 @@ void generate_while_condition()
 
 void generate_while_end()
 {
-    if_counter--;
+    while_counter--;
 
     fprintf(out_code_file, "# while%d end\n", if_counter);
 
