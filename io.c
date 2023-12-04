@@ -74,6 +74,19 @@ PSA_Token readNextToken(PSA_Token_stack *s, char *next_token_error, int *num_of_
 
             b = parseFunctionCall(s, b);
 
+            if (b.expr_type != TYPE_INVALID && b.type != TOKEN_EOF)
+            {
+                if (isBuiltInFunction(convertPSATokenToToken(b)))
+                {
+                    generate_builtin_func_call(convertPSATokenToToken(b));
+                }
+                else
+                {
+                    generate_instruction(CALL, label(b.token_value));
+                    generate_instruction(PUSHS, variable("retval", -1, false));
+                }
+            }
+
             DEBUG_PSA_CODE(printf_cyan("func call type: ");
                            print_expression_type(b.expr_type););
         }
