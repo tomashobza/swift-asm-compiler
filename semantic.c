@@ -11,6 +11,12 @@
 
 #include "semantic.h"
 
+void sem_start(__attribute__((unused)) Token *token, __attribute__((unused)) sym_items *items)
+{
+    items->funcItem = NULL;
+    items->varItem = NULL;
+}
+
 void sem_let(__attribute__((unused)) Token *token, __attribute__((unused)) sym_items *items)
 {
     items->varItem = init_symtable_item(false);
@@ -320,7 +326,6 @@ void sem_func_body_done(__attribute__((unused)) Token *token, __attribute__((unu
     {
         throw_error(PARAM_TYPE_ERR, token->line_num, "Function %s of type: %d does not have a return statement!\n", items->funcItem->id, func_body_item->data.func_data->return_type);
     }
-    sem_pop_scope(token, items);
 }
 
 void sem_load_identif(__attribute__((unused)) Token *token, __attribute__((unused)) sym_items *items)
