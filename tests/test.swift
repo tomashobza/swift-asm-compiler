@@ -1,23 +1,6 @@
-func boo () -> Bool {
-    if true {
-        return true
+func foo () -> String {
+    if 5+5 {
+        return "test"
     } else {
-        return false
-    }
-}
-
-func foo () -> Bool {
-    if boo() {
-        return true
-    } else if boo() {
-        if boo() {
-            return true
-        } else {
-            if boo() {
-                return true
-            }
-        }
-    } else {
-        return false
     }
 }

@@ -14,7 +14,6 @@
 void sem_start(__attribute__((unused)) Token *token, __attribute__((unused)) sym_items *items)
 {
     items->funcItem = NULL;
-    items->varItem = NULL;
 }
 
 void sem_let(__attribute__((unused)) Token *token, __attribute__((unused)) sym_items *items)
