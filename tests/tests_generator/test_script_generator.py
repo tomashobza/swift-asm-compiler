@@ -52,9 +52,9 @@ def run_compiler_and_interpreter(file_path, expected_output):
 
         # Check if interpreter output is correct
         if interpreter_result.stdout.strip() != expected_output:
-            return False, f"{interpreter_result.stdout.strip()}"
+            return False, f"{interpreter_result.stdout}"
 
-        return True, interpreter_result.stdout.strip()
+        return True, interpreter_result.stdout
     finally:
         os.remove(asm_path)
     
