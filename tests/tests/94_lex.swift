@@ -20,7 +20,7 @@ func calculateStatistics(_ data: Int) -> Int {
         }
     }
 
-    let average = Int2Double(sum) / IntDouble(data.count)
+    let average = Int2Double(sum) / IntDouble(data)
 
     // Invalid token usage: using an undefined operator '##'
     return Double2Int(average) // This line contains the lexical error
