@@ -367,6 +367,8 @@ bool check_ret_values(Expression_type t_exp, Expression_type t_id)
 {
     switch (t_exp)
     {
+    case TYPE_EMPTY:
+        return (t_id == TYPE_EMPTY);
     case TYPE_INT:
         return (t_id == TYPE_INT || t_id == TYPE_INT_NIL);
     case TYPE_DOUBLE:
