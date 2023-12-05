@@ -257,11 +257,6 @@ void sem_cond_exp(__attribute__((unused)) Token *token, __attribute__((unused)) 
         throw_error(COMPATIBILITY_ERR, token->line_num, "Expression type: %d and type: %d of variable: %s do not match!\n", return_type3.type, TYPE_BOOL, items->varItem->id);
     }
 
-    // push new scope
-    DEBUG_SEMANTIC_CODE(printf(RED "PUSH_SCOPE\n" RESET););
-    symtable symtable = symtable_init();
-    symtable_stack_push(sym_st, symtable);
-
     DEBUG_SEMANTIC_CODE(print_expression_type(return_type3.type););
 }
 
@@ -275,22 +270,19 @@ void sem_let_in_if(__attribute__((unused)) Token *token, __attribute__((unused))
         throw_error(SEMANTICS_ERR, token->line_num, "Variable %s is not a defined const!\n", token->token_value);
     }
 
-    // prepare items->varItem
-    *(items->varItem->data.var_data) = *(let_in_if_item->data.var_data);
-    items->varItem->id = token->token_value;
-    switch (items->varItem->data.var_data->type)
+    switch (let_in_if_item->data.var_data->type)
     {
     case TYPE_BOOL_NIL:
-        items->varItem->data.var_data->type = TYPE_BOOL;
+        let_in_if_item->data.var_data->type = TYPE_BOOL;
         break;
     case TYPE_DOUBLE_NIL:
-        items->varItem->data.var_data->type = TYPE_DOUBLE;
+        let_in_if_item->data.var_data->type = TYPE_DOUBLE;
         break;
     case TYPE_INT_NIL:
-        items->varItem->data.var_data->type = TYPE_INT;
+        let_in_if_item->data.var_data->type = TYPE_INT;
         break;
     case TYPE_STRING_NIL:
-        items->varItem->data.var_data->type = TYPE_STRING;
+        let_in_if_item->data.var_data->type = TYPE_STRING;
         break;
     default:
         break;
@@ -302,7 +294,7 @@ void sem_let_in_if(__attribute__((unused)) Token *token, __attribute__((unused))
     symtable_stack_push(sym_st, symtable);
 
     // add temporary var to scope
-    symtable_add(items->varItem, symtable_stack_top(sym_st));
+    // symtable_add(items->varItem, symtable_stack_top(sym_st));
 
     DEBUG_SEMANTIC_CODE(symtable_print(symtable_stack_top(sym_st)););
 }

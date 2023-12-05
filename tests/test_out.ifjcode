@@ -3,13 +3,111 @@ CREATEFRAME
 PUSHFRAME
 CREATEFRAME
 
-# variable definition
-DEFVAR GF@$result0
+# function header
+JUMP fibonacci_end
+LABEL fibonacci
 
-PUSHS float@0x1.2p+2
-PUSHS int@4
-INT2FLOATS
-MULS
+PUSHFRAME
+CREATEFRAME
+# function params
+DEFVAR LF@$n1
+POPS LF@$n1
+# function params end
+
+PUSHS LF@$n1
+PUSHS int@1
+GTS
+NOTS
+# if0 start
+PUSHS bool@true
+JUMPIFNEQS else0_0
+CLEARS
+
+PUSHS LF@$n1
+
+# return
+DEFVAR LF@$retval
+POPS LF@$retval
+RETURN
+
+# if0 else
+JUMP else0_1
+LABEL else0_0
+CLEARS
+
+PUSHS LF@$n1
+PUSHS int@1
+SUBS
+CALL fibonacci
+POPFRAME
+PUSHS TF@$retval
+PUSHS LF@$n1
+PUSHS int@2
+SUBS
+CALL fibonacci
+POPFRAME
+PUSHS TF@$retval
+ADDS
+
+# return
+DEFVAR LF@$retval
+POPS LF@$retval
+RETURN
+
+# if0 end
+LABEL else0_1
+
+# function end
+LABEL fibonacci_end
+
+# variable definition
+DEFVAR GF@$n0
+
+DEFVAR TF@$tmp0
+READ TF@$tmp0 int
+PUSHS TF@$tmp0
+
 # variable initialization
-POPS GF@$result0
+POPS GF@$n0
+
+PUSHS GF@$n0
+PUSHS nil@nil
+EQS
+NOTS
+# if0 start
+PUSHS bool@true
+JUMPIFNEQS else0_1
+CLEARS
+
+# variable definition
+DEFVAR LF@$y1
+
+DEFVAR TF@$tmp1
+READ TF@$tmp1 int
+PUSHS TF@$tmp1
+
+# variable initialization
+POPS LF@$y1
+
+PUSHS string@string@
+PUSHS GF@$n0
+CALL fibonacci
+POPFRAME
+PUSHS TF@$retval
+DEFVAR TF@$tmp2
+POPS TF@$tmp2
+WRITE TF@$tmp2
+
+# if0 else
+JUMP else0_2
+LABEL else0_1
+CLEARS
+
+PUSHS string@string@
+DEFVAR TF@$tmp3
+POPS TF@$tmp3
+WRITE TF@$tmp3
+
+# if0 end
+LABEL else0_2
 
