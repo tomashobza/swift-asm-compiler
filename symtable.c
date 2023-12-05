@@ -59,7 +59,8 @@ void symtable_stack_free_all(symtable_stack *stack)
 
 symtable symtable_init()
 {
-    symtable st = malloc(sizeof(symtable_item *) * SYMTABLE_MAX_ITEMS);
+    symtable st = malloc(sizeof(symtable *));
+    st->symtable = malloc(sizeof(symtable_item *) * SYMTABLE_MAX_ITEMS);
 
     if (st == NULL)
     {
@@ -68,9 +69,12 @@ symtable symtable_init()
 
     for (int i = 0; i < SYMTABLE_MAX_ITEMS; i++)
     {
-        st[i] = NULL;
+        st->symtable[i] = NULL;
     }
 
+    st->all_children_return = true;
+    st->found_else = false;
+    st->found_return = false;
     return st;
 }
 
@@ -83,14 +87,14 @@ symtable_item *symtable_add(symtable_item *item, symtable table)
         return NULL;
     }
 
-    if (table[item_hash] == NULL) // new item
+    if (table->symtable[item_hash] == NULL) // new item
     {
-        table[item_hash] = item;
+        table->symtable[item_hash] = item;
     }
     else // found item
     {
 
-        symtable_item *last_item = table[item_hash];
+        symtable_item *last_item = table->symtable[item_hash];
         while (last_item->next != NULL)
         {
             last_item = last_item->next;
@@ -115,7 +119,7 @@ symtable_item *symtable_find(char *name, symtable table, bool is_func)
         return NULL;
     }
 
-    symtable_item *item = table[item_hash];
+    symtable_item *item = table->symtable[item_hash];
     while (item != NULL)
     {
         if (item->id == 0)
@@ -268,13 +272,13 @@ void symtable_print(symtable table)
     for (int i = 0; i < SYMTABLE_MAX_ITEMS; i++)
     {
         printf("%d: ", i);
-        if (table[i] == NULL)
+        if (table->symtable[i] == NULL)
         {
             printf("NULL\n");
         }
         else
         {
-            symtable_item *item = table[i];
+            symtable_item *item = table->symtable[i];
             while (item != NULL)
             {
                 if (item->type == VARIABLE)
@@ -310,9 +314,9 @@ void symtable_free(symtable table)
 {
     for (int i = 0; i < SYMTABLE_MAX_ITEMS; i++)
     {
-        if (table[i] != NULL)
+        if (table->symtable[i] != NULL)
         {
-            free_synonyms(table[i]);
+            free_synonyms(table->symtable[i]);
         }
     }
 
