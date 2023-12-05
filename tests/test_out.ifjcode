@@ -4,36 +4,22 @@ PUSHFRAME
 CREATEFRAME
 
 # function header
-JUMP foo_end
-LABEL foo
+JUMP fn_end
+LABEL fn
 
 PUSHFRAME
 CREATEFRAME
 # function params
-DEFVAR LF@$x1
-POPS LF@$x1
 # function params end
 
-PUSHS bool@true
-# if0 start
-PUSHS bool@true
-JUMPIFNEQS else0_0
-
-# if0 else
-JUMP else0_1
-LABEL else0_0
-
-
-# return
-POPFRAME
-CREATEFRAME
-DEFVAR TF@$retval
-POPS TF@$retval
-RETURN
-
-# if0 end
-LABEL else0_1
-
 # function end
-LABEL foo_end
+LABEL fn_end
+
+# variable definition
+DEFVAR GF@$a0
+
+CALL fn
+PUSHS TF@$retval
+# variable initialization
+POPS GF@$a0
 
