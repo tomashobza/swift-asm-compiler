@@ -83,9 +83,9 @@ def test_examples():
             expected = file.read()
 
         result, output = run_compiler_and_interpreter(file_path, expected)
-        utils.print_white("-----------------------------------")
+        # utils.print_white("-----------------------------------")
         utils.print_white(f"{base_file_name}:")
-        print(" ")
+        # print(" ")
         try:
             assert result
             utils.print_green("PASS")
@@ -98,7 +98,7 @@ def test_examples():
             print(expected)
             utils.print_magenta("Actual output:")
             print(output)
-        print(" ")
+        # print(" ")
 
 if __name__ == "__main__":
     test_examples()
