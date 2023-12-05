@@ -19,6 +19,8 @@ symtable_stack *sym_st;
 #include "generator.h"
 
 FILE *out_code_file = NULL;
+FILE *while_def_out_code_file = NULL;
+bool is_in_loop = false;
 
 int main(void)
 {

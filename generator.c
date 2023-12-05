@@ -174,6 +174,7 @@ char *symb_resolve(Token token)
             sprintf(var_name, "%s", token.token_value);
             break;
         }
+        sprintf(var_name, "%s@$%s%d", item.scope == 0 ? "GF" : (item.scope < 0 ? "TF" : "LF"), item.id, (int)item.data.var_data->gen_id_idx);
         break;
     }
     case TOKEN_STRING:
@@ -220,10 +221,8 @@ char *format_token(Token token)
     case TOKEN_STRING:
     {
         // Format string literals with "string@"
-        formatted_value = malloc(strlen(token.token_value) + 8); //"string@" and '\0'
-        // char *escaped_token_value = escapeString(token.token_value);
-        char *escaped_token_value = formatted_value;
-        sprintf(formatted_value, "string@%s", escaped_token_value);
+        formatted_value = malloc((strlen(token.token_value) * 10) + 8); //"string@" and '\0'
+        sprintf(formatted_value, "string@%s", escapeString(token.token_value));
         break;
     }
     case TOKEN_BOOL:
@@ -303,7 +302,7 @@ void generate_func_header(symtable_item func_item)
 
         char *var_name = symbol(param);
 
-        generate_instruction(DEFVAR, var_name);
+        HANDLE_DEFVAR(generate_instruction(DEFVAR, var_name););
         generate_instruction(POPS, var_name);
 
         free(var_name);
@@ -337,69 +336,75 @@ void generate_builtin_func_call(Token func, int param_cnt)
     switch (builting_inst)
     {
     case B_WRITE:
-        fprintf(out_code_file, "# Built-in: Write()\n");
+        fprintf(out_code_file, "# WRITE\n");
         for (int i = 0; i < param_cnt; i++)
         {
-            generate_instruction(DEFVAR, tmp_token_name);
+            HANDLE_DEFVAR(generate_instruction(DEFVAR, tmp_token_name););
             generate_instruction(POPS, tmp_token_name);
             generate_instruction(WRITE, tmp_token_name);
+            tmp_counter++;
             sprintf(tmp_token, "tmp%d", tmp_counter);
             tmp_token_name = variable(tmp_token, -1, false);
-            tmp_counter++;
         }
         tmp_counter--;
+        fprintf(out_code_file, "# WRITE END\n");
         fprintf(out_code_file, "\n");
         break;
     case B_READ:
-        fprintf(out_code_file, "# Built-in: Read()\n");
-        generate_instruction(DEFVAR, tmp_token_name);
+
+        fprintf(out_code_file, "# READ\n");
+        HANDLE_DEFVAR(generate_instruction(DEFVAR, tmp_token_name););
         generate_instruction(READ, tmp_token_name, type(getReadType(func)));
         generate_instruction(PUSHS, tmp_token_name);
+        fprintf(out_code_file, "# READ END\n");
         fprintf(out_code_file, "\n");
         break;
     case B_INT2DOUBLE:
-        fprintf(out_code_file, "# Built-in: Int2Double()\n");
-        generate_instruction(DEFVAR, tmp_token_name);
-        generate_instruction(POPS, tmp_token_name);
-        generate_instruction(INT2FLOATS, tmp_token_name, tmp_token_name);
-        generate_instruction(PUSHS, tmp_token_name);
+        fprintf(out_code_file, "# INT2DOUBLE\n");
+        // HANDLE_DEFVAR(generate_instruction(DEFVAR, tmp_token_name););
+        // generate_instruction(POPS, tmp_token_name);
+        generate_instruction(INT2FLOATS);
+        // generate_instruction(PUSHS, tmp_token_name);
+        fprintf(out_code_file, "# INT2DOUBLE END\n");
         fprintf(out_code_file, "\n");
         break;
     case B_DOUBLE2INT:
-        fprintf(out_code_file, "# Built-in: Double2Int()\n");
-        generate_instruction(DEFVAR, tmp_token_name);
-        generate_instruction(POPS, tmp_token_name);
-        generate_instruction(FLOAT2INTS, tmp_token_name, tmp_token_name);
-        generate_instruction(PUSHS, tmp_token_name);
+        fprintf(out_code_file, "# FLOAT2INT\n");
+        // HANDLE_DEFVAR(generate_instruction(DEFVAR, tmp_token_name););
+        // generate_instruction(POPS, tmp_token_name);
+        generate_instruction(FLOAT2INTS);
+        // generate_instruction(PUSHS, tmp_token_name);
+        fprintf(out_code_file, "# FLOAT2INT END\n");
         fprintf(out_code_file, "\n");
         break;
     case B_LENGTH:
     {
-        fprintf(out_code_file, "# Built-in: Length()\n");
-        generate_instruction(DEFVAR, tmp_token_name);
+        fprintf(out_code_file, "# LENGTH\n");
+        HANDLE_DEFVAR(generate_instruction(DEFVAR, tmp_token_name););
         tmp_counter++;
         sprintf(tmp_token, "tmp%d", tmp_counter);
         char *tmp_token_name_2 = variable(tmp_token, -1, false);
-        generate_instruction(DEFVAR, tmp_token_name_2);
+        HANDLE_DEFVAR(generate_instruction(DEFVAR, tmp_token_name_2););
         generate_instruction(POPS, tmp_token_name_2);
         generate_instruction(STRLEN, tmp_token_name, tmp_token_name_2);
+        fprintf(out_code_file, "# LENGTH END\n");
         fprintf(out_code_file, "\n");
         break;
     }
     case B_SUBSTRING:
     {
-        fprintf(out_code_file, "# Built-in: Substring()\n");
-        generate_instruction(DEFVAR, tmp_token_name);
+        fprintf(out_code_file, "# SUBSTRING\n");
+        HANDLE_DEFVAR(generate_instruction(DEFVAR, tmp_token_name););
         generate_instruction(POPS, tmp_token_name);
         tmp_counter++;
         sprintf(tmp_token, "tmp%d", tmp_counter);
         char *start_index = variable(tmp_token, -1, false);
-        generate_instruction(DEFVAR, start_index);
+        HANDLE_DEFVAR(generate_instruction(DEFVAR, start_index););
         generate_instruction(POPS, start_index);
         tmp_counter++;
         sprintf(tmp_token, "tmp%d", tmp_counter);
         char *string = variable(tmp_token, -1, false);
-        generate_instruction(DEFVAR, string);
+        HANDLE_DEFVAR(generate_instruction(DEFVAR, string););
         generate_instruction(POPS, string);
         generate_instruction(PUSHS, "string@");
         char *label = malloc(sizeof(char) * 20);
@@ -414,7 +419,7 @@ void generate_builtin_func_call(Token func, int param_cnt)
         tmp_counter++;
         sprintf(tmp_token, "tmp%d", tmp_counter);
         char *char_val = variable(tmp_token, -1, false);
-        generate_instruction(DEFVAR, char_val);
+        HANDLE_DEFVAR(generate_instruction(DEFVAR, char_val););
         generate_instruction(LABEL, label);
         generate_instruction(GT, bool_val, tmp_token_name, start_index);
         generate_instruction(JUMPIFNEQ, end_label, bool_val, "bool@true");
@@ -422,26 +427,28 @@ void generate_builtin_func_call(Token func, int param_cnt)
         generate_instruction(ADDS, char_val);
         generate_instruction(ADD, start_index, start_index, "int@1");
         generate_instruction(LABEL, end_label);
+        fprintf(out_code_file, "# SUBSTRING END\n");
         fprintf(out_code_file, "\n");
         break;
     }
     case B_ORD:
     {
-        fprintf(out_code_file, "# Built-in: Ord()\n");
-        generate_instruction(DEFVAR, tmp_token_name);
-        tmp_counter++;
-        sprintf(tmp_token, "tmp%d", tmp_counter);
-        char *tmp_token_name_2 = variable(tmp_token, -1, false);
-        generate_instruction(DEFVAR, tmp_token_name_2);
-        generate_instruction(POPS, tmp_token_name_2);
-        generate_instruction(STRI2INT, tmp_token_name, tmp_token_name_2, "int@0");
+        fprintf(out_code_file, "# STRI2INT\n");
+        // HANDLE_DEFVAR(generate_instruction(DEFVAR, tmp_token_name););
+        // tmp_counter++;
+        // sprintf(tmp_token, "tmp%d", tmp_counter);
+        // char *tmp_token_name_2 = variable(tmp_token, -1, false);
+        // HANDLE_DEFVAR(generate_instruction(DEFVAR, tmp_token_name_2););
+        // generate_instruction(POPS, tmp_token_name_2);
+        generate_instruction(STRI2INTS);
+        fprintf(out_code_file, "# STRI2INT END\n");
         fprintf(out_code_file, "\n");
         break;
     }
     case B_CHR:
     {
-        fprintf(out_code_file, "# Built-in: Chr()\n");
-        generate_instruction(DEFVAR, tmp_token_name);
+        fprintf(out_code_file, "# CHR\n");
+        HANDLE_DEFVAR(generate_instruction(DEFVAR, tmp_token_name););
         generate_instruction(LTS, tmp_token_name, "int@0");
         char *label = malloc(sizeof(char) * 20);
         sprintf(label, "%dlabel", label_counter);
@@ -455,6 +462,7 @@ void generate_builtin_func_call(Token func, int param_cnt)
         generate_instruction(POPS, tmp_token_name_2);
         generate_instruction(INT2CHAR, tmp_token_name, tmp_token_name_2);
         generate_instruction(LABEL, label);
+        fprintf(out_code_file, "# CHR END\n");
         fprintf(out_code_file, "\n");
         break;
     }
@@ -583,6 +591,16 @@ void generate_while_start()
     sprintf(while_lbl, "while%d", while_counter);
 
     fprintf(out_code_file, "# while%d start\n", while_counter);
+
+    while_def_out_code_file = out_code_file;
+    out_code_file = tmpfile();
+    if (out_code_file == NULL)
+    {
+        throw_error(INTERNAL_ERR, -1, "Error: out_code_file is not initialized.\n");
+        return;
+    }
+    is_in_loop = true;
+
     generate_instruction(LABEL, label(while_lbl));
 
     fprintf(out_code_file, "\n");
@@ -618,6 +636,11 @@ void generate_while_condition()
 void generate_while_end()
 {
     while_counter--;
+
+    copyFileContents(out_code_file, while_def_out_code_file);
+    // fclose(while_def_out_code_file);
+    out_code_file = while_def_out_code_file;
+    is_in_loop = false;
 
     fprintf(out_code_file, "# while%d end\n", if_counter);
 
@@ -1178,60 +1201,50 @@ Expression_type getReadType(Token token)
 
 char *escapeString(char *input)
 {
-    char *result = malloc(strlen(input) * 4 + 1);
+    char *result = malloc(strlen(input) * 4 + 1); // Alokace paměti s dostatečnou kapacitou
     if (!result)
     {
         return NULL;
     }
 
+    result[0] = '\0'; // Inicializace result jako prázdného řetězce
     int pos = 0;
     for (int i = 0; input[i] != '\0'; i++)
     {
         switch (input[i])
         {
         case '\0':
-            strcat(result, "\\000");
-            pos += 4;
+            pos += sprintf(result + pos, "\\000");
             break;
         case '\a':
-            strcat(result, "\\007");
-            pos += 4;
+            pos += sprintf(result + pos, "\\007");
             break;
         case '\b':
-            strcat(result, "\\008");
-            pos += 4;
+            pos += sprintf(result + pos, "\\008");
             break;
         case '\t':
-            strcat(result, "\\009");
-            pos += 4;
+            pos += sprintf(result + pos, "\\009");
             break;
         case '\n':
-            strcat(result, "\\010");
-            pos += 4;
+            pos += sprintf(result + pos, "\\010");
             break;
         case '\v':
-            strcat(result, "\\011");
-            pos += 4;
+            pos += sprintf(result + pos, "\\011");
             break;
         case '\f':
-            strcat(result, "\\012");
-            pos += 4;
+            pos += sprintf(result + pos, "\\012");
             break;
         case '\r':
-            strcat(result, "\\013");
-            pos += 4;
+            pos += sprintf(result + pos, "\\013");
             break;
         case ' ':
-            strcat(result, "\\032");
-            pos += 4;
+            pos += sprintf(result + pos, "\\032");
             break;
         case '#':
-            strcat(result, "\\035");
-            pos += 4;
+            pos += sprintf(result + pos, "\\035");
             break;
         case '\\':
-            strcat(result, "\\092");
-            pos += 4;
+            pos += sprintf(result + pos, "\\092");
             break;
         default:
             result[pos++] = input[i];
@@ -1239,4 +1252,29 @@ char *escapeString(char *input)
         }
     }
     return result;
+}
+
+void copyFileContents(FILE *source, FILE *destination)
+{
+    char ch;
+
+    // Check if either file is NULL
+    if (source == NULL || destination == NULL)
+    {
+        fprintf(stderr, "Invalid file pointer.\n");
+        exit(EXIT_FAILURE);
+    }
+
+    // Rewind the source file to ensure it starts from the beginning
+    rewind(source);
+
+    fprintf(destination, "# ======== while ========\n");
+
+    // Read from source and write to destination
+    while ((ch = fgetc(source)) != EOF)
+    {
+        fputc(ch, destination);
+    }
+
+    fprintf(destination, "# ====== end while ======\n");
 }

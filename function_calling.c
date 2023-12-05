@@ -80,6 +80,7 @@ PSA_Token parseFunctionCall(PSA_Token_stack *main_s, PSA_Token id, int *param_co
         // parameter will be empty if the next token is a ) token (end of the parameter list)
         if (parsed_param.type == TYPE_EMPTY || parsed_param.type == TYPE_INVALID)
         {
+            *param_count = *param_count - 1;
             break;
         }
     }
