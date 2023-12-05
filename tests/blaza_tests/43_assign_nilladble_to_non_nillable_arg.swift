@@ -1,5 +1,5 @@
 // 4
-func fn(_ a: String) {
+func fn(_ a: String) -> String {
     return "foo"
 }
 
