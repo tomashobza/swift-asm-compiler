@@ -87,7 +87,12 @@ PSA_Token parseFunctionCall(PSA_Token_stack *main_s, PSA_Token id, int *param_co
 
     // read the next token (should be ) token)
     PSA_Token r_bracket = readNextToken(main_s, &next_token_error, NULL, true);
-    if (r_bracket.type != TOKEN_R_BRACKET)
+    if (r_bracket.type != TOKEN_R_BRACKET && !unknown_params)
+    {
+        throw_error(PARAM_TYPE_ERR, id.line_num, "Wrong number of parameters for function '%s'!", id.token_value);
+        is_ok = false;
+    }
+    else if (r_bracket.type != TOKEN_R_BRACKET)
     {
         throw_error(SYNTACTIC_ERR, r_bracket.line_num, "Missing ')' after function parameter list!");
 
@@ -208,6 +213,11 @@ bool checkParamName(PSA_Token_stack *main_s, unsigned int param_index, symtable_
             {
                 // the name is correct
                 name_is_ok = true;
+            }
+            else
+            {
+                throw_error(PARAM_TYPE_ERR, func_id.line_num, "Parameter %d of function '%s' should be named '%s'!", param_index + 1, found_func->id, found_func->data.func_data->params[param_index].name);
+                name_is_ok = false;
             }
         }
     }
