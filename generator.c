@@ -337,15 +337,32 @@ void generate_builtin_func_call(Token func, int param_cnt)
     {
     case B_WRITE:
         fprintf(out_code_file, "# WRITE\n");
+
         for (int i = 0; i < param_cnt; i++)
         {
+            sprintf(tmp_token, "tmp%d", tmp_counter + param_cnt - i - 1);
+            char *tmp_token_name = variable(tmp_token, -1, false);
+
             HANDLE_DEFVAR(generate_instruction(DEFVAR, tmp_token_name););
             generate_instruction(POPS, tmp_token_name);
+
+            // tmp_counter++;
+            sprintf(tmp_token, "tmp%d", tmp_counter);
+            tmp_token_name = variable(tmp_token, -1, false);
+        }
+
+        for (int i = 0; i < param_cnt; i++)
+        {
+            sprintf(tmp_token, "tmp%d", tmp_counter);
+            char *tmp_token_name = variable(tmp_token, -1, false);
+
             generate_instruction(WRITE, tmp_token_name);
+
             tmp_counter++;
             sprintf(tmp_token, "tmp%d", tmp_counter);
             tmp_token_name = variable(tmp_token, -1, false);
         }
+
         tmp_counter--;
         fprintf(out_code_file, "# WRITE END\n");
         fprintf(out_code_file, "\n");
