@@ -1,6 +1,6 @@
-// SEMANTICS_ERR
+// NO_ERR
 // Logical error in a complex game logic function
-func checkGameStatus(_playerPoints: Int, _opponentPoints: Int) -> String {
+func checkGameStatus(_ playerPoints: Int, _ opponentPoints: Int) -> String {
     if playerPoints > 100 && opponentPoints > 100 { // Impossible winning condition
         return "Both players win"
     } else if playerPoints > 100 {
