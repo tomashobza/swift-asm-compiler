@@ -7,13 +7,13 @@ let d : String = "hello"
 let e : String
 let f = "hello"
 
-if a {
+if a == "hello" {
     write(a)
 } else {
     write(a)
 }
 
-while a {
+while a == "hello" {
     write(a)
 }
 
