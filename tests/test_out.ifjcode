@@ -3,39 +3,10 @@ CREATEFRAME
 PUSHFRAME
 CREATEFRAME
 
-PUSHS string@string@
-# Built-in: Write()
+PUSHS string@Hello,\032world!
+# WRITE
 DEFVAR TF@$tmp0
 POPS TF@$tmp0
 WRITE TF@$tmp0
-DEFVAR TF@$tmp0
-POPS TF@$tmp0
-WRITE TF@$tmp0
-
-PUSHS string@string@
-# Built-in: Write()
-DEFVAR TF@$tmp2
-POPS TF@$tmp2
-WRITE TF@$tmp2
-DEFVAR TF@$tmp2
-POPS TF@$tmp2
-WRITE TF@$tmp2
-
-PUSHS string@string@
-# Built-in: Write()
-DEFVAR TF@$tmp4
-POPS TF@$tmp4
-WRITE TF@$tmp4
-DEFVAR TF@$tmp4
-POPS TF@$tmp4
-WRITE TF@$tmp4
-
-PUSHS string@string@
-# Built-in: Write()
-DEFVAR TF@$tmp6
-POPS TF@$tmp6
-WRITE TF@$tmp6
-DEFVAR TF@$tmp6
-POPS TF@$tmp6
-WRITE TF@$tmp6
+# WRITE END
 

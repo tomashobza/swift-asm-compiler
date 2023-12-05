@@ -1,4 +1,2 @@
-write("1")
- write("2")
- write("3")
- write("4")
+var number = 10 
+if number > 5 { write("OK") }
