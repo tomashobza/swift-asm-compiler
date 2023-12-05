@@ -527,8 +527,11 @@ void generate_if_start()
 void generate_elseif_else()
 {
     if_counter--;
-    // int tmp = int_stack_pop(else_label_st);
-    int elif_counter = int_stack_pop(else_label_st);
+    int elif_counter = 0;
+    if (!int_stack_empty(else_label_st))
+    {
+        elif_counter = int_stack_pop(else_label_st);
+    }
 
     char *end_lbl = malloc(sizeof(char) * 20);
     sprintf(end_lbl, "endif%d", if_counter);
@@ -548,15 +551,17 @@ void generate_elseif_else()
     free(elsif_else_lbl);
 
     int_stack_push(else_label_st, elif_counter);
-    // int_stack_push(else_label_st, tmp);
     if_counter++;
 }
 
 void generate_elseif_if()
 {
     if_counter--;
-    // int tmp = int_stack_pop(else_label_st);
-    int elif_counter = int_stack_pop(else_label_st);
+    int elif_counter = 0;
+    if (!int_stack_empty(else_label_st))
+    {
+        elif_counter = int_stack_pop(else_label_st);
+    }
 
     char *true_op = literal((Token){
         .type = TOKEN_BOOL,
@@ -577,15 +582,17 @@ void generate_elseif_if()
     free(elsif_if_lbl);
 
     int_stack_push(else_label_st, elif_counter);
-    // int_stack_push(else_label_st, tmp);
     if_counter++;
 }
 
 void generate_else()
 {
     if_counter--;
-    // int tmp = int_stack_pop(else_label_st);
-    int elif_counter = int_stack_pop(else_label_st);
+    int elif_counter = 0;
+    if (!int_stack_empty(else_label_st))
+    {
+        elif_counter = int_stack_pop(else_label_st);
+    }
 
     char *else_lbl = malloc(sizeof(char) * 10);
     sprintf(else_lbl, "else%d_%d", if_counter, elif_counter);
@@ -606,14 +613,17 @@ void generate_else()
     free(endif_lbl);
 
     int_stack_push(else_label_st, elif_counter);
-    // int_stack_push(else_label_st, tmp);
     if_counter++;
 }
 
 void generate_if_end()
 {
     if_counter--;
-    int elif_counter = int_stack_pop(else_label_st);
+    int elif_counter = 0;
+    if (!int_stack_empty(else_label_st))
+    {
+        elif_counter = int_stack_pop(else_label_st);
+    }
 
     fprintf(out_code_file, "# if%d end\n", if_counter);
 
