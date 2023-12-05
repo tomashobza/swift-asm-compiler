@@ -1,8 +1,8 @@
 // SEMANTICS_ERR
 // Logical error in array processing
-func checkArrayContents(_numbers: [Int]) -> Bool {
-    for number in numbers {
-        if number < 0 && sqrt(number) > 0 { // sqrt of a negative number is not valid
+func checkArrayContents(_ numbers: Int) -> Bool {
+    while true {
+        if number < 0 && number > 0 { // sqrt of a negative number is not valid
             return true
         }
     }

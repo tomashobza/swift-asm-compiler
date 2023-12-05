@@ -6,7 +6,7 @@ func checkConditions(_ a: Int, _ b: Int) -> Bool {
         } else {
             return false
         }
-    } else if a > b || a == -1 {
+    } else if a > b || a == 0-1 {
         return true
     } else {
         return false
