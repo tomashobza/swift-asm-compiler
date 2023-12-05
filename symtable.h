@@ -83,7 +83,15 @@ typedef struct symtable_item
     struct symtable_item *next;
 } symtable_item;
 
-typedef symtable_item **symtable;
+typedef struct
+{
+    bool all_children_return;
+    bool found_else;
+    bool found_return;
+    symtable_item **symtable;
+} symtable_t;
+
+typedef symtable_t *symtable;
 
 typedef struct
 {
