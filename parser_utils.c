@@ -378,13 +378,13 @@ bool check_ret_values(Expression_type t_exp, Expression_type t_id)
     case TYPE_BOOL:
         return (t_id == TYPE_BOOL || t_id == TYPE_BOOL_NIL);
     case TYPE_INT_NIL:
-        return (t_id == TYPE_INT || t_id == TYPE_INT_NIL);
+        return (t_id == TYPE_INT_NIL);
     case TYPE_DOUBLE_NIL:
-        return (t_id == TYPE_DOUBLE || t_id == TYPE_DOUBLE_NIL);
+        return (t_id == TYPE_DOUBLE_NIL);
     case TYPE_STRING_NIL:
-        return (t_id == TYPE_STRING || t_id == TYPE_STRING_NIL);
+        return (t_id == TYPE_STRING_NIL);
     case TYPE_BOOL_NIL:
-        return (t_id == TYPE_BOOL || t_id == TYPE_BOOL_NIL);
+        return (t_id == TYPE_BOOL_NIL);
     case TYPE_NIL:
         return (t_id == TYPE_DOUBLE_NIL || t_id == TYPE_STRING_NIL || t_id == TYPE_BOOL_NIL || t_id == TYPE_INT_NIL);
     default:

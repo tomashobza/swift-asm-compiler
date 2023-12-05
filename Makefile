@@ -45,6 +45,11 @@ test-blaza: main.c $(SRCS)
 	@$(CC) $(CFLAGS) -D DEBUG_PSA=$(DEBUG_PSA) $(TESTFLAGS) $^ -o $(TEST_TARGET)
 	bash tests/test-blaza.sh $(TESTFILE)
 
+test-allall: main.c $(SRCS)
+	@$(CC) $(CFLAGS) -D DEBUG_PSA=$(DEBUG_PSA) $(TESTFLAGS) $^ -o $(TEST_TARGET)
+	bash tests/test.sh $(TESTFILE)
+	bash tests/test-blaza.sh $(TESTFILE)
+
 # build the program and run with the tests/ugly_tests_generator/test_ugly.sh test script
 test-ugly: main.c $(SRCS)
 	@$(CC) $(CFLAGS) -D DEBUG_PSA=$(DEBUG_PSA) $(TESTFLAGS) $^ -o $(TEST_TARGET)

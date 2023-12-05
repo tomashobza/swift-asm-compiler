@@ -65,6 +65,7 @@ bool START(Token *token, sym_items *items)
     case TOKEN_WHILE:
     case TOKEN_VAR:
     case TOKEN_LET:
+        run_control(token, items, STARTING);
         return STMT_LIST(token, items) && cmp_type(token, items, TOKEN_EOF, SEM_NONE);
     default:
         return false;
