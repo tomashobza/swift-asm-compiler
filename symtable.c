@@ -99,13 +99,9 @@ symtable_item *symtable_add(symtable_item *item, symtable table)
 
     if (item->type == VARIABLE)
     {
-        struct timespec ts;
-        clock_gettime(CLOCK_MONOTONIC, &ts);
-
-        // Combine seconds and nanoseconds for a more precise unique index
-        unsigned long long uniqueIndex = (unsigned long long)ts.tv_sec * 1000000000 + ts.tv_nsec;
-        item->data.var_data->gen_id_idx = uniqueIndex;
-        DEBUG_SEMANTIC_CODE(printf("Unique Index: %lu\n", item->data.var_data->gen_id_idx););
+        item->data.var_data->gen_id_idx = gen_id_idx_cnt;
+        gen_id_idx_cnt++;
+        DEBUG_SEMANTIC_CODE(printf("gen_id_idx_cnt: %lu\n", item->data.var_data->gen_id_idx););
     }
 
     return item;
