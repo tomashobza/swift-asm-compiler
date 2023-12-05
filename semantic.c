@@ -332,11 +332,11 @@ void sem_load_identif(__attribute__((unused)) Token *token, __attribute__((unuse
     symtable_item *item = symtable_find_in_stack(token->token_value, sym_st, false);
     if (item == NULL)
     {
-        throw_error(FUNCTIONS_ERR, token->line_num, "Variable %s is not defined!\n", token->token_value);
+        throw_error(VARIABLES_ERR, token->line_num, "Variable %s is not defined!\n", token->token_value);
     }
     else if (item->data.var_data->is_const == true)
     {
-        throw_error(COMPATIBILITY_ERR, token->line_num, "Variable %s is const!\n", token->token_value);
+        throw_error(SEMANTICS_ERR, token->line_num, "Variable %s is const!\n", token->token_value);
     }
     // DEBUG_SEMANTIC_CODE(printf("FOUND: %s, type: %d, const: %d\n", item->id, item->data.var_data->type, item->data.var_data->is_const););
     items->varItem->id = token->token_value;
