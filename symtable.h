@@ -24,8 +24,6 @@
 #include "debug.h"
 #include "error.h"
 
-extern unsigned long gen_id_idx_cnt;
-
 /**
  * @brief Enum for the types of the expression.
  */

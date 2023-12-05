@@ -11,7 +11,6 @@
 #include "symtable.h"
 
 symtable_stack *sym_st;
-unsigned long gen_id_idx_cnt = 0;
 
 #include "psa.h"
 #include "error.h"

@@ -11,6 +11,7 @@
 
 #include "symtable.h"
 
+unsigned long gen_id_idx_cnt = 0;
 const uint32_t FNV_PRIME = 16777619;
 const uint32_t FNV_OFFSET_BASIS = 2166136261;
 
@@ -101,7 +102,6 @@ symtable_item *symtable_add(symtable_item *item, symtable table)
     {
         item->data.var_data->gen_id_idx = gen_id_idx_cnt;
         gen_id_idx_cnt++;
-        DEBUG_SEMANTIC_CODE(printf("gen_id_idx_cnt: %lu\n", item->data.var_data->gen_id_idx););
     }
 
     return item;
