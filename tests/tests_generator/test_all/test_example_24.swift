@@ -2,7 +2,7 @@
     if x > 10 { 
 
     if x < 30 { 
-        write('In range') } 
+        write("In range") } 
     } else { 
-        write('Out of range') 
+        write("Out of range") 
             }

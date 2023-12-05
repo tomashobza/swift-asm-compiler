@@ -1,6 +1,4 @@
-func foo () -> String {
-    if 5+5 {
-        return "test"
-    } else {
-    }
-}
+var x = false
+  if !x {
+    write("Not false")
+  }

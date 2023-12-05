@@ -2,11 +2,14 @@ import subprocess
 import tempfile
 import os
 import py_utils as utils
+from natsort import natsorted, ns
+
 
 COMP_PATH = "./../../ifjcompiler"
 INTERPRETER_PATH = "./../../utils/ic23int"
 TEST_DIR = "./test_all"
 EXPECTED_DIR = "./expected_out"
+
 
 def run_compiler_and_interpreter(file_path, expected_output):
     # Check if compiler executable exists
@@ -61,7 +64,7 @@ def run_compiler_and_interpreter(file_path, expected_output):
 # Test examples
 def test_examples():
 
-    swift_files = [f for f in os.listdir(TEST_DIR) if f.endswith('.swift')]
+    swift_files = natsorted([f for f in os.listdir(TEST_DIR) if f.endswith('.swift')], alg=ns.IGNORECASE)
     expected_outputs = {os.path.splitext(f)[0]: os.path.join(EXPECTED_DIR, f) 
                         for f in os.listdir(EXPECTED_DIR) if f.endswith('.out')}
 
@@ -80,9 +83,9 @@ def test_examples():
             expected = file.read()
 
         result, output = run_compiler_and_interpreter(file_path, expected)
-        utils.print_white("-----------------------------------")
+        # utils.print_white("-----------------------------------")
         utils.print_white(f"{base_file_name}:")
-        print(" ")
+        # print(" ")
         try:
             assert result
             utils.print_green("PASS")
@@ -95,7 +98,7 @@ def test_examples():
             print(expected)
             utils.print_magenta("Actual output:")
             print(output)
-        print(" ")
+        # print(" ")
 
 if __name__ == "__main__":
     test_examples()
