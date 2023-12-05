@@ -15,7 +15,6 @@
 #define SYMTABLE_MAX_ITEMS 13
 // #define SYMTABLE_MAX_ITEMS 313
 
-#define _POSIX_C_SOURCE 200809L
 #include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
@@ -24,7 +23,6 @@
 #include "stack.h"
 #include "debug.h"
 #include "error.h"
-#include "time.h"
 
 /**
  * @brief Enum for the types of the expression.

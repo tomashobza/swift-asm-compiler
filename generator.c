@@ -20,6 +20,7 @@ int if_counter = 0;
 int elif_counter = 0;
 int while_counter = 0;
 int tmp_counter = 0;
+int label_counter = 0;
 
 /// OPERAND FUNCTIONS
 
@@ -159,7 +160,8 @@ char *symb_resolve(Token token)
             {
                 throw_error(INTERNAL_ERR, -1, "Variable '%s' is invalid\n", token.token_value);
             }
-            sprintf(var_name, "%s@$%s%d", item.scope == 0 ? "GF" : (item.scope < 0 ? "TF" : "LF"), item.id, (int)item.data.var_data->gen_id_idx);
+            sprintf(var_name, "%s@$%s%d", item.scope == 0 ? "GF" : (item.scope < 0 ? "TF" : "LF"), item.id,
+                    item.scope);
             break;
         }
         else if (item.type == FUNCTION)
@@ -172,6 +174,7 @@ char *symb_resolve(Token token)
             sprintf(var_name, "%s", token.token_value);
             break;
         }
+        sprintf(var_name, "%s@$%s%d", item.scope == 0 ? "GF" : (item.scope < 0 ? "TF" : "LF"), item.id, (int)item.data.var_data->gen_id_idx);
         break;
     }
     case TOKEN_STRING:
@@ -325,48 +328,133 @@ void generate_func_end(symtable_item func_item)
     free(func_lbl);
 }
 
-void generate_builtin_func_call(Token func)
+void generate_builtin_func_call(Token func, int param_cnt)
 {
     char *tmp_token = malloc(sizeof(char) * 20);
     sprintf(tmp_token, "tmp%d", tmp_counter);
     char *tmp_token_name = variable(tmp_token, -1, false);
-    Instruction builting_inst = stringToInstruction(getBuiltInFunctionName(func));
+    BuiltinFunc builting_inst = getBuiltInFunctionName(func);
 
     switch (builting_inst)
     {
-    case WRITE:
-        generate_instruction(DEFVAR, tmp_token_name);
-        generate_instruction(POPS, tmp_token_name);
-        generate_instruction(builting_inst, tmp_token_name);
+    case B_WRITE:
+        for (int i = 0; i < param_cnt; i++)
+        {
+            generate_instruction(DEFVAR, tmp_token_name);
+            generate_instruction(POPS, tmp_token_name);
+            generate_instruction(WRITE, tmp_token_name);
+            sprintf(tmp_token, "tmp%d", tmp_counter);
+            tmp_token_name = variable(tmp_token, -1, false);
+            tmp_counter++;
+        }
+        tmp_counter--;
         fprintf(out_code_file, "\n");
         break;
-    case READ:
+    case B_READ:
         generate_instruction(DEFVAR, tmp_token_name);
         generate_instruction(READ, tmp_token_name, type(getReadType(func)));
         generate_instruction(PUSHS, tmp_token_name);
         fprintf(out_code_file, "\n");
         break;
-    case INT2FLOAT:
+    case B_INT2DOUBLE:
         generate_instruction(DEFVAR, tmp_token_name);
         generate_instruction(POPS, tmp_token_name);
         generate_instruction(INT2FLOATS, tmp_token_name, tmp_token_name);
         generate_instruction(PUSHS, tmp_token_name);
         fprintf(out_code_file, "\n");
         break;
-    case FLOAT2INT:
+    case B_DOUBLE2INT:
         generate_instruction(DEFVAR, tmp_token_name);
         generate_instruction(POPS, tmp_token_name);
         generate_instruction(FLOAT2INTS, tmp_token_name, tmp_token_name);
         generate_instruction(PUSHS, tmp_token_name);
         fprintf(out_code_file, "\n");
         break;
-    case STRLEN:
+    case B_LENGTH:
+    {
+        generate_instruction(DEFVAR, tmp_token_name);
+        tmp_counter++;
+        sprintf(tmp_token, "tmp%d", tmp_counter);
+        char *tmp_token_name_2 = variable(tmp_token, -1, false);
+        generate_instruction(DEFVAR, tmp_token_name_2);
+        generate_instruction(POPS, tmp_token_name_2);
+        generate_instruction(STRLEN, tmp_token_name, tmp_token_name_2);
+        fprintf(out_code_file, "\n");
         break;
+    }
+    case B_SUBSTRING:
+    {
+        generate_instruction(DEFVAR, tmp_token_name);
+        generate_instruction(POPS, tmp_token_name);
+        tmp_counter++;
+        sprintf(tmp_token, "tmp%d", tmp_counter);
+        char *start_index = variable(tmp_token, -1, false);
+        generate_instruction(DEFVAR, start_index);
+        generate_instruction(POPS, start_index);
+        tmp_counter++;
+        sprintf(tmp_token, "tmp%d", tmp_counter);
+        char *string = variable(tmp_token, -1, false);
+        generate_instruction(DEFVAR, string);
+        generate_instruction(POPS, string);
+        generate_instruction(PUSHS, "string@");
+        char *label = malloc(sizeof(char) * 20);
+        sprintf(label, "%dlabel", label_counter);
+        label_counter++;
+        char *end_label = malloc(sizeof(char) * 20);
+        sprintf(end_label, "%dend", label_counter);
+        label_counter++;
+        tmp_counter++;
+        sprintf(tmp_token, "tmp%d", tmp_counter);
+        char *bool_val = variable(tmp_token, -1, false);
+        tmp_counter++;
+        sprintf(tmp_token, "tmp%d", tmp_counter);
+        char *char_val = variable(tmp_token, -1, false);
+        generate_instruction(DEFVAR, char_val);
+        generate_instruction(LABEL, label);
+        generate_instruction(GT, bool_val, tmp_token_name, start_index);
+        generate_instruction(JUMPIFNEQ, end_label, bool_val, "bool@true");
+        generate_instruction(GETCHAR, char_val, string, start_index);
+        generate_instruction(ADDS, char_val);
+        generate_instruction(ADD, start_index, start_index, "int@1");
+        generate_instruction(LABEL, end_label);
+        fprintf(out_code_file, "\n");
+        break;
+    }
+    case B_ORD:
+    {
+        generate_instruction(DEFVAR, tmp_token_name);
+        tmp_counter++;
+        sprintf(tmp_token, "tmp%d", tmp_counter);
+        char *tmp_token_name_2 = variable(tmp_token, -1, false);
+        generate_instruction(DEFVAR, tmp_token_name_2);
+        generate_instruction(POPS, tmp_token_name_2);
+        generate_instruction(STRI2INT, tmp_token_name, tmp_token_name_2, "int@0");
+        fprintf(out_code_file, "\n");
+        break;
+    }
+    case B_CHR:
+    {
+        generate_instruction(DEFVAR, tmp_token_name);
+        generate_instruction(LTS, tmp_token_name, "int@0");
+        char *label = malloc(sizeof(char) * 20);
+        sprintf(label, "%dlabel", label_counter);
+        label_counter++;
+        generate_instruction(JUMPIFEQ, label, tmp_token_name, "bool@true");
+        generate_instruction(GTS, tmp_token_name, "int@255");
+        generate_instruction(JUMPIFEQ, label, tmp_token_name, "bool@true");
+        tmp_counter++;
+        sprintf(tmp_token, "tmp%d", tmp_counter);
+        char *tmp_token_name_2 = variable(tmp_token, -1, false);
+        generate_instruction(POPS, tmp_token_name_2);
+        generate_instruction(INT2CHAR, tmp_token_name, tmp_token_name_2);
+        generate_instruction(LABEL, label);
+        fprintf(out_code_file, "\n");
+        break;
+    }
     default:
         throw_error(INTERNAL_ERR, -1, "Invalid built-in function.\n");
         break;
     }
-
     tmp_counter++;
 }
 
@@ -1030,50 +1118,53 @@ bool isBuiltInFunction(Token token)
     return false;
 }
 
-char *getBuiltInFunctionName(Token token)
+BuiltinFunc getBuiltInFunctionName(Token token)
 {
-    char *name = malloc(sizeof(char) * (strlen(token.token_value) + 1));
     if (strcmp(token.token_value, "readString") == 0)
     {
-        strcpy(name, "READ");
+        return B_READ;
     }
     else if (strcmp(token.token_value, "readInt") == 0)
     {
-        strcpy(name, "READ");
+        return B_READ;
     }
     else if (strcmp(token.token_value, "readDouble") == 0)
     {
-        strcpy(name, "READ");
+        return B_READ;
     }
     else if (strcmp(token.token_value, "write") == 0)
     {
-        strcpy(name, "WRITE");
+        return B_WRITE;
     }
     else if (strcmp(token.token_value, "Int2Double") == 0)
     {
-        strcpy(name, "INT2FLOAT");
+        return B_INT2DOUBLE;
     }
     else if (strcmp(token.token_value, "Double2Int") == 0)
     {
-        strcpy(name, "FLOAT2INT");
+        return B_DOUBLE2INT;
     }
     else if (strcmp(token.token_value, "length") == 0)
     {
-        strcpy(name, "STRLEN");
+        return B_LENGTH;
     }
     else if (strcmp(token.token_value, "substring") == 0)
     {
-        strcpy(name, "TODO_add"); // TODO: add this functionality
+        return B_SUBSTRING;
     }
     else if (strcmp(token.token_value, "ord") == 0)
     {
-        strcpy(name, "TODO_add"); // TODO: add this functionality
+        return B_ORD;
     }
     else if (strcmp(token.token_value, "chr") == 0)
     {
-        strcpy(name, "TODO_add"); // TODO: add this functionality
+        return B_CHR;
     }
-    return name;
+    else
+    {
+        throw_error(INTERNAL_ERR, -1, "wrong builtin function");
+        return B_INVALID;
+    }
 }
 
 Expression_type getReadType(Token token)
@@ -1097,7 +1188,9 @@ char *escapeString(char *input)
 {
     char *result = malloc(strlen(input) * 4 + 1);
     if (!result)
+    {
         return NULL;
+    }
 
     int pos = 0;
     for (int i = 0; input[i] != '\0'; i++)

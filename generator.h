@@ -22,8 +22,7 @@ extern FILE *out_code_file;
 extern FILE *while_def_out_code_file;
 extern bool is_in_loop;
 
-typedef enum
-{
+typedef enum {
     EMPTY,
     // -
     CREATEFRAME, // 0
@@ -47,23 +46,23 @@ typedef enum
     INT2CHARS,   // 18
     STRI2INTS,   // 19
     BREAK,       // 20
-                 // <label>
+    // <label>
     CALL,        // 21
     LABEL,       // 22
     JUMP,        // 23
     JUMPIFEQS,   // 24
     JUMPIFNEQS,  // 25
-                 // <var>
+    // <var>
     DEFVAR,      // 26
     POPS,        // 27
-                 // <symb>
+    // <symb>
     PUSHS,       // 28
     WRITE,       // 29
     EXIT,        // 30
     DPRINT,      // 31
-                 // <var> <type>
+    // <var> <type>
     READ,        // 32
-                 // <var> <symb>
+    // <var> <symb>
     MOVE,        // 33
     INT2FLOAT,   // 34
     FLOAT2INT,   // 35
@@ -71,7 +70,7 @@ typedef enum
     STRI2INT,    // 37
     STRLEN,      // 38
     TYPE,        // 39
-                 // <var> <symb> <symb>
+    // <var> <symb> <symb>
     ADD,         // 40
     SUB,         // 41
     DIV,         // 42
@@ -86,10 +85,24 @@ typedef enum
     CONCAT,      // 51
     GETCHAR,     // 52
     SETCHAR,     // 53
-                 // <label> <symb> <symb>
+    // <label> <symb> <symb>
     JUMPIFEQ,    // 54
     JUMPIFNEQ,   // 55
+
 } Instruction;
+
+typedef enum {
+    B_WRITE,
+    B_READ,
+    B_INT2DOUBLE,
+    B_DOUBLE2INT,
+    B_LENGTH,
+    B_SUBSTRING,
+    B_ORD,
+    B_CHR,
+    B_INVALID
+
+} BuiltinFunc;
 
 /**
  * @brief Generates a label operand for IFJcode23.
@@ -228,7 +241,7 @@ void generate_func_end(symtable_item func_item);
  *
  * @param func Token record of the function.
  */
-void generate_builtin_func_call(Token func);
+void generate_builtin_func_call(Token func, int param_count);
 
 /**
  * @brief Generates the IFJcode23 if header.
@@ -306,7 +319,7 @@ bool isBuiltInFunction(Token token);
  * @param token
  * @return char*
  */
-char *getBuiltInFunctionName(Token token);
+BuiltinFunc getBuiltInFunctionName(Token token);
 
 /**
  * @brief Returns the data type of the read function
