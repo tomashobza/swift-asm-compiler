@@ -159,7 +159,7 @@ char *symb_resolve(Token token)
             {
                 throw_error(INTERNAL_ERR, -1, "Variable '%s' is invalid\n", token.token_value);
             }
-            sprintf(var_name, "%s@$%s%d", item.scope == 0 ? "GF" : (item.scope < 0 ? "TF" : "LF"), item.id, item.scope);
+            sprintf(var_name, "%s@$%s%d", item.scope == 0 ? "GF" : (item.scope < 0 ? "TF" : "LF"), item.id, (int)item.data.var_data->gen_id_idx);
             break;
         }
         else if (item.type == FUNCTION)
@@ -488,6 +488,16 @@ void generate_while_start()
     sprintf(while_lbl, "while%d", while_counter);
 
     fprintf(out_code_file, "# while%d start\n", while_counter);
+
+    while_def_out_code_file = out_code_file;
+    out_code_file = tmpfile();
+    if (out_code_file == NULL)
+    {
+        throw_error(INTERNAL_ERR, -1, "Error: out_code_file is not initialized.\n");
+        return;
+    }
+    is_in_loop = true;
+
     generate_instruction(LABEL, label(while_lbl));
 
     fprintf(out_code_file, "\n");
@@ -523,6 +533,11 @@ void generate_while_condition()
 void generate_while_end()
 {
     while_counter--;
+
+    copyFileContents(out_code_file, while_def_out_code_file);
+    // fclose(while_def_out_code_file);
+    out_code_file = while_def_out_code_file;
+    is_in_loop = false;
 
     fprintf(out_code_file, "# while%d end\n", if_counter);
 
@@ -1139,4 +1154,29 @@ char *escapeString(char *input)
         }
     }
     return result;
+}
+
+void copyFileContents(FILE *source, FILE *destination)
+{
+    char ch;
+
+    // Check if either file is NULL
+    if (source == NULL || destination == NULL)
+    {
+        fprintf(stderr, "Invalid file pointer.\n");
+        exit(EXIT_FAILURE);
+    }
+
+    // Rewind the source file to ensure it starts from the beginning
+    rewind(source);
+
+    fprintf(destination, "# ======== while ========\n");
+
+    // Read from source and write to destination
+    while ((ch = fgetc(source)) != EOF)
+    {
+        fputc(ch, destination);
+    }
+
+    fprintf(destination, "# ======== while ========\n");
 }

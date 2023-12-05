@@ -19,6 +19,8 @@
 #include "scanner.h"
 
 extern FILE *out_code_file;
+extern FILE *while_def_out_code_file;
+extern bool is_in_loop;
 
 typedef enum
 {
@@ -321,5 +323,13 @@ Expression_type getReadType(Token token);
  * @return char*
  */
 char *escapeString(char *input);
+
+/**
+ * @brief Copies the contents of the source file to the destination file.
+ *
+ * @param source
+ * @param destination
+ */
+void copyFileContents(FILE *source, FILE *destination);
 
 #endif // GENERATOR_H

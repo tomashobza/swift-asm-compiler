@@ -51,9 +51,17 @@ int run_control(Token *token, sym_items *items, Control_state sem_rule)
     case VAR_ID:
         sem_var_id(token, items);
 
+        FILE *temp = out_code_file;
+        if (is_in_loop)
+        {
+            out_code_file = while_def_out_code_file;
+        }
+
         fprintf(out_code_file, "# variable definition\n");
         generate_instruction(DEFVAR, variable(items->varItem->id, sym_st->size - 1, true));
         fprintf(out_code_file, "\n");
+
+        out_code_file = temp;
 
         break;
     case VAR_TYPE:
