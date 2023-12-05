@@ -1,2 +1,2 @@
-// FUNCTIONS_ERR
+// VARIABLES_ERR
 x : Int = 10

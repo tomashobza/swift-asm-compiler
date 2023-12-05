@@ -16,7 +16,7 @@ psa_return_type parse_expression_base(bool is_param)
 {
 
     // TODO: add checking if variable is initialized before use
-    // TODO: add functions for expressions in parameters
+    // TODO: add implicit type conversion Int -> Double
     int num_of_brackets = 0; // number of brackets in the expression
 
     PSA_Token_stack *s = PSA_Token_stack_init();
@@ -35,7 +35,7 @@ psa_return_type parse_expression_base(bool is_param)
     PSA_Token a = PSA_Token_stack_top(s);
 
     char next_token_error = 0;
-    PSA_Token b = readNextToken(s, &next_token_error, &num_of_brackets);
+    PSA_Token b = readNextToken(s, &next_token_error, &num_of_brackets, false);
 
     while (!(a.type == (Token_type)TOKEN_EXPRSN && s->size == 2 && (b.type == (Token_type)TOKEN_EOF)))
     {
@@ -77,7 +77,7 @@ psa_return_type parse_expression_base(bool is_param)
         if (next_token_error > 0 && b.type != TOKEN_EOF)
         {
             return_token(convertPSATokenToToken(b));
-            if (b.preceded_by_nl || b.type == TOKEN_L_CURLY)
+            if (b.preceded_by_nl || b.type == TOKEN_L_CURLY || b.type == TOKEN_R_CURLY)
             {
                 next_token_error = 0;
                 b = PSA_TOKEN_EOF;
@@ -89,67 +89,6 @@ psa_return_type parse_expression_base(bool is_param)
                 next_token_error = 0;
                 b = PSA_TOKEN_EOF;
             }
-        }
-
-        // CHECK FOR FUNCTION CALL
-        // if the next token is a function identificator, start parsing function call
-        if (b.type == TOKEN_FUNC_ID)
-        {
-            DEBUG_PSA_CODE(
-                printf_magenta("--------Je to funkce! --------\n");
-                print_token_type(b.type););
-
-            b = parseFunctionCall(s, b);
-            PSA_Token_stack_push(s, b);
-            a = PSA_Token_stack_top(s);
-
-            b = readNextToken(s, &next_token_error, &num_of_brackets);
-
-            DEBUG_PSA_CODE(printf_magenta("------------------------------\n"););
-
-            if (is_param)
-            {
-                switch (b.type)
-                {
-                case TOKEN_R_BRACKET:
-                    if (num_of_brackets >= 0)
-                    {
-                        break;
-                    }
-
-                    return_token(convertPSATokenToToken(b));
-
-                    __attribute__((fallthrough));
-                case TOKEN_COMMA:
-                    next_token_error = 0;
-                    b = PSA_TOKEN_EOF;
-                    break;
-                default:
-                    break;
-                }
-            }
-            // CHECK NEXT TOKEN FOR ERRORS
-            if (next_token_error > 0 && b.type != TOKEN_EOF)
-            {
-                return_token(convertPSATokenToToken(b));
-                if (b.preceded_by_nl || b.type == TOKEN_L_CURLY)
-                {
-                    next_token_error = 0;
-                    b = PSA_TOKEN_EOF;
-                }
-                else
-                {
-                    throw_error(SYNTACTIC_ERR, b.line_num, "Missing separator (EOL) after expression, before '%s'.", b.token_value);
-
-                    next_token_error = 0;
-                    b = PSA_TOKEN_EOF;
-                }
-            }
-
-            continue;
-
-            // read the next token
-            // b = readNextToken(s, &next_token_error, num_of_brackets);
         }
 
         // check for an empty expression
@@ -175,11 +114,17 @@ psa_return_type parse_expression_base(bool is_param)
         const unsigned int b_val = getSymbolValue(b.type);
 
         // choose further behaviour based on the value in the precedence table
-        switch (P_TABLE[a_val][b_val])
+        char ptable_val = P_TABLE[a_val][b_val];
+        if (s->size >= 2 && s->top->next->data.type == TOKEN_EXPRSN && a.type == TOKEN_NOT)
+        {
+            ptable_val = '>';
+        }
+
+        switch (ptable_val)
         {
         case '=': // just push the token on the stack
             PSA_Token_stack_push(s, b);
-            b = readNextToken(s, &next_token_error, &num_of_brackets);
+            b = readNextToken(s, &next_token_error, &num_of_brackets, false);
             break;
 
         case '<': // opening of a handle
@@ -191,7 +136,7 @@ psa_return_type parse_expression_base(bool is_param)
                                             .token_value = "<"});
                 PSA_Token_stack_push(s, tmp);
                 PSA_Token_stack_push(s, b);
-                b = readNextToken(s, &next_token_error, &num_of_brackets);
+                b = readNextToken(s, &next_token_error, &num_of_brackets, false);
             }
             else
             {
@@ -199,7 +144,7 @@ psa_return_type parse_expression_base(bool is_param)
                                             .type = (Token_type)TOKEN_SHIFT,
                                             .token_value = "<"});
                 PSA_Token_stack_push(s, b);
-                b = readNextToken(s, &next_token_error, &num_of_brackets);
+                b = readNextToken(s, &next_token_error, &num_of_brackets, false);
             }
             break;
         case '>':
@@ -222,17 +167,20 @@ psa_return_type parse_expression_base(bool is_param)
 
             if (derivation_ok && isTokenBinaryOperator(top.type))
             {
-                // printf("Mrda volee pushuju '%s'\n", top.token_value);
-                // printf("rule type: ");
-                // print_expression_type(rule.expr_type);
-                generate_instruction(tokenTypeToStackInstruction(top.type));
+                Instruction_list inst_list = tokenTypeToStackInstruction(top.type);
+                for (int i = 0; i < inst_list.len; i++)
+                {
+                    Instruction inst = inst_list.inst[i];
+                    if (inst == IDIVS && rule.expr_type == TYPE_DOUBLE)
+                    {
+                        inst = DIVS;
+                    }
+                    generate_instruction(inst);
+                }
             }
             else if (derivation_ok && (isTokenLiteral(top.type) || top.type == TOKEN_IDENTIFICATOR))
             {
-                // printf("Pico volee pushuju '%s'\n", top.token_value);
-                // printf("rule type: ");
-                // print_expression_type(rule.expr_type);
-                generate_instruction(PUSHS, convertPSATokenToToken(top));
+                generate_instruction(PUSHS, symbol(convertPSATokenToToken(top)));
             }
 
             if (rule.type != TOKEN_EOF)

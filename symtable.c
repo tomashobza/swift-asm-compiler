@@ -11,6 +11,7 @@
 
 #include "symtable.h"
 
+unsigned long gen_id_idx_cnt = 0;
 const uint32_t FNV_PRIME = 16777619;
 const uint32_t FNV_OFFSET_BASIS = 2166136261;
 
@@ -75,17 +76,18 @@ symtable symtable_init()
 
 symtable_item *symtable_add(symtable_item *item, symtable table)
 {
+    // get hash
     const uint32_t item_hash = hash(item->id);
     if (item_hash == (uint32_t)-1)
     {
         return NULL;
     }
 
-    if (table[item_hash] == NULL)
+    if (table[item_hash] == NULL) // new item
     {
         table[item_hash] = item;
     }
-    else
+    else // found item
     {
 
         symtable_item *last_item = table[item_hash];
@@ -94,6 +96,12 @@ symtable_item *symtable_add(symtable_item *item, symtable table)
             last_item = last_item->next;
         }
         last_item->next = item;
+    }
+
+    if (item->type == VARIABLE)
+    {
+        item->data.var_data->gen_id_idx = gen_id_idx_cnt;
+        gen_id_idx_cnt++;
     }
 
     return item;
@@ -188,6 +196,7 @@ VariableData *init_var_data()
         return NULL;
     }
 
+    var_data->gen_id_idx = 0;
     var_data->is_const = false;
     var_data->is_initialized = false;
     var_data->type = TYPE_EMPTY;
