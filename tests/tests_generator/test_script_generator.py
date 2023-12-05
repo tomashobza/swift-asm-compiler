@@ -66,6 +66,7 @@ def test_examples():
 
     for file_name, expected_out_file in zip(swift_files, expected_out):
         file_path = os.path.join(TEST_DIR, file_name)
+        base_file_name, _ = os.path.splitext(file_name)
         expected_path = os.path.join(EXPECTED_DIR, expected_out_file)
         with open(file_path, "r") as file:
             source = file.read()
@@ -73,17 +74,21 @@ def test_examples():
             expected = file.read()
         result, output = run_compiler_and_interpreter(file_path, expected)
         utils.print_white("-----------------------------------")
+        utils.print_white(f"{base_file_name}:")
+        print(" ")
         try:
             assert result
+            utils.print_green("PASS")
         except AssertionError as e:
-            utils.print_red("Test failed")
+            utils.print_red("FAILED")
+            utils.print_red(" ")
             utils.print_magenta("Source code:")
             print(source)
             utils.print_magenta("Expected output:")
             print(expected)
             utils.print_magenta("Actual output:")
             print(output)
-            print()
+        print(" ")
 
 if __name__ == "__main__":
     test_examples()

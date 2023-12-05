@@ -1,2 +1,2 @@
 var a = 5 
- write(a)
+write(a)
