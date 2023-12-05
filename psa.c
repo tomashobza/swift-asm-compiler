@@ -181,6 +181,11 @@ psa_return_type parse_expression_base(bool is_param)
                 generate_instruction(PUSHS, symbol(convertPSATokenToToken(top)));
             }
 
+            if (!PSA_Token_stack_empty(s) && PSA_Token_stack_top(s).type == TOKEN_NOT)
+            {
+                generate_instruction(NOTS);
+            }
+
             if (rule.type != TOKEN_EOF)
             {
                 PSA_Token_stack_push(s, rule);
