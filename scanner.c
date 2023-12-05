@@ -66,8 +66,11 @@ int generate_token(Token *token, char *code) {
             {"break",    TOKEN_BREAK},
             {"continue", TOKEN_CONTINUE}};
     token->preceded_by_nl = false;
-    int code_len = 1;
+    int code_len            = 1;
+    int previous_indent_cnt = 0;
+    bool      indent_set       = false;
     bool      string_newline   = false;
+    bool      first_line       = true;
     code = calloc(code_len + 1, sizeof(char));
     if (code == NULL) {
         ret = INTERNAL_ERR;
@@ -428,7 +431,8 @@ int generate_token(Token *token, char *code) {
                  */
             case STRING_BLOCK:
             case STRING: {
-                char c = (char) getchar();
+                int  curr_indent_cnt = 0;
+                char c               = (char) getchar();
                 DEBUG_LEXER_CODE(printf("in string block%d\n", state););
                 while (c != '"') {
                     if (c == '\\') {
@@ -446,27 +450,61 @@ int generate_token(Token *token, char *code) {
                         return LEXICAL_ERR;
                     }
                     else {
-                        if (c == '\n') {
-                            line_num++;
-                            if (state == STRING) {
-                                return LEXICAL_ERR;
+                        while (c == '\n' || c == '\r') {
+                            if (state == STRING_BLOCK) {
+                                indent_set      = true;
+                                curr_indent_cnt = 0;
+                                string_newline  = true;
                             }
                             else {
-                                string_newline = true;
+                                return LEXICAL_ERR;
+                            }
+                            line_num++;
+                            c = (char) getchar();
+                        }
+                        if (state == STRING_BLOCK) {
+                            while (c == ' ' || c == '\t') {
+                                curr_indent_cnt++;
+                                c = (char) getchar();
+                            }
+                            if (indent_set && c != '\n') {
+                                if (first_line) {
+                                    previous_indent_cnt = curr_indent_cnt;
+                                    first_line          = false;
+                                }
+                                else if (previous_indent_cnt != curr_indent_cnt) {
+                                    return LEXICAL_ERR;
+                                }
+                            }
+                            indent_set      = false;
+                            curr_indent_cnt = 0;
+                            if (c == '\n') {
+                                ungetc(c, stdin);
+                                break;
+                            }
+                            if (c == '"') {
+                                if (state == STRING) {
+                                    return set_token(NEW_TOKEN, code, TOKEN_STRING, token);
+                                }
+                                else if (state == STRING_BLOCK && string_newline == true) {
+                                    state = STRING_1_END;
+                                    break;
+                                }
                             }
                         }
+
                         check_length(&code_len, 0, &code);
                         strncat(code, &c, 1);
                         c = '\0';
                         c = (char) getchar();
                     }
                 }
-                DEBUG_LEXER_CODE(printf("before set token:%d\n", state););
                 if (state == STRING) {
                     return set_token(NEW_TOKEN, code, TOKEN_STRING, token);
                 }
                 else if (state == STRING_BLOCK && string_newline == true) {
                     state = STRING_1_END;
+                    break;
                 }
                 else if (state != STRING_BLOCK && state != STRING) {
                     break;
@@ -640,14 +678,14 @@ int generate_token(Token *token, char *code) {
             case STRING_1_END:
             case STRING_2_END: {
                 char c = (char) getchar();
+                DEBUG_LEXER_CODE(printf("char:%c\n", c););
                 if (c == '"') {
                     if (state == STRING_1_END) {
-                        DEBUG_LEXER_CODE(printf("end1\n"););
                         state = STRING_2_END;
+                        break;
                     }
                     else {
                         int len = strlen(code);
-                        DEBUG_LEXER_CODE(printf("end1:%d\n", len););
                         // Remove newline characters from the end of the string
                         while (len > 0 && (code[len - 1] == '\n' || code[len - 1] == '\r')) {
                             code[len - 1] = '\0';
@@ -661,6 +699,7 @@ int generate_token(Token *token, char *code) {
                         if (start > 0) {
                             memmove(code, code + start, len - start + 1);
                         }
+                        indent_set = false;
                         return set_token(NEW_TOKEN, code, TOKEN_STRING, token);
                     }
                 }
