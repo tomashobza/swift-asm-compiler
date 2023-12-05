@@ -75,17 +75,18 @@ symtable symtable_init()
 
 symtable_item *symtable_add(symtable_item *item, symtable table)
 {
+    // get hash
     const uint32_t item_hash = hash(item->id);
     if (item_hash == (uint32_t)-1)
     {
         return NULL;
     }
 
-    if (table[item_hash] == NULL)
+    if (table[item_hash] == NULL) // new item
     {
         table[item_hash] = item;
     }
-    else
+    else // found item
     {
 
         symtable_item *last_item = table[item_hash];
@@ -94,6 +95,17 @@ symtable_item *symtable_add(symtable_item *item, symtable table)
             last_item = last_item->next;
         }
         last_item->next = item;
+    }
+
+    if (item->type == VARIABLE)
+    {
+        struct timespec ts;
+        clock_gettime(CLOCK_MONOTONIC, &ts);
+
+        // Combine seconds and nanoseconds for a more precise unique index
+        unsigned long long uniqueIndex = (unsigned long long)ts.tv_sec * 1000000000 + ts.tv_nsec;
+        item->data.var_data->gen_id_idx = uniqueIndex;
+        DEBUG_SEMANTIC_CODE(printf("Unique Index: %lu\n", item->data.var_data->gen_id_idx););
     }
 
     return item;
@@ -188,6 +200,7 @@ VariableData *init_var_data()
         return NULL;
     }
 
+    var_data->gen_id_idx = 0;
     var_data->is_const = false;
     var_data->is_initialized = false;
     var_data->type = TYPE_EMPTY;
