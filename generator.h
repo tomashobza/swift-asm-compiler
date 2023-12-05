@@ -22,7 +22,8 @@ extern FILE *out_code_file;
 extern FILE *while_def_out_code_file;
 extern bool is_in_loop;
 
-typedef enum {
+typedef enum
+{
     EMPTY,
     // -
     CREATEFRAME, // 0
@@ -47,51 +48,52 @@ typedef enum {
     STRI2INTS,   // 19
     BREAK,       // 20
     // <label>
-    CALL,        // 21
-    LABEL,       // 22
-    JUMP,        // 23
-    JUMPIFEQS,   // 24
-    JUMPIFNEQS,  // 25
+    CALL,       // 21
+    LABEL,      // 22
+    JUMP,       // 23
+    JUMPIFEQS,  // 24
+    JUMPIFNEQS, // 25
     // <var>
-    DEFVAR,      // 26
-    POPS,        // 27
+    DEFVAR, // 26
+    POPS,   // 27
     // <symb>
-    PUSHS,       // 28
-    WRITE,       // 29
-    EXIT,        // 30
-    DPRINT,      // 31
+    PUSHS,  // 28
+    WRITE,  // 29
+    EXIT,   // 30
+    DPRINT, // 31
     // <var> <type>
-    READ,        // 32
+    READ, // 32
     // <var> <symb>
-    MOVE,        // 33
-    INT2FLOAT,   // 34
-    FLOAT2INT,   // 35
-    INT2CHAR,    // 36
-    STRI2INT,    // 37
-    STRLEN,      // 38
-    TYPE,        // 39
+    MOVE,      // 33
+    INT2FLOAT, // 34
+    FLOAT2INT, // 35
+    INT2CHAR,  // 36
+    STRI2INT,  // 37
+    STRLEN,    // 38
+    TYPE,      // 39
     // <var> <symb> <symb>
-    ADD,         // 40
-    SUB,         // 41
-    DIV,         // 42
-    IDIV,        // 43
-    MUL,         // 44
-    LT,          // 45
-    GT,          // 46
-    EQ,          // 47
-    AND,         // 48
-    OR,          // 49
-    NOT,         // 50
-    CONCAT,      // 51
-    GETCHAR,     // 52
-    SETCHAR,     // 53
+    ADD,     // 40
+    SUB,     // 41
+    DIV,     // 42
+    IDIV,    // 43
+    MUL,     // 44
+    LT,      // 45
+    GT,      // 46
+    EQ,      // 47
+    AND,     // 48
+    OR,      // 49
+    NOT,     // 50
+    CONCAT,  // 51
+    GETCHAR, // 52
+    SETCHAR, // 53
     // <label> <symb> <symb>
-    JUMPIFEQ,    // 54
-    JUMPIFNEQ,   // 55
+    JUMPIFEQ,  // 54
+    JUMPIFNEQ, // 55
 
 } Instruction;
 
-typedef enum {
+typedef enum
+{
     B_WRITE,
     B_READ,
     B_INT2DOUBLE,
@@ -344,5 +346,17 @@ char *escapeString(char *input);
  * @param destination
  */
 void copyFileContents(FILE *source, FILE *destination);
+
+#define HANDLE_DEFVAR(provided_code)                 \
+    do                                               \
+    {                                                \
+        FILE *temp = out_code_file;                  \
+        if (is_in_loop)                              \
+        {                                            \
+            out_code_file = while_def_out_code_file; \
+        }                                            \
+        provided_code;                               \
+        out_code_file = temp;                        \
+    } while (0)
 
 #endif // GENERATOR_H

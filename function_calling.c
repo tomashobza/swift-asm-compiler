@@ -84,6 +84,8 @@ PSA_Token parseFunctionCall(PSA_Token_stack *main_s, PSA_Token id, int *param_co
         }
     }
 
+    *param_count = *param_count - 1;
+
     // read the next token (should be ) token)
     PSA_Token r_bracket = readNextToken(main_s, &next_token_error, NULL, true);
     if (r_bracket.type != TOKEN_R_BRACKET)

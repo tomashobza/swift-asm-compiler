@@ -304,7 +304,7 @@ void generate_func_header(symtable_item func_item)
 
         char *var_name = symbol(param);
 
-        generate_instruction(DEFVAR, var_name);
+        HANDLE_DEFVAR(generate_instruction(DEFVAR, var_name););
         generate_instruction(POPS, var_name);
 
         free(var_name);
@@ -338,33 +338,35 @@ void generate_builtin_func_call(Token func, int param_cnt)
     switch (builting_inst)
     {
     case B_WRITE:
+        fprintf(out_code_file, "# WRAJT\n");
         for (int i = 0; i < param_cnt; i++)
         {
-            generate_instruction(DEFVAR, tmp_token_name);
+            HANDLE_DEFVAR(generate_instruction(DEFVAR, tmp_token_name););
             generate_instruction(POPS, tmp_token_name);
             generate_instruction(WRITE, tmp_token_name);
+            tmp_counter++;
             sprintf(tmp_token, "tmp%d", tmp_counter);
             tmp_token_name = variable(tmp_token, -1, false);
-            tmp_counter++;
         }
         tmp_counter--;
+        fprintf(out_code_file, "# WRAJT END\n");
         fprintf(out_code_file, "\n");
         break;
     case B_READ:
-        generate_instruction(DEFVAR, tmp_token_name);
+        HANDLE_DEFVAR(generate_instruction(DEFVAR, tmp_token_name););
         generate_instruction(READ, tmp_token_name, type(getReadType(func)));
         generate_instruction(PUSHS, tmp_token_name);
         fprintf(out_code_file, "\n");
         break;
     case B_INT2DOUBLE:
-        generate_instruction(DEFVAR, tmp_token_name);
+        HANDLE_DEFVAR(generate_instruction(DEFVAR, tmp_token_name););
         generate_instruction(POPS, tmp_token_name);
         generate_instruction(INT2FLOATS, tmp_token_name, tmp_token_name);
         generate_instruction(PUSHS, tmp_token_name);
         fprintf(out_code_file, "\n");
         break;
     case B_DOUBLE2INT:
-        generate_instruction(DEFVAR, tmp_token_name);
+        HANDLE_DEFVAR(generate_instruction(DEFVAR, tmp_token_name););
         generate_instruction(POPS, tmp_token_name);
         generate_instruction(FLOAT2INTS, tmp_token_name, tmp_token_name);
         generate_instruction(PUSHS, tmp_token_name);
@@ -372,11 +374,11 @@ void generate_builtin_func_call(Token func, int param_cnt)
         break;
     case B_LENGTH:
     {
-        generate_instruction(DEFVAR, tmp_token_name);
+        HANDLE_DEFVAR(generate_instruction(DEFVAR, tmp_token_name););
         tmp_counter++;
         sprintf(tmp_token, "tmp%d", tmp_counter);
         char *tmp_token_name_2 = variable(tmp_token, -1, false);
-        generate_instruction(DEFVAR, tmp_token_name_2);
+        HANDLE_DEFVAR(generate_instruction(DEFVAR, tmp_token_name_2););
         generate_instruction(POPS, tmp_token_name_2);
         generate_instruction(STRLEN, tmp_token_name, tmp_token_name_2);
         fprintf(out_code_file, "\n");
@@ -384,17 +386,17 @@ void generate_builtin_func_call(Token func, int param_cnt)
     }
     case B_SUBSTRING:
     {
-        generate_instruction(DEFVAR, tmp_token_name);
+        HANDLE_DEFVAR(generate_instruction(DEFVAR, tmp_token_name););
         generate_instruction(POPS, tmp_token_name);
         tmp_counter++;
         sprintf(tmp_token, "tmp%d", tmp_counter);
         char *start_index = variable(tmp_token, -1, false);
-        generate_instruction(DEFVAR, start_index);
+        HANDLE_DEFVAR(generate_instruction(DEFVAR, start_index););
         generate_instruction(POPS, start_index);
         tmp_counter++;
         sprintf(tmp_token, "tmp%d", tmp_counter);
         char *string = variable(tmp_token, -1, false);
-        generate_instruction(DEFVAR, string);
+        HANDLE_DEFVAR(generate_instruction(DEFVAR, string););
         generate_instruction(POPS, string);
         generate_instruction(PUSHS, "string@");
         char *label = malloc(sizeof(char) * 20);
@@ -409,7 +411,7 @@ void generate_builtin_func_call(Token func, int param_cnt)
         tmp_counter++;
         sprintf(tmp_token, "tmp%d", tmp_counter);
         char *char_val = variable(tmp_token, -1, false);
-        generate_instruction(DEFVAR, char_val);
+        HANDLE_DEFVAR(generate_instruction(DEFVAR, char_val););
         generate_instruction(LABEL, label);
         generate_instruction(GT, bool_val, tmp_token_name, start_index);
         generate_instruction(JUMPIFNEQ, end_label, bool_val, "bool@true");
@@ -422,11 +424,11 @@ void generate_builtin_func_call(Token func, int param_cnt)
     }
     case B_ORD:
     {
-        generate_instruction(DEFVAR, tmp_token_name);
+        HANDLE_DEFVAR(generate_instruction(DEFVAR, tmp_token_name););
         tmp_counter++;
         sprintf(tmp_token, "tmp%d", tmp_counter);
         char *tmp_token_name_2 = variable(tmp_token, -1, false);
-        generate_instruction(DEFVAR, tmp_token_name_2);
+        HANDLE_DEFVAR(generate_instruction(DEFVAR, tmp_token_name_2););
         generate_instruction(POPS, tmp_token_name_2);
         generate_instruction(STRI2INT, tmp_token_name, tmp_token_name_2, "int@0");
         fprintf(out_code_file, "\n");
@@ -434,7 +436,7 @@ void generate_builtin_func_call(Token func, int param_cnt)
     }
     case B_CHR:
     {
-        generate_instruction(DEFVAR, tmp_token_name);
+        HANDLE_DEFVAR(generate_instruction(DEFVAR, tmp_token_name););
         generate_instruction(LTS, tmp_token_name, "int@0");
         char *label = malloc(sizeof(char) * 20);
         sprintf(label, "%dlabel", label_counter);
