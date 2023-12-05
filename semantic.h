@@ -56,6 +56,8 @@ typedef enum
     ELSE_IF_AFTER_COND,
     ELSE_START,
     IF_END,
+    FUNC_IF_FOUND,
+    FUNC_ELSE,
     WHILE_START,
     WHILE_COND,
     WHILE_END,
@@ -76,6 +78,8 @@ bool get_func_definition(Token *token, char *name, symtable_item *psa_item);
 Expression_type get_expression_type(Token *token);
 bool check_ret_values(Expression_type t_exp, Expression_type t_id);
 
+void sem_func_if_start(Token *token, sym_items *items);
+void sem_func_else(Token *token, sym_items *items);
 void sem_start(Token *token, sym_items *items);
 void sem_func_call_psa(Token *token, sym_items *items);
 void sem_identif_exp(Token *token, sym_items *items);

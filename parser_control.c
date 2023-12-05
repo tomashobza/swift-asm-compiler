@@ -143,6 +143,12 @@ int run_control(Token *token, sym_items *items, Control_state sem_rule)
     case IF_END:
         generate_if_end();
         break;
+    case FUNC_IF_FOUND:
+        sem_func_if_start(token, items);
+        break;
+    case FUNC_ELSE:
+        sem_func_else(token, items);
+        break;
     case WHILE_START:
         generate_while_start();
         break;
