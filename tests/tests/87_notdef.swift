@@ -2,7 +2,7 @@
 // Complex function using undefined variables
 func sumArrayElements(_ elements: Int) -> Int {
     var total = 0
-    total += element
+    total = total + element
 
     return total
 }
