@@ -82,6 +82,11 @@ void sem_var_exp(__attribute__((unused)) Token *token, __attribute__((unused)) s
     }
     DEBUG_SEMANTIC_CODE(
         (symtable_stack_top(sym_st)););
+
+    if (!check_ret_values(return_type.type, items->varItem->data.var_data->type) && isTypeConvertable(items->varItem->data.var_data->type, return_type.type, return_type.is_literal))
+    {
+        generate_instruction(INT2FLOATS);
+    }
     // sem_var_add(token, items);
 }
 
@@ -345,6 +350,10 @@ void sem_identif_exp(__attribute__((unused)) Token *token, __attribute__((unused
         throw_error(COMPATIBILITY_ERR, token->line_num, "Expression type: %d and type: %d of variable: %s do not match!\n", return_type4.type, identif_exp_item->data.var_data->type, items->varItem->id);
     }
     identif_exp_item->data.var_data->is_initialized = true;
+    if (!check_ret_values(return_type4.type, identif_exp_item->data.var_data->type) && isTypeConvertable(identif_exp_item->data.var_data->type, return_type4.type, return_type4.is_literal))
+    {
+        generate_instruction(INT2FLOATS);
+    }
 }
 
 void sem_func_call_psa(__attribute__((unused)) Token *token, __attribute__((unused)) sym_items *items)
