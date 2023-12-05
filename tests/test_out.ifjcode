@@ -1,77 +1,41 @@
-gen_id_idx_cnt: 0
-gen_id_idx_cnt: 1
-gen_id_idx_cnt: 2
-gen_id_idx_cnt: 3
-gen_id_idx_cnt: 4
-gen_id_idx_cnt: 5
-gen_id_idx_cnt: 6
-gen_id_idx_cnt: 7
-gen_id_idx_cnt: 8
 .IFJcode23
 CREATEFRAME
 PUSHFRAME
 CREATEFRAME
 
-# variable definition
-DEFVAR GF@$x0
+PUSHS string@string@
+# Built-in: Write()
+DEFVAR TF@$tmp0
+POPS TF@$tmp0
+WRITE TF@$tmp0
+DEFVAR TF@$tmp0
+POPS TF@$tmp0
+WRITE TF@$tmp0
 
-PUSHS int@5
-# variable initialization
-POPS GF@$x0
+PUSHS string@string@
+# Built-in: Write()
+DEFVAR TF@$tmp2
+POPS TF@$tmp2
+WRITE TF@$tmp2
+DEFVAR TF@$tmp2
+POPS TF@$tmp2
+WRITE TF@$tmp2
 
-# variable definition
-DEFVAR GF@$y0
+PUSHS string@string@
+# Built-in: Write()
+DEFVAR TF@$tmp4
+POPS TF@$tmp4
+WRITE TF@$tmp4
+DEFVAR TF@$tmp4
+POPS TF@$tmp4
+WRITE TF@$tmp4
 
-PUSHS int@5
-# variable initialization
-POPS GF@$y0
-
-# variable definition
-DEFVAR GF@$c0
-
-PUSHS int@5
-# variable initialization
-POPS GF@$c0
-
-# variable definition
-DEFVAR GF@$d0
-
-PUSHS int@5
-# variable initialization
-POPS GF@$d0
-
-# variable definition
-DEFVAR GF@$g0
-
-PUSHS int@5
-# variable initialization
-POPS GF@$g0
-
-# variable definition
-DEFVAR GF@$i0
-
-PUSHS int@5
-# variable initialization
-POPS GF@$i0
-
-# variable definition
-DEFVAR GF@$j0
-
-PUSHS int@5
-# variable initialization
-POPS GF@$j0
-
-# variable definition
-DEFVAR GF@$k0
-
-PUSHS int@5
-# variable initialization
-POPS GF@$k0
-
-# variable definition
-DEFVAR GF@$l0
-
-PUSHS int@5
-# variable initialization
-POPS GF@$l0
+PUSHS string@string@
+# Built-in: Write()
+DEFVAR TF@$tmp6
+POPS TF@$tmp6
+WRITE TF@$tmp6
+DEFVAR TF@$tmp6
+POPS TF@$tmp6
+WRITE TF@$tmp6
 

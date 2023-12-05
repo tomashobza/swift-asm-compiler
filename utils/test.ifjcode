@@ -6,33 +6,257 @@ CREATEFRAME
 # variable definition
 DEFVAR GF@$x0
 
-PUSHS int@5
+# Built-in: Read()
+DEFVAR TF@$tmp0
+READ TF@$tmp0 string
+PUSHS TF@$tmp0
+
 # variable initialization
 POPS GF@$x0
 
-# while0 start
-LABEL while0
+# variable definition
+DEFVAR GF@$y0
+
+# Built-in: Read()
+DEFVAR TF@$tmp1
+READ TF@$tmp1 int
+PUSHS TF@$tmp1
+
+# variable initialization
+POPS GF@$y0
+
+# variable definition
+DEFVAR GF@$z0
+
+# Built-in: Read()
+DEFVAR TF@$tmp2
+READ TF@$tmp2 float
+PUSHS TF@$tmp2
+
+# variable initialization
+POPS GF@$z0
 
 PUSHS GF@$x0
-PUSHS int@10
-LTS
-# while0 condition
-PUSHS bool@true
-JUMPIFNEQS endwhile0
-CLEARS
+PUSHS GF@$y0
+PUSHS GF@$z0
+# Built-in: Write()
+DEFVAR TF@$tmp3
+POPS TF@$tmp3
+WRITE TF@$tmp3
+DEFVAR TF@$tmp3
+POPS TF@$tmp3
+WRITE TF@$tmp3
+DEFVAR TF@$tmp4
+POPS TF@$tmp4
+WRITE TF@$tmp4
+DEFVAR TF@$tmp5
+POPS TF@$tmp5
+WRITE TF@$tmp5
 
-PUSHS GF@$x0
-DEFVAR TF@$tmp0
-POPS TF@$tmp0
-WRITE TF@$tmp0
+PUSHS string@string@
+# Built-in: Write()
+DEFVAR TF@$tmp7
+POPS TF@$tmp7
+WRITE TF@$tmp7
+DEFVAR TF@$tmp7
+POPS TF@$tmp7
+WRITE TF@$tmp7
 
-PUSHS GF@$x0
-PUSHS int@1
-ADDS
-# variable assigment
-POPS LF@$x1
+# variable definition
+DEFVAR GF@$y10
 
-# while-1 end
-JUMP while1
-LABEL endwhile1
-CLEARS
+# Built-in: Read()
+DEFVAR TF@$tmp9
+READ TF@$tmp9 int
+PUSHS TF@$tmp9
+
+# variable initialization
+POPS GF@$y10
+
+# variable definition
+DEFVAR GF@$a0
+
+PUSHS GF@$y10
+# Built-in: Int2Double()
+DEFVAR TF@$tmp10
+POPS TF@$tmp10
+INT2FLOATS TF@$tmp10 TF@$tmp10
+PUSHS TF@$tmp10
+
+# variable initialization
+POPS GF@$a0
+
+# variable definition
+DEFVAR GF@$z10
+
+# Built-in: Read()
+DEFVAR TF@$tmp11
+READ TF@$tmp11 float
+PUSHS TF@$tmp11
+
+# variable initialization
+POPS GF@$z10
+
+# variable definition
+DEFVAR GF@$b0
+
+PUSHS GF@$z10
+# Built-in: Double2Int()
+DEFVAR TF@$tmp12
+POPS TF@$tmp12
+FLOAT2INTS TF@$tmp12 TF@$tmp12
+PUSHS TF@$tmp12
+
+# variable initialization
+POPS GF@$b0
+
+# variable definition
+DEFVAR GF@$x10
+
+# Built-in: Read()
+DEFVAR TF@$tmp13
+READ TF@$tmp13 string
+PUSHS TF@$tmp13
+
+# variable initialization
+POPS GF@$x10
+
+# variable definition
+DEFVAR GF@$c0
+
+PUSHS GF@$x10
+# Built-in: Length()
+DEFVAR TF@$tmp14
+DEFVAR TF@$tmp15
+POPS TF@$tmp15
+STRLEN TF@$tmp14 TF@$tmp15
+
+# variable initialization
+POPS GF@$c0
+
+PUSHS GF@$a0
+PUSHS GF@$b0
+PUSHS GF@$c0
+# Built-in: Write()
+DEFVAR TF@$tmp16
+POPS TF@$tmp16
+WRITE TF@$tmp16
+DEFVAR TF@$tmp16
+POPS TF@$tmp16
+WRITE TF@$tmp16
+DEFVAR TF@$tmp17
+POPS TF@$tmp17
+WRITE TF@$tmp17
+DEFVAR TF@$tmp18
+POPS TF@$tmp18
+WRITE TF@$tmp18
+
+PUSHS string@string@
+# Built-in: Write()
+DEFVAR TF@$tmp20
+POPS TF@$tmp20
+WRITE TF@$tmp20
+DEFVAR TF@$tmp20
+POPS TF@$tmp20
+WRITE TF@$tmp20
+
+# variable definition
+DEFVAR GF@$k0
+
+PUSHS GF@$x10
+PUSHS GF@$y10
+PUSHS GF@$b0
+# Built-in: Substring()
+DEFVAR TF@$tmp22
+POPS TF@$tmp22
+DEFVAR TF@$tmp23
+POPS TF@$tmp23
+DEFVAR TF@$tmp24
+POPS TF@$tmp24
+PUSHS string@
+DEFVAR TF@$tmp26
+LABEL 0label
+GT TF@$tmp25 TF@$tmp22 TF@$tmp23
+JUMPIFNEQ 1end TF@$tmp25 bool@true
+GETCHAR TF@$tmp26 TF@$tmp24 TF@$tmp23
+ADDS TF@$tmp26
+ADD TF@$tmp23 TF@$tmp23 int@1
+LABEL 1end
+
+# variable initialization
+POPS GF@$k0
+
+PUSHS GF@$k0
+# Built-in: Write()
+DEFVAR TF@$tmp27
+POPS TF@$tmp27
+WRITE TF@$tmp27
+DEFVAR TF@$tmp27
+POPS TF@$tmp27
+WRITE TF@$tmp27
+
+PUSHS string@string@
+# Built-in: Write()
+DEFVAR TF@$tmp29
+POPS TF@$tmp29
+WRITE TF@$tmp29
+DEFVAR TF@$tmp29
+POPS TF@$tmp29
+WRITE TF@$tmp29
+
+# variable definition
+DEFVAR GF@$d0
+
+PUSHS GF@$x10
+# Built-in: Ord()
+DEFVAR TF@$tmp31
+DEFVAR TF@$tmp32
+POPS TF@$tmp32
+STRI2INT TF@$tmp31 TF@$tmp32 int@0
+
+# variable initialization
+POPS GF@$d0
+
+PUSHS GF@$d0
+# Built-in: Write()
+DEFVAR TF@$tmp33
+POPS TF@$tmp33
+WRITE TF@$tmp33
+DEFVAR TF@$tmp33
+POPS TF@$tmp33
+WRITE TF@$tmp33
+
+PUSHS string@string@
+# Built-in: Write()
+DEFVAR TF@$tmp35
+POPS TF@$tmp35
+WRITE TF@$tmp35
+DEFVAR TF@$tmp35
+POPS TF@$tmp35
+WRITE TF@$tmp35
+
+# variable definition
+DEFVAR GF@$e0
+
+PUSHS GF@$y10
+# Built-in: Chr()
+DEFVAR TF@$tmp37
+LTS TF@$tmp37 int@0
+JUMPIFEQ 2label TF@$tmp37 bool@true
+GTS TF@$tmp37 int@255
+JUMPIFEQ 2label TF@$tmp37 bool@true
+POPS TF@$tmp38
+INT2CHAR TF@$tmp37 TF@$tmp38
+LABEL 2label
+
+# variable initialization
+POPS GF@$e0
+
+PUSHS GF@$e0
+# Built-in: Write()
+DEFVAR TF@$tmp39
+POPS TF@$tmp39
+WRITE TF@$tmp39
+DEFVAR TF@$tmp39
+POPS TF@$tmp39
+WRITE TF@$tmp39
