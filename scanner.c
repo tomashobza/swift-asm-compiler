@@ -243,7 +243,7 @@ int generate_token(Token *token, char *code) {
             }
             case UNDERSCORE: {
                 char c = (char) getchar();
-                if ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || (c <= '9' && c >= '0')) {
+                if ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || (c <= '9' && c >= '0') || c == '_') {
                     check_length(&code_len, 0, &code);
                     code[strlen(code)] = '_';
                     ungetc(c, stdin);
@@ -665,8 +665,14 @@ int generate_token(Token *token, char *code) {
                     }
                 }
                 else {
+                    check_length(&code_len, 0, &code);
+                    strcat(code, "\"");
+                    if (state == STRING_2_END) {
+                        check_length(&code_len, 0, &code);
+                        strcat(code, "\"");
+                    }
                     ungetc(c, stdin);
-                    return LEXICAL_ERR;
+                    state = STRING_BLOCK;
                 }
                 break;
             }
