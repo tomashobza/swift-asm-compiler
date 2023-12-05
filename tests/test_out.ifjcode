@@ -1,0 +1,642 @@
+[33mpopped: (null)[0m
+type:5, value:let, line_num:1
+ret: 0
+[31mlexer: 0
+[0mSTART token: 5 value: let
+STMT_LIST token: 5 value: let
+STMT token: 5 value: let
+VAR_LET token: 5 value: let
+VAR_SCOPE token: 5 value: let
+[33mpopped: let[0m
+bools:1:0:
+type:17, value:input, line_num:1
+ret: 0
+[31mlexer: 0
+[0m[33mpopped: input[0m
+type:35, value:=, line_num:1
+ret: 0
+[31mlexer: 0
+[0mTYPE_AND_ASIGN token: 35 value: =
+[33mpopped: =[0m
+type:23, value:ifj projekt je moc hard, line_num:1
+ret: 0
+[31mlexer: 0
+[0mEXP token: 23 value: ifj projekt je moc hard
+ret: 0
+type:5, value:let, line_num:2
+ret: 0
+[33mpopped: ifj projekt je moc hard[0m
+ret: 0
+[31mlexer: 0
+[0mSTMT_LIST token: 5 value: let
+STMT token: 5 value: let
+VAR_LET token: 5 value: let
+VAR_SCOPE token: 5 value: let
+[33mpopped: let[0m
+bools:1:0:
+type:17, value:mock, line_num:2
+ret: 0
+[31mlexer: 0
+[0m[33mpopped: mock[0m
+type:35, value:=, line_num:2
+ret: 0
+[31mlexer: 0
+[0mTYPE_AND_ASIGN token: 35 value: =
+[33mpopped: =[0m
+bools:0:0:
+type:48, value:mock, line_num:2
+ret: 0
+[31mlexer: 0
+[0mEXP token: 48 value: mock
+ret: 0
+type:36, value:(, line_num:2
+ret: 0
+bools:0:0:
+type:17, value:input, line_num:2
+ret: 0
+type:37, value:), line_num:2
+ret: 0
+bools:0:0:
+type:48, value:write, line_num:3
+ret: 0
+type:36, value:(, line_num:3
+ret: 0
+bools:0:0:
+type:17, value:mock, line_num:3
+ret: 0
+type:37, value:), line_num:3
+ret: 0
+type:16, value:func, line_num:5
+ret: 0
+bools:0:0:
+type:48, value:is_even, line_num:5
+ret: 0
+type:36, value:(, line_num:5
+ret: 0
+type:17, value:_, line_num:5
+ret: 0
+bools:0:0:
+type:17, value:i, line_num:5
+ret: 0
+type:43, value::, line_num:5
+ret: 0
+type:9, value:Int, line_num:5
+ret: 0
+type:37, value:), line_num:5
+ret: 0
+type:41, value:->, line_num:5
+ret: 0
+type:11, value:Bool, line_num:5
+ret: 0
+type:39, value:{, line_num:5
+ret: 0
+type:5, value:let, line_num:6
+ret: 0
+bools:1:0:
+type:17, value:int, line_num:6
+ret: 0
+type:35, value:=, line_num:6
+ret: 0
+bools:1:0:
+type:17, value:i, line_num:6
+ret: 0
+type:33, value:/, line_num:6
+ret: 0
+type:19, value:2, line_num:6
+ret: 0
+type:32, value:*, line_num:6
+ret: 0
+type:19, value:2, line_num:6
+ret: 0
+type:5, value:let, line_num:8
+ret: 0
+bools:1:0:
+type:17, value:i_d, line_num:8
+ret: 0
+type:35, value:=, line_num:8
+ret: 0
+bools:0:0:
+type:48, value:Int2Double, line_num:8
+ret: 0
+type:36, value:(, line_num:8
+ret: 0
+bools:0:0:
+type:17, value:i, line_num:8
+ret: 0
+type:37, value:), line_num:8
+ret: 0
+type:5, value:let, line_num:9
+ret: 0
+bools:1:0:
+type:17, value:d, line_num:9
+ret: 0
+type:35, value:=, line_num:9
+ret: 0
+bools:1:0:
+type:17, value:i_d, line_num:9
+ret: 0
+type:33, value:/, line_num:9
+ret: 0
+type:20, value:2.0, line_num:9
+ret: 0
+type:32, value:*, line_num:9
+ret: 0
+type:20, value:2.0, line_num:9
+ret: 0
+type:5, value:let, line_num:10
+ret: 0
+bools:1:0:
+type:17, value:double, line_num:10
+ret: 0
+type:35, value:=, line_num:10
+ret: 0
+bools:0:0:
+type:48, value:Double2Int, line_num:10
+ret: 0
+type:36, value:(, line_num:10
+ret: 0
+bools:0:0:
+type:17, value:d, line_num:10
+ret: 0
+type:37, value:), line_num:10
+ret: 0
+type:3, value:return, line_num:12
+ret: 0
+bools:1:0:
+type:17, value:int, line_num:12
+ret: 0
+type:24, value:==, line_num:12
+ret: 0
+bools:1:1:
+type:17, value:double, line_num:13
+ret: 0
+type:38, value:}, line_num:14
+ret: 0
+type:16, value:func, line_num:16
+ret: 0
+bools:0:0:
+type:48, value:mock_char, line_num:16
+ret: 0
+type:36, value:(, line_num:16
+ret: 0
+type:17, value:_, line_num:16
+ret: 0
+bools:0:0:
+type:17, value:s, line_num:16
+ret: 0
+type:43, value::, line_num:16
+ret: 0
+type:8, value:String, line_num:16
+ret: 0
+type:37, value:), line_num:16
+ret: 0
+type:41, value:->, line_num:16
+ret: 0
+type:8, value:String, line_num:16
+ret: 0
+type:39, value:{, line_num:16
+ret: 0
+type:4, value:var, line_num:17
+ret: 0
+bools:1:0:
+type:17, value:c, line_num:17
+ret: 0
+type:35, value:=, line_num:17
+ret: 0
+bools:0:0:
+type:48, value:ord, line_num:17
+ret: 0
+type:36, value:(, line_num:17
+ret: 0
+bools:0:0:
+type:17, value:s, line_num:17
+ret: 0
+type:37, value:), line_num:17
+ret: 0
+type:0, value:if, line_num:19
+ret: 0
+bools:1:0:
+type:17, value:c, line_num:19
+ret: 0
+type:28, value:>=, line_num:19
+ret: 0
+type:19, value:65, line_num:19
+ret: 0
+type:39, value:{, line_num:19
+ret: 0
+type:0, value:if, line_num:19
+ret: 0
+bools:1:0:
+type:17, value:c, line_num:19
+ret: 0
+type:29, value:<=, line_num:19
+ret: 0
+type:19, value:90, line_num:19
+ret: 0
+type:39, value:{, line_num:19
+ret: 0
+bools:1:0:
+type:17, value:c, line_num:20
+ret: 0
+type:35, value:=, line_num:20
+ret: 0
+bools:1:0:
+type:17, value:c, line_num:20
+ret: 0
+type:30, value:+, line_num:20
+ret: 0
+type:19, value:32, line_num:20
+ret: 0
+type:5, value:let, line_num:21
+ret: 0
+bools:1:0:
+type:17, value:new, line_num:21
+ret: 0
+type:35, value:=, line_num:21
+ret: 0
+bools:0:0:
+type:48, value:chr, line_num:21
+ret: 0
+type:36, value:(, line_num:21
+ret: 0
+bools:0:0:
+type:17, value:c, line_num:21
+ret: 0
+type:37, value:), line_num:21
+ret: 0
+type:3, value:return, line_num:22
+ret: 0
+bools:1:1:
+type:17, value:new, line_num:23
+ret: 0
+type:38, value:}, line_num:24
+ret: 0
+type:1, value:else, line_num:24
+ret: 0
+type:39, value:{, line_num:24
+ret: 0
+type:38, value:}, line_num:24
+ret: 0
+type:38, value:}, line_num:24
+ret: 0
+type:1, value:else, line_num:24
+ret: 0
+type:39, value:{, line_num:24
+ret: 0
+type:38, value:}, line_num:24
+ret: 0
+type:0, value:if, line_num:26
+ret: 0
+bools:1:0:
+type:17, value:c, line_num:26
+ret: 0
+type:28, value:>=, line_num:26
+ret: 0
+type:19, value:97, line_num:26
+ret: 0
+type:39, value:{, line_num:26
+ret: 0
+type:0, value:if, line_num:26
+ret: 0
+bools:1:0:
+type:17, value:c, line_num:26
+ret: 0
+type:29, value:<=, line_num:26
+ret: 0
+type:19, value:122, line_num:26
+ret: 0
+type:39, value:{, line_num:26
+ret: 0
+bools:1:0:
+type:17, value:c, line_num:27
+ret: 0
+type:35, value:=, line_num:27
+ret: 0
+bools:1:0:
+type:17, value:c, line_num:27
+ret: 0
+type:31, value:-, line_num:27
+ret: 0
+type:19, value:32, line_num:27
+ret: 0
+type:5, value:let, line_num:28
+ret: 0
+bools:1:0:
+type:17, value:new, line_num:28
+ret: 0
+type:35, value:=, line_num:28
+ret: 0
+bools:0:0:
+type:48, value:chr, line_num:28
+ret: 0
+type:36, value:(, line_num:28
+ret: 0
+bools:0:0:
+type:17, value:c, line_num:28
+ret: 0
+type:37, value:), line_num:28
+ret: 0
+type:3, value:return, line_num:29
+ret: 0
+bools:1:1:
+type:17, value:new, line_num:30
+ret: 0
+type:38, value:}, line_num:31
+ret: 0
+type:1, value:else, line_num:31
+ret: 0
+type:39, value:{, line_num:31
+ret: 0
+type:38, value:}, line_num:31
+ret: 0
+type:38, value:}, line_num:31
+ret: 0
+type:1, value:else, line_num:31
+ret: 0
+type:39, value:{, line_num:31
+ret: 0
+type:38, value:}, line_num:31
+ret: 0
+type:3, value:return, line_num:33
+ret: 0
+bools:1:1:
+type:17, value:s, line_num:34
+ret: 0
+type:38, value:}, line_num:35
+ret: 0
+type:16, value:func, line_num:38
+ret: 0
+bools:0:0:
+type:48, value:mock, line_num:38
+ret: 0
+type:36, value:(, line_num:38
+ret: 0
+type:17, value:_, line_num:38
+ret: 0
+bools:0:0:
+type:17, value:s, line_num:38
+ret: 0
+type:43, value::, line_num:38
+ret: 0
+type:8, value:String, line_num:38
+ret: 0
+type:37, value:), line_num:38
+ret: 0
+type:41, value:->, line_num:38
+ret: 0
+type:8, value:String, line_num:38
+ret: 0
+type:39, value:{, line_num:38
+ret: 0
+ret: 0
+ret: 0
+ret: 0
+ret: 0
+ret: 0
+ret: 0
+ret: 0
+[33mpopped: mock[0m
+ret: 0
+[31mlexer: 0
+[0mSTMT_LIST token: 48 value: write
+STMT token: 48 value: write
+LOAD_ID token: 48 value: write
+EXP token: 48 value: write
+ret: 0
+ret: 0
+ret: 0
+ret: 0
+ret: 0
+ret: 0
+ret: 0
+ret: 0
+ret: 0
+ret: 0
+ret: 0
+[33mpopped: write[0m
+ret: 0
+[31mlexer: 0
+[0mSTMT_LIST token: 16 value: func
+STMT token: 16 value: func
+DEF_FUNC token: 16 value: func
+[33mpopped: func[0m
+ret: 0
+[31mlexer: 0
+[0m[33mpopped: is_even[0m
+ret: 0
+[31mlexer: 0
+[0m[33mpopped: ([0m
+ret: 0
+[31mlexer: 0
+[0mP_LIST token: 17 value: _
+PARAM token: 17 value: _
+[33mpopped: _[0m
+ret: 0
+[31mlexer: 0
+[0m[33mpopped: i[0m
+ret: 0
+[31mlexer: 0
+[0m[33mpopped: :[0m
+ret: 0
+[31mlexer: 0
+[0mD_TYPE token: 9 value: Int
+[33mpopped: Int[0m
+ret: 0
+[31mlexer: 0
+[0mP_SEP token: 37 value: )
+[33mpopped: )[0m
+ret: 0
+[31mlexer: 0
+[0mRET_TYPE token: 41 value: ->
+[33mpopped: ->[0m
+ret: 0
+[31mlexer: 0
+[0mD_TYPE token: 11 value: Bool
+[33mpopped: Bool[0m
+ret: 0
+[31mlexer: 0
+[0m[33mpopped: {[0m
+ret: 0
+[31mlexer: 0
+[0mFUNC_STMT_LIST token: 5 value: let
+FUNC_STMT token: 5 value: let
+VAR_LET token: 5 value: let
+VAR_SCOPE token: 5 value: let
+[33mpopped: let[0m
+ret: 0
+[31mlexer: 0
+[0m[33mpopped: int[0m
+ret: 0
+[31mlexer: 0
+[0mTYPE_AND_ASIGN token: 35 value: =
+[33mpopped: =[0m
+ret: 0
+[31mlexer: 0
+[0mEXP token: 17 value: i
+ret: 0
+ret: 0
+ret: 0
+ret: 0
+ret: 0
+ret: 0
+[33mpopped: i[0m
+ret: 0
+[31mlexer: 0
+[0mFUNC_STMT_LIST token: 5 value: let
+FUNC_STMT token: 5 value: let
+VAR_LET token: 5 value: let
+VAR_SCOPE token: 5 value: let
+[33mpopped: let[0m
+ret: 0
+[31mlexer: 0
+[0m[33mpopped: i_d[0m
+ret: 0
+[31mlexer: 0
+[0mTYPE_AND_ASIGN token: 35 value: =
+[33mpopped: =[0m
+ret: 0
+[31mlexer: 0
+[0mEXP token: 48 value: Int2Double
+ret: 0
+ret: 0
+ret: 0
+ret: 0
+ret: 0
+ret: 0
+ret: 0
+ret: 0
+[33mpopped: Int2Double[0m
+ret: 0
+[31mlexer: 0
+[0mFUNC_STMT_LIST token: 5 value: let
+FUNC_STMT token: 5 value: let
+VAR_LET token: 5 value: let
+VAR_SCOPE token: 5 value: let
+[33mpopped: let[0m
+ret: 0
+[31mlexer: 0
+[0m[33mpopped: d[0m
+ret: 0
+[31mlexer: 0
+[0mTYPE_AND_ASIGN token: 35 value: =
+[33mpopped: =[0m
+ret: 0
+[31mlexer: 0
+[0mEXP token: 17 value: i_d
+ret: 0
+ret: 0
+ret: 0
+ret: 0
+ret: 0
+ret: 0
+[33mpopped: i_d[0m
+ret: 0
+[31mlexer: 0
+[0mFUNC_STMT_LIST token: 5 value: let
+FUNC_STMT token: 5 value: let
+VAR_LET token: 5 value: let
+VAR_SCOPE token: 5 value: let
+[33mpopped: let[0m
+ret: 0
+[31mlexer: 0
+[0m[33mpopped: double[0m
+ret: 0
+[31mlexer: 0
+[0mTYPE_AND_ASIGN token: 35 value: =
+[33mpopped: =[0m
+ret: 0
+[31mlexer: 0
+[0mEXP token: 48 value: Double2Int
+ret: 0
+ret: 0
+ret: 0
+ret: 0
+ret: 0
+ret: 0
+ret: 0
+ret: 0
+[33mpopped: Double2Int[0m
+ret: 0
+[31mlexer: 0
+[0mFUNC_STMT_LIST token: 3 value: return
+FUNC_STMT token: 3 value: return
+RET token: 3 value: return
+[33mpopped: return[0m
+ret: 0
+[31mlexer: 0
+[0mEXP token: 17 value: int
+ret: 0
+ret: 0
+ret: 0
+ret: 0
+[33mpopped: int[0m
+ret: 0
+[31mlexer: 0
+[0mFUNC_STMT_LIST token: 38 value: }
+[33mpopped: }[0m
+ret: 0
+[31mlexer: 0
+[0mSTMT_LIST token: 16 value: func
+STMT token: 16 value: func
+DEF_FUNC token: 16 value: func
+[33mpopped: func[0m
+ret: 0
+[31mlexer: 0
+[0m[33mpopped: mock_char[0m
+ret: 0
+[31mlexer: 0
+[0m[33mpopped: ([0m
+ret: 0
+[31mlexer: 0
+[0mP_LIST token: 17 value: _
+PARAM token: 17 value: _
+[33mpopped: _[0m
+ret: 0
+[31mlexer: 0
+[0m[33mpopped: s[0m
+ret: 0
+[31mlexer: 0
+[0m[33mpopped: :[0m
+ret: 0
+[31mlexer: 0
+[0mD_TYPE token: 8 value: String
+[33mpopped: String[0m
+ret: 0
+[31mlexer: 0
+[0mP_SEP token: 37 value: )
+[33mpopped: )[0m
+ret: 0
+[31mlexer: 0
+[0mRET_TYPE token: 41 value: ->
+[33mpopped: ->[0m
+ret: 0
+[31mlexer: 0
+[0mD_TYPE token: 8 value: String
+[33mpopped: String[0m
+ret: 0
+[31mlexer: 0
+[0m[33mpopped: {[0m
+ret: 0
+[31mlexer: 0
+[0mFUNC_STMT_LIST token: 4 value: var
+FUNC_STMT token: 4 value: var
+VAR_LET token: 4 value: var
+VAR_SCOPE token: 4 value: var
+[33mpopped: var[0m
+ret: 0
+[31mlexer: 0
+[0m[33mpopped: c[0m
+ret: 0
+[31mlexer: 0
+[0mTYPE_AND_ASIGN token: 35 value: =
+[33mpopped: =[0m
+ret: 0
+[31mlexer: 0
+[0mEXP token: 48 value: ord
+ret: 0
+ret: 0
+ret: 0
+ret: 0
+ret: 0
+ret: 0
+ret: 0

@@ -18,6 +18,8 @@ TARGET = ifjcompiler
 # Test executable name
 TEST_TARGET = ifjcompiler_debug
 
+PEPEGA_TESTS = compiler_tests.py
+
 TESTFILE?=-1
 
 # Default target
@@ -30,6 +32,9 @@ $(TARGET): main.c $(SRCS)
 test: main.c $(SRCS)
 	@$(CC) $(CFLAGS) -D DEBUG_PSA=$(DEBUG_PSA) $(TESTFLAGS) $^ -o $(TEST_TARGET)
 	./$(TEST_TARGET) <tests/test.swift
+	@./$(TEST_TARGET) <tests/test.swift > tests/test_out.ifjcode
+	./utils/ic23int tests/test_out.ifjcode
+
 
 # build the program and run with the tests/test.sh test script
 test-all: main.c $(SRCS)
@@ -40,6 +45,12 @@ test-all: main.c $(SRCS)
 test-ugly: main.c $(SRCS)
 	@$(CC) $(CFLAGS) -D DEBUG_PSA=$(DEBUG_PSA) $(TESTFLAGS) $^ -o $(TEST_TARGET)
 	bash tests/ugly_tests_generator/test_ugly.sh ./tests/ugly_tests_generator/gen ./$(TEST_TARGET) ./tests/ugly_tests_generator/ugly_test.out
+
+
+pepe: main.c $(SRCS)
+	@$(CC) $(CFLAGS) -D DEBUG_PSA=$(DEBUG_PSA) $(TESTFLAGS) $^ -o $(TEST_TARGET)
+	cd ./tests/pepega_tests/ && \
+	python3 $(PEPEGA_TESTS) ./$(TEST_TARGET)
 
 # clean, compile and run
 run: clean all

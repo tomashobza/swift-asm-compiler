@@ -119,6 +119,7 @@ int run_control(Token *token, sym_items *items, Control_state sem_rule)
     }
     case COND_EXP:
         sem_cond_exp(token, items);
+        sem_push_scope(token, items);
         break;
     case IF_START:
         generate_if_start();
