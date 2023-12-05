@@ -2,6 +2,8 @@ import subprocess
 import tempfile
 import os
 
+COMP_PATH = "./../../ifjcompiler"
+
 def run_compiler_and_interpreter(source_code, expected_output):
     # Creating a temp file for the source code
     src_fd, src_path = tempfile.mkstemp(suffix='.srcSwift')
@@ -10,13 +12,13 @@ def run_compiler_and_interpreter(source_code, expected_output):
             src_file.write(source_code)
 
         # Check if compiler executable exists
-        if not os.path.isfile('./ifjcompiler'):
-            return False, "Compiler './ifjcompiler' not found"
+        if not os.path.isfile(COMP_PATH):
+            return False, "Compiler './../../ifjcompiler' not found"
 
         # Start compiler
         try:
              compile_result = subprocess.run(
-                ['./ifjcompiler'],
+                [COMP_PATH],
                 input=source_code,
                 text=True,
                 timeout=10
@@ -92,7 +94,14 @@ def test_examples():
 
     for example in examples:
         result, output = run_compiler_and_interpreter(example["source"], example["expected"])
-        assert result, f"Test failed: expected output {example['expected']}, but got {output}"
+        try:
+            assert result, f"Test failed: expected output {example['expected']}, but got {output}"
+        except AssertionError as e:
+            print(e)
+            print(f"Source code: {example['source']}")
+            print(f"Expected output: {example['expected']}")
+            print(f"Actual output: {output}")
+            print()
 
 if __name__ == "__main__":
     test_examples()

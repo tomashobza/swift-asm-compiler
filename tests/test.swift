@@ -1,9 +1,14 @@
+/*
 var x : Int = 5
 var y : Int = 5
-var c : Int = 5
-var d : Int = 5
-var g : Int = 5
-var i : Int = 5
-var j : Int = 5
-var k : Int = 5
-var l : Int = 5
+write(x,y)
+ */
+
+var z = readString()
+var t = readInt()
+var k = readDouble()
+k = Int2Double(5)
+t = Double2Int(3.2)
+
+t = length("xddd")
+z = substring(of :z, startingAt :1, endingBefore :3)
