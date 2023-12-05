@@ -336,7 +336,7 @@ void generate_builtin_func_call(Token func, int param_cnt)
     switch (builting_inst)
     {
     case B_WRITE:
-        fprintf(out_code_file, "# WRAJT\n");
+        fprintf(out_code_file, "# WRITE\n");
         for (int i = 0; i < param_cnt; i++)
         {
             HANDLE_DEFVAR(generate_instruction(DEFVAR, tmp_token_name););
@@ -347,31 +347,39 @@ void generate_builtin_func_call(Token func, int param_cnt)
             tmp_token_name = variable(tmp_token, -1, false);
         }
         tmp_counter--;
-        fprintf(out_code_file, "# WRAJT END\n");
+        fprintf(out_code_file, "# WRITE END\n");
         fprintf(out_code_file, "\n");
         break;
     case B_READ:
+
+        fprintf(out_code_file, "# READ\n");
         HANDLE_DEFVAR(generate_instruction(DEFVAR, tmp_token_name););
         generate_instruction(READ, tmp_token_name, type(getReadType(func)));
         generate_instruction(PUSHS, tmp_token_name);
+        fprintf(out_code_file, "# READ END\n");
         fprintf(out_code_file, "\n");
         break;
     case B_INT2DOUBLE:
-        HANDLE_DEFVAR(generate_instruction(DEFVAR, tmp_token_name););
-        generate_instruction(POPS, tmp_token_name);
-        generate_instruction(INT2FLOATS, tmp_token_name, tmp_token_name);
-        generate_instruction(PUSHS, tmp_token_name);
+        fprintf(out_code_file, "# INT2DOUBLE\n");
+        // HANDLE_DEFVAR(generate_instruction(DEFVAR, tmp_token_name););
+        // generate_instruction(POPS, tmp_token_name);
+        generate_instruction(INT2FLOATS);
+        // generate_instruction(PUSHS, tmp_token_name);
+        fprintf(out_code_file, "# INT2DOUBLE END\n");
         fprintf(out_code_file, "\n");
         break;
     case B_DOUBLE2INT:
-        HANDLE_DEFVAR(generate_instruction(DEFVAR, tmp_token_name););
-        generate_instruction(POPS, tmp_token_name);
-        generate_instruction(FLOAT2INTS, tmp_token_name, tmp_token_name);
-        generate_instruction(PUSHS, tmp_token_name);
+        fprintf(out_code_file, "# FLOAT2INT\n");
+        // HANDLE_DEFVAR(generate_instruction(DEFVAR, tmp_token_name););
+        // generate_instruction(POPS, tmp_token_name);
+        generate_instruction(FLOAT2INTS);
+        // generate_instruction(PUSHS, tmp_token_name);
+        fprintf(out_code_file, "# FLOAT2INT END\n");
         fprintf(out_code_file, "\n");
         break;
     case B_LENGTH:
     {
+        fprintf(out_code_file, "# LENGTH\n");
         HANDLE_DEFVAR(generate_instruction(DEFVAR, tmp_token_name););
         tmp_counter++;
         sprintf(tmp_token, "tmp%d", tmp_counter);
@@ -379,11 +387,13 @@ void generate_builtin_func_call(Token func, int param_cnt)
         HANDLE_DEFVAR(generate_instruction(DEFVAR, tmp_token_name_2););
         generate_instruction(POPS, tmp_token_name_2);
         generate_instruction(STRLEN, tmp_token_name, tmp_token_name_2);
+        fprintf(out_code_file, "# LENGTH END\n");
         fprintf(out_code_file, "\n");
         break;
     }
     case B_SUBSTRING:
     {
+        fprintf(out_code_file, "# SUBSTRING\n");
         HANDLE_DEFVAR(generate_instruction(DEFVAR, tmp_token_name););
         generate_instruction(POPS, tmp_token_name);
         tmp_counter++;
@@ -417,23 +427,27 @@ void generate_builtin_func_call(Token func, int param_cnt)
         generate_instruction(ADDS, char_val);
         generate_instruction(ADD, start_index, start_index, "int@1");
         generate_instruction(LABEL, end_label);
+        fprintf(out_code_file, "# SUBSTRING END\n");
         fprintf(out_code_file, "\n");
         break;
     }
     case B_ORD:
     {
-        HANDLE_DEFVAR(generate_instruction(DEFVAR, tmp_token_name););
-        tmp_counter++;
-        sprintf(tmp_token, "tmp%d", tmp_counter);
-        char *tmp_token_name_2 = variable(tmp_token, -1, false);
-        HANDLE_DEFVAR(generate_instruction(DEFVAR, tmp_token_name_2););
-        generate_instruction(POPS, tmp_token_name_2);
-        generate_instruction(STRI2INT, tmp_token_name, tmp_token_name_2, "int@0");
+        fprintf(out_code_file, "# STRI2INT\n");
+        // HANDLE_DEFVAR(generate_instruction(DEFVAR, tmp_token_name););
+        // tmp_counter++;
+        // sprintf(tmp_token, "tmp%d", tmp_counter);
+        // char *tmp_token_name_2 = variable(tmp_token, -1, false);
+        // HANDLE_DEFVAR(generate_instruction(DEFVAR, tmp_token_name_2););
+        // generate_instruction(POPS, tmp_token_name_2);
+        generate_instruction(STRI2INTS);
+        fprintf(out_code_file, "# STRI2INT END\n");
         fprintf(out_code_file, "\n");
         break;
     }
     case B_CHR:
     {
+        fprintf(out_code_file, "# CHR\n");
         HANDLE_DEFVAR(generate_instruction(DEFVAR, tmp_token_name););
         generate_instruction(LTS, tmp_token_name, "int@0");
         char *label = malloc(sizeof(char) * 20);
@@ -448,6 +462,7 @@ void generate_builtin_func_call(Token func, int param_cnt)
         generate_instruction(POPS, tmp_token_name_2);
         generate_instruction(INT2CHAR, tmp_token_name, tmp_token_name_2);
         generate_instruction(LABEL, label);
+        fprintf(out_code_file, "# CHR END\n");
         fprintf(out_code_file, "\n");
         break;
     }
@@ -1261,5 +1276,5 @@ void copyFileContents(FILE *source, FILE *destination)
         fputc(ch, destination);
     }
 
-    fprintf(destination, "# ======== while ========\n");
+    fprintf(destination, "# ====== end while ======\n");
 }
