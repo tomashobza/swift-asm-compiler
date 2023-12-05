@@ -65,7 +65,7 @@ void sem_var_exp(__attribute__((unused)) Token *token, __attribute__((unused)) s
             throw_error(COMPATIBILITY_ERR, token->line_num, "Unrecognizable type of variable: %s\n", items->varItem->id);
         }
     }
-    else if (return_type.type == TYPE_NIL)
+    else if (return_type.type == TYPE_NIL || return_type.type == TYPE_EMPTY)
     {
         if (items->varItem->data.var_data->type == TYPE_EMPTY)
         {

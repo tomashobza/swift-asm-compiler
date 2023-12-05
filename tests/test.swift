@@ -1,4 +1,7 @@
-if true {
+// 4
+func fn() -> String {
+    if id {
+        return "test"
     } else {
-        return
     }
+}
