@@ -1205,7 +1205,7 @@ bool AFTER_ELSE()
     {
     // AFTER_ELSE -> { STMT_LIST }
     case TOKEN_L_CURLY:
-        return cmp_type(TOKEN_L_CURLY) && STMT_LIST() && cmp_type(TOKEN_R_CURLY);
+        return cmp_type(TOKEN_L_CURLY) && LOCAL_STMT_LIST() && cmp_type(TOKEN_R_CURLY);
     // AFTER_ELSE -> IF_STMT
     case TOKEN_IF:
         return ELSE_IF_STMT();
