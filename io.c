@@ -72,7 +72,10 @@ PSA_Token readNextToken(PSA_Token_stack *s, char *next_token_error, int *num_of_
             DEBUG_PSA_CODE(PSA_Token og_b = b;
                            printf("func call: %s\n", og_b.token_value););
 
-            b = parseFunctionCall(s, b);
+            int param_count = 0;
+            b = parseFunctionCall(s, b, &param_count);
+
+            // YEET - tady se vola a funkce
 
             if (b.expr_type != TYPE_INVALID && b.type != TOKEN_EOF)
             {

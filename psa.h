@@ -360,10 +360,12 @@ void printTokenArray(PSA_Token *handle, unsigned int len);
 /**
  * @brief Parses the calling of a function both syntactically and semantically.
  *
+ * @param main_s main PSA token stack
  * @param id PSA_Token contaning the id of the function
+ * @param param_count number of actually parsed parameters
  * @return PSA_Token derivation of the function call
  */
-PSA_Token parseFunctionCall(PSA_Token_stack *main_s, PSA_Token id);
+PSA_Token parseFunctionCall(PSA_Token_stack *main_s, PSA_Token id, int *param_count);
 
 /**
  * @brief Checks the validity of the parameters of the function call.
