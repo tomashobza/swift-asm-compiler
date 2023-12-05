@@ -1,2 +1,2 @@
-// FUNCTIONS_ERR
+// 3
 fn(123, 456)

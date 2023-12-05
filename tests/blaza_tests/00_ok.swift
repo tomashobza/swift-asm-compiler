@@ -1,4 +1,4 @@
-// NO_ERR
+// 0
 var a : String = "hello"
 var b : String
 var c = "hello"
