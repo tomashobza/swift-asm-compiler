@@ -15,8 +15,6 @@ DEFINE_STACK_FUNCTIONS(PSA_Token)
 psa_return_type parse_expression_base(bool is_param)
 {
 
-    // TODO: add checking if variable is initialized before use
-    // TODO: add implicit type conversion Int -> Double
     int num_of_brackets = 0; // number of brackets in the expression
 
     PSA_Token_stack *s = PSA_Token_stack_init();
@@ -227,7 +225,6 @@ psa_return_type parse_expression_base(bool is_param)
     DEBUG_PSA_CODE(printf("\n");
                    printf_green("PSA: ✅ | All good! \n"););
 
-    // TODO: checking bracket count might be redundant because of handles
     if (num_of_brackets != 0 && !(is_param && num_of_brackets == -1))
     {
         throw_error(SYNTACTIC_ERR, a.line_num, num_of_brackets > 0 ? "Missing closing bracket" : "Missing opening bracket");

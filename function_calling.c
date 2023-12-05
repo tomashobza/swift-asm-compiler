@@ -69,11 +69,7 @@ PSA_Token parseFunctionCall(PSA_Token_stack *main_s, PSA_Token id, int *param_co
 
     while (unknown_params || *param_count < found_func->data.func_data->params_count)
     {
-        // TODO: handle builtin functions (number of parameters = -1)
-
         params_ok = params_ok && checkParameter(main_s, *param_count, found_func, &parsed_param, unknown_params, id);
-
-        // TODO: save parameters for later checking if the function is not in the symtable
 
         *param_count = *param_count + 1;
 
@@ -104,8 +100,6 @@ PSA_Token parseFunctionCall(PSA_Token_stack *main_s, PSA_Token id, int *param_co
         throw_error(SYNTACTIC_ERR, id.line_num, "Wrong number of parameters for function '%s'!", id.token_value);
         is_ok = false;
     }
-
-    // TODO:check if the correct number of parameters was provided
 
     is_ok = is_ok && params_ok;
 
@@ -184,7 +178,6 @@ bool checkParamName(PSA_Token_stack *main_s, unsigned int param_index, symtable_
         4. should_have_name = false, has_name = false -> ok
     */
 
-    // TODO: handle all 4 error states
     if (has_name != should_have_name)
     {
         // 2. should have name, does not have name -> error

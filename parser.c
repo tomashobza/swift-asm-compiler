@@ -25,7 +25,6 @@ void get_token(Token *token)
         break;
     case INTERNAL_ERR:
         throw_error(INTERNAL_ERR, token->line_num, " ");
-        break; // TODO: free pameti, ukoncen programu
     default:
         break;
     }
