@@ -8,11 +8,11 @@ while i < 10 {
     isEven = !isEven  
 
     if isEven {
-        continue  
+        write("a")
     }
 
     if i > 5 {
-        break  
+        write("b")
     }
 
     write("i is ", i)

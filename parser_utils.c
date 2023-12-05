@@ -115,9 +115,7 @@ void add_builtin_functions(sym_items *items)
     items->funcItem->data.func_data->params[items->funcItem->data.func_data->params_count - 1].type = TYPE_INT;
     symtable_add(items->funcItem, symtable_stack_top(sym_st));
 
-    printf(GREEN);
     DEBUG_SEMANTIC_CODE(symtable_print(symtable_stack_top(sym_st)););
-    printf(RESET);
 }
 
 Expression_type get_expression_type(Token *token)
@@ -369,6 +367,8 @@ bool check_ret_values(Expression_type t_exp, Expression_type t_id)
 {
     switch (t_exp)
     {
+    case TYPE_EMPTY:
+        return (t_id == TYPE_EMPTY);
     case TYPE_INT:
         return (t_id == TYPE_INT || t_id == TYPE_INT_NIL);
     case TYPE_DOUBLE:

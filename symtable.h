@@ -44,6 +44,7 @@ typedef enum
 
 typedef struct
 {
+    unsigned long gen_id_idx;
     Expression_type type;
     bool is_const;
     bool is_initialized;

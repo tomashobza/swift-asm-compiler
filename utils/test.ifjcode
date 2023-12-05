@@ -3,40 +3,72 @@ CREATEFRAME
 PUSHFRAME
 CREATEFRAME
 
-# variable definition
-DEFVAR GF@$a0
+# function header
+JUMP fib_end
+LABEL fib
 
-MOVE GF@$a0 nil@nil
-PUSHS GF@$a0
-PUSHS nil@nil
+PUSHFRAME
+CREATEFRAME
+# function params
+DEFVAR LF@$n1
+POPS LF@$n1
+# function params end
+
+PUSHS LF@$n1
+PUSHS int@0
 EQS
-NOTS
+PUSHS LF@$n1
+PUSHS int@1
+EQS
+ORS
 # if0 start
 PUSHS bool@true
 JUMPIFNEQS else0_0
 CLEARS
 
-PUSHS string@string@
-DEFVAR TF@$tmp0
-POPS TF@$tmp0
-WRITE TF@$tmp0
+PUSHS LF@$n1
+
+# return
+DEFVAR LF@$retval
+POPS LF@$retval
+RETURN
 
 # if0 else
 JUMP else0_1
 LABEL else0_0
 CLEARS
 
-# variable definition
-DEFVAR LF@$b1
+PUSHS LF@$n1
+PUSHS int@1
+SUBS
+CALL fib
+POPFRAME
+PUSHS TF@$retval
+PUSHS LF@$n1
+PUSHS int@2
+SUBS
+CALL fib
+POPFRAME
+PUSHS TF@$retval
+ADDS
 
-PUSHS GF@$a0
-# variable initialization
-POPS LF@$b1
-
-PUSHS LF@$b1
-DEFVAR TF@$tmp1
-POPS TF@$tmp1
-WRITE TF@$tmp1
+# return
+DEFVAR LF@$retval
+POPS LF@$retval
+RETURN
 
 # if0 end
 LABEL else0_1
+
+# function end
+LABEL fib_end
+
+PUSHS int@10
+CALL fib
+POPFRAME
+PUSHS TF@$retval
+# WRITE
+DEFVAR TF@$tmp0
+POPS TF@$tmp0
+WRITE TF@$tmp0
+# WRITE END

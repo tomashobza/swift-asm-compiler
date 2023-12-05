@@ -72,18 +72,20 @@ PSA_Token readNextToken(PSA_Token_stack *s, char *next_token_error, int *num_of_
             DEBUG_PSA_CODE(PSA_Token og_b = b;
                            printf("func call: %s\n", og_b.token_value););
 
-            b = parseFunctionCall(s, b);
+            int param_count = 0;
+            b = parseFunctionCall(s, b, &param_count);
+
+            // YEET - tady se vola a funkce
 
             if (b.expr_type != TYPE_INVALID && b.type != TOKEN_EOF)
             {
                 if (isBuiltInFunction(convertPSATokenToToken(b)))
                 {
-                    generate_builtin_func_call(convertPSATokenToToken(b));
+                    generate_builtin_func_call(convertPSATokenToToken(b), param_count);
                 }
                 else
                 {
                     generate_instruction(CALL, label(b.token_value));
-                    generate_instruction(POPFRAME);
                     generate_instruction(PUSHS, variable("retval", -1, false));
                 }
             }
@@ -114,7 +116,10 @@ PSA_Token readNextToken(PSA_Token_stack *s, char *next_token_error, int *num_of_
     *next_token_error = *next_token_error << 1;
 
     // detect expression end by a missing operator between operands
-    *next_token_error += (isTokenOperand(a.type) && !isTokenBinaryOperator(b.type) && !isTokenBracket(b.type) && b.type != TOKEN_NOT) ? 1 : 0;
+    *next_token_error += (isTokenOperand(a.type) && !isTokenBinaryOperator(b.type) && !isTokenBracket(b.type) &&
+                          b.type != TOKEN_NOT)
+                             ? 1
+                             : 0;
     *next_token_error = *next_token_error << 1;
 
     // detect expression end by an illegal token for expression being read
