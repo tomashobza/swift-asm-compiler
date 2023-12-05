@@ -42,7 +42,7 @@
     type##_stack *type##_stack_init()                                          \
     {                                                                          \
         type##_stack *stack = (type##_stack *)malloc(sizeof(type##_stack));    \
-        if (!stack)                                                            \
+        if (stack == NULL)                                                     \
         {                                                                      \
             fprintf(stderr, "Memory allocation failed for stack\n");           \
             throw_error(INTERNAL_ERR, -1, "Stack is allocation failed.")       \
