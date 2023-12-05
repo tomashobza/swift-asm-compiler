@@ -41,6 +41,9 @@ int run_control(Token *token, sym_items *items, Control_state sem_rule)
 {
     switch (sem_rule)
     {
+    case STARTING:
+        sem_start(token, items);
+        break;
     case LET:
         sem_let(token, items);
         break;
@@ -122,7 +125,7 @@ int run_control(Token *token, sym_items *items, Control_state sem_rule)
     }
     case COND_EXP:
         sem_cond_exp(token, items);
-        sem_push_scope(token, items);
+        run_control(token, items, PUSH_SCOPE);
         break;
     case IF_START:
         generate_if_start();
@@ -139,6 +142,12 @@ int run_control(Token *token, sym_items *items, Control_state sem_rule)
         break;
     case IF_END:
         generate_if_end();
+        break;
+    case FUNC_IF_FOUND:
+        sem_func_if_start(token, items);
+        break;
+    case FUNC_ELSE:
+        sem_func_else(token, items);
         break;
     case WHILE_START:
         generate_while_start();
@@ -159,10 +168,12 @@ int run_control(Token *token, sym_items *items, Control_state sem_rule)
         break;
     case FUNC_BODY_DONE:
         sem_func_body_done(token, items);
+        run_control(token, items, POP_SCOPE);
 
         fprintf(out_code_file, "# function end\n");
         generate_func_end(*(items->funcItem));
 
+        items->funcItem = NULL;
         break;
     case LOAD_IDENTIF:
         sem_load_identif(token, items);

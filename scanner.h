@@ -5,7 +5,6 @@
  *
  * Project: IFJ compiler
  */
-// TODO check comments
 
 #ifndef IFJ2023_SCANNER_H
 #define IFJ2023_SCANNER_H

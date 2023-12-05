@@ -25,7 +25,6 @@ void get_token(Token *token)
         break;
     case INTERNAL_ERR:
         throw_error(INTERNAL_ERR, token->line_num, " ");
-        break; // TODO: free pameti, ukoncen programu
     default:
         break;
     }
@@ -65,6 +64,7 @@ bool START(Token *token, sym_items *items)
     case TOKEN_WHILE:
     case TOKEN_VAR:
     case TOKEN_LET:
+        run_control(token, items, STARTING);
         return STMT_LIST(token, items) && cmp_type(token, items, TOKEN_EOF, SEM_NONE);
     default:
         return false;
@@ -440,7 +440,7 @@ bool FUNC_IF(Token *token, sym_items *items)
     {
     // 	FUNC_IF -> if IF_COND { FUNC_STMT_LIST } FUNC_ELSE_CLAUSE
     case TOKEN_IF:
-        return cmp_type(token, items, TOKEN_IF, SEM_NONE) && IF_COND(token, items) && cmp_type(token, items, TOKEN_L_CURLY, IF_START) &&
+        return cmp_type(token, items, TOKEN_IF, FUNC_IF_FOUND) && IF_COND(token, items) && cmp_type(token, items, TOKEN_L_CURLY, IF_START) &&
                FUNC_STMT_LIST(token, items) && cmp_type(token, items, TOKEN_R_CURLY, POP_SCOPE) && FUNC_ELSE_CLAUSE(token, items);
     default:
         return false;
@@ -478,7 +478,7 @@ bool FUNC_ELSE_CLAUSE(Token *token, sym_items *items)
         return true;
     // FUNC_ELSE_CLAUSE -> else FUNC_AFTER_ELSE
     case TOKEN_ELSE:
-        return cmp_type(token, items, TOKEN_ELSE, SEM_NONE) && FUNC_AFTER_ELSE(token, items);
+        return cmp_type(token, items, TOKEN_ELSE, FUNC_ELSE) && FUNC_AFTER_ELSE(token, items);
     default:
         return false;
     }

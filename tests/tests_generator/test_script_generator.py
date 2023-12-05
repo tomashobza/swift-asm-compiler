@@ -62,16 +62,23 @@ def run_compiler_and_interpreter(file_path, expected_output):
 def test_examples():
 
     swift_files = [f for f in os.listdir(TEST_DIR) if f.endswith('.swift')]
-    expected_out = [f for f in os.listdir(EXPECTED_DIR) if f.endswith('.out')]
+    expected_outputs = {os.path.splitext(f)[0]: os.path.join(EXPECTED_DIR, f) 
+                        for f in os.listdir(EXPECTED_DIR) if f.endswith('.out')}
 
-    for file_name, expected_out_file in zip(swift_files, expected_out):
-        file_path = os.path.join(TEST_DIR, file_name)
-        base_file_name, _ = os.path.splitext(file_name)
-        expected_path = os.path.join(EXPECTED_DIR, expected_out_file)
+    for swift_file in swift_files:
+        file_path = os.path.join(TEST_DIR, swift_file)
+        base_file_name = os.path.splitext(swift_file)[0]
+
+        expected_out_file = expected_outputs.get(base_file_name)
+        if not expected_out_file:
+            continue  # or handle the missing file case
+
         with open(file_path, "r") as file:
             source = file.read()
-        with open(expected_path, "r") as file:
+
+        with open(expected_out_file, "r") as file:
             expected = file.read()
+
         result, output = run_compiler_and_interpreter(file_path, expected)
         utils.print_white("-----------------------------------")
         utils.print_white(f"{base_file_name}:")

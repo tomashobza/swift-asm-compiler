@@ -1,7 +1,23 @@
-var start = 2
-let end = Double2Int(5.6)
+func boo () -> Bool {
+    if true {
+        return true
+    } else {
+        return false
+    }
+}
 
-while (start <= end) {
-    write(start)
-    start = start + 1
+func foo () -> Bool {
+    if boo() {
+        return true
+    } else if boo() {
+        if boo() {
+            return true
+        } else {
+            if boo() {
+                return true
+            }
+        }
+    } else {
+        return false
+    }
 }

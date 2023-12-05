@@ -11,6 +11,12 @@
 
 #include "semantic.h"
 
+void sem_start(__attribute__((unused)) Token *token, __attribute__((unused)) sym_items *items)
+{
+    items->funcItem = NULL;
+    items->varItem = NULL;
+}
+
 void sem_let(__attribute__((unused)) Token *token, __attribute__((unused)) sym_items *items)
 {
     items->varItem = init_symtable_item(false);
@@ -226,7 +232,22 @@ void sem_push_scope(__attribute__((unused)) Token *token, __attribute__((unused)
 void sem_pop_scope(__attribute__((unused)) Token *token, __attribute__((unused)) sym_items *items)
 {
     DEBUG_SEMANTIC_CODE(printf(RED "POP_SCOPE\n"););
-    symtable_stack_pop(sym_st);
+    symtable symt = symtable_stack_pop(sym_st);
+    // return checking logic
+    if (items->funcItem != NULL)
+    {
+        // process self
+        symtable_stack_top(sym_st)->found_return = (symt->all_children_return && symt->found_else) || symt->found_return;
+
+        // process lower scope
+        symtable_stack_top(sym_st)->found_return &= symt->found_return; // bitwise AND assing
+        symtable_stack_top(sym_st)->found_else = symt->found_else;
+    }
+}
+
+void sem_func_if_start(__attribute__((unused)) Token *token, __attribute__((unused)) sym_items *items)
+{
+    symtable_stack_top(sym_st)->found_else = false;
 }
 
 void sem_r_exp(__attribute__((unused)) Token *token, __attribute__((unused)) sym_items *items)
@@ -250,7 +271,8 @@ void sem_r_exp(__attribute__((unused)) Token *token, __attribute__((unused)) sym
         throw_error(FUNCTIONS_ERR, token->line_num, "Function %s is not defined!\n", items->funcItem->id);
         return;
     }
-    func_r_exp_item->data.func_data->found_return = true;
+    func_r_exp_item->data.func_data->found_return = true; // TODO maybe not needed
+    symtable_stack_top(sym_st)->found_return = true;
     DEBUG_SEMANTIC_CODE(print_expression_type(return_type2.type););
 }
 
@@ -271,6 +293,11 @@ void sem_cond_exp(__attribute__((unused)) Token *token, __attribute__((unused)) 
     }
 
     DEBUG_SEMANTIC_CODE(print_expression_type(return_type3.type););
+}
+
+void sem_func_else(__attribute__((unused)) Token *token, __attribute__((unused)) sym_items *items)
+{
+    symtable_stack_top(sym_st)->found_else = true;
 }
 
 void sem_let_in_if(__attribute__((unused)) Token *token, __attribute__((unused)) sym_items *items)
@@ -316,11 +343,15 @@ void sem_func_body_done(__attribute__((unused)) Token *token, __attribute__((unu
 {
 
     symtable_item *func_body_item = symtable_find_in_stack(items->funcItem->id, sym_st, true);
-    if (func_body_item->data.func_data->found_return == false && func_body_item->data.func_data->return_type != TYPE_EMPTY)
+    if (symtable_stack_top(sym_st)->found_return == false && func_body_item->data.func_data->return_type != TYPE_EMPTY)
     {
         throw_error(PARAM_TYPE_ERR, token->line_num, "Function %s of type: %d does not have a return statement!\n", items->funcItem->id, func_body_item->data.func_data->return_type);
     }
-    sem_pop_scope(token, items);
+
+    // reset atributtes for checking return logic
+    symtable_stack_top(sym_st)->found_return = false;
+    symtable_stack_top(sym_st)->found_else = false;
+    symtable_stack_top(sym_st)->all_children_return = true;
 }
 
 void sem_load_identif(__attribute__((unused)) Token *token, __attribute__((unused)) sym_items *items)
