@@ -294,6 +294,7 @@ int generate_token(Token *token, char *code) {
                 }
                 break;
             }
+            break;
                 /*
                  * We expect identifier to be a particular keyword,
                  * builtin function or some user defined identificator
@@ -350,6 +351,7 @@ int generate_token(Token *token, char *code) {
                 }
                 // return set_token(NEW_TOKEN, code, TOKEN_IDENTIFICATOR, token, code);
             }
+            break;
 
                 /*
                  * TOKEN_INT is generated if integer is read and there is no dec.point subsequent it
@@ -425,12 +427,14 @@ int generate_token(Token *token, char *code) {
                 ungetc(c, stdin);
                 return set_token(NEW_TOKEN, code, TOKEN_EXP, token);
             }
+            break;
                 /*
                  * either " or """  has been read
                  * Characters are read till " or """ is read again
                  */
             case STRING_BLOCK:
-            case STRING: {
+            case STRING:
+            {
                 int  curr_indent_cnt = 0;
                 char c               = (char) getchar();
                 DEBUG_LEXER_CODE(printf("in string block%d\n", state););
@@ -509,11 +513,8 @@ int generate_token(Token *token, char *code) {
                 else if (state != STRING_BLOCK && state != STRING) {
                     break;
                 }
-                else {
-                    return LEXICAL_ERR;
-                }
-                break;
             }
+            return LEXICAL_ERR;
                 /*
                  * '\' was read while in STRING state
                  */
@@ -594,6 +595,7 @@ int generate_token(Token *token, char *code) {
                 }
                 break;
             }
+            break;
                 /* '\{' has been read
                  * correct indicated whether sequence is valid hexadecimal number in range 01 - ff (case-insensitive)
                  */
@@ -653,6 +655,7 @@ int generate_token(Token *token, char *code) {
                 }
                 break;
             }
+            break;
             case STRING_1: {
                 char c = (char) getchar();
                 if (c == '"') {
