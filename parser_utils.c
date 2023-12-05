@@ -115,9 +115,7 @@ void add_builtin_functions(sym_items *items)
     items->funcItem->data.func_data->params[items->funcItem->data.func_data->params_count - 1].type = TYPE_INT;
     symtable_add(items->funcItem, symtable_stack_top(sym_st));
 
-    printf(GREEN);
     DEBUG_SEMANTIC_CODE(symtable_print(symtable_stack_top(sym_st)););
-    printf(RESET);
 }
 
 Expression_type get_expression_type(Token *token)
@@ -257,23 +255,22 @@ bool get_func_definition(Token *token, char *name, symtable_item *psa_item)
             break;
         case PARAM:
         {
-            ParamData new_psa_param;
-            printf("param pointer: %p\n", &new_psa_param); // TODO
+            add_param(psa_item->data.func_data);                                                                        // new psa param
+            ParamData *new_psa_param = &(psa_item->data.func_data->params[psa_item->data.func_data->params_count - 1]); // TODO
             if (token->type == TOKEN_IDENTIFICATOR || token->type == TOKEN_UNDERSCORE)
             {
-                new_psa_param.name = token->token_value;
+                new_psa_param->name = token->token_value;
                 push_token_get_next(token, token_stack);
                 if (token->type == TOKEN_IDENTIFICATOR)
                 {
-                    new_psa_param.id = token->token_value;
+                    new_psa_param->id = token->token_value;
                     push_token_get_next(token, token_stack);
                     if (token->type == TOKEN_DOUBLE_DOT)
                     {
                         push_token_get_next(token, token_stack);
                         if (token->type == TOKEN_TYPE_INT || token->type == TOKEN_TYPE_DOUBLE || token->type == TOKEN_TYPE_STRING || token->type == TOKEN_TYPE_BOOL)
                         {
-                            new_psa_param.type = get_expression_type(token);
-                            add_param(psa_item->data.func_data); // new psa param
+                            new_psa_param->type = get_expression_type(token);
                             nstate = P_SEP;
                         }
                         else
@@ -370,6 +367,8 @@ bool check_ret_values(Expression_type t_exp, Expression_type t_id)
 {
     switch (t_exp)
     {
+    case TYPE_EMPTY:
+        return (t_id == TYPE_EMPTY);
     case TYPE_INT:
         return (t_id == TYPE_INT || t_id == TYPE_INT_NIL);
     case TYPE_DOUBLE:

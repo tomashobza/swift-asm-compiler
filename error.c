@@ -30,13 +30,15 @@ void throw_error_base(Error_code code, char *message, int line_num)
                                    .code = code,
                                    .line_num = line_num,
                                    .message = message});
+
+    exit(print_errors());
 }
 
 Error_code print_errors()
 {
     if (error_st == NULL || Error_stack_empty(error_st))
     {
-        fprintf_green(stderr, "✅ The compiler found no errors.\n");
+        // fprintf_green(stderr, "✅ The compiler found no errors.\n");
         return NO_ERR;
     }
 

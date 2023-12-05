@@ -1,0 +1,25 @@
+.IFJcode23
+CREATEFRAME
+PUSHFRAME
+CREATEFRAME
+
+# function header
+JUMP fn_end
+LABEL fn
+
+PUSHFRAME
+CREATEFRAME
+# function params
+# function params end
+
+# function end
+LABEL fn_end
+
+# variable definition
+DEFVAR GF@$a0
+
+CALL fn
+PUSHS TF@$retval
+# variable initialization
+POPS GF@$a0
+

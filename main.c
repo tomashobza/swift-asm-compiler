@@ -19,6 +19,8 @@ symtable_stack *sym_st;
 #include "generator.h"
 
 FILE *out_code_file = NULL;
+FILE *while_def_out_code_file = NULL;
+bool is_in_loop = false;
 
 int main(void)
 {
@@ -27,6 +29,11 @@ int main(void)
     {
         return INTERNAL_ERR;
     }
+    fprintf(out_code_file, ".IFJcode23\n");
+    generate_instruction(CREATEFRAME);
+    generate_instruction(PUSHFRAME);
+    generate_instruction(CREATEFRAME);
+    fprintf(out_code_file, "\n");
 
     scanner_init();
 
@@ -39,5 +46,6 @@ int main(void)
     {
         print_out_code();
     }
+    fclose(out_code_file);
     return error_code;
 }
