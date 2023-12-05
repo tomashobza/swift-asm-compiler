@@ -67,7 +67,7 @@ PSA_Token parseFunctionCall(PSA_Token_stack *main_s, PSA_Token id, int *param_co
     bool params_ok = true;
     psa_return_type parsed_param;
 
-    while (unknown_params || *param_count < (unsigned int)found_func->data.func_data->params_count)
+    while (unknown_params || *param_count < found_func->data.func_data->params_count)
     {
         // TODO: handle builtin functions (number of parameters = -1)
 
@@ -75,7 +75,7 @@ PSA_Token parseFunctionCall(PSA_Token_stack *main_s, PSA_Token id, int *param_co
 
         // TODO: save parameters for later checking if the function is not in the symtable
 
-        *param_count++;
+        *param_count = *param_count + 1;
 
         // parameter will be empty if the next token is a ) token (end of the parameter list)
         if (parsed_param.type == TYPE_EMPTY || parsed_param.type == TYPE_INVALID)
@@ -93,7 +93,7 @@ PSA_Token parseFunctionCall(PSA_Token_stack *main_s, PSA_Token id, int *param_co
         is_ok = false;
     }
 
-    if (!unknown_params && *param_count != (unsigned int)found_func->data.func_data->params_count)
+    if (!unknown_params && *param_count != found_func->data.func_data->params_count)
     {
         throw_error(SYNTACTIC_ERR, id.line_num, "Wrong number of parameters for function '%s'!", id.token_value);
         is_ok = false;
