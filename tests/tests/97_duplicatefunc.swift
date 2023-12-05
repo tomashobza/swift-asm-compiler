@@ -1,9 +1,9 @@
 // FUNCTIONS_ERR
 // Duplicate function in a scheduling system
 func createEvent(_name: String, _date: String) {
-    print("Event \(name) scheduled for \(date)")
+    write("Event ", name, date)
 }
 // Incorrectly redefining the same function
 func createEvent(_title: String, _day: String) {
-    print("Event \(title) set for \(day)")
+    write("Event", name, date)
 }

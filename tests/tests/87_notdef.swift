@@ -1,10 +1,9 @@
 // VARIABLES_ERR
 // Complex function using undefined variables
-func sumArrayElements(_elements: [Int]) -> Int {
+func sumArrayElements(_ elements: Int) -> Int {
     var total = 0
-    for element in elements {
-        total += element
-    }
+    total += element
+
     return total
 }
 func performSummation() {

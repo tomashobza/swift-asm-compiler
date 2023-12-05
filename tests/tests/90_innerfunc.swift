@@ -1,4 +1,4 @@
-// VARIABLES_ERR
+// SYNTACTIC
 // Reference to an out-of-scope variable
 func outerFunction() {
     let outerVar = "Outer"

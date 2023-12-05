@@ -1,7 +1,7 @@
-// PARAM_TYPE_ERR
+// NO_ERR
 // Database query function with incorrect parameter types
-func queryDatabase(_tableName: String, _conditions: [String: Any]) -> [String: Any] {
+func queryDatabase(_ tableName: String, _ conditions: String) -> String {
     // Simulating database querying logic
-    return ["result": "Data from \(tableName)"]
+    return "Data from" + tableName
 }
-let result = queryDatabase(_tableName: "users", _conditions: "age > 30") // Passing a String instead of a dictionary
+let result = queryDatabase(tableName: "users", conditions: "age > 30") // Passing a String instead of a dictionary

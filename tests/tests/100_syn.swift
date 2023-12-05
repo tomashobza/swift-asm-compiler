@@ -1,4 +1,4 @@
-// [SEMANTICS_ERR]
+// SYNTACTIC_ERR
 // Complex scenario involving multiple functions and control structures
 
 func calculateDiscount(_price: Double, _discountRate: Double) -> Double {
