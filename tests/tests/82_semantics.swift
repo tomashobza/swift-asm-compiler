@@ -1,7 +1,7 @@
-//SEMANTICS_ERR
+// NO_ERR
 // Complex function with logical errors
-func checkValues(_values: [Int]) -> Bool {
-    for value in values {
+func checkValues(_ value: Int) -> Bool {
+    while true {
         if value > 0 && value < 0 { // Contradictory condition
             return true
         }

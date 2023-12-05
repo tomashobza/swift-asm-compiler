@@ -1,9 +1,9 @@
 // FUNCTIONS_ERR
 // Redefinition of functions and incorrect usage
-func compute(_a: Int, _b: Int) -> Int {
+func compute(_ a: Int, _ b: Int) -> Int {
     return a + b
 }
-func compute(_a: Int, _b: Int, _c: Int) -> Int { // Redefining existing function
+func compute(_ a: Int, _ b: Int, _ c: Int) -> Int { // Redefining existing function
     return a * b * c
 }
 func executeComplex() {

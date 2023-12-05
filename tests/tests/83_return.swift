@@ -1,6 +1,6 @@
-// RETURN_ERR
+// PARAM_TYPE_ERR
 // Complex function returning incorrect type
-func evaluateCondition(_condition: Bool) -> Bool {
+func evaluateCondition(_ condition: Bool) -> Bool {
     if condition {
         return "True Condition" // Returning a String in a Bool function
     }
