@@ -221,10 +221,8 @@ char *format_token(Token token)
     case TOKEN_STRING:
     {
         // Format string literals with "string@"
-        formatted_value = malloc(strlen(token.token_value) + 8); //"string@" and '\0'
-        // char *escaped_token_value = escapeString(token.token_value);
-        char *escaped_token_value = formatted_value;
-        sprintf(formatted_value, "string@%s", escaped_token_value);
+        formatted_value = malloc((strlen(token.token_value) * 10) + 8); //"string@" and '\0'
+        sprintf(formatted_value, "string@%s", escapeString(token.token_value));
         break;
     }
     case TOKEN_BOOL:
@@ -1188,60 +1186,50 @@ Expression_type getReadType(Token token)
 
 char *escapeString(char *input)
 {
-    char *result = malloc(strlen(input) * 4 + 1);
+    char *result = malloc(strlen(input) * 4 + 1); // Alokace paměti s dostatečnou kapacitou
     if (!result)
     {
         return NULL;
     }
 
+    result[0] = '\0'; // Inicializace result jako prázdného řetězce
     int pos = 0;
     for (int i = 0; input[i] != '\0'; i++)
     {
         switch (input[i])
         {
         case '\0':
-            strcat(result, "\\000");
-            pos += 4;
+            pos += sprintf(result + pos, "\\000");
             break;
         case '\a':
-            strcat(result, "\\007");
-            pos += 4;
+            pos += sprintf(result + pos, "\\007");
             break;
         case '\b':
-            strcat(result, "\\008");
-            pos += 4;
+            pos += sprintf(result + pos, "\\008");
             break;
         case '\t':
-            strcat(result, "\\009");
-            pos += 4;
+            pos += sprintf(result + pos, "\\009");
             break;
         case '\n':
-            strcat(result, "\\010");
-            pos += 4;
+            pos += sprintf(result + pos, "\\010");
             break;
         case '\v':
-            strcat(result, "\\011");
-            pos += 4;
+            pos += sprintf(result + pos, "\\011");
             break;
         case '\f':
-            strcat(result, "\\012");
-            pos += 4;
+            pos += sprintf(result + pos, "\\012");
             break;
         case '\r':
-            strcat(result, "\\013");
-            pos += 4;
+            pos += sprintf(result + pos, "\\013");
             break;
         case ' ':
-            strcat(result, "\\032");
-            pos += 4;
+            pos += sprintf(result + pos, "\\032");
             break;
         case '#':
-            strcat(result, "\\035");
-            pos += 4;
+            pos += sprintf(result + pos, "\\035");
             break;
         case '\\':
-            strcat(result, "\\092");
-            pos += 4;
+            pos += sprintf(result + pos, "\\092");
             break;
         default:
             result[pos++] = input[i];
