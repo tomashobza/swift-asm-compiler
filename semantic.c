@@ -25,6 +25,10 @@ void sem_var(__attribute__((unused)) Token *token, __attribute__((unused)) sym_i
 
 void sem_var_id(__attribute__((unused)) Token *token, __attribute__((unused)) sym_items *items)
 {
+    if (strcmp(token->token_value, "_") == 0)
+    {
+        throw_error(SYNTACTIC_ERR, token->line_num, "Variable name can't be '_'");
+    }
     symtable_item *var_id_item = symtable_find(token->token_value, symtable_stack_top(sym_st), false);
     if (var_id_item != NULL && var_id_item->data.var_data->is_param == false)
     {
@@ -140,6 +144,10 @@ void sem_p_name(__attribute__((unused)) Token *token, __attribute__((unused)) sy
 
 void sem_p_id(__attribute__((unused)) Token *token, __attribute__((unused)) sym_items *items)
 {
+    if (strcmp(token->token_value, items->funcItem->data.func_data->params[items->funcItem->data.func_data->params_count - 1].name) == 0)
+    {
+        throw_error(SEMANTICS_ERR, token->line_num, "Parameter name: '%s' matches parameter id", token->token_value);
+    }
     items->funcItem->data.func_data->params[items->funcItem->data.func_data->params_count - 1].id = token->token_value;
     items->varItem = init_symtable_item(false);
     items->varItem->id = token->token_value;
@@ -160,7 +168,7 @@ void sem_p_type(__attribute__((unused)) Token *token, __attribute__((unused)) sy
         DEBUG_SEMANTIC_CODE(printf(CYAN "ADDED PARAM: %s, id: %s, type: %d\n", items->funcItem->data.func_data->params[i].name, items->funcItem->data.func_data->params[i].id, items->funcItem->data.func_data->params[i].type););
         if (strcmp(items->funcItem->data.func_data->params[items->funcItem->data.func_data->params_count - 1].id, items->funcItem->data.func_data->params[i].id) == 0)
         {
-            throw_error(FUNCTIONS_ERR, token->line_num, "Parameter: %s in function: %s is already defined", items->funcItem->data.func_data->params[items->funcItem->data.func_data->params_count - 1].id, items->funcItem->id);
+            throw_error(FUNCTIONS_ERR, token->line_num, "Parameter: '%s' in function: '%s' is already defined", items->funcItem->data.func_data->params[items->funcItem->data.func_data->params_count - 1].id, items->funcItem->id);
         }
     }
 
