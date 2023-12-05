@@ -17,10 +17,12 @@
 /// COUNTERS
 
 int if_counter = 0;
-int elif_counter = 0;
 int while_counter = 0;
 int tmp_counter = 0;
 int label_counter = 0;
+int_stack *else_label_st = NULL;
+
+DEFINE_STACK_FUNCTIONS(int);
 
 /// OPERAND FUNCTIONS
 
@@ -492,6 +494,14 @@ void generate_builtin_func_call(Token func, int param_cnt)
 
 void generate_if_start()
 {
+    if (else_label_st == NULL)
+    {
+        else_label_st = int_stack_init();
+        int_stack_push(else_label_st, 0);
+    }
+
+    int elif_counter = int_stack_top(else_label_st);
+
     char *true_op = literal((Token){
         .type = TOKEN_BOOL,
         .token_value = "true",
@@ -511,11 +521,14 @@ void generate_if_start()
     free(if_lbl);
 
     if_counter++;
+    int_stack_push(else_label_st, 0);
 }
 
 void generate_elseif_else()
 {
     if_counter--;
+    // int tmp = int_stack_pop(else_label_st);
+    int elif_counter = int_stack_pop(else_label_st);
 
     char *end_lbl = malloc(sizeof(char) * 20);
     sprintf(end_lbl, "endif%d", if_counter);
@@ -534,12 +547,16 @@ void generate_elseif_else()
     free(end_lbl);
     free(elsif_else_lbl);
 
+    int_stack_push(else_label_st, elif_counter);
+    // int_stack_push(else_label_st, tmp);
     if_counter++;
 }
 
 void generate_elseif_if()
 {
     if_counter--;
+    // int tmp = int_stack_pop(else_label_st);
+    int elif_counter = int_stack_pop(else_label_st);
 
     char *true_op = literal((Token){
         .type = TOKEN_BOOL,
@@ -559,12 +576,16 @@ void generate_elseif_if()
 
     free(elsif_if_lbl);
 
+    int_stack_push(else_label_st, elif_counter);
+    // int_stack_push(else_label_st, tmp);
     if_counter++;
 }
 
 void generate_else()
 {
     if_counter--;
+    // int tmp = int_stack_pop(else_label_st);
+    int elif_counter = int_stack_pop(else_label_st);
 
     char *else_lbl = malloc(sizeof(char) * 10);
     sprintf(else_lbl, "else%d_%d", if_counter, elif_counter);
@@ -584,12 +605,15 @@ void generate_else()
     free(else_lbl);
     free(endif_lbl);
 
+    int_stack_push(else_label_st, elif_counter);
+    // int_stack_push(else_label_st, tmp);
     if_counter++;
 }
 
 void generate_if_end()
 {
     if_counter--;
+    int elif_counter = int_stack_pop(else_label_st);
 
     fprintf(out_code_file, "# if%d end\n", if_counter);
 

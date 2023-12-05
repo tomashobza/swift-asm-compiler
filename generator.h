@@ -17,6 +17,7 @@
 #include "error.h"
 #include "symtable.h"
 #include "scanner.h"
+#include "stack.h"
 
 extern FILE *out_code_file;
 extern FILE *while_def_out_code_file;
