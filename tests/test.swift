@@ -1,4 +1,9 @@
-// NO_ERR
-func a (a _: String) {
-
-}
+var x : Int = 5
+var y : Int = 5
+var c : Int = 5
+var d : Int = 5
+var g : Int = 5
+var i : Int = 5
+var j : Int = 5
+var k : Int = 5
+var l : Int = 5
