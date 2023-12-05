@@ -12,8 +12,7 @@
 #ifndef SYMTABLE_H
 #define SYMTABLE_H
 
-#define SYMTABLE_MAX_ITEMS 13
-// #define SYMTABLE_MAX_ITEMS 313
+#define SYMTABLE_MAX_ITEMS 1024
 
 #include <stdint.h>
 #include <stdlib.h>
