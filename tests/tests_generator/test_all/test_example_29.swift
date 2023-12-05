@@ -3,8 +3,8 @@
     var sum = x + y
 
     if sum > 15 { 
-        var message = 'Sum is ' + sum
+        write("Sum is ")
+        write(sum)
         if sum < 30 { 
-            message = message + ', which is less than 30' }
-            write(message)
+            write(", which is less than 30") }
 }
