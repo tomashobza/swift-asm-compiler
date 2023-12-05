@@ -11,8 +11,6 @@
 
 #include "psa.h"
 
-// TODO: handle implicit type conversion only for literals
-
 PSA_Token getRule(PSA_Token *handle, unsigned int len)
 {
     uint32_t handle_val = handleToUInt32(handle, len);
@@ -174,7 +172,7 @@ PSA_Token getRule(PSA_Token *handle, unsigned int len)
     }
     default:
         DEBUG_PSA_CODE(printf_red("rule: EOF\n"););
-        throw_error(SYNTACTIC_ERR, handle[1].line_num, "Expression '%s' is not valid.", "TODO: add this"); // TODO: add printing the expression
+        throw_error(SYNTACTIC_ERR, handle[1].line_num, "Expression '%s' is not valid.", "TODO: add this");
         return (PSA_Token){
             .type = (Token_type)TOKEN_EOF,
             .token_value = "$",
@@ -182,7 +180,7 @@ PSA_Token getRule(PSA_Token *handle, unsigned int len)
         };
     }
 
-    throw_error(SYNTACTIC_ERR, handle[1].line_num, "Expression '%s' is not valid.", "TODO: add this"); // TODO: add this
+    throw_error(SYNTACTIC_ERR, handle[1].line_num, "Expression is not valid.");
 
     return (PSA_Token){
         .type = (Token_type)TOKEN_EOF,

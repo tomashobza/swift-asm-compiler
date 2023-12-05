@@ -253,7 +253,7 @@ Instruction_list tokenTypeToStackInstruction(Token_type tt)
     case TOKEN_OR:
         return (Instruction_list){.inst = {ORS}, .len = 1};
     case TOKEN_BINARY_OPERATOR:
-        // TODO: posefit toto
+        // TODO: posefit ?? toto
         return (Instruction_list){.inst = {EMPTY}, .len = 1};
 
     default:

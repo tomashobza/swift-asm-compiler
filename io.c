@@ -106,12 +106,6 @@ PSA_Token readNextToken(PSA_Token_stack *s, char *next_token_error, int *num_of_
 
     *next_token_error = 0;
 
-    // TODO: fix ID after ID!
-    /* example:
-        let y = readInt()!
-        write(y)
-    */
-
     *next_token_error += (a.type == TOKEN_NOT && b.preceded_by_nl) ? 1 : 0;
     *next_token_error = *next_token_error << 1;
 
@@ -153,9 +147,6 @@ void printStackRec(PSA_Token_node *top)
     }
     printStackRec(top->next);
     printf("%s", top->data.token_value);
-    // TODO: cleanup
-    // printf("%s:%d, ", ((PSA_Token *)top->data)->token_value, ((PSA_Token *)top->data)->expr_type);
-    // printf("{'%s', %d} ", ((PSA_Token *)top->data)->token_value, ((PSA_Token *)top->data)->type);
 }
 
 void printStack(PSA_Token_node *top)

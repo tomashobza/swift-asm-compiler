@@ -44,8 +44,6 @@ Error_code print_errors()
 
     int first_error_code = NO_ERR;
 
-    // TODO: add stderr
-
     fprintf(stderr, "\nCOMPILER FOUND ");
     fprintf_red(stderr, "%d ERRORS:\n\n", error_st->size);
 
