@@ -3,7 +3,70 @@ CREATEFRAME
 PUSHFRAME
 CREATEFRAME
 
-PUSHS string@Hello,\032world!
+# function header
+JUMP fib_end
+LABEL fib
+
+PUSHFRAME
+CREATEFRAME
+# function params
+DEFVAR LF@$n1
+POPS LF@$n1
+# function params end
+
+PUSHS LF@$n1
+PUSHS int@0
+EQS
+PUSHS LF@$n1
+PUSHS int@1
+EQS
+ORS
+# if0 start
+PUSHS bool@true
+JUMPIFNEQS else0_0
+CLEARS
+
+PUSHS LF@$n1
+
+# return
+DEFVAR LF@$retval
+POPS LF@$retval
+RETURN
+
+# if0 else
+JUMP else0_1
+LABEL else0_0
+CLEARS
+
+PUSHS LF@$n1
+PUSHS int@1
+SUBS
+CALL fib
+POPFRAME
+PUSHS TF@$retval
+PUSHS LF@$n1
+PUSHS int@2
+SUBS
+CALL fib
+POPFRAME
+PUSHS TF@$retval
+ADDS
+
+# return
+DEFVAR LF@$retval
+POPS LF@$retval
+RETURN
+
+# if0 end
+LABEL else0_1
+
+# function end
+LABEL fib_end
+
+PUSHS int@10
+CALL fib
+POPFRAME
+PUSHS TF@$retval
 # WRITE
 DEFVAR TF@$tmp0
 POPS TF@$tmp0

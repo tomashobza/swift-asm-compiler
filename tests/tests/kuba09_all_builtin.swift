@@ -1,3 +1,4 @@
+// NO_ERR
 // readString() -> String?
 // readInt() -> Int?
 // readDouble() -> Double?

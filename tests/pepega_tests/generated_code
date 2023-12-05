@@ -3,6 +3,13 @@ CREATEFRAME
 PUSHFRAME
 CREATEFRAME
 
+# variable definition
+DEFVAR GF@$t0
+
+PUSHS bool@true
+# variable initialization
+POPS GF@$t0
+
 # function header
 JUMP a_end
 LABEL a
@@ -12,38 +19,35 @@ CREATEFRAME
 # function params
 # function params end
 
-# variable definition
-DEFVAR LF@$t1
-
-PUSHS bool@true
-# variable initialization
-POPS LF@$t1
-
 # while0 start
+# variable definition
+DEFVAR LF@$a2
+
+DEFVAR TF@$tmp0
+# ======== while ========
 LABEL while0
 
-PUSHS LF@$t1
+PUSHS GF@$t0
 # while0 condition
 PUSHS bool@true
 JUMPIFNEQS endwhile0
 CLEARS
-
-# variable definition
-DEFVAR LF@$a2
 
 PUSHS int@5
 # variable initialization
 POPS LF@$a2
 
 PUSHS LF@$a2
-DEFVAR TF@$tmp0
+# WRITE
 POPS TF@$tmp0
 WRITE TF@$tmp0
+# WRITE END
 
 PUSHS bool@false
 # variable assigment
-POPS LF@$t1
+POPS GF@$t0
 
+# ====== end while ======
 # while0 end
 JUMP while0
 LABEL endwhile0
