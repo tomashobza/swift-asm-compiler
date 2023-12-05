@@ -39,6 +39,10 @@ PSA_Token getRule(PSA_Token *handle, unsigned int len)
     {
     case RULE_0:
         DEBUG_PSA_CODE(printf_cyan("rule: E -> f\n"););
+        if (strcmp(handle[0].token_value, "_") == 0)
+        {
+            throw_error(SYNTACTIC_ERR, handle[0].line_num, "Variable name cannot be '_'.");
+        }
         return (PSA_Token){
             .type = (Token_type)TOKEN_EXPRSN,
             .token_value = "E",
@@ -56,6 +60,15 @@ PSA_Token getRule(PSA_Token *handle, unsigned int len)
         Expression_type type = getTypeFromToken(handle[0].type);
         if (handle[0].type == TOKEN_IDENTIFICATOR)
         {
+            if (handle[0].token_value == NULL)
+            {
+                throw_error(INTERNAL_ERR, handle[0].line_num, "Token value is NULL.");
+            }
+            else if (strcmp(handle[0].token_value, "_") == 0)
+            {
+                throw_error(SYNTACTIC_ERR, handle[0].line_num, "Variable name cannot be '_'.");
+            }
+
             symtable_item *found = symtable_find_in_stack(handle[0].token_value, sym_st, true);
             bool found_valid_var = found != NULL && found->type == VARIABLE && found->data.var_data != NULL && found->data.var_data->type != TYPE_INVALID;
             if (found_valid_var)
