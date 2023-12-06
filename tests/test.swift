@@ -1,4 +1,1 @@
-var x = false
-  if !x {
-    write("Not false")
-  }
+write(10.5)
