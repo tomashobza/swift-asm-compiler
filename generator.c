@@ -1,6 +1,6 @@
 /**
  * @file generator.c
- * @author Tomáš Hobza (xhobza03@vutbr.cz), Jakub Všetečka (xvsete00@vutbr.cz), Simona Valkovská <xvalko12@vutbr.cz>, Anastasia Butok <xbutok00@vutbr.cz>
+ * @author Tomáš Hobza (xhobza03@vutbr.cz)
  * @brief Generator of IFJcode20.
  * @version 0.1
  * @date 2023-11-24
@@ -380,19 +380,13 @@ void generate_builtin_func_call(Token func, int param_cnt)
         break;
     case B_INT2DOUBLE:
         fprintf(out_code_file, "# INT2DOUBLE\n");
-        // HANDLE_DEFVAR(generate_instruction(DEFVAR, tmp_token_name););
-        // generate_instruction(POPS, tmp_token_name);
         generate_instruction(INT2FLOATS);
-        // generate_instruction(PUSHS, tmp_token_name);
         fprintf(out_code_file, "# INT2DOUBLE END\n");
         fprintf(out_code_file, "\n");
         break;
     case B_DOUBLE2INT:
         fprintf(out_code_file, "# FLOAT2INT\n");
-        // HANDLE_DEFVAR(generate_instruction(DEFVAR, tmp_token_name););
-        // generate_instruction(POPS, tmp_token_name);
         generate_instruction(FLOAT2INTS);
-        // generate_instruction(PUSHS, tmp_token_name);
         fprintf(out_code_file, "# FLOAT2INT END\n");
         fprintf(out_code_file, "\n");
         break;
@@ -401,7 +395,6 @@ void generate_builtin_func_call(Token func, int param_cnt)
         fprintf(out_code_file, "# LENGTH\n");
         sprintf(tmp_token, "tmp%d", tmp_counter);
 
-        // char *tmp_token_name_2 = variable(tmp_token, -1, false);
         tmp_counter++;
 
         sprintf(tmp_token, "tmp%d", tmp_counter);
@@ -492,6 +485,7 @@ void generate_builtin_func_call(Token func, int param_cnt)
     case B_ORD:
     {
         fprintf(out_code_file, "# STRI2INT\n");
+
         generate_instruction(PUSHS, literal((Token){
                                         .type = TOKEN_INT,
                                         .token_value = "0",
@@ -504,20 +498,7 @@ void generate_builtin_func_call(Token func, int param_cnt)
     case B_CHR:
     {
         fprintf(out_code_file, "# CHR\n");
-        HANDLE_DEFVAR(generate_instruction(DEFVAR, tmp_token_name););
-        generate_instruction(LTS, tmp_token_name, "int@0");
-        char *label = malloc(sizeof(char) * 20);
-        sprintf(label, "%dlabel", label_counter);
-        label_counter++;
-        generate_instruction(JUMPIFEQ, label, tmp_token_name, "bool@true");
-        generate_instruction(GTS, tmp_token_name, "int@255");
-        generate_instruction(JUMPIFEQ, label, tmp_token_name, "bool@true");
-        tmp_counter++;
-        sprintf(tmp_token, "tmp%d", tmp_counter);
-        char *tmp_token_name_2 = variable(tmp_token, -1, false);
-        generate_instruction(POPS, tmp_token_name_2);
-        generate_instruction(INT2CHAR, tmp_token_name, tmp_token_name_2);
-        generate_instruction(LABEL, label);
+        generate_instruction(INT2CHARS);
         fprintf(out_code_file, "# CHR END\n");
         fprintf(out_code_file, "\n");
         break;
