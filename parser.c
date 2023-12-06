@@ -34,16 +34,20 @@ bool cmp_type(Token *token, sym_items *items, Token_type type, Control_state sem
 {
     switch (token->type)
     {
+    // Found end of file
     case TOKEN_EOF:
         return type == TOKEN_EOF;
     default:
     {
+        // Check if token is correct
         bool result = (token->type == type);
 
         if (result)
         {
+            // If token is correct, run semantic analysis and generate code
             run_control(token, items, sem_rule);
         }
+        // Get next token
         get_token(token);
         return result;
     }
@@ -626,6 +630,8 @@ bool LOAD_ID(Token *token, sym_items *items)
 bool EXP(Token *token, sym_items *items, Control_state sem_rule)
 {
     DEBUG_SYNTAX_CODE(printf("EXP token: %d value: %s\n", token->type, token->token_value););
+
+    // returns token and calls PSA to parser expression
     return_token(*token);
     run_control(token, items, sem_rule);
     get_token(token);

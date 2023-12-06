@@ -30,19 +30,25 @@ void sem_var(__attribute__((unused)) Token *token, __attribute__((unused)) sym_i
 
 void sem_var_id(__attribute__((unused)) Token *token, __attribute__((unused)) sym_items *items)
 {
+    // var id can't be _
     if (strcmp(token->token_value, "_") == 0)
     {
         throw_error(SYNTACTIC_ERR, token->line_num, "Variable name can't be '_'");
     }
+
+    // check if var is already defined
     symtable_item *var_id_item = symtable_find(token->token_value, symtable_stack_top(sym_st), false);
     if (var_id_item != NULL && var_id_item->data.var_data->is_param == false)
     {
         throw_error(FUNCTIONS_ERR, token->line_num, "Variable %s is already defined!", token->token_value)
     }
+
+    // check if var is param
     else if (var_id_item != NULL && var_id_item->data.var_data->is_param == true)
     {
         items->varItem->data.var_data->is_param = true;
     }
+
     items->varItem->id = token->token_value;
 }
 
@@ -57,8 +63,13 @@ void sem_var_exp(__attribute__((unused)) Token *token, __attribute__((unused)) s
 
     DEBUG_SEMANTIC_CODE(
         (symtable_stack_top(sym_st)););
+
+    // parse expression
     psa_return_type return_type = parse_expression();
+
     DEBUG_SEMANTIC_CODE(print_expression_type(return_type.type););
+
+    // check if expression is valid
     if (return_type.is_ok == false)
     {
         if (items->varItem->data.var_data->type == TYPE_EMPTY)
@@ -72,6 +83,7 @@ void sem_var_exp(__attribute__((unused)) Token *token, __attribute__((unused)) s
     }
     else if (return_type.type == TYPE_NIL || return_type.type == TYPE_EMPTY)
     {
+        // check if var can be nil
         if (items->varItem->data.var_data->type == TYPE_EMPTY)
         {
             throw_error(TYPE_ERR, token->line_num, "Couldn't decide the type of %s from type NIL!\n", items->varItem->id);
@@ -81,22 +93,25 @@ void sem_var_exp(__attribute__((unused)) Token *token, __attribute__((unused)) s
             throw_error(COMPATIBILITY_ERR, token->line_num, "Expression type: %d and type: %d of variable: %s do not match!\n", return_type.type, items->varItem->data.var_data->type, items->varItem->id);
         }
     }
+    // if var's type is empty, set it to expression type
     else if (items->varItem->data.var_data->type == TYPE_EMPTY)
     {
         items->varItem->data.var_data->type = return_type.type;
     }
+    // check if expression type and var type match, conversion is possible
     else if (!(check_ret_values(return_type.type, items->varItem->data.var_data->type) || isTypeConvertable(items->varItem->data.var_data->type, return_type.type, return_type.is_literal)))
     {
         throw_error(COMPATIBILITY_ERR, token->line_num, "Expression type: %d and type: %d of variable: %s do not match!\n", return_type.type, items->varItem->data.var_data->type, items->varItem->id);
     }
+
     DEBUG_SEMANTIC_CODE(
         (symtable_stack_top(sym_st)););
 
+    // convert int to float
     if (!check_ret_values(return_type.type, items->varItem->data.var_data->type) && isTypeConvertable(items->varItem->data.var_data->type, return_type.type, return_type.is_literal))
     {
         generate_instruction(INT2FLOATS);
     }
-    // sem_var_add(token, items);
 }
 
 void sem_var_add(__attribute__((unused)) Token *token, __attribute__((unused)) sym_items *items)
@@ -176,9 +191,6 @@ void sem_p_type(__attribute__((unused)) Token *token, __attribute__((unused)) sy
             throw_error(FUNCTIONS_ERR, token->line_num, "Parameter: '%s' in function: '%s' is already defined", items->funcItem->data.func_data->params[items->funcItem->data.func_data->params_count - 1].id, items->funcItem->id);
         }
     }
-
-    // DEBUG_PSA_CODE(printf(YELLOW "ADDING PARAM: %s, id: %s, type: %d\n", items->funcItem->data.func_data->params[items->funcItem->data.func_data->params_count - 1].name, items->funcItem->data.func_data->params[items->funcItem->data.func_data->params_count - 1].id, items->funcItem->data.func_data->params[items->funcItem->data.func_data->params_count - 1].type););
-    // reset param
 }
 
 void sem_r_type(__attribute__((unused)) Token *token, __attribute__((unused)) sym_items *items)
@@ -331,9 +343,6 @@ void sem_let_in_if(__attribute__((unused)) Token *token, __attribute__((unused))
     symtable symtable = symtable_init();
     symtable_stack_push(sym_st, symtable);
 
-    // add temporary var to scope
-    // symtable_add(items->varItem, symtable_stack_top(sym_st));
-
     DEBUG_SEMANTIC_CODE(symtable_print(symtable_stack_top(sym_st)););
 }
 
@@ -367,7 +376,6 @@ void sem_load_identif(__attribute__((unused)) Token *token, __attribute__((unuse
     {
         throw_error(SEMANTICS_ERR, token->line_num, "Variable %s is const!\n", token->token_value);
     }
-    // DEBUG_SEMANTIC_CODE(printf("FOUND: %s, type: %d, const: %d\n", item->id, item->data.var_data->type, item->data.var_data->is_const););
     items->varItem->id = token->token_value;
 }
 
