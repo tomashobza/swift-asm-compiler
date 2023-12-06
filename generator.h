@@ -287,7 +287,22 @@ void generate_while_condition();
  */
 void generate_while_end();
 
+// TODO: jakubee
+/**
+ * @brief bruh
+ * @param var_item
+ */
 void generate_implicit_init(symtable_item var_item);
+
+/**
+ * @brief Generates the IFJcode23 a temporary variable initialization.
+ */
+void generate_temp_pop();
+
+/**
+ * @brief Generates the IFJcode23 a temporary variable push.
+ */
+void generate_temp_push();
 
 /// UTILITY FUNCTIONS
 
