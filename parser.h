@@ -377,7 +377,7 @@ bool WHILE_STMT(Token *token, sym_items *items);
 bool LOAD_ID(Token *token, sym_items *items);
 
 /**
- * Parses EXP nonterminal in the defined grammar. PSA is used for parsing.
+ * Parses EXP nonterminal in the defined grammar.
  * PSA is used for parsing.
  *
  * @param token A pointer to the current token in the parsing process.
