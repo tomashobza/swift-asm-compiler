@@ -452,7 +452,7 @@ void sem_identif_exp(__attribute__((unused)) Token *token, __attribute__((unused
 
 void sem_func_call_psa(__attribute__((unused)) Token *token, __attribute__((unused)) sym_items *items)
 {
-    psa_return_type return_type5 = parse_expression();
+    parse_expression();
 
     DEBUG_SEMANTIC_CODE(print_expression_type(return_type5.type););
 }
