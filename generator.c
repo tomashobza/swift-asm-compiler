@@ -399,13 +399,21 @@ void generate_builtin_func_call(Token func, int param_cnt)
     case B_LENGTH:
     {
         fprintf(out_code_file, "# LENGTH\n");
-        HANDLE_DEFVAR(generate_instruction(DEFVAR, tmp_token_name););
+        sprintf(tmp_token, "tmp%d", tmp_counter);
+
+        // char *tmp_token_name_2 = variable(tmp_token, -1, false);
         tmp_counter++;
+
         sprintf(tmp_token, "tmp%d", tmp_counter);
         char *tmp_token_name_2 = variable(tmp_token, -1, false);
+        tmp_counter++;
+
+        HANDLE_DEFVAR(generate_instruction(DEFVAR, tmp_token_name););
         HANDLE_DEFVAR(generate_instruction(DEFVAR, tmp_token_name_2););
         generate_instruction(POPS, tmp_token_name_2);
         generate_instruction(STRLEN, tmp_token_name, tmp_token_name_2);
+        generate_instruction(PUSHS, tmp_token_name);
+
         fprintf(out_code_file, "# LENGTH END\n");
         fprintf(out_code_file, "\n");
         break;
