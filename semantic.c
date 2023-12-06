@@ -404,9 +404,12 @@ void sem_load_identif(__attribute__((unused)) Token *token, __attribute__((unuse
 {
 
     items->varItem = init_symtable_item(false);
+
     DEBUG_SEMANTIC_CODE(printf(CYAN);
                         symtable_print(symtable_stack_top(sym_st)););
+
     symtable_item *item = symtable_find_in_stack(token->token_value, sym_st, false);
+
     if (item == NULL)
     {
         throw_error(VARIABLES_ERR, token->line_num, "Variable %s is not defined!\n", token->token_value);
@@ -422,18 +425,25 @@ void sem_identif_exp(__attribute__((unused)) Token *token, __attribute__((unused
 {
     DEBUG_SEMANTIC_CODE(printf(CYAN);
                         symtable_print(symtable_stack_top(sym_st)););
+
     psa_return_type return_type4 = parse_expression();
+
     DEBUG_SEMANTIC_CODE(print_expression_type(return_type4.type););
+
     if (return_type4.is_ok == false)
     {
         throw_error(COMPATIBILITY_ERR, token->line_num, "Unrecognizable type of variable: %s \n", items->varItem->id);
     }
+
     symtable_item *identif_exp_item = symtable_find_in_stack(items->varItem->id, sym_st, false);
+
+    // check if expression type and var type match, conversion is possible
     if (!(check_ret_values(return_type4.type, identif_exp_item->data.var_data->type) || isTypeConvertable(identif_exp_item->data.var_data->type, return_type4.type, return_type4.is_literal)))
     {
         throw_error(COMPATIBILITY_ERR, token->line_num, "Expression type: %d and type: %d of variable: %s do not match!\n", return_type4.type, identif_exp_item->data.var_data->type, items->varItem->id);
     }
-    identif_exp_item->data.var_data->is_initialized = true;
+
+    // generate instructuions for conversion
     if (!check_ret_values(return_type4.type, identif_exp_item->data.var_data->type) && isTypeConvertable(identif_exp_item->data.var_data->type, return_type4.type, return_type4.is_literal))
     {
         generate_instruction(INT2FLOATS);
@@ -443,8 +453,6 @@ void sem_identif_exp(__attribute__((unused)) Token *token, __attribute__((unused
 void sem_func_call_psa(__attribute__((unused)) Token *token, __attribute__((unused)) sym_items *items)
 {
     psa_return_type return_type5 = parse_expression();
-    if (return_type5.is_ok)
-    {
-    }
+
     DEBUG_SEMANTIC_CODE(print_expression_type(return_type5.type););
 }
