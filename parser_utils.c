@@ -46,7 +46,7 @@ void add_builtin_functions(sym_items *items)
     // reset param
     add_param(items->funcItem->data.func_data);
     items->funcItem->data.func_data->params[items->funcItem->data.func_data->params_count - 1].name = "_";
-    items->funcItem->data.func_data->params[items->funcItem->data.func_data->params_count - 1].id = ""; // TODO check if okay
+    items->funcItem->data.func_data->params[items->funcItem->data.func_data->params_count - 1].id = "";
     items->funcItem->data.func_data->params[items->funcItem->data.func_data->params_count - 1].type = TYPE_INT;
     symtable_add(items->funcItem, symtable_stack_top(sym_st));
     // Double2Int(_ term ∶ Double) -> Int
@@ -57,7 +57,7 @@ void add_builtin_functions(sym_items *items)
     // reset param
     add_param(items->funcItem->data.func_data);
     items->funcItem->data.func_data->params[items->funcItem->data.func_data->params_count - 1].name = "_";
-    items->funcItem->data.func_data->params[items->funcItem->data.func_data->params_count - 1].id = ""; // TODO check if okay
+    items->funcItem->data.func_data->params[items->funcItem->data.func_data->params_count - 1].id = "";
     items->funcItem->data.func_data->params[items->funcItem->data.func_data->params_count - 1].type = TYPE_DOUBLE;
     symtable_add(items->funcItem, symtable_stack_top(sym_st));
     // length(_ 𝑠 : String) -> Int
@@ -68,7 +68,7 @@ void add_builtin_functions(sym_items *items)
     // reset param
     add_param(items->funcItem->data.func_data);
     items->funcItem->data.func_data->params[items->funcItem->data.func_data->params_count - 1].name = "_";
-    items->funcItem->data.func_data->params[items->funcItem->data.func_data->params_count - 1].id = ""; // TODO check if okay
+    items->funcItem->data.func_data->params[items->funcItem->data.func_data->params_count - 1].id = "";
     items->funcItem->data.func_data->params[items->funcItem->data.func_data->params_count - 1].type = TYPE_STRING;
     symtable_add(items->funcItem, symtable_stack_top(sym_st));
     // substring(of 𝑠 : String, startingAt 𝑖 : Int, endingBefore 𝑗 : Int) -> String?
@@ -79,17 +79,17 @@ void add_builtin_functions(sym_items *items)
     // reset param
     add_param(items->funcItem->data.func_data);
     items->funcItem->data.func_data->params[items->funcItem->data.func_data->params_count - 1].name = "of";
-    items->funcItem->data.func_data->params[items->funcItem->data.func_data->params_count - 1].id = ""; // TODO check if okay
+    items->funcItem->data.func_data->params[items->funcItem->data.func_data->params_count - 1].id = "";
     items->funcItem->data.func_data->params[items->funcItem->data.func_data->params_count - 1].type = TYPE_STRING;
     // reset param
     add_param(items->funcItem->data.func_data);
     items->funcItem->data.func_data->params[items->funcItem->data.func_data->params_count - 1].name = "startingAt";
-    items->funcItem->data.func_data->params[items->funcItem->data.func_data->params_count - 1].id = ""; // TODO check if okay
+    items->funcItem->data.func_data->params[items->funcItem->data.func_data->params_count - 1].id = "";
     items->funcItem->data.func_data->params[items->funcItem->data.func_data->params_count - 1].type = TYPE_INT;
     // reset param
     add_param(items->funcItem->data.func_data);
     items->funcItem->data.func_data->params[items->funcItem->data.func_data->params_count - 1].name = "endingBefore";
-    items->funcItem->data.func_data->params[items->funcItem->data.func_data->params_count - 1].id = ""; // TODO check if okay
+    items->funcItem->data.func_data->params[items->funcItem->data.func_data->params_count - 1].id = "";
     items->funcItem->data.func_data->params[items->funcItem->data.func_data->params_count - 1].type = TYPE_INT;
     symtable_add(items->funcItem, symtable_stack_top(sym_st));
     // ord(_ 𝑐 : String) -> Int
@@ -100,7 +100,7 @@ void add_builtin_functions(sym_items *items)
     // reset param
     add_param(items->funcItem->data.func_data);
     items->funcItem->data.func_data->params[items->funcItem->data.func_data->params_count - 1].name = "_";
-    items->funcItem->data.func_data->params[items->funcItem->data.func_data->params_count - 1].id = ""; // TODO check if okay
+    items->funcItem->data.func_data->params[items->funcItem->data.func_data->params_count - 1].id = "";
     items->funcItem->data.func_data->params[items->funcItem->data.func_data->params_count - 1].type = TYPE_STRING;
     symtable_add(items->funcItem, symtable_stack_top(sym_st));
     // chr(_ 𝑖 : Int) -> String
@@ -111,7 +111,7 @@ void add_builtin_functions(sym_items *items)
     // reset param
     add_param(items->funcItem->data.func_data);
     items->funcItem->data.func_data->params[items->funcItem->data.func_data->params_count - 1].name = "_";
-    items->funcItem->data.func_data->params[items->funcItem->data.func_data->params_count - 1].id = ""; // TODO check if okay
+    items->funcItem->data.func_data->params[items->funcItem->data.func_data->params_count - 1].id = "";
     items->funcItem->data.func_data->params[items->funcItem->data.func_data->params_count - 1].type = TYPE_INT;
     symtable_add(items->funcItem, symtable_stack_top(sym_st));
 
@@ -255,8 +255,8 @@ bool get_func_definition(Token *token, char *name, symtable_item *psa_item)
             break;
         case PARAM:
         {
-            add_param(psa_item->data.func_data);                                                                        // new psa param
-            ParamData *new_psa_param = &(psa_item->data.func_data->params[psa_item->data.func_data->params_count - 1]); // TODO
+            add_param(psa_item->data.func_data); // new psa param
+            ParamData *new_psa_param = &(psa_item->data.func_data->params[psa_item->data.func_data->params_count - 1]);
             if (token->type == TOKEN_IDENTIFICATOR || token->type == TOKEN_UNDERSCORE)
             {
                 new_psa_param->name = token->token_value;

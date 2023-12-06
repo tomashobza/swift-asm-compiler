@@ -270,7 +270,6 @@ void sem_r_exp(__attribute__((unused)) Token *token, __attribute__((unused)) sym
         throw_error(FUNCTIONS_ERR, token->line_num, "Function %s is not defined!\n", items->funcItem->id);
         return;
     }
-    func_r_exp_item->data.func_data->found_return = true; // TODO maybe not needed
     symtable_stack_top(sym_st)->found_return = true;
     DEBUG_SEMANTIC_CODE(print_expression_type(return_type2.type););
 }
