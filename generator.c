@@ -726,6 +726,30 @@ void generate_implicit_init(symtable_item var_item)
     }
 }
 
+void generate_temp_pop()
+{
+    char *tmp_token = malloc(sizeof(char) * 20);
+    sprintf(tmp_token, "tmp%d", tmp_counter);
+    char *tmp_token_name = variable(tmp_token, -1, false);
+    HANDLE_DEFVAR(generate_instruction(DEFVAR, tmp_token_name););
+    generate_instruction(POPS, tmp_token_name);
+
+    tmp_counter++;
+
+    free(tmp_token);
+}
+
+void generate_temp_push()
+{
+    tmp_counter--;
+    char *tmp_token = malloc(sizeof(char) * 20);
+    sprintf(tmp_token, "tmp%d", tmp_counter);
+    char *tmp_token_name = variable(tmp_token, -1, false);
+    generate_instruction(PUSHS, tmp_token_name);
+
+    free(tmp_token);
+}
+
 /// UTILITY FUNCTIONS
 char *instructionToString(Instruction in)
 {

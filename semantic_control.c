@@ -26,7 +26,9 @@ Expression_type getTypeCombination(PSA_Token l_operand, PSA_Token r_operand)
         if (l_operand.is_literal)
         {
             // TODO: add call the appropriate retyping function
+            generate_temp_pop();
             generate_instruction(INT2FLOATS);
+            generate_temp_push();
             DEBUG_PSA_CODE(printf("implicite Int2Double for left operand '%s'\n", l_operand.token_value););
             return TYPE_DOUBLE;
         }
