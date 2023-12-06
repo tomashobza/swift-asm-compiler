@@ -55,6 +55,9 @@ typedef struct
     int line_num;
 } PSA_Token;
 
+/**
+ * @brief Struct to hold the instruction list representing an operation.
+ */
 typedef struct
 {
     Instruction inst[10];
@@ -127,7 +130,7 @@ typedef enum
 // UTILITY FUNCTIONS
 
 /**
- * @brief Converts the handle to uint32_t (for the handle LUT).
+ * @brief Converts the handle to uint32_t (for the handle LUT). The handle is read from the stack in reversed order. The handle is converted by shifting the token type by 8 bits and adding it to the result.
  *
  * @param handle array of tokens (handle)
  * @param len length of the handle
@@ -136,7 +139,7 @@ typedef enum
 uint32_t handleToUInt32(PSA_Token *handle, unsigned int len);
 
 /**
- * @brief  Converts the handle to uint32_t (for the handle LUT) in reversed order, because the handle is read from the stack in reversed order.
+ * @brief  Converts the handle to uint32_t (for the handle LUT) in reversed order, because the handle is read from the stack in reversed order. The handle is converted by shifting the token type by 8 bits and adding it to the result.
  *
  * @param types array of types (handle) in reversed order
  * @param len length of the handle

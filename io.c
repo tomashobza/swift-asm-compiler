@@ -106,6 +106,7 @@ PSA_Token readNextToken(PSA_Token_stack *s, char *next_token_error, int *num_of_
 
     *next_token_error = 0;
 
+    // detect expression end by splitting operator and operand with EOL
     *next_token_error += (a.type == TOKEN_NOT && b.preceded_by_nl) ? 1 : 0;
     *next_token_error = *next_token_error << 1;
 

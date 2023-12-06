@@ -49,10 +49,10 @@ void symtable_stack_free_all(symtable_stack *stack)
 {
     while (stack->size > 0)
     {
-        // symtable_free(symtable_stack_pop(stack));
+        symtable_free(symtable_stack_pop(stack));
     }
 
-    // free(stack);
+    free(stack);
 }
 
 symtable symtable_init()
@@ -85,13 +85,13 @@ symtable_item *symtable_add(symtable_item *item, symtable table)
         return NULL;
     }
 
-    if (table->symtable[item_hash] == NULL) // new item
+    if (table->symtable[item_hash] == NULL) // there is no item with this hash
     {
-        table->symtable[item_hash] = item;
+        table->symtable[item_hash] = item; // just add it
     }
-    else // found item
+    else // there is an item with this hash
     {
-
+        // add it to the end of the one-way list
         symtable_item *last_item = table->symtable[item_hash];
         while (last_item->next != NULL)
         {
@@ -100,6 +100,7 @@ symtable_item *symtable_add(symtable_item *item, symtable table)
         last_item->next = item;
     }
 
+    // for a variable, generate a globally unique index
     if (item->type == VARIABLE)
     {
         item->data.var_data->gen_id_idx = gen_id_idx_cnt;
@@ -111,12 +112,14 @@ symtable_item *symtable_add(symtable_item *item, symtable table)
 
 symtable_item *symtable_find(char *name, symtable table, bool is_func)
 {
+    // get the search hash
     const uint32_t item_hash = hash(name);
     if (item_hash == (uint32_t)-1)
     {
         return NULL;
     }
 
+    // go through the one-way list and find the item
     symtable_item *item = table->symtable[item_hash];
     while (item != NULL)
     {
@@ -136,15 +139,18 @@ symtable_item *symtable_find(char *name, symtable table, bool is_func)
         item = item->next;
     }
 
-    return NULL;
+    return NULL; // not found -> return NULL
 }
 
 symtable_item *symtable_find_in_stack(char *name, symtable_stack *stack, bool is_func)
 {
     int cnt = 0;
     symtable_node *node = stack->top;
+
+    // for every table of symbols in the stack (from top/current to bottom/global)
     while (node != NULL)
     {
+        // find the item in the table
         symtable_item *item = symtable_find(name, node->data, is_func);
         if (item != NULL)
         {
@@ -152,6 +158,8 @@ symtable_item *symtable_find_in_stack(char *name, symtable_stack *stack, bool is
             item->scope = (int)sym_st->size - cnt - 1;
             return item;
         }
+
+        // item not found, go to the next table in the stack
         node = node->next;
         cnt = cnt + 1;
     }
@@ -267,8 +275,10 @@ symtable_item *init_symtable_item(bool is_func)
 
 void symtable_print(symtable table)
 {
+    // for each item in the table
     for (int i = 0; i < SYMTABLE_MAX_ITEMS; i++)
     {
+        // print all the items in the one-way list
         printf("%d: ", i);
         if (table->symtable[i] == NULL)
         {
@@ -300,6 +310,7 @@ void symtable_print(symtable table)
 
 void free_synonyms(symtable_item *item)
 {
+    // free all chained items
     if (item->next != NULL)
     {
         free_synonyms(item->next);
@@ -310,11 +321,12 @@ void free_synonyms(symtable_item *item)
 
 void symtable_free(symtable table)
 {
+    // free all items in the table
     for (int i = 0; i < SYMTABLE_MAX_ITEMS; i++)
     {
         if (table->symtable[i] != NULL)
         {
-            free_synonyms(table->symtable[i]);
+            free_synonyms(table->symtable[i]); // free all chained items
         }
     }
 
