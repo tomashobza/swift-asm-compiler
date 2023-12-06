@@ -40,16 +40,16 @@ test: main.c $(SRCS)
 # build the program and run with the tests/test.sh test script
 test-all: main.c $(SRCS)
 	@$(CC) $(CFLAGS) -D DEBUG_PSA=$(DEBUG_PSA) $(TESTFLAGS) $^ -o $(TEST_TARGET)
-	bash tests/test.sh $(TESTFILE)
+	bash tests/test.sh $(TESTFILE) 0
 
 test-blaza: main.c $(SRCS)
 	@$(CC) $(CFLAGS) -D DEBUG_PSA=$(DEBUG_PSA) $(TESTFLAGS) $^ -o $(TEST_TARGET)
-	bash tests/test-blaza.sh $(TESTFILE)
+	bash tests/test-blaza.sh $(TESTFILE) 0
 
 test-allall: main.c $(SRCS)
 	@$(CC) $(CFLAGS) -D DEBUG_PSA=$(DEBUG_PSA) $(TESTFLAGS) $^ -o $(TEST_TARGET)
-	bash tests/test.sh $(TESTFILE)
-	bash tests/test-blaza.sh $(TESTFILE)
+	bash tests/test.sh $(TESTFILE) 0
+	bash tests/test-blaza.sh $(TESTFILE) 0
 
 # build the program and run with the tests/ugly_tests_generator/test_ugly.sh test script
 test-ugly: main.c $(SRCS)
@@ -59,7 +59,12 @@ test-ugly: main.c $(SRCS)
 testo: main.c $(SRCS)
 	@$(CC) $(CFLAGS) -D DEBUG_PSA=$(DEBUG_PSA) $(TESTFLAGS) $^ -o $(TEST_TARGET)
 	bash tests/tests_generator/run_test.sh
-	
+
+pesto: main.c $(SRCS)
+	@$(CC) $(CFLAGS) -D DEBUG_PSA=$(DEBUG_PSA) $(TESTFLAGS) $^ -o $(TEST_TARGET)
+	bash tests/test.sh $(TESTFILE) 1
+	bash tests/test-blaza.sh $(TESTFILE) 1
+	bash tests/tests_generator/run_test.sh
 
 pepe: main.c $(SRCS)
 	@$(CC) $(CFLAGS) -D DEBUG_PSA=$(DEBUG_PSA) $(TESTFLAGS) $^ -o $(TEST_TARGET)
