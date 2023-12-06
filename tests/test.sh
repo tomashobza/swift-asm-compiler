@@ -140,6 +140,11 @@ for testfile in "$(dirname "$0")"/tests/*.swift; do
     test_file "$(basename "$testfile")"
 done
 
+# if is prod, exit
+if [ "$IS_PROD" = "1" ]; then
+    exit 0
+fi
+
 counter=0
 while [ $counter -lt 5 ]; do
     echo "                                  ....							"
