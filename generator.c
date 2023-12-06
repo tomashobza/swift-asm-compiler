@@ -492,12 +492,6 @@ void generate_builtin_func_call(Token func, int param_cnt)
     case B_ORD:
     {
         fprintf(out_code_file, "# STRI2INT\n");
-        // HANDLE_DEFVAR(generate_instruction(DEFVAR, tmp_token_name););
-        // tmp_counter++;
-        // sprintf(tmp_token, "tmp%d", tmp_counter);
-        // char *tmp_token_name_2 = variable(tmp_token, -1, false);
-        // HANDLE_DEFVAR(generate_instruction(DEFVAR, tmp_token_name_2););
-        // generate_instruction(POPS, tmp_token_name_2);
         generate_instruction(PUSHS, literal((Token){
                                         .type = TOKEN_INT,
                                         .token_value = "0",
