@@ -70,7 +70,7 @@ char *type(Expression_type type)
 char *variable(char *id, int scope, bool has_suffix)
 {
     char *var_name = malloc(sizeof(char) * (10 + strlen(id)));
-    char *scope_prefix = scope == 0 ? "GF" : (scope < 0 ? "TF" : "LF");
+    char *scope_prefix = scope == 0 ? "GF" : (scope < 0 ? "TF" : "LF"); // scope determies the frame prefix
     char *suffix = malloc(sizeof(char) * 10);
     sprintf(suffix, "%d", scope);
 
@@ -149,15 +149,18 @@ char *symb_resolve(Token token)
     {
     case TOKEN_IDENTIFICATOR:
     {
+        // for identificators, we need to find the variable in the symtable
         symtable_item *found = symtable_find_in_stack(token.token_value, sym_st, false);
         if (found == NULL)
         {
+            // if the symbol has not been found, we we will presume that it's just temporary
             sprintf(var_name, "%s@$%s", "TF", token.token_value);
             break;
         }
         symtable_item item = *found;
         if (item.type == VARIABLE)
         {
+            // check if the variable is initialized
             if (item.data.var_data->type == TYPE_INVALID)
             {
                 throw_error(INTERNAL_ERR, -1, "Variable '%s' is invalid\n", token.token_value);
@@ -168,11 +171,13 @@ char *symb_resolve(Token token)
         }
         else if (item.type == FUNCTION)
         {
+            // functions are just labels and function names are already uniques
             sprintf(var_name, "%s", item.id);
             break;
         }
         else
         {
+            // this state should never occur
             sprintf(var_name, "%s", token.token_value);
             break;
         }
@@ -185,6 +190,7 @@ char *symb_resolve(Token token)
     case TOKEN_NIL:
     case TOKEN_BOOL:
     {
+        // literals need to be formatted based on their type
         free(var_name);
         var_name = format_token(token);
         break;
@@ -279,20 +285,23 @@ void print_out_code()
 
 void generate_func_header(symtable_item func_item)
 {
+    // CREATE OPERANDS
     char *func_lbl = malloc(sizeof(char) * (strlen(func_item.id) + 5));
     strcpy(func_lbl, func_item.id);
 
     char *func_end_lbl = malloc(sizeof(char) * (strlen(func_item.id) + 5));
     sprintf(func_end_lbl, "%s_end", func_item.id);
 
-    generate_instruction(JUMP, label(func_end_lbl));
-    generate_instruction(LABEL, label(func_lbl));
+    generate_instruction(JUMP, label(func_end_lbl)); // jump over the function body
+    generate_instruction(LABEL, label(func_lbl));    // function label
 
     fprintf(out_code_file, "\n");
 
+    // frame initialization
     generate_instruction(PUSHFRAME);
     generate_instruction(CREATEFRAME);
 
+    // initialize function params (in reverse order, because of stack)
     fprintf(out_code_file, "# function params\n");
     for (int i = func_item.data.func_data->params_count - 1; i >= 0; i--)
     {
@@ -322,7 +331,7 @@ void generate_func_end(symtable_item func_item)
     func_lbl = malloc(sizeof(char) * (strlen(func_item.id) + 5));
     sprintf(func_lbl, "%s_end", func_item.id);
 
-    generate_instruction(LABEL, label(func_lbl));
+    generate_instruction(LABEL, label(func_lbl)); // function end label
     fprintf(out_code_file, "\n");
 
     free(func_lbl);
@@ -340,6 +349,7 @@ void generate_builtin_func_call(Token func, int param_cnt)
     case B_WRITE:
         fprintf(out_code_file, "# WRITE\n");
 
+        // all the parameters separately in reverse order (because of stack)
         for (int i = 0; i < param_cnt; i++)
         {
             sprintf(tmp_token, "tmp%d", tmp_counter + param_cnt - i - 1);
@@ -353,6 +363,7 @@ void generate_builtin_func_call(Token func, int param_cnt)
             tmp_token_name = variable(tmp_token, -1, false);
         }
 
+        // write all the parameters separately
         for (int i = 0; i < param_cnt; i++)
         {
             sprintf(tmp_token, "tmp%d", tmp_counter);
@@ -370,21 +381,23 @@ void generate_builtin_func_call(Token func, int param_cnt)
         fprintf(out_code_file, "\n");
         break;
     case B_READ:
-
+        // read the input and push it on the stack
         fprintf(out_code_file, "# READ\n");
         HANDLE_DEFVAR(generate_instruction(DEFVAR, tmp_token_name););
-        generate_instruction(READ, tmp_token_name, type(getReadType(func)));
+        generate_instruction(READ, tmp_token_name, type(getReadType(func))); // the type is determined by the function name
         generate_instruction(PUSHS, tmp_token_name);
         fprintf(out_code_file, "# READ END\n");
         fprintf(out_code_file, "\n");
         break;
     case B_INT2DOUBLE:
+        // just a stack instruction
         fprintf(out_code_file, "# INT2DOUBLE\n");
         generate_instruction(INT2FLOATS);
         fprintf(out_code_file, "# INT2DOUBLE END\n");
         fprintf(out_code_file, "\n");
         break;
     case B_DOUBLE2INT:
+        // just a stack instruction
         fprintf(out_code_file, "# FLOAT2INT\n");
         generate_instruction(FLOAT2INTS);
         fprintf(out_code_file, "# FLOAT2INT END\n");
@@ -401,10 +414,13 @@ void generate_builtin_func_call(Token func, int param_cnt)
         char *tmp_token_name_2 = variable(tmp_token, -1, false);
         tmp_counter++;
 
+        // get the string to a temporary variable
         HANDLE_DEFVAR(generate_instruction(DEFVAR, tmp_token_name););
         HANDLE_DEFVAR(generate_instruction(DEFVAR, tmp_token_name_2););
         generate_instruction(POPS, tmp_token_name_2);
+        // get the length of the string
         generate_instruction(STRLEN, tmp_token_name, tmp_token_name_2);
+        // push the length on the stack
         generate_instruction(PUSHS, tmp_token_name);
 
         fprintf(out_code_file, "# LENGTH END\n");
@@ -415,26 +431,31 @@ void generate_builtin_func_call(Token func, int param_cnt)
     {
         fprintf(out_code_file, "# SUBSTRING\n");
 
+        // end index variable
         char *end_name = malloc(sizeof(char) * 20);
         sprintf(end_name, "tmp%d", tmp_counter);
         char *end = variable(end_name, -1, false);
         tmp_counter++;
 
+        // start index variable
         char *start_name = malloc(sizeof(char) * 20);
         sprintf(start_name, "tmp%d", tmp_counter);
         char *start = variable(start_name, -1, false);
         tmp_counter++;
 
+        // string variable
         char *string_name = malloc(sizeof(char) * 20);
         sprintf(string_name, "tmp%d", tmp_counter);
         char *string = variable(string_name, -1, false);
         tmp_counter++;
 
+        // internal variable (used for storing the characters)
         char *internal_name = malloc(sizeof(char) * 20);
         sprintf(internal_name, "tmp%d", tmp_counter);
         char *internal = variable(internal_name, -1, false);
         tmp_counter++;
 
+        // result variable (used for storing the resulting string)
         char *result_name = malloc(sizeof(char) * 20);
         sprintf(result_name, "tmp%d", tmp_counter);
         char *result = variable(result_name, -1, false);
@@ -460,9 +481,11 @@ void generate_builtin_func_call(Token func, int param_cnt)
         char *end_label = malloc(sizeof(char) * 20);
         sprintf(end_label, "end_substring_%d", tmp_counter);
 
+        // loop until start != end
         generate_instruction(LABEL, label(loop_label));
         generate_instruction(JUMPIFEQ, label(end_label), start, end);
 
+        // concat the character to the result
         generate_instruction(GETCHAR, internal, string, start);
         generate_instruction(CONCAT, result, result, internal);
 
@@ -473,6 +496,7 @@ void generate_builtin_func_call(Token func, int param_cnt)
         generate_instruction(JUMP, label(loop_label));
         generate_instruction(LABEL, label(end_label));
 
+        // push the resulting string on the stack
         generate_instruction(PUSHS, result);
 
         fprintf(out_code_file, "# SUBSTRING END\n");
@@ -486,6 +510,7 @@ void generate_builtin_func_call(Token func, int param_cnt)
     {
         fprintf(out_code_file, "# STRI2INT\n");
 
+        // push 0 as the index for the STRI2INTS instruction
         generate_instruction(PUSHS, literal((Token){
                                         .type = TOKEN_INT,
                                         .token_value = "0",
@@ -497,6 +522,7 @@ void generate_builtin_func_call(Token func, int param_cnt)
     }
     case B_CHR:
     {
+        // just a stack instruction
         fprintf(out_code_file, "# CHR\n");
         generate_instruction(INT2CHARS);
         fprintf(out_code_file, "# CHR END\n");
@@ -530,9 +556,8 @@ void generate_if_start()
 
     fprintf(out_code_file, "# if%d start\n", if_counter);
 
-    generate_instruction(PUSHS, true_op);
+    generate_instruction(PUSHS, true_op); // push true to check the condition
     generate_instruction(JUMPIFNEQS, label(if_lbl));
-    // generate_instruction(CLEARS);
 
     fprintf(out_code_file, "\n");
 
@@ -551,21 +576,20 @@ void generate_elseif_else()
         elif_counter = int_stack_pop(else_label_st);
     }
 
-    char *end_lbl = malloc(sizeof(char) * 20);
-    sprintf(end_lbl, "endif%d", if_counter);
+    char *endif_lbl = malloc(sizeof(char) * 10);
+    sprintf(endif_lbl, "else%d_%d", if_counter, elif_counter);
 
     char *elsif_else_lbl = malloc(sizeof(char) * 20);
     sprintf(elsif_else_lbl, "else%d_%d", if_counter, elif_counter);
 
-    generate_instruction(JUMP, label(end_lbl));
+    generate_instruction(JUMP, label(endif_lbl)); // jump to end of if block
     generate_instruction(LABEL, label(elsif_else_lbl));
-    // generate_instruction(CLEARS);
 
     fprintf(out_code_file, "\n");
 
     elif_counter++;
 
-    free(end_lbl);
+    free(endif_lbl);
     free(elsif_else_lbl);
 
     int_stack_push(else_label_st, elif_counter);
@@ -591,9 +615,8 @@ void generate_elseif_if()
 
     fprintf(out_code_file, "# elseif%d start\n", elif_counter);
 
-    generate_instruction(PUSHS, true_op);
+    generate_instruction(PUSHS, true_op); // push true to check the condition
     generate_instruction(JUMPIFNEQS, label(elsif_if_lbl));
-    // generate_instruction(CLEARS);
 
     fprintf(out_code_file, "\n");
 
@@ -621,9 +644,8 @@ void generate_else()
     sprintf(endif_lbl, "else%d_%d", if_counter, elif_counter);
 
     fprintf(out_code_file, "# if%d else\n", if_counter);
-    generate_instruction(JUMP, label(endif_lbl));
+    generate_instruction(JUMP, label(endif_lbl)); // jump to end of if block
     generate_instruction(LABEL, label(else_lbl));
-    // generate_instruction(CLEARS);
 
     fprintf(out_code_file, "\n");
 
@@ -647,7 +669,7 @@ void generate_if_end()
 
     char *endif_lbl = malloc(sizeof(char) * 10);
     sprintf(endif_lbl, "else%d_%d", if_counter, elif_counter);
-    generate_instruction(LABEL, label(endif_lbl));
+    generate_instruction(LABEL, label(endif_lbl)); // ending label of the if block
 
     fprintf(out_code_file, "\n");
 
