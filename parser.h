@@ -86,7 +86,7 @@ bool START(Token *token, sym_items *items);
 
 /**
  * @brief Parses STMT_LIST nonterminal in the defined grammar.
- * STMT_LIST -> LOCAL_STMT_LIST STMT_LIST | ε
+ * STMT_LIST -> STMT STMT_LIST | ε
  *
  * @param token A pointer to the current token in the parsing process.
  * @param items A pointer to sym_items, used for context propagation during parsing.
@@ -277,8 +277,8 @@ bool FUNC_WHILE(Token *token, sym_items *items);
 bool FUNC_IF(Token *token, sym_items *items);
 
 /**
- * @brief Parses FUNC_ELSE_CLAUSE nonterminal in the defined grammar.
- * FUNC_ELSE_CLAUSE -> if IF_COND { FUNC_STMT_LIST } FUNC_ELSE_CLAUSE
+ * @brief Parses FUNC_ELSE_IF nonterminal in the defined grammar.
+ * FUNC_ELSE_IF -> if IF_COND { FUNC_STMT_LIST } FUNC_ELSE_CLAUSE
  *
  * @param token A pointer to the current token in the parsing process.
  * @param items A pointer to sym_items, used for semantic analysis.

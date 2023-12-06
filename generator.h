@@ -317,6 +317,11 @@ void generate_temp_push();
  */
 void generate_nil_coelacing();
 
+/**
+ * @brief Generates the IFJcode23 for the string concat operation.
+ */
+void generate_string_concat();
+
 /// UTILITY FUNCTIONS
 
 /**

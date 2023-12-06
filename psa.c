@@ -169,15 +169,34 @@ psa_return_type parse_expression_base(bool is_param)
             }
             else if (derivation_ok && isTokenBinaryOperator(top.type))
             {
-                Instruction_list inst_list = tokenTypeToStackInstruction(top.type);
-                for (int i = 0; i < inst_list.len; i++)
+                switch (top.type)
                 {
-                    Instruction inst = inst_list.inst[i];
-                    if (inst == IDIVS && rule.expr_type == TYPE_DOUBLE)
+                case TOKEN_BINARY_OPERATOR:
+                    break;
+                case TOKEN_PLUS:
+                    if (rule.expr_type == TYPE_STRING)
                     {
-                        inst = DIVS;
+                        generate_string_concat();
                     }
-                    generate_instruction(inst);
+                    else
+                    {
+                        generate_instruction(ADDS);
+                    }
+                    break;
+                default:
+                {
+                    Instruction_list inst_list = tokenTypeToStackInstruction(top.type);
+                    for (int i = 0; i < inst_list.len; i++)
+                    {
+                        Instruction inst = inst_list.inst[i];
+                        if (inst == IDIVS && rule.expr_type == TYPE_DOUBLE)
+                        {
+                            inst = DIVS;
+                        }
+                        generate_instruction(inst);
+                    }
+                    break;
+                }
                 }
             }
             else if (derivation_ok && (isTokenLiteral(top.type) || top.type == TOKEN_IDENTIFICATOR))
