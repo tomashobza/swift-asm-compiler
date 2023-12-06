@@ -6,6 +6,7 @@
  * @date 2023-11-24
  *
  * @copyright Copyright (c) 2023
+ * Project: IFJ compiler
  *
  */
 
@@ -14,7 +15,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-/// COUNTERS
+/// GLOBAL COUNTERS
 
 int if_counter = 0;
 int while_counter = 0;
