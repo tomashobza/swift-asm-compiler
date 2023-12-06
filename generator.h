@@ -304,6 +304,11 @@ void generate_temp_pop();
  */
 void generate_temp_push();
 
+/**
+ * @brief Generates the IFJcode23 for the nil coelacing operation.
+ */
+void generate_nil_coelacing();
+
 /// UTILITY FUNCTIONS
 
 /**

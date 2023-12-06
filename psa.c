@@ -163,7 +163,11 @@ psa_return_type parse_expression_base(bool is_param)
 
             /// GENERATOR STUFF
 
-            if (derivation_ok && isTokenBinaryOperator(top.type))
+            if (derivation_ok && top.type == TOKEN_BINARY_OPERATOR)
+            {
+                generate_nil_coelacing();
+            }
+            else if (derivation_ok && isTokenBinaryOperator(top.type))
             {
                 Instruction_list inst_list = tokenTypeToStackInstruction(top.type);
                 for (int i = 0; i < inst_list.len; i++)
