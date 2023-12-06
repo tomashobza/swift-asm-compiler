@@ -498,6 +498,10 @@ void generate_builtin_func_call(Token func, int param_cnt)
         // char *tmp_token_name_2 = variable(tmp_token, -1, false);
         // HANDLE_DEFVAR(generate_instruction(DEFVAR, tmp_token_name_2););
         // generate_instruction(POPS, tmp_token_name_2);
+        generate_instruction(PUSHS, literal((Token){
+                                        .type = TOKEN_INT,
+                                        .token_value = "0",
+                                    }));
         generate_instruction(STRI2INTS);
         fprintf(out_code_file, "# STRI2INT END\n");
         fprintf(out_code_file, "\n");
