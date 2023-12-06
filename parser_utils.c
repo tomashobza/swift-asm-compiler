@@ -167,10 +167,10 @@ void print_items(sym_items *items)
         } printf("\n"););
 }
 
-int push_token_get_next(Token *token, Token_stack *token_stack)
+void push_token_get_next(Token *token, Token_stack *token_stack)
 {
     Token_stack_push(token_stack, *token);
-    return main_scanner(token);
+    main_scanner(token);
 }
 
 bool get_func_definition(Token *token, char *name, symtable_item *psa_item)

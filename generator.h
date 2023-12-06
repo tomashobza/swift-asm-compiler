@@ -287,10 +287,18 @@ void generate_while_condition();
  */
 void generate_while_end();
 
-// TODO: jakubee
 /**
- * @brief bruh
- * @param var_item
+ * @brief Generates implicit initialization for a variable if it is not already initialized.
+ *
+ * This function checks if the given variable (var_item) has been initialized.
+ * If not, and if the variable's type allows nil initialization
+ * (e.g., TYPE_INT_NIL, TYPE_DOUBLE_NIL, TYPE_STRING_NIL, TYPE_BOOL_NIL),
+ * it generates an implicit initialization instruction with a nil value.
+ * This ensures variables with potentially nullable types are correctly initialized to nil
+ * if no explicit initialization is provided in the source code.
+ *
+ * @param var_item The symtable_item representing the variable to be initialized.
+ *                 It contains information about the variable's initialization state and type.
  */
 void generate_implicit_init(symtable_item var_item);
 

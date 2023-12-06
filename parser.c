@@ -519,7 +519,7 @@ bool ELSE_IF_STMT(Token *token, sym_items *items)
     DEBUG_SYNTAX_CODE(printf("IF_STMT token: %d value: %s\n", token->type, token->token_value););
     switch (token->type)
     {
-    // IF_STMT -> if EXP { LOCAL_STMT_LIST } ELSE_CLAUSE
+    // ELSE_IF_STMT -> if EXP { LOCAL_STMT_LIST } ELSE_CLAUSE
     case TOKEN_IF:
         return cmp_type(token, items, TOKEN_IF, ELSE_IF_START) && IF_COND(token, items) && cmp_type(token, items, TOKEN_L_CURLY, ELSE_IF_AFTER_COND) &&
                LOCAL_STMT_LIST(token, items) && cmp_type(token, items, TOKEN_R_CURLY, POP_SCOPE) && ELSE_CLAUSE(token, items);
