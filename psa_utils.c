@@ -6,6 +6,7 @@
  * @date 2023-11-24
  *
  * @copyright Copyright (c) 2023
+ * Project: IFJ compiler
  *
  */
 

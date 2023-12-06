@@ -17,36 +17,37 @@
 /**
  * Enumeration to represent different states of the scanner.
  */
-typedef enum {
-    NEW_TOKEN,              // 0
-    COMMENTARY,             // 1
-    COMMENTARY_BL,          // 2
-    UNDERSCORE,             // 3
-    END_STATE,              // 4
-    INTEGER,                // 5
-    DEC_POINT,              // 6
-    EXP_START,              // 7
-    STRING,                 // 8
-    STRING_ESCAPE,          // 9
-    STRING_1,               // 10
-    STRING_2,               // 11
-    STRING_3,               // 12
-    STRING_1_END,           // 13
-    STRING_2_END,           // 14
-    STRING_BLOCK,           // 15
-    STRING_BLOCK_ESCAPE,    // 16
-    HEX_START_BLOCK,        // 17
-    HEX_START,              // 18
-    IDENTIFICATOR,          // 19
+typedef enum
+{
+    NEW_TOKEN,           // 0
+    COMMENTARY,          // 1
+    COMMENTARY_BL,       // 2
+    UNDERSCORE,          // 3
+    END_STATE,           // 4
+    INTEGER,             // 5
+    DEC_POINT,           // 6
+    EXP_START,           // 7
+    STRING,              // 8
+    STRING_ESCAPE,       // 9
+    STRING_1,            // 10
+    STRING_2,            // 11
+    STRING_3,            // 12
+    STRING_1_END,        // 13
+    STRING_2_END,        // 14
+    STRING_BLOCK,        // 15
+    STRING_BLOCK_ESCAPE, // 16
+    HEX_START_BLOCK,     // 17
+    HEX_START,           // 18
+    IDENTIFICATOR,       // 19
 } Scanner_state;
-
 
 extern unsigned int line_num;
 
 /**
  * Enumeration to represent different token types.
  */
-typedef enum {
+typedef enum
+{
     TOKEN_IF,              // Keyword if 0
     TOKEN_ELSE,            // Keyword else 1
     TOKEN_WHILE,           // Keyword while 2
@@ -99,7 +100,7 @@ typedef enum {
     TOKEN_EXPRSN,          // E 49
     TOKEN_SHIFT,           // < 50
     TOKEN_UNSHIFT,         // > 51
-}                   Token_type;
+} Token_type;
 
 /**
  * @brief - Used to store token type and token value read from stdin
@@ -108,12 +109,13 @@ typedef enum {
  * @param preceded_by_nl - bool flag to indicate whether the token has been preceded by newline character
  * @param line_num - number of the line in stdin file
  */
-typedef struct {
+typedef struct
+{
     Token_type type;
-    char       *token_value;
+    char *token_value;
     bool preceded_by_nl;
-    int        line_num;
-}                   Token;
+    int line_num;
+} Token;
 
 // STACK FUNCTIONS
 DECLARE_STACK_FUNCTIONS(Token);
@@ -123,10 +125,11 @@ DECLARE_STACK_FUNCTIONS(Token);
  * @param code - value of the token
  * @param token - token type
  */
-typedef struct {
+typedef struct
+{
     const char *code;
     Token_type token;
-}                   Token_map;
+} Token_map;
 
 /**
  * Declaration of token map of builtin functions and keywords
