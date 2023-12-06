@@ -678,11 +678,14 @@ void generate_if_end()
 
 void generate_while_start()
 {
+    // just the label to jump to
+
     char *while_lbl = malloc(sizeof(char) * 10);
     sprintf(while_lbl, "while%d", while_counter);
 
     fprintf(out_code_file, "# while%d start\n", while_counter);
 
+    // all the variable definitions should be above the looping while body, so we need to create another file just for the while body, save only the variable defenitions of the body into the original file and then copy the body file back to the original file
     while_def_out_code_file = out_code_file;
     out_code_file = tmpfile();
     if (out_code_file == NULL)
@@ -715,9 +718,9 @@ void generate_while_condition()
 
     fprintf(out_code_file, "# while%d condition\n", while_counter);
 
+    // check condition and jump accordingly
     generate_instruction(PUSHS, true_op);
     generate_instruction(JUMPIFNEQS, label(endwhile_lbl));
-    // generate_instruction(CLEARS);
 
     fprintf(out_code_file, "\n");
 
@@ -728,8 +731,8 @@ void generate_while_end()
 {
     while_counter--;
 
+    // copy the while body back to the original file, swap the pointers back and delete the temporary file
     copyFileContents(out_code_file, while_def_out_code_file);
-    // fclose(while_def_out_code_file);
     out_code_file = while_def_out_code_file;
     is_in_loop = false;
 
@@ -741,9 +744,8 @@ void generate_while_end()
     char *while_lbl = malloc(sizeof(char) * 10);
     sprintf(while_lbl, "while%d", while_counter);
 
-    generate_instruction(JUMP, label(while_lbl));
-    generate_instruction(LABEL, label(endwhile_lbl));
-    // generate_instruction(CLEARS);
+    generate_instruction(JUMP, label(while_lbl));     // jump back to condition
+    generate_instruction(LABEL, label(endwhile_lbl)); // while ending label
 
     fprintf(out_code_file, "\n");
 
@@ -768,6 +770,7 @@ void generate_implicit_init(symtable_item var_item)
 
 void generate_temp_pop()
 {
+    // create a temporary variable and pop the stack into it
     char *tmp_token = malloc(sizeof(char) * 20);
     sprintf(tmp_token, "tmp%d", tmp_counter);
     char *tmp_token_name = variable(tmp_token, -1, false);
@@ -781,6 +784,7 @@ void generate_temp_pop()
 
 void generate_temp_push()
 {
+    // push the value of the latest temporary value back onto the stack
     tmp_counter--;
     char *tmp_token = malloc(sizeof(char) * 20);
     sprintf(tmp_token, "tmp%d", tmp_counter);
@@ -815,15 +819,19 @@ void generate_nil_coelacing()
 
     // instruction generation
 
+    // push left operand and nil
     generate_instruction(PUSHS, tmp_token_name2);
     generate_instruction(PUSHS, literal((Token){
                                     .type = TOKEN_NIL,
                                     .token_value = "nil",
                                 }));
+    // if left operand is nil, push right operand
     generate_instruction(JUMPIFNEQS, label(not_nil_label));
+    // push right operand
     generate_instruction(PUSHS, tmp_token_name1);
     generate_instruction(JUMP, label(was_nil_label));
     generate_instruction(LABEL, label(not_nil_label));
+    // else push left operand
     generate_instruction(PUSHS, tmp_token_name2);
     generate_instruction(LABEL, label(was_nil_label));
 }
@@ -843,6 +851,7 @@ void generate_string_concat()
     sprintf(tmp_token2, "tmp%d", tmp_counter - 1);
     char *tmp_token_name2 = variable(tmp_token2, -1, false);
 
+    // concant the two strings and push the result
     generate_instruction(CONCAT, tmp_token_name1, tmp_token_name2, tmp_token_name1);
     generate_instruction(PUSHS, tmp_token_name1);
 }
