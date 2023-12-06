@@ -1,0 +1,1 @@
+write(ord("ahoj"))
