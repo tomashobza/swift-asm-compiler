@@ -294,6 +294,15 @@ Expression_type getIdType(PSA_Token id);
  */
 bool canTypeBeNil(Expression_type type);
 
+/**
+ * @brief Prints the token values of each token in the handle into a string (for error messages.)
+ *
+ * @param handle array of tokens (handle)
+ * @param handle_len length of the handle
+ * @return char* - string with the token values
+ */
+char *hadleToString(PSA_Token *handle, unsigned int handle_len);
+
 // PSA MAIN FUNCTION
 
 /**

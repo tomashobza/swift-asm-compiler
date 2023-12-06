@@ -172,7 +172,7 @@ PSA_Token getRule(PSA_Token *handle, unsigned int len)
     }
     default:
         DEBUG_PSA_CODE(printf_red("rule: EOF\n"););
-        throw_error(SYNTACTIC_ERR, handle[1].line_num, "Expression '%s' is not valid.", "TODO: add this");
+        throw_error(SYNTACTIC_ERR, handle[1].line_num, "Expression '%s' is not valid.", hadleToString(handle, len));
         return (PSA_Token){
             .type = (Token_type)TOKEN_EOF,
             .token_value = "$",
@@ -180,7 +180,7 @@ PSA_Token getRule(PSA_Token *handle, unsigned int len)
         };
     }
 
-    throw_error(SYNTACTIC_ERR, handle[1].line_num, "Expression is not valid.");
+    throw_error(SYNTACTIC_ERR, handle[1].line_num, "Expression '%s' is not valid.", hadleToString(handle, len));
 
     return (PSA_Token){
         .type = (Token_type)TOKEN_EOF,
