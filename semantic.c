@@ -126,7 +126,7 @@ void sem_var_add(__attribute__((unused)) Token *token, __attribute__((unused)) s
         }
     }
 
-    if (items->varItem->data.var_data->is_param == false) // new symmbol
+    if (items->varItem->data.var_data->is_param == false) // new symbol
     {
         DEBUG_SEMANTIC_CODE(printf(YELLOW "ADDING VAR: %s, type: %d, const: %d\n", items->varItem->id, items->varItem->data.var_data->type, items->varItem->data.var_data->is_const););
         symtable_add(items->varItem, symtable_stack_top(sym_st));
@@ -146,6 +146,8 @@ void sem_func_id(__attribute__((unused)) Token *token, __attribute__((unused)) s
 {
     items->funcItem = init_symtable_item(true);
     symtable_item *func_id_item = symtable_find_in_stack(token->token_value, sym_st, true);
+
+    // check if function is already defined
     if (func_id_item != NULL) // is in stack
     {
         if (func_id_item->type == FUNCTION)
@@ -153,12 +155,15 @@ void sem_func_id(__attribute__((unused)) Token *token, __attribute__((unused)) s
             throw_error(FUNCTIONS_ERR, token->line_num, "Function %s is already defined!\n", token->token_value);
         }
     }
+
     items->funcItem->id = token->token_value;
 }
 
 void sem_p_name(__attribute__((unused)) Token *token, __attribute__((unused)) sym_items *items)
 {
     add_param(items->funcItem->data.func_data);
+
+    // sets param's name to token value
     items->funcItem->data.func_data->params[items->funcItem->data.func_data->params_count - 1].name = token->token_value;
 }
 
@@ -168,6 +173,8 @@ void sem_p_id(__attribute__((unused)) Token *token, __attribute__((unused)) sym_
     {
         throw_error(SEMANTICS_ERR, token->line_num, "Parameter name: '%s' matches parameter id", token->token_value);
     }
+
+    // parameters must be accesible as variables in function's body's scope
     items->funcItem->data.func_data->params[items->funcItem->data.func_data->params_count - 1].id = token->token_value;
     items->varItem = init_symtable_item(false);
     items->varItem->id = token->token_value;
@@ -183,6 +190,7 @@ void sem_p_type(__attribute__((unused)) Token *token, __attribute__((unused)) sy
     {
         throw_error(FUNCTIONS_ERR, token->line_num, "Parameter name matches parameter id");
     }
+    // check if param is already defined
     for (int i = 0; i < items->funcItem->data.func_data->params_count - 1; i++)
     {
         DEBUG_SEMANTIC_CODE(printf(CYAN "ADDED PARAM: %s, id: %s, type: %d\n", items->funcItem->data.func_data->params[i].name, items->funcItem->data.func_data->params[i].id, items->funcItem->data.func_data->params[i].type););
@@ -200,7 +208,7 @@ void sem_r_type(__attribute__((unused)) Token *token, __attribute__((unused)) sy
 
 void sem_func_header_done(__attribute__((unused)) Token *token, __attribute__((unused)) sym_items *items)
 {
-
+    // adds function to symtable
     DEBUG_SEMANTIC_CODE(printf(YELLOW "ADDING FUNC: %s, return type: %d\n", items->funcItem->id, items->funcItem->data.func_data->return_type););
     symtable_add(items->funcItem, symtable_stack_top(sym_st));
     DEBUG_SEMANTIC_CODE(symtable_print(symtable_stack_top(sym_st)););
@@ -244,7 +252,28 @@ void sem_pop_scope(__attribute__((unused)) Token *token, __attribute__((unused))
 {
     DEBUG_SEMANTIC_CODE(printf(RED "POP_SCOPE\n"););
     symtable symt = symtable_stack_pop(sym_st);
+
     // return checking logic
+    //
+    // scope1 _
+    //       | | _ scope11
+    //       | || |
+    //       | || |
+    //       | ||_|             <-  S1.found_return = S1.found_return && S11.found_return
+    //       | | _ scope12
+    //       | || |
+    //       | || |
+    //       | ||_|             <-  S1.found_return = S1.found_return && S12.found_return
+    //       | | _ scope12
+    //       | || |
+    //       | || |
+    //       | ||_|             <-  S1.found_return = S1.found_return && S13.found_return
+    //       | |
+    //       |_|
+    //
+    // only looking at if we found return in every child scope is not enough to tell if the actual scope (scope1) needs to have return statement
+    // we must check if every 'if' block ends with 'else' aswell
+    // otherwise return statement must be present in scope1
     if (items->funcItem != NULL)
     {
         // process self
@@ -264,6 +293,8 @@ void sem_func_if_start(__attribute__((unused)) Token *token, __attribute__((unus
 void sem_r_exp(__attribute__((unused)) Token *token, __attribute__((unused)) sym_items *items)
 {
     psa_return_type return_type2 = parse_expression();
+
+    // check if return type matches function's return type
     if (((items->funcItem->data.func_data->return_type == TYPE_EMPTY) ^ (return_type2.type == TYPE_EMPTY))) // items->funcItem_type XOR exp_type
     {
         throw_error(RETURN_ERR, token->line_num, " ");
@@ -276,12 +307,7 @@ void sem_r_exp(__attribute__((unused)) Token *token, __attribute__((unused)) sym
     {
         throw_error(PARAM_TYPE_ERR, token->line_num, "Expression type: %d and return type: %d of function: %s do not match!\n", return_type2.type, items->funcItem->data.func_data->return_type, items->funcItem->id);
     }
-    symtable_item *func_r_exp_item = symtable_find_in_stack(items->funcItem->id, sym_st, true);
-    if (func_r_exp_item == NULL)
-    {
-        throw_error(FUNCTIONS_ERR, token->line_num, "Function %s is not defined!\n", items->funcItem->id);
-        return;
-    }
+
     symtable_stack_top(sym_st)->found_return = true;
     DEBUG_SEMANTIC_CODE(print_expression_type(return_type2.type););
 }
@@ -291,8 +317,11 @@ void sem_cond_exp(__attribute__((unused)) Token *token, __attribute__((unused)) 
 
     DEBUG_SEMANTIC_CODE(printf(CYAN "COND EXP: %s\n", token->token_value);
                         symtable_print(symtable_stack_top(sym_st)););
+
     psa_return_type return_type3 = parse_expression();
+
     DEBUG_SEMANTIC_CODE(printf(CYAN "COND EXP: %d\n", return_type3.type););
+
     if (return_type3.is_ok == false)
     {
         throw_error(COMPATIBILITY_ERR, token->line_num, "Invalid expression!\n");
@@ -315,6 +344,7 @@ void sem_let_in_if(__attribute__((unused)) Token *token, __attribute__((unused))
 
     items->varItem = init_symtable_item(false);
     symtable_item *let_in_if_item = symtable_find_in_stack(token->token_value, sym_st, false);
+
     if (let_in_if_item == NULL || let_in_if_item->data.var_data->is_const == false)
     {
         throw_error(SEMANTICS_ERR, token->line_num, "Variable %s is not a defined const!\n", token->token_value);
@@ -323,25 +353,34 @@ void sem_let_in_if(__attribute__((unused)) Token *token, __attribute__((unused))
     switch (let_in_if_item->data.var_data->type)
     {
     case TYPE_BOOL_NIL:
-        let_in_if_item->data.var_data->type = TYPE_BOOL;
+        items->varItem->data.var_data->type = TYPE_BOOL;
         break;
     case TYPE_DOUBLE_NIL:
-        let_in_if_item->data.var_data->type = TYPE_DOUBLE;
+        items->varItem->data.var_data->type = TYPE_DOUBLE;
         break;
     case TYPE_INT_NIL:
-        let_in_if_item->data.var_data->type = TYPE_INT;
+        items->varItem->data.var_data->type = TYPE_INT;
         break;
     case TYPE_STRING_NIL:
-        let_in_if_item->data.var_data->type = TYPE_STRING;
+        items->varItem->data.var_data->type = TYPE_STRING;
         break;
     default:
         break;
     }
 
+    // 'if let id' id type shloudn't include nil in first block
+    items->varItem->id = token->token_value;
+    items->varItem->data.var_data->is_const = true;
+    items->varItem->data.var_data->is_initialized = true;
+    items->varItem->data.var_data->is_param = false;
+
     // push new scope
     DEBUG_SEMANTIC_CODE(printf(RED "PUSH_SCOPE\n" RESET););
     symtable symtable = symtable_init();
     symtable_stack_push(sym_st, symtable);
+
+    // add var to new scope
+    symtable_add(items->varItem, symtable_stack_top(sym_st));
 
     DEBUG_SEMANTIC_CODE(symtable_print(symtable_stack_top(sym_st)););
 }

@@ -1,14 +1,6 @@
-func boo () -> Bool {
-    if true {
-        return true
-    } else {
-        return false
-    }
-}
+let x : Int? = 5
+if let x {
+    Int2Double(x)
+} else {
 
-func foo () -> String {
-    while boo() {
-        return "test"
-    }
-    return "test"
 }
