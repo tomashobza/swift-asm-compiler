@@ -803,7 +803,7 @@ void generate_string_concat()
     sprintf(tmp_token2, "tmp%d", tmp_counter - 1);
     char *tmp_token_name2 = variable(tmp_token2, -1, false);
 
-    generate_instruction(CONCAT, tmp_token_name1, tmp_token_name1, tmp_token_name2);
+    generate_instruction(CONCAT, tmp_token_name1, tmp_token_name2, tmp_token_name1);
     generate_instruction(PUSHS, tmp_token_name1);
 }
 
