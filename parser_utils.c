@@ -179,11 +179,13 @@ bool get_func_definition(Token *token, char *name, symtable_item *psa_item)
 
     bool is_ok = true;
 
+    // find function
     do
     {
         push_token_get_next(token, token_stack);
     } while (token != NULL && token->type != TOKEN_EOF && (strcmp(token->token_value, name) || token->type != TOKEN_FUNC_ID));
 
+    // check if function was found
     if (token == NULL || token->type == TOKEN_EOF)
     {
         is_ok = false;
@@ -207,7 +209,9 @@ bool get_func_definition(Token *token, char *name, symtable_item *psa_item)
         DONE
     } nstate_t;
     nstate_t nstate = FUNC_ID;
+
     //  DEF_FUNC -> func func_id ( P_LIST ) RET_TYPE { FUNC_STMT_LIST }
+    // parses function definition analagous to parser.c
     while (nstate != DONE)
     {
         switch (nstate)
@@ -251,7 +255,6 @@ bool get_func_definition(Token *token, char *name, symtable_item *psa_item)
                 is_ok = false;
                 goto return_tokens;
             }
-            // push_token_get_next(token, token_stack);
             break;
         case PARAM:
         {

@@ -13,8 +13,8 @@
 
 void run_parser()
 {
+    // initilizes variables needed for parser
     Token *token = malloc(sizeof(Token));
-
     symtable s_tb = symtable_init();
     symtable_stack_push(sym_st, s_tb);
     sym_items *items = malloc(sizeof(sym_items));
@@ -25,6 +25,7 @@ void run_parser()
 
     get_token(token);
 
+    // starts recursive descent
     bool all_ok = START(token, items);
     if (all_ok)
     {
@@ -160,12 +161,16 @@ int run_control(Token *token, sym_items *items, Control_state sem_rule)
         generate_while_end();
         break;
     case LET_IN_IF:
+    {
         generate_instruction(PUSHS, symbol((Token){.type = TOKEN_IDENTIFICATOR, .token_value = token->token_value, .line_num = token->line_num}));
         generate_instruction(PUSHS, literal((Token){.type = TOKEN_NIL, .token_value = "nil", .line_num = token->line_num}));
         generate_instruction(EQS);
         generate_instruction(NOTS);
+
         sem_let_in_if(token, items);
+
         break;
+    }
     case FUNC_BODY_DONE:
         sem_func_body_done(token, items);
         run_control(token, items, POP_SCOPE);
