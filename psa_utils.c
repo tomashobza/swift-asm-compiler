@@ -252,11 +252,19 @@ Instruction_list tokenTypeToStackInstruction(Token_type tt)
         return (Instruction_list){.inst = {ANDS}, .len = 1};
     case TOKEN_OR:
         return (Instruction_list){.inst = {ORS}, .len = 1};
-    case TOKEN_BINARY_OPERATOR:
-        // TODO: posefit ?? toto
-        return (Instruction_list){.inst = {EMPTY}, .len = 1};
-
+    case TOKEN_NOT:
+        return (Instruction_list){.inst = {NOTS}, .len = 1};
     default:
         return (Instruction_list){.inst = {EMPTY}, .len = 1};
     }
+}
+
+char *hadleToString(PSA_Token *handle, unsigned int handle_len)
+{
+    char *result = calloc(100, sizeof(char));
+    for (unsigned int i = 0; i < handle_len; i++)
+    {
+        strcat(result, handle[i].token_value);
+    }
+    return result;
 }

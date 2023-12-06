@@ -752,6 +752,61 @@ void generate_temp_push()
     free(tmp_token);
 }
 
+void generate_nil_coelacing()
+{
+    generate_temp_pop();
+    generate_temp_pop();
+
+    // operand deinitions
+
+    char *tmp_token1 = malloc(sizeof(char) * 20);
+    sprintf(tmp_token1, "tmp%d", tmp_counter - 2);
+    char *tmp_token_name1 = variable(tmp_token1, -1, false);
+
+    char *tmp_token2 = malloc(sizeof(char) * 20);
+    sprintf(tmp_token2, "tmp%d", tmp_counter - 1);
+    char *tmp_token_name2 = variable(tmp_token2, -1, false);
+
+    char *not_nil_label = malloc(sizeof(char) * 20);
+    sprintf(not_nil_label, "not_nil_%d", tmp_counter);
+
+    char *was_nil_label = malloc(sizeof(char) * 20);
+    sprintf(was_nil_label, "was_nil_%d", tmp_counter);
+
+    // instruction generation
+
+    generate_instruction(PUSHS, tmp_token_name2);
+    generate_instruction(PUSHS, literal((Token){
+                                    .type = TOKEN_NIL,
+                                    .token_value = "nil",
+                                }));
+    generate_instruction(JUMPIFNEQS, label(not_nil_label));
+    generate_instruction(PUSHS, tmp_token_name1);
+    generate_instruction(JUMP, label(was_nil_label));
+    generate_instruction(LABEL, label(not_nil_label));
+    generate_instruction(PUSHS, tmp_token_name2);
+    generate_instruction(LABEL, label(was_nil_label));
+}
+
+void generate_string_concat()
+{
+    generate_temp_pop();
+    generate_temp_pop();
+
+    // operand deinitions
+
+    char *tmp_token1 = malloc(sizeof(char) * 20);
+    sprintf(tmp_token1, "tmp%d", tmp_counter - 2);
+    char *tmp_token_name1 = variable(tmp_token1, -1, false);
+
+    char *tmp_token2 = malloc(sizeof(char) * 20);
+    sprintf(tmp_token2, "tmp%d", tmp_counter - 1);
+    char *tmp_token_name2 = variable(tmp_token2, -1, false);
+
+    generate_instruction(CONCAT, tmp_token_name1, tmp_token_name1, tmp_token_name2);
+    generate_instruction(PUSHS, tmp_token_name1);
+}
+
 /// UTILITY FUNCTIONS
 char *instructionToString(Instruction in)
 {
