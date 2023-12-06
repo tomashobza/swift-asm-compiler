@@ -413,41 +413,72 @@ void generate_builtin_func_call(Token func, int param_cnt)
     case B_SUBSTRING:
     {
         fprintf(out_code_file, "# SUBSTRING\n");
-        HANDLE_DEFVAR(generate_instruction(DEFVAR, tmp_token_name););
-        generate_instruction(POPS, tmp_token_name);
+
+        char *end_name = malloc(sizeof(char) * 20);
+        sprintf(end_name, "tmp%d", tmp_counter);
+        char *end = variable(end_name, -1, false);
         tmp_counter++;
-        sprintf(tmp_token, "tmp%d", tmp_counter);
-        char *start_index = variable(tmp_token, -1, false);
-        HANDLE_DEFVAR(generate_instruction(DEFVAR, start_index););
-        generate_instruction(POPS, start_index);
+
+        char *start_name = malloc(sizeof(char) * 20);
+        sprintf(start_name, "tmp%d", tmp_counter);
+        char *start = variable(start_name, -1, false);
         tmp_counter++;
-        sprintf(tmp_token, "tmp%d", tmp_counter);
-        char *string = variable(tmp_token, -1, false);
+
+        char *string_name = malloc(sizeof(char) * 20);
+        sprintf(string_name, "tmp%d", tmp_counter);
+        char *string = variable(string_name, -1, false);
+        tmp_counter++;
+
+        char *internal_name = malloc(sizeof(char) * 20);
+        sprintf(internal_name, "tmp%d", tmp_counter);
+        char *internal = variable(internal_name, -1, false);
+        tmp_counter++;
+
+        char *result_name = malloc(sizeof(char) * 20);
+        sprintf(result_name, "tmp%d", tmp_counter);
+        char *result = variable(result_name, -1, false);
+        tmp_counter++;
+
+        HANDLE_DEFVAR(generate_instruction(DEFVAR, end););
+        HANDLE_DEFVAR(generate_instruction(DEFVAR, start););
         HANDLE_DEFVAR(generate_instruction(DEFVAR, string););
+        HANDLE_DEFVAR(generate_instruction(DEFVAR, internal););
+        HANDLE_DEFVAR(generate_instruction(DEFVAR, result););
+
+        generate_instruction(POPS, end);
+        generate_instruction(POPS, start);
         generate_instruction(POPS, string);
-        generate_instruction(PUSHS, "string@");
-        char *label = malloc(sizeof(char) * 20);
-        sprintf(label, "%dlabel", label_counter);
-        label_counter++;
+
+        generate_instruction(MOVE, result, literal((Token){
+                                               .type = TOKEN_STRING,
+                                               .token_value = "",
+                                           }));
+
+        char *loop_label = malloc(sizeof(char) * 20);
+        sprintf(loop_label, "loop_substring_%d", tmp_counter);
         char *end_label = malloc(sizeof(char) * 20);
-        sprintf(end_label, "%dend", label_counter);
-        label_counter++;
-        tmp_counter++;
-        sprintf(tmp_token, "tmp%d", tmp_counter);
-        char *bool_val = variable(tmp_token, -1, false);
-        tmp_counter++;
-        sprintf(tmp_token, "tmp%d", tmp_counter);
-        char *char_val = variable(tmp_token, -1, false);
-        HANDLE_DEFVAR(generate_instruction(DEFVAR, char_val););
-        generate_instruction(LABEL, label);
-        generate_instruction(GT, bool_val, tmp_token_name, start_index);
-        generate_instruction(JUMPIFNEQ, end_label, bool_val, "bool@true");
-        generate_instruction(GETCHAR, char_val, string, start_index);
-        generate_instruction(ADDS, char_val);
-        generate_instruction(ADD, start_index, start_index, "int@1");
-        generate_instruction(LABEL, end_label);
+        sprintf(end_label, "end_substring_%d", tmp_counter);
+
+        generate_instruction(LABEL, label(loop_label));
+        generate_instruction(JUMPIFEQ, label(end_label), start, end);
+
+        generate_instruction(GETCHAR, internal, string, start);
+        generate_instruction(CONCAT, result, result, internal);
+
+        generate_instruction(ADD, start, start, literal((Token){
+                                                    .type = TOKEN_INT,
+                                                    .token_value = "1",
+                                                }));
+        generate_instruction(JUMP, label(loop_label));
+        generate_instruction(LABEL, label(end_label));
+
+        generate_instruction(PUSHS, result);
+
         fprintf(out_code_file, "# SUBSTRING END\n");
         fprintf(out_code_file, "\n");
+
+        tmp_counter++;
+
         break;
     }
     case B_ORD:
