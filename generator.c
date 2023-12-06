@@ -747,6 +747,8 @@ void generate_temp_push()
     char *tmp_token_name = variable(tmp_token, -1, false);
     generate_instruction(PUSHS, tmp_token_name);
 
+    tmp_counter++;
+
     free(tmp_token);
 }
 
