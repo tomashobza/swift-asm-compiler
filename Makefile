@@ -57,7 +57,7 @@ test-ugly: main.c $(SRCS)
 	bash tests/ugly_tests_generator/test_ugly.sh ./tests/ugly_tests_generator/gen ./$(TEST_TARGET) ./tests/ugly_tests_generator/ugly_test.out
 
 testo: main.c $(SRCS)
-	@$(CC) $(CFLAGS) $(MAINFLAGS) $^ -o $@
+	@$(CC) $(CFLAGS) -D DEBUG_PSA=$(DEBUG_PSA) $(TESTFLAGS) $^ -o $(TEST_TARGET)
 	bash tests/tests_generator/run_test.sh
 	
 
