@@ -149,8 +149,6 @@ char *literal(Token token);
  */
 char *symbol(Token symbol);
 
-// TODO: delete unused
-
 /**
  * @brief Returns the format of symb for IFJcode23.
  *
