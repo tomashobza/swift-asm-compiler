@@ -1,4 +1,4 @@
-# <img src="https://www.designportal.cz/wp-content/uploads/2015/10/vut_brno_00.jpg" style="display: inline-block; height: 1.5rem; width: 1.5rem; object-fit: cover;"> Projekt do předmětu IFJ 2023/Project for IFJ 2023
+# <img src="doc/vut-logo.webp" style="display: inline-block; height: 1.5rem; width: 1.5rem; object-fit: cover;"> Projekt do předmětu IFJ 2023/Project for IFJ 2023
 
 ✍️ **Autoři/Authors:**
 
@@ -14,8 +14,6 @@ Jedná se o překladač napsaný v jazyce C, který překládá kód z jazyka po
 /
 This project was created within the IFJ (*Formal Languages and Compilers*) course at Brno University of Technology, 2023.
 It is a compiler written in C that translates code from a Swift-like language to an Assembly-like language. The compiler is divided into several parts: the Scanner, the Parser, the Precedence Syntactic Analyzer and the Code Generator. Each source file contains a header with the name of its author.
-
-Translated with DeepL.com (free version)
 
 🏗️ **Struktura projektu/Project structure:**
 
