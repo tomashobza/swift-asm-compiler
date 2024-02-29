@@ -2,10 +2,10 @@
 
 ✍️ **Autoři/Authors:**
 
-- xbutok00
-- xhobza03
-- xvalko12
-- xvsete00
+- [xbutok00](mailto:xbutok00@vutbr.cz)
+- [xhobza03](mailto:xhobza03@vutbr.cz)
+- [xvalko12](mailto:xvalko12@vutbr.cz)
+- [xvsete00](mailto:xvsete00@vutbr.cz)
 
 🎨 **Abstrakt/Abstract:**
 
